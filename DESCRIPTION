@@ -1,0 +1,33 @@
+Package: replayr
+Title: Read Emulator Movie Files into a Uniform Frame-by-Frame Array
+Version: 0.3.0
+Authors@R:
+    person("Thorben", "Pelzer", , "thorben@pelzer.blog",
+           role = c("aut", "cre"))
+Description: Decoders for eleven emulator movie ("input log") file
+    formats used by the speedrun and tool-assisted-speedrun
+    communities: 'FCEUX' (.fm2), 'BizHawk' (.bk2), 'FCEU' (.fcm),
+    'lsnes' (.lsmv), 'Gens-rerecording' (.gmv), 'VBA-rerecording'
+    (.vbm), 'Mupen64' (.m64), 'Snes9x-rerecording' (.smv), 'PSXjin'
+    (.pxm and .pjm), and 'Dolphin' (.dtm). Every parser produces
+    the same in-memory shape: a per-frame logical matrix indexed
+    against a single 30-slot universal-button layout, plus the
+    file's header metadata and a per-frame commands vector. Allows
+    cross-platform analysis of input recordings without an emulator.
+License: GPL (>= 2)
+Encoding: UTF-8
+Language: en-US
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.0)
+Imports:
+    utils
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+URL: https://github.com/tp451/replayr
+BugReports: https://github.com/tp451/replayr/issues
+Config/roxygen2/version: 8.0.0

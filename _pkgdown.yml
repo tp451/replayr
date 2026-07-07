@@ -1,0 +1,49 @@
+url: https://tp451.github.io/replayr/
+
+template:
+  bootstrap: 5
+
+reference:
+  - title: Reading movie files
+    desc: Top-level entry points for parsing emulator movie files.
+    contents:
+      - read_movie
+      - supported_formats
+  - title: Per-format readers
+    desc: Direct readers for each supported file format. Useful when you already know the format.
+    contents:
+      - read_fm2
+      - read_bk2
+      - read_fcm
+      - read_lsmv
+      - read_gmv
+      - read_vbm
+      - read_m64
+      - read_smv
+      - read_pxm
+      - read_pjm
+      - read_dtm
+  - read_lmp
+  - title: Inspecting parsed movies
+    desc: Helpers for working with the `replayr_movie` S3 object returned by the readers.
+    contents:
+      - replayr_movie
+      - n_frames
+      - n_players
+      - n_buttons
+      - player
+      - press_counts
+  - title: Universal button layout
+    desc: The 40-slot universal-button alphabet that every parser writes into.
+    contents:
+      - universal_buttons
+      - universal_button_names
+  - title: Package
+    contents:
+      - replayr-package
+
+articles:
+  - title: Get started
+    navbar: ~
+    contents:
+      - replayr

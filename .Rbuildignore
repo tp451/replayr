@@ -1,0 +1,14 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^README\.Rmd$
+^LICENSE\.md$
+^\.github$
+^\.git$
+^\.gitignore$
+^doc$
+^Meta$
+^cran-comments\.md$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.devnotes$
