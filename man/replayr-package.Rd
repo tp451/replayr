@@ -6,16 +6,16 @@
 \alias{replayr-package}
 \title{replayr: parsers for emulator movie ("input log") files}
 \description{
-Decoders for 11 emulator movie file formats used by the speedrun and
+Decoders for 12 emulator movie file formats used by the speedrun and
 tool-assisted-speedrun communities. Every parser produces a uniform
 in-memory shape (a \code{replayr_movie} S3 object) with a per-frame logical
-input matrix indexed against a single 30-slot universal-button layout.
+input matrix indexed against a single 40-slot universal-button layout.
 }
 \details{
 Supported formats: .fm2 (FCEUX), .bk2 (BizHawk), .fcm (FCEU),
 .lsmv (lsnes), .gmv (Gens-rerecording), .vbm (VBA-rerecording),
 .m64 (Mupen64), .smv (Snes9x-rerecording), .pxm (PSXjin binary),
-.pjm (PSXjin text), .dtm (Dolphin GameCube).
+.pjm (PSXjin text), .dtm (Dolphin GameCube), .lmp (Doom).
 }
 \section{Quick start}{
 
@@ -31,7 +31,7 @@ Supported formats: .fm2 (FCEUX), .bk2 (BizHawk), .fcm (FCEU),
 \section{Universal button layout}{
 
 Each \code{replayr_movie} indexes its third dimension against a prefix of
-the 30-slot universal layout. Slots 1..8 are NES-shaped (R, L, D, U,
+the 40-slot universal layout. Slots 1..8 are NES-shaped (R, L, D, U,
 Start, Select, B, A); higher slots cover SNES, Genesis, GBA, N64,
 PSX, GameCube. See \code{\link[=universal_buttons]{universal_buttons()}} and \code{\link[=universal_button_names]{universal_button_names()}}.
 }
@@ -40,6 +40,7 @@ PSX, GameCube. See \code{\link[=universal_buttons]{universal_buttons()}} and \co
 Useful links:
 \itemize{
   \item \url{https://github.com/tp451/replayr}
+  \item \url{https://tp451.github.io/replayr}
   \item Report bugs at \url{https://github.com/tp451/replayr/issues}
 }
 

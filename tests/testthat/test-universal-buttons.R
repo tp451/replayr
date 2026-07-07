@@ -19,8 +19,8 @@ test_that("universal_button_names() is the same length as universal_buttons()", 
                c("Right", "Left", "Down", "Up", "Start", "Select", "B", "A"))
 })
 
-test_that("supported_formats() lists exactly 11 extensions", {
+test_that("supported_formats() lists exactly 12 extensions", {
   fmt <- supported_formats()
-  expect_length(fmt, 11)
+  expect_length(fmt, 12)
   expect_true(all(startsWith(fmt, ".")))
 })

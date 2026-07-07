@@ -1,7 +1,0 @@
-This file is kept for git history. As of v0.2, replayr is licensed
-under the GNU General Public License version 2 or later; see the
-`License:` field in DESCRIPTION and the canonical text installed
-with R. Upstream attributions for code derived from emulator
-sources licensed under GPL-2+ are in inst/COPYRIGHTS.
-
-This file may be safely deleted.
