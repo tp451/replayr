@@ -1,6 +1,6 @@
 # replayr
 
-Pure-R parsers for 11 emulator movie (“input log”) file formats used by
+Pure-R parsers for 12 emulator movie (“input log”) file formats used by
 the speedrun and tool-assisted-speedrun communities.
 
 | Format | Emulator             | Platforms                                   |
@@ -16,6 +16,7 @@ the speedrun and tool-assisted-speedrun communities.
 | .pxm   | PSXjin (binary body) | PSX                                         |
 | .pjm   | PSXjin (text body)   | PSX                                         |
 | .dtm   | Dolphin              | GameCube                                    |
+| .lmp   | Doom (vanilla 1.9)   | DOS / PC                                    |
 
 Every parser produces the same in-memory shape: a `replayr_movie` S3
 object with a `(n_frames, n_players, n_buttons)` logical input array
@@ -62,7 +63,7 @@ mv <- read_movie("/path/to/your/movie.bk2")
 
 ## Universal button layout
 
-The 30-slot universal-button alphabet is documented in
+The 40-slot universal-button alphabet is documented in
 [`?universal_buttons`](https://tp451.github.io/replayr/reference/universal_buttons.md).
 Slots 1..8 are NES-shaped (R, L, D, U, Start, Select, B, A); higher
 slots cover SNES face/shoulder buttons, the N64 C-buttons, an
@@ -107,8 +108,8 @@ Thorben Pelzer (<thorben@pelzer.blog>).
 ## License
 
 `replayr` is licensed under the [GNU General Public License version 2 or
-later](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html). Five of
-the eleven format readers were developed with reference to the upstream
+later](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html). Six of
+the twelve format readers were developed with reference to the upstream
 emulator’s source tree (named in those files’ headers); those upstreams
 are themselves GPL-2+, so the package as a whole is GPL.
 
@@ -122,6 +123,10 @@ to be re-implemented:
 - **[Dolphin Emulator Project](https://github.com/dolphin-emu/dolphin)**
   – the `.dtm` GameCube movie format reader (`R/read_dtm.R`) was
   developed with reference to `Source/Core/Core/Movie.cpp`.
+- **[id Software’s Doom source](https://github.com/id-Software/DOOM)** –
+  the `.lmp` demo format reader (`R/read_lmp.R`) was developed with
+  reference to `linuxdoom-1.10/g_game.c` and the [DoomWiki demo
+  spec](https://doomwiki.org/wiki/Demo).
 - **PSXjin** – the `.pjm` (text body) and `.pxm` (binary body) movie
   format readers were developed with reference to the PSXjin source
   tree.
