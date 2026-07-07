@@ -1,0 +1,9 @@
+pandoc: 3.8.3
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  replayr: replayr.html
+last_built: 2026-07-07T08:56Z
+urls:
+  reference: https://tp451.github.io/replayr/reference
+  article: https://tp451.github.io/replayr/articles

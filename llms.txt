@@ -1,0 +1,236 @@
+# replayr
+
+Pure-R parsers for 11 emulator movie (“input log”) file formats used by
+the speedrun and tool-assisted-speedrun communities.
+
+| Format | Emulator             | Platforms                                   |
+|--------|----------------------|---------------------------------------------|
+| .fm2   | FCEUX                | NES                                         |
+| .bk2   | BizHawk              | NES, SNES, Atari 2600, GB/GBC/GBA, N64, PSX |
+| .fcm   | FCEU                 | NES                                         |
+| .lsmv  | lsnes                | SNES, Game Boy, Super Game Boy              |
+| .gmv   | Gens-rerecording     | Sega Genesis / Mega Drive                   |
+| .vbm   | VBA-rerecording      | Game Boy / GBC / GBA                        |
+| .m64   | Mupen64              | N64                                         |
+| .smv   | Snes9x-rerecording   | SNES                                        |
+| .pxm   | PSXjin (binary body) | PSX                                         |
+| .pjm   | PSXjin (text body)   | PSX                                         |
+| .dtm   | Dolphin              | GameCube                                    |
+
+Every parser produces the same in-memory shape: a `replayr_movie` S3
+object with a `(n_frames, n_players, n_buttons)` logical input array
+indexed against a single 40-slot universal-button layout, plus the
+file’s header metadata and a per-frame commands vector.
+
+![replayr universal-button
+layout](reference/figures/universal_buttons_layout.svg)
+
+replayr universal-button layout
+
+Slots 1–30 cover the gamepad family (d-pad, Start/Select/Mode, six face
+buttons, two shoulders, two triggers, four C-buttons, and the eight
+stick directions). Slots 31–40 cover the Intellivision / ColecoVision
+numeric keypad. INTV’s Enter / Clear and Coleco’s Star / Pound fold into
+Start (slot 5) and Select (slot 6) — they’re pressed once at boot, not
+as gameplay verbs, so they share semantics with console Start/Select
+rather than getting their own slots.
+
+## Quick start
+
+``` r
+
+library(replayr)
+
+# Use a bundled sample (one is shipped per format).
+fp <- system.file("extdata", "sample.fm2", package = "replayr")
+mv <- read_movie(fp)
+mv
+#> <replayr_movie [fm2] frames=1748 players=2 buttons=8 source=sample.fm2>
+
+n_frames(mv)            # frame count
+press_counts(mv)        # named vector of per-button hold counts
+p1 <- player(mv, 1L)    # logical matrix (frames x buttons)
+```
+
+`system.file("extdata", package = "replayr")` lists every bundled
+sample. To parse your own movie file, just pass the path:
+
+``` r
+
+mv <- read_movie("/path/to/your/movie.bk2")
+```
+
+## Universal button layout
+
+The 30-slot universal-button alphabet is documented in
+[`?universal_buttons`](https://tp451.github.io/replayr/reference/universal_buttons.md).
+Slots 1..8 are NES-shaped (R, L, D, U, Start, Select, B, A); higher
+slots cover SNES face/shoulder buttons, the N64 C-buttons, an
+8-direction quantisation of any analog stick, and PSX- specific L2/R2.
+`n_buttons(mv)` tells you how many slots a particular movie actually
+uses (8 NES, 12 SNES, 15 Genesis, 28 N64/GameCube, 30 PSX).
+
+## Install
+
+From GitHub:
+
+``` r
+
+# install.packages("remotes")
+remotes::install_github("tp451/replayr")
+```
+
+From a local clone:
+
+``` r
+
+# install.packages("devtools")
+devtools::install("path/to/replayr")
+```
+
+## Test
+
+``` r
+
+devtools::test("path/to/replayr")
+```
+
+The test suite is self-contained against the bundled fixtures. The .pxm,
+.pjm, and .dtm tests skip by default because their typical fixtures are
+large (~0.3-0.7 MB each); set `REPLAYR_FIXTURE_DIR` to a folder
+containing `raw_psx/<game>/<n>.pxm` etc. to enable them.
+
+## Author
+
+Thorben Pelzer (<thorben@pelzer.blog>).
+
+## License
+
+`replayr` is licensed under the [GNU General Public License version 2 or
+later](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html). Five of
+the eleven format readers were developed with reference to the upstream
+emulator’s source tree (named in those files’ headers); those upstreams
+are themselves GPL-2+, so the package as a whole is GPL.
+
+## Acknowledgements
+
+The format-specific readers build on documentation and reference
+implementations from the speedrunning / TAS community. We are grateful
+to the authors of these projects for keeping their formats open enough
+to be re-implemented:
+
+- **[Dolphin Emulator Project](https://github.com/dolphin-emu/dolphin)**
+  – the `.dtm` GameCube movie format reader (`R/read_dtm.R`) was
+  developed with reference to `Source/Core/Core/Movie.cpp`.
+- **PSXjin** – the `.pjm` (text body) and `.pxm` (binary body) movie
+  format readers were developed with reference to the PSXjin source
+  tree.
+- **[lsnes](https://github.com/Ilari-Pihlajisto/lsnes)** – the `.lsmv`
+  movie format reader was developed with reference to the lsnes source
+  tree.
+- **[VBA-rerecording](https://github.com/TASEmulators/vba-rerecording)**
+  – the `.vbm` movie format reader was developed with reference to
+  `movie.h`.
+- **TASVideos** – the
+  [EmulatorResources](https://tasvideos.org/EmulatorResources) wiki
+  provides community-authored format documentation. Every reader cites
+  at least one TASVideos page.
+- **FCEUX** – the [`.fm2` format spec](https://fceux.com/web/FM2.html)
+  is the canonical reference for the FCEUX movie format.
+
+Per-file attribution comments name the specific upstream references for
+each derivative reader. The full provenance manifest is in
+[`inst/COPYRIGHTS`](https://tp451.github.io/replayr/inst/COPYRIGHTS).
+
+The `.fm2`, `.bk2`, `.fcm`, `.gmv`, `.m64`, and `.smv` readers were
+written from public format specifications and to our knowledge do not
+draw on any GPL emulator source, but they are still covered by the
+package’s GPL (\>= 2) license.
+
+# Package index
+
+## Reading movie files
+
+Top-level entry points for parsing emulator movie files.
+
+- [`read_movie()`](https://tp451.github.io/replayr/reference/read_movie.md)
+  : Read any supported movie file by extension
+- [`supported_formats()`](https://tp451.github.io/replayr/reference/supported_formats.md)
+  : Names of the supported movie file extensions
+
+## Per-format readers
+
+Direct readers for each supported file format. Useful when you already
+know the format.
+
+- [`read_fm2()`](https://tp451.github.io/replayr/reference/read_fm2.md)
+  : Read an FCEUX .fm2 movie file
+- [`read_bk2()`](https://tp451.github.io/replayr/reference/read_bk2.md)
+  : Read a BizHawk .bk2 movie file
+- [`read_fcm()`](https://tp451.github.io/replayr/reference/read_fcm.md)
+  : Read a FCEU .fcm movie file
+- [`read_lsmv()`](https://tp451.github.io/replayr/reference/read_lsmv.md)
+  : Read an lsnes .lsmv movie file
+- [`read_gmv()`](https://tp451.github.io/replayr/reference/read_gmv.md)
+  : Read a Gens-rerecording .gmv movie file
+- [`read_vbm()`](https://tp451.github.io/replayr/reference/read_vbm.md)
+  : Read a VBA-rerecording .vbm movie file
+- [`read_m64()`](https://tp451.github.io/replayr/reference/read_m64.md)
+  : Read a Mupen64 .m64 movie file
+- [`read_smv()`](https://tp451.github.io/replayr/reference/read_smv.md)
+  : Read a Snes9x-rerecording .smv movie file
+- [`read_pxm()`](https://tp451.github.io/replayr/reference/read_pxm.md)
+  : Read a PSXjin .pxm movie file
+- [`read_pjm()`](https://tp451.github.io/replayr/reference/read_pjm.md)
+  : Read a PSXjin .pjm movie file
+- [`read_dtm()`](https://tp451.github.io/replayr/reference/read_dtm.md)
+  : Read a Dolphin .dtm GameCube movie file
+- [`read_lmp()`](https://tp451.github.io/replayr/reference/read_lmp.md)
+  : Read a Doom .lmp demo file
+
+## Inspecting parsed movies
+
+Helpers for working with the `replayr_movie` S3 object returned by the
+readers.
+
+- [`replayr_movie`](https://tp451.github.io/replayr/reference/replayr_movie.md)
+  :
+
+  The `replayr_movie` S3 class
+
+- [`n_frames()`](https://tp451.github.io/replayr/reference/n_frames.md)
+  : Number of frames in a parsed movie
+
+- [`n_players()`](https://tp451.github.io/replayr/reference/n_players.md)
+  : Number of players (controller ports) in a parsed movie
+
+- [`n_buttons()`](https://tp451.github.io/replayr/reference/n_buttons.md)
+  : Number of universal-button slots in a parsed movie
+
+- [`player()`](https://tp451.github.io/replayr/reference/player.md) :
+  Per-frame button presses for one player
+
+- [`press_counts()`](https://tp451.github.io/replayr/reference/press_counts.md)
+  : Press counts per universal-button slot
+
+## Universal button layout
+
+The 40-slot universal-button alphabet that every parser writes into.
+
+- [`universal_buttons()`](https://tp451.github.io/replayr/reference/universal_buttons.md)
+  : Universal button mnemonics
+- [`universal_button_names()`](https://tp451.github.io/replayr/reference/universal_button_names.md)
+  : Universal button friendly names
+
+## Package
+
+- [`replayr`](https://tp451.github.io/replayr/reference/replayr-package.md)
+  [`replayr-package`](https://tp451.github.io/replayr/reference/replayr-package.md)
+  : replayr: parsers for emulator movie ("input log") files
+
+# Articles
+
+### Get started
+
+- [Reading emulator movie files with
+  replayr](https://tp451.github.io/replayr/articles/replayr.md):
