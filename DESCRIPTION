@@ -28,6 +28,6 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-URL: https://github.com/tp451/replayr
+URL: https://github.com/tp451/replayr, https://tp451.github.io/replayr
 BugReports: https://github.com/tp451/replayr/issues
 Config/roxygen2/version: 8.0.0

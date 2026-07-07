@@ -23,7 +23,7 @@ reference:
       - read_pxm
       - read_pjm
       - read_dtm
-  - read_lmp
+      - read_lmp
   - title: Inspecting parsed movies
     desc: Helpers for working with the `replayr_movie` S3 object returned by the readers.
     contents:
