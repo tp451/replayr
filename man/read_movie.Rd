@@ -17,7 +17,7 @@ Dispatches to the appropriate reader based on the file extension:
 .fm2 -> \code{\link[=read_fm2]{read_fm2()}}, .bk2 -> \code{\link[=read_bk2]{read_bk2()}}, .fcm -> \code{\link[=read_fcm]{read_fcm()}},
 .lsmv -> \code{\link[=read_lsmv]{read_lsmv()}}, .gmv -> \code{\link[=read_gmv]{read_gmv()}}, .vbm -> \code{\link[=read_vbm]{read_vbm()}},
 .m64 -> \code{\link[=read_m64]{read_m64()}}, .smv -> \code{\link[=read_smv]{read_smv()}}, .pxm -> \code{\link[=read_pxm]{read_pxm()}},
-.pjm -> \code{\link[=read_pjm]{read_pjm()}}, .dtm -> \code{\link[=read_dtm]{read_dtm()}}.
+.pjm -> \code{\link[=read_pjm]{read_pjm()}}, .dtm -> \code{\link[=read_dtm]{read_dtm()}}, .lmp -> \code{\link[=read_lmp]{read_lmp()}}.
 }
 \details{
 Returns a \code{replayr_movie} regardless of source format. The
