@@ -48,5 +48,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Thorben Pelzer \email{thorben@pelzer.blog}
 
+Authors:
+\itemize{
+  \item Thorben Pelzer \email{thorben@pelzer.blog}
+}
+
 }
 \keyword{internal}

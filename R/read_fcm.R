@@ -1,9 +1,15 @@
 # FCEU .fcm movie format. Predecessor to .fm2. Reference:
 # https://tasvideos.org/EmulatorResources/FCEU/FCM
 #
+# Versions 1 and 2 share this header layout and the delta-encoded body
+# below; the version bump added header metadata (savestate handling) without
+# changing the input encoding. Both decode identically here -- verified on
+# real v1 files (e.g. Dragon's Lair, Power Blade) whose decoded press rates
+# and frame counts match the header.
+#
 # Header (>= 56 bytes):
 #   0x00  4   magic "FCM\x1a"
-#   0x04  4   version (==2)
+#   0x04  4   version (1 or 2)
 #   0x08  1   flags (bit 1 = reset/power-on, bit 2 = PAL)
 #   0x0c  4   number of frames (LE u32)
 #   0x10  4   rerecord count (LE u32)
@@ -50,7 +56,7 @@ read_fcm <- function(path) {
     stop(path, ": not an FCM file")
   }
   version <- .read_u32_le(data, 4L)
-  if (version != 2L) stop(path, ": unsupported FCM version ", version)
+  if (!version %in% c(1L, 2L)) stop(path, ": unsupported FCM version ", version)
 
   flags <- as.integer(data[9L])
   is_pal <- bitwAnd(flags, 0x04L) != 0L

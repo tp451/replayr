@@ -11,6 +11,19 @@ test_that("read_bk2() parses an Atari 2600 movie", {
   expect_true(sum(pc) > 0L)
 })
 
+test_that("read_bk2() tolerates a NUL-padded Header.txt field", {
+  # Some Gambatte-core Game Boy movies write `BoardName NULL\0\0...` as a
+  # fixed-width NUL-padded field; rawToChar() used to abort on the embedded
+  # NUL. Kwirk is the canonical example.
+  fp <- external_fixture("raw_gb/kwirk/3755.bk2")
+  if (is.null(fp)) skip("set REPLAYR_FIXTURE_DIR to enable the NUL-header test")
+  mv <- read_bk2(fp)
+  expect_s3_class(mv, "replayr_movie")
+  expect_equal(mv$header[["_format"]], "bk2")
+  expect_gt(n_frames(mv), 0L)
+  expect_gt(sum(press_counts(mv, 1L)), 0L)
+})
+
 test_that("LogKey parser handles the NES single-group case correctly", {
   # Synthetic GB-shaped LogKey (single group, no P1 prefix).
   parsed <- replayr:::.parse_bk2_logkey(

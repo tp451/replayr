@@ -13,10 +13,11 @@ read_pjm(path)
 A \code{replayr_movie} object.
 }
 \description{
-Parses the PSXjin text-body movie format into the standard
-\code{replayr_movie} shape. PSX gamepad maps onto universal slots 1..12 (NES
-\itemize{
-\item SNES face / shoulder layout) plus 29 / 30 for L2 / R2; the output is
-30 buttons wide.
-}
+Parses the PSXjin movie format into the standard \code{replayr_movie} shape.
+Supports the text body in its one-controller (20-byte line),
+two-controller (34-byte line) and analog (wider line) variants, plus the
+binary 5-byte-per-frame body. The PSX gamepad maps onto universal slots
+1..12 (NES + SNES face / shoulder layout) plus 29 / 30 for L2 / R2; the
+output is 30 buttons wide. Two-controller movies yield a two-player movie
+(analysis code that wants player 1 simply reads the first player).
 }

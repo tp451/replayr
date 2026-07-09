@@ -1,3 +1,53 @@
+# replayr 0.3.2
+
+## Bug fixes
+
+* `read_pjm()` now handles every PSXjin body layout, not just the
+  one-controller `<mask>||0|` text line. PSXjin renders each frame as
+  `<port1>|<port2>|...|<cmd>|`, where a port is a 14-character digital
+  mask optionally trailed by space-padded decimal analog-stick values.
+  One-controller movies leave port 2 empty (the historical 20-byte
+  line); two-controller movies fill it (34-byte line); analog movies
+  are wider (52-byte). The reader locates the body by its `|`CRLF frame
+  terminator, derives the stride and per-port column offsets from the
+  first frame, and reads each port's digital mask (analog decimals are
+  ignored); two-controller movies yield a two-player movie.
+  Binary-body movies (no text terminator; 5 bytes/frame at the end of
+  the file) are decoded via the shared DualShock bit layout. This
+  fixes the previously-unreadable Metal Gear Solid, Spyro 1 / 2,
+  Klonoa, Pepsiman, Bishi Bashi and Mega Man X4 movies. One-controller
+  decoding is byte-for-byte unchanged. Regression + synthetic tests
+  added.
+* `read_fcm()` accepts format version 1 as well as 2. The two versions
+  share this header layout and delta-encoded body (the bump only added
+  savestate metadata); verified on real v1 movies (Dragon's Lair,
+  Power Blade) whose decoded frame counts and press rates are correct.
+  Test added.
+* `read_bk2()` no longer aborts on archives whose `Header.txt` carries
+  a NUL-padded fixed-width field (e.g. `BoardName NULL\0\0...`, written
+  by some Gambatte-core Game Boy movies such as Kwirk and the 4-in-1
+  Fun Pak titles). Embedded NULs are stripped before the member is
+  decoded as text. Test added.
+
+## Known limitations
+
+* One rare PSXjin binary variant with per-frame analog records
+  (~9 bytes/frame, e.g. Final Fantasy VIII) is detected and rejected
+  with a clear message rather than silently mis-decoded.
+
+# replayr 0.3.1
+
+## Bug fixes
+
+* `read_fm2()` no longer aborts on `.fm2` headers that contain
+  non-UTF-8 bytes -- e.g. a Shift-JIS `romFilename` for a Japanese
+  ROM (忍者龍剣伝…), or an 8-bit `subtitle`. Previously the first
+  regex to touch such a line raised "unable to translate '<bytes>'
+  to a wide string". Offending header lines are now re-decoded as
+  latin1 (the fields that carry these bytes are non-essential
+  metadata); valid UTF-8 lines such as accented author names are
+  left untouched. Regression test added.
+
 # replayr 0.3.0
 
 ## New format

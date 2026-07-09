@@ -322,6 +322,10 @@ read_bk2 <- function(path) {
   utils::unzip(zip_path, files = member, exdir = td, junkpaths = FALSE)
   fp <- file.path(td, member)
   raw <- readBin(fp, what = "raw", n = file.info(fp)$size)
+  # Some BizHawk cores write NUL-padded fixed-width header fields (e.g.
+  # `BoardName NULL\0\0...`); strip embedded NULs so rawToChar() -- which
+  # errors on them -- can decode the member as text.
+  raw <- raw[raw != as.raw(0L)]
   txt <- rawToChar(raw)
   Encoding(txt) <- "latin1"
   enc2utf8(txt)
