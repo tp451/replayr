@@ -44,3 +44,7 @@ Useful links:
 ## Author
 
 **Maintainer**: Thorben Pelzer <thorben@pelzer.blog>
+
+Authors:
+
+- Thorben Pelzer <thorben@pelzer.blog>
