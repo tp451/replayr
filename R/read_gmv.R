@@ -20,15 +20,24 @@
 #     bit 4 P2 Mode  bit 5 P2 X  bit 6 P2 Y  bit 7 P2 Z
 
 # Bit-index 0..7 in std byte -> 1-based universal slot.
+# NOTE (2026-07-15): the Gens "SACBRLDU" spec labels the three face bits B/C/A,
+# but that labeling is ROTATED relative to BizHawk (.bk2) + the physical Genesis
+# controller. Empirically, for 5 games recorded in BOTH formats (golden_axe,
+# disney_s_aladdin, decapattack, batman, dynamite_headdy) the primary-action
+# button reads gmv-A == bk2-C, gmv-B == bk2-A, gmv-C == bk2-B. To make .gmv and
+# .bk2 report the same physical button under the same universal slot (so a game's
+# attack/jump/magic verbs agree across formats), each face bit maps to the slot of
+# the PHYSICAL button it actually is: bit4(gmv-B)=phys A->8, bit5(gmv-C)=phys B->7,
+# bit6(gmv-A)=phys C->13.  (Was 7/13/8, which scrambled attack<->jump<->magic.)
 .GMV_STD_BIT_TO_UNI <- c(
-  4L,   # bit 0: Up    -> 4
-  3L,   # bit 1: Down  -> 3
-  2L,   # bit 2: Left  -> 2
-  1L,   # bit 3: Right -> 1
-  7L,   # bit 4: B     -> 7
-  13L,  # bit 5: C     -> 13
-  8L,   # bit 6: A     -> 8
-  5L    # bit 7: Start -> 5
+  4L,   # bit 0: Up                     -> 4
+  3L,   # bit 1: Down                   -> 3
+  2L,   # bit 2: Left                   -> 2
+  1L,   # bit 3: Right                  -> 1
+  8L,   # bit 4: gmv "B" = physical A   -> 8
+  7L,   # bit 5: gmv "C" = physical B   -> 7
+  13L,  # bit 6: gmv "A" = physical C   -> 13
+  5L    # bit 7: Start                  -> 5
 )
 
 # Bit-index 0..7 in 6-button extras byte -> (player_idx_1based, slot_1based).

@@ -1,3 +1,24 @@
+# replayr 0.3.3
+
+## Bug fixes
+
+* `read_bk2()` now reads zip members as UTF-8 (falling back to latin1 only
+  for members that are not valid UTF-8). The previous latin1 tag +
+  `enc2utf8()` double-encoded (mojibake'd) the Unicode face-button glyphs
+  (Triangle/Square/Circle) that Mednafen-family PSX cores (Nymashock) use in
+  their `LogKey`, so the PSX-core detection failed and the "X" (Cross) column
+  collided with the SNES X-face button while Triangle/Square/Circle went
+  unmapped. Nymashock PlayStation movies now decode their face buttons
+  correctly (verified against the Octoshock recording of the same game).
+
+* `read_gmv()` face buttons were rotated relative to BizHawk `.bk2` and the
+  physical Genesis controller. The Gens "SACBRLDU" byte spec labels the three
+  face bits B/C/A, but that labeling does not match BizHawk's A/B/C; across
+  five games recorded in both formats the primary-action button read
+  gmv-A == bk2-C, gmv-B == bk2-A, gmv-C == bk2-B. The three face bits now map
+  to the universal slot of the physical button they actually are, so a game's
+  attack/jump/magic decode identically from `.gmv` and `.bk2`.
+
 # replayr 0.3.2
 
 ## Bug fixes

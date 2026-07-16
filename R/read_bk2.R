@@ -123,8 +123,14 @@
   "button 5" = 11L, "button 6" = 12L
 )
 
-# Substrings that mark analog / sensor / non-button channels.
-.BK2_ANALOG_HINTS <- c("axis", "tilt", "sensor", "accel", "gyro", "stick")
+# Substrings that mark analog / sensor / non-button channels. "disc" catches
+# the Intellivision control disc when a core logs it as numeric "Disc X|Disc Y"
+# axes (rather than the 16 named-direction boolean columns N|NNE|... that other
+# INTV bk2s use). Without this the two numeric axis columns are treated as
+# unmapped buttons, consuming column positions that the frame parser then
+# comma-strips -- shifting every keypad/side button read by two and zeroing the
+# whole track.
+.BK2_ANALOG_HINTS <- c("axis", "tilt", "sensor", "accel", "gyro", "stick", "disc")
 
 # Tag an analog-channel name as 'lstick_x' / 'lstick_y' / 'rstick_x' /
 # 'rstick_y' / NA. NA means drop the column entirely (sensors like GBA
@@ -144,6 +150,10 @@
   if (grepl("rstick y", name_lower)) return("rstick_y")
   if (grepl("x axis", name_lower)) return("lstick_x")
   if (grepl("y axis", name_lower)) return("lstick_y")
+  # Intellivision control disc logged as numeric axes: quantise onto the same
+  # 8 stick-direction slots that the named-direction INTV disc (N|NE|...) uses.
+  if (grepl("disc x", name_lower)) return("lstick_x")
+  if (grepl("disc y", name_lower)) return("lstick_y")
   NA_character_
 }
 
@@ -275,13 +285,26 @@
 #' @param path Path to a .bk2 file.
 #' @return A `replayr_movie` object.
 #' @export
+# Locate a bk2 member by its canonical name, tolerating two real-world export
+# variants: a leading "<game folder>/" subdirectory prefix (some BizHawk builds
+# nest every member under a ROM-named directory) and a missing ".txt" extension
+# (older cores wrote "Input Log" / "Header" plain). Returns the actual member
+# name for utils::unzip, or NA if the member is truly absent.
+.bk2_find_member <- function(zip_names, canonical) {
+  stem <- sub("\\.txt$", "", canonical)
+  bn <- basename(zip_names)
+  hit <- which(bn == canonical | bn == stem)
+  if (length(hit)) zip_names[[hit[1L]]] else NA_character_
+}
+
 read_bk2 <- function(path) {
   header <- list("_format" = "bk2")
   zip_names <- utils::unzip(path, list = TRUE)$Name
 
-  # Header.txt
-  if ("Header.txt" %in% zip_names) {
-    raw <- .read_zip_member_text(path, "Header.txt")
+  # Header (usually "Header.txt"; some exports nest it or drop the extension)
+  hdr_member <- .bk2_find_member(zip_names, "Header.txt")
+  if (!is.na(hdr_member)) {
+    raw <- .read_zip_member_text(path, hdr_member)
     for (line in strsplit(raw, "\n", fixed = TRUE)[[1]]) {
       line <- trimws(line)
       if (!nzchar(line)) next
@@ -298,14 +321,16 @@ read_bk2 <- function(path) {
       }
     }
   }
-  if ("Comments.txt" %in% zip_names) {
-    txt <- trimws(.read_zip_member_text(path, "Comments.txt"))
+  cmt_member <- .bk2_find_member(zip_names, "Comments.txt")
+  if (!is.na(cmt_member)) {
+    txt <- trimws(.read_zip_member_text(path, cmt_member))
     if (nzchar(txt)) header[["comment"]] <- txt
   }
-  if (!("Input Log.txt" %in% zip_names)) {
+  il_member <- .bk2_find_member(zip_names, "Input Log.txt")
+  if (is.na(il_member)) {
     stop(path, ": bk2 missing Input Log.txt")
   }
-  log_text <- .read_zip_member_text(path, "Input Log.txt")
+  log_text <- .read_zip_member_text(path, il_member)
   mv <- .parse_bk2_input_log(log_text, header = header)
   mv$source_path <- path
   mv
@@ -327,8 +352,19 @@ read_bk2 <- function(path) {
   # errors on them -- can decode the member as text.
   raw <- raw[raw != as.raw(0L)]
   txt <- rawToChar(raw)
-  Encoding(txt) <- "latin1"
-  enc2utf8(txt)
+  # BizHawk writes members as UTF-8. The LogKey of Mednafen-family PSX cores
+  # (Nymashock) names the face buttons with Unicode shape glyphs (Triangle
+  # Square Circle) that the PSX-core detection keys on. The old latin1 tag +
+  # enc2utf8 DOUBLE-encoded those glyphs (mojibake), so detection failed and
+  # Cross ("X") collided with the SNES X-face button. Prefer UTF-8; fall back
+  # to latin1 only for the rare member that is not valid UTF-8.
+  if (validUTF8(txt)) {
+    Encoding(txt) <- "UTF-8"
+    txt
+  } else {
+    Encoding(txt) <- "latin1"
+    enc2utf8(txt)
+  }
 }
 
 .parse_bk2_input_log <- function(text, header = list("_format" = "bk2")) {

@@ -12,7 +12,7 @@ by the speedrun and tool-assisted-speedrun communities.
 | Format | Emulator              | Platforms                                   |
 |--------|-----------------------|---------------------------------------------|
 | .fm2   | FCEUX                 | NES                                         |
-| .bk2   | BizHawk               | NES, SNES, Atari 2600, GB/GBC/GBA, N64, PSX |
+| .bk2   | BizHawk (multi-system) | NES, SNES, Genesis, Master System, GB/GBC/GBA, N64, PSX, Saturn, Atari 2600, PC Engine, Intellivision, ColecoVision, Arcade |
 | .fcm   | FCEU                  | NES                                         |
 | .lsmv  | lsnes                 | SNES, Game Boy, Super Game Boy              |
 | .gmv   | Gens-rerecording      | Sega Genesis / Mega Drive                   |

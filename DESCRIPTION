@@ -1,6 +1,6 @@
 Package: replayr
 Title: Read Emulator Movie Files into a Uniform Frame-by-Frame Array
-Version: 0.3.2
+Version: 0.3.3
 Authors@R:
     person("Thorben", "Pelzer", , "thorben@pelzer.blog",
            role = c("aut", "cre"))

@@ -22,9 +22,10 @@
 #   0x15       u64 inputCount  (controller-poll count, == body frames)
 #   0x2D       u32 numRerecords
 #   0x100+     controller data, 8 bytes per frame per polled GC port:
-#       byte 0  buttons low (D-Left, D-Right, D-Down, D-Up, Z, R-dig,
-#                            L-dig, USE_ORIGIN)
-#       byte 1  buttons high (A, B, X, Y, Start, ...)
+#       byte 0  buttons low  (Start, A, B, X, Y, Z, D-Up, D-Down) -- the packed
+#                            Dolphin ControllerState bitfield (NOT GCPadStatus order)
+#       byte 1  buttons high (D-Left, D-Right, L-dig, R-dig, disc, reset,
+#                            is_connected, get_origin)
 #       byte 2  L analog trigger (0-255)
 #       byte 3  R analog trigger (0-255)
 #       byte 4  analog stick X (0-255, 128=center)
@@ -32,22 +33,26 @@
 #       byte 6  C-stick X
 #       byte 7  C-stick Y
 
-# Bit-index 0..15 in the GC button word -> 1-based universal slot.
+# Bit-index 0..15 in the GC button word -> 1-based universal slot. Order is the
+# Dolphin .dtm PACKED ControllerState bitfield (Start,A,B,X,Y,Z,DPadUp,DPadDown,
+# DPadLeft,DPadRight,L,R,...), NOT the GCPadStatus.button flag order (which the
+# earlier version wrongly used) -- the two differ, which read every GC button off
+# the wrong bit (symptom: A/B decoded as 0.00 across ALL .dtm games while the real
+# A presses surfaced as "D-Right"). Verified against raw movies (2026-07-14).
 .DTM_BIT_TO_UNI <- c(
-  2L,             # bit 0:  D-Left      -> 2
-  1L,             # bit 1:  D-Right     -> 1
-  3L,             # bit 2:  D-Down      -> 3
-  4L,             # bit 3:  D-Up        -> 4
-  14L,            # bit 4:  Z trigger   -> 14
-  12L,            # bit 5:  R-digital   -> 12
-  11L,            # bit 6:  L-digital   -> 11
-  NA_integer_,    # bit 7:  USE_ORIGIN
-  8L,             # bit 8:  A           -> 8
-  7L,             # bit 9:  B           -> 7
-  9L,             # bit 10: X           -> 9
-  10L,            # bit 11: Y           -> 10
-  5L,             # bit 12: Start       -> 5
-  NA_integer_, NA_integer_, NA_integer_  # bits 13-15 reserved
+  5L,             # bit 0:  Start       -> 5
+  8L,             # bit 1:  A           -> 8
+  7L,             # bit 2:  B           -> 7
+  9L,             # bit 3:  X           -> 9
+  10L,            # bit 4:  Y           -> 10
+  14L,            # bit 5:  Z           -> 14
+  4L,             # bit 6:  D-Up        -> 4
+  3L,             # bit 7:  D-Down      -> 3
+  2L,             # bit 8:  D-Left      -> 2
+  1L,             # bit 9:  D-Right     -> 1
+  11L,            # bit 10: L-digital   -> 11
+  12L,            # bit 11: R-digital   -> 12
+  NA_integer_, NA_integer_, NA_integer_, NA_integer_  # bits 12-15: disc/reset/is_connected/get_origin
 )
 
 .DTM_STICK_DEADZONE <- 16L
