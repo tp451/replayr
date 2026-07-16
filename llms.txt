@@ -3,20 +3,20 @@
 Pure-R parsers for 12 emulator movie (“input log”) file formats used by
 the speedrun and tool-assisted-speedrun communities.
 
-| Format | Emulator             | Platforms                                   |
-|--------|----------------------|---------------------------------------------|
-| .fm2   | FCEUX                | NES                                         |
-| .bk2   | BizHawk              | NES, SNES, Atari 2600, GB/GBC/GBA, N64, PSX |
-| .fcm   | FCEU                 | NES                                         |
-| .lsmv  | lsnes                | SNES, Game Boy, Super Game Boy              |
-| .gmv   | Gens-rerecording     | Sega Genesis / Mega Drive                   |
-| .vbm   | VBA-rerecording      | Game Boy / GBC / GBA                        |
-| .m64   | Mupen64              | N64                                         |
-| .smv   | Snes9x-rerecording   | SNES                                        |
-| .pxm   | PSXjin (binary body) | PSX                                         |
-| .pjm   | PSXjin (text body)   | PSX                                         |
-| .dtm   | Dolphin              | GameCube                                    |
-| .lmp   | Doom (vanilla 1.9)   | DOS / PC                                    |
+| Format | Emulator | Platforms |
+|----|----|----|
+| .fm2 | FCEUX | NES |
+| .bk2 | BizHawk (multi-system) | NES, SNES, Genesis, Master System, GB/GBC/GBA, N64, PSX, Saturn, Atari 2600, PC Engine, Intellivision, ColecoVision, Arcade |
+| .fcm | FCEU | NES |
+| .lsmv | lsnes | SNES, Game Boy, Super Game Boy |
+| .gmv | Gens-rerecording | Sega Genesis / Mega Drive |
+| .vbm | VBA-rerecording | Game Boy / GBC / GBA |
+| .m64 | Mupen64 | N64 |
+| .smv | Snes9x-rerecording | SNES |
+| .pxm | PSXjin (binary body) | PSX |
+| .pjm | PSXjin (text body) | PSX |
+| .dtm | Dolphin | GameCube |
+| .lmp | Doom (vanilla 1.9) | DOS / PC |
 
 Every parser produces the same in-memory shape: a `replayr_movie` S3
 object with a `(n_frames, n_players, n_buttons)` logical input array
