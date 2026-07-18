@@ -2,5 +2,4 @@
 
 ### Get started
 
-- [Reading emulator movie files with
-  replayr](https://tp451.github.io/replayr/articles/replayr.md):
+- [Reading emulator movie files with replayr](replayr.md):

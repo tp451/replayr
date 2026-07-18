@@ -3,7 +3,7 @@
 replayr_movie shape. Returns one row per game tic (per the
 active-player count from playeringame[])."><meta property="og:description" content="Parses a vanilla Doom 1.9 .lmp demo into the standard
 replayr_movie shape. Returns one row per game tic (per the
-active-player count from playeringame[])."><meta property="og:image" content="https://tp451.github.io/replayr/logo.svg"></head><body>
+active-player count from playeringame[])."><meta property="og:image" content="/logo.svg"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -24,7 +24,6 @@ active-player count from playeringame[])."><meta property="og:image" content="ht
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/tp451/replayr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -33,7 +32,7 @@ active-player count from playeringame[])."><meta property="og:image" content="ht
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Read a Doom .lmp demo file</h1>
-      <small class="dont-index">Source: <a href="https://github.com/tp451/replayr/blob/main/R/read_lmp.R" class="external-link"><code>R/read_lmp.R</code></a></small>
+
       <div class="d-none name"><code>read_lmp.Rd</code></div>
     </div>
 
@@ -63,29 +62,23 @@ is <code>"lmp"</code>, with extra header columns documented above.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Doom's input model is fundamentally <strong>digital</strong>: vanilla
-Doom 1.9 is keyboard-driven, and the signed forwardmove /
-sidemove bytes in the wire format are just smoothed
-representations of held-key state (the engine ramps to the
-cap when a movement key is held and decays when released).
-Mouse input contributes to <strong>angleturn only</strong> – never to
-forward / side movement. The reader therefore exposes inputs
-two ways:</p><ul><li><p>Universal <code>inputs</code> array: action buttons map to the
+    <p>Doom records the resulting <code>ticcmd_t</code>, not the physical device events.
+Keyboard, mouse and joystick input may all contribute to its signed
+movement fields. The reader therefore exposes inputs two ways:</p><ul><li><p>Universal <code>inputs</code> array: action buttons map to the
 NES-shaped layout (ATTACK -&gt; slot 8 "A", USE -&gt; slot 7
 "B"), and the <strong>sign</strong> of forwardmove / sidemove drives
 the D-pad slots (forwardmove &gt; 0 -&gt; U, &lt; 0 -&gt; D;
 sidemove &gt; 0 -&gt; R, &lt; 0 -&gt; L). This makes a Doom keypress
-look like a Doom keypress and lets cross-format analyses
-treat it uniformly with NES / SNES / arcade keyboard data.</p></li>
+or other movement command comparable with digital gamepad data; it
+must not be interpreted as evidence that a keyboard key was held.</p></li>
 <li><p>Original analog axes are preserved as <code>n_frames x 4</code>
 integer matrices in <code>header$forwardmove</code>,
 <code>header$sidemove</code>, and <code>header$angleturn</code>. Weapon-switch
 state lives in <code>header$weaponselect</code> and BT_SPECIAL flags
 in <code>header$has_special</code>.</p></li>
-</ul><p><code>angleturn</code> is intentionally <strong>not</strong> thresholded onto a
-button slot: it is the one channel that can carry mouse
-input in vanilla Doom, so a binary projection would
-misrepresent runs that used mouse turning.</p>
+</ul><p><code>angleturn</code> is intentionally <strong>not</strong> thresholded onto a button slot,
+because its magnitude contains useful turning information that a binary
+projection would discard.</p>
 <p>Boom / PrBoom+ extended demos (leading 0xFF byte) are not
 yet supported; this reader will error out with a clear
 message if the file uses that variant.</p>

@@ -13,7 +13,7 @@ the speedrun and tool-assisted-speedrun communities.
 | .vbm | VBA-rerecording | Game Boy / GBC / GBA |
 | .m64 | Mupen64 | N64 |
 | .smv | Snes9x-rerecording | SNES |
-| .pxm | PSXjin (binary body) | PSX |
+| .pxm | PCSX-rerecording | PSX |
 | .pjm | PSXjin (text body) | PSX |
 | .dtm | Dolphin | GameCube |
 | .lmp | Doom (vanilla 1.9) | DOS / PC |
@@ -42,11 +42,11 @@ rather than getting their own slots.
 
 library(replayr)
 
-# Use a bundled sample (one is shipped per format).
+# Use one of the bundled samples.
 fp <- system.file("extdata", "sample.fm2", package = "replayr")
 mv <- read_movie(fp)
 mv
-#> <replayr_movie [fm2] frames=1748 players=2 buttons=8 source=sample.fm2>
+#> <replayr_movie [fm2] frames=3600 players=2 buttons=8 source=sample.fm2>
 
 n_frames(mv)            # frame count
 press_counts(mv)        # named vector of per-button hold counts
@@ -64,24 +64,16 @@ mv <- read_movie("/path/to/your/movie.bk2")
 ## Universal button layout
 
 The 40-slot universal-button alphabet is documented in
-[`?universal_buttons`](https://tp451.github.io/replayr/reference/universal_buttons.md).
-Slots 1..8 are NES-shaped (R, L, D, U, Start, Select, B, A); higher
-slots cover SNES face/shoulder buttons, the N64 C-buttons, an
-8-direction quantisation of any analog stick, and PSX- specific L2/R2.
-`n_buttons(mv)` tells you how many slots a particular movie actually
-uses (8 NES, 12 SNES, 15 Genesis, 28 N64/GameCube, 30 PSX).
+[`?universal_buttons`](reference/universal_buttons.md). Slots 1..8 are
+NES-shaped (R, L, D, U, Start, Select, B, A); higher slots cover SNES
+face/shoulder buttons, the N64 C-buttons, an 8-direction quantisation of
+any analog stick, and PSX- specific L2/R2. `n_buttons(mv)` tells you how
+many slots a particular movie actually uses (8 NES, 12 SNES, 15 Genesis,
+28 N64/GameCube, 30 PSX).
 
 ## Install
 
-From GitHub:
-
-``` r
-
-# install.packages("remotes")
-remotes::install_github("tp451/replayr")
-```
-
-From a local clone:
+From a local source tree:
 
 ``` r
 
@@ -96,10 +88,12 @@ devtools::install("path/to/replayr")
 devtools::test("path/to/replayr")
 ```
 
-The test suite is self-contained against the bundled fixtures. The .pxm,
-.pjm, and .dtm tests skip by default because their typical fixtures are
-large (~0.3-0.7 MB each); set `REPLAYR_FIXTURE_DIR` to a folder
-containing `raw_psx/<game>/<n>.pxm` etc. to enable them.
+The test suite is self-contained: twelve generated one-minute samples
+exercise every supported reader. They contain only synthetic controller
+input and no third-party movie data. Set `REPLAYR_FIXTURE_DIR` to a
+separately obtained local corpus if you want to run optional
+compatibility tests as well; corpus files are never bundled with
+replayr.
 
 ## Author
 
@@ -107,11 +101,10 @@ Thorben Pelzer (<thorben@pelzer.blog>).
 
 ## License
 
-`replayr` is licensed under the [GNU General Public License version 2 or
-later](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html). Six of
-the twelve format readers were developed with reference to the upstream
-emulator’s source tree (named in those files’ headers); those upstreams
-are themselves GPL-2+, so the package as a whole is GPL.
+`replayr` is licensed under the GNU General Public License version 2 or
+later. Six of the twelve format readers were developed with reference to
+the upstream emulator’s source tree (named in those files’ headers);
+those upstreams are themselves GPL-2+, so the package as a whole is GPL.
 
 ## Acknowledgements
 
@@ -125,14 +118,14 @@ to be re-implemented:
   developed with reference to `Source/Core/Core/Movie.cpp`.
 - **[id Software’s Doom source](https://github.com/id-Software/DOOM)** –
   the `.lmp` demo format reader (`R/read_lmp.R`) was developed with
-  reference to `linuxdoom-1.10/g_game.c` and the [DoomWiki demo
-  spec](https://doomwiki.org/wiki/Demo).
-- **PSXjin** – the `.pjm` (text body) and `.pxm` (binary body) movie
-  format readers were developed with reference to the PSXjin source
-  tree.
-- **[lsnes](https://github.com/Ilari-Pihlajisto/lsnes)** – the `.lsmv`
-  movie format reader was developed with reference to the lsnes source
-  tree.
+  reference to `linuxdoom-1.10/g_game.c` and the DoomWiki demo
+  specification.
+- **PSXjin** – the `.pjm` reader was developed with reference to the
+  PSXjin source tree.
+- **PCSX-rerecording** – the `.pxm` reader follows the PCSX-rr format
+  and its documented controller-record layout.
+- **[lsnes](https://repo.or.cz/lsnes.git)** – the `.lsmv` movie format
+  reader was developed with reference to the lsnes source tree.
 - **[VBA-rerecording](https://github.com/TASEmulators/vba-rerecording)**
   – the `.vbm` movie format reader was developed with reference to
   `movie.h`.
@@ -145,7 +138,7 @@ to be re-implemented:
 
 Per-file attribution comments name the specific upstream references for
 each derivative reader. The full provenance manifest is in
-[`inst/COPYRIGHTS`](https://tp451.github.io/replayr/inst/COPYRIGHTS).
+[`inst/COPYRIGHTS`](inst/COPYRIGHTS).
 
 The `.fm2`, `.bk2`, `.fcm`, `.gmv`, `.m64`, and `.smv` readers were
 written from public format specifications and to our knowledge do not

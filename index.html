@@ -16,9 +16,9 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Read Emulator Movie Files into a Uniform Frame-by-Frame Array">
-<meta name="description" content="Decoders for twelve emulator movie (&quot;input log&quot;) file formats used by the speedrun and tool-assisted-speedrun communities: FCEUX (.fm2), BizHawk (.bk2), FCEU (.fcm), lsnes (.lsmv), Gens-rerecording (.gmv), VBA-rerecording (.vbm), Mupen64 (.m64), Snes9x-rerecording (.smv), PSXjin (.pxm and .pjm), Dolphin (.dtm), and Doom (.lmp). Every parser produces the same in-memory shape: a per-frame logical matrix indexed against a single 40-slot universal-button layout, plus the file's header metadata and a per-frame commands vector. Allows cross-platform analysis of input recordings without an emulator.">
-<meta property="og:description" content="Decoders for twelve emulator movie (&quot;input log&quot;) file formats used by the speedrun and tool-assisted-speedrun communities: FCEUX (.fm2), BizHawk (.bk2), FCEU (.fcm), lsnes (.lsmv), Gens-rerecording (.gmv), VBA-rerecording (.vbm), Mupen64 (.m64), Snes9x-rerecording (.smv), PSXjin (.pxm and .pjm), Dolphin (.dtm), and Doom (.lmp). Every parser produces the same in-memory shape: a per-frame logical matrix indexed against a single 40-slot universal-button layout, plus the file's header metadata and a per-frame commands vector. Allows cross-platform analysis of input recordings without an emulator.">
-<meta property="og:image" content="https://tp451.github.io/replayr/logo.svg">
+<meta name="description" content="Decoders for twelve emulator movie (&quot;input log&quot;) file formats used by the speedrun and tool-assisted-speedrun communities: FCEUX (.fm2), BizHawk (.bk2), FCEU (.fcm), lsnes (.lsmv), Gens-rerecording (.gmv), VBA-rerecording (.vbm), Mupen64 (.m64), Snes9x-rerecording (.smv), PCSX-rerecording (.pxm), PSXjin (.pjm), Dolphin (.dtm), and Doom (.lmp). Every parser produces the same in-memory shape: a per-frame logical matrix indexed against a single 40-slot universal-button layout, plus the file's header metadata and a per-frame commands vector. Allows cross-platform analysis of input recordings without an emulator.">
+<meta property="og:description" content="Decoders for twelve emulator movie (&quot;input log&quot;) file formats used by the speedrun and tool-assisted-speedrun communities: FCEUX (.fm2), BizHawk (.bk2), FCEU (.fcm), lsnes (.lsmv), Gens-rerecording (.gmv), VBA-rerecording (.vbm), Mupen64 (.m64), Snes9x-rerecording (.smv), PCSX-rerecording (.pxm), PSXjin (.pjm), Dolphin (.dtm), and Doom (.lmp). Every parser produces the same in-memory shape: a per-frame logical matrix indexed against a single 40-slot universal-button layout, plus the file's header metadata and a per-frame commands vector. Allows cross-platform analysis of input recordings without an emulator.">
+<meta property="og:image" content="/logo.svg">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -45,7 +45,6 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/tp451/replayr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -115,7 +114,7 @@
 </tr>
 <tr>
 <td>.pxm</td>
-<td>PSXjin (binary body)</td>
+<td>PCSX-rerecording</td>
 <td>PSX</td>
 </tr>
 <tr>
@@ -144,13 +143,13 @@
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tp451/replayr" class="external-link">replayr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">replayr</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Use a bundled sample (one is shipped per format).</span></span>
+<span><span class="co"># Use one of the bundled samples.</span></span>
 <span><span class="va">fp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample.fm2"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
 <span><span class="va">mv</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">fp</span><span class="op">)</span></span>
 <span><span class="va">mv</span></span>
-<span><span class="co">#&gt; &lt;replayr_movie [fm2] frames=1748 players=2 buttons=8 source=sample.fm2&gt;</span></span>
+<span><span class="co">#&gt; &lt;replayr_movie [fm2] frames=3600 players=2 buttons=8 source=sample.fm2&gt;</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/n_frames.html">n_frames</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span>            <span class="co"># frame count</span></span>
 <span><span class="fu"><a href="reference/press_counts.html">press_counts</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span>        <span class="co"># named vector of per-button hold counts</span></span>
@@ -167,21 +166,17 @@
 <div class="section level2">
 <h2 id="install">Install<a class="anchor" aria-label="anchor" href="#install"></a>
 </h2>
-<p>From GitHub:</p>
+<p>From a local source tree:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"tp451/replayr"</span><span class="op">)</span></span></code></pre></div>
-<p>From a local clone:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="st">"path/to/replayr"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="test">Test<a class="anchor" aria-label="anchor" href="#test"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">test</span><span class="op">(</span><span class="st">"path/to/replayr"</span><span class="op">)</span></span></code></pre></div>
-<p>The test suite is self-contained against the bundled fixtures. The .pxm, .pjm, and .dtm tests skip by default because their typical fixtures are large (~0.3-0.7 MB each); set <code>REPLAYR_FIXTURE_DIR</code> to a folder containing <code>raw_psx/&lt;game&gt;/&lt;n&gt;.pxm</code> etc. to enable them.</p>
+<p>The test suite is self-contained: twelve generated one-minute samples exercise every supported reader. They contain only synthetic controller input and no third-party movie data. Set <code>REPLAYR_FIXTURE_DIR</code> to a separately obtained local corpus if you want to run optional compatibility tests as well; corpus files are never bundled with replayr.</p>
 </div>
 <div class="section level2">
 <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a>
@@ -191,7 +186,7 @@
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
-<p><code>replayr</code> is licensed under the <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html" class="external-link">GNU General Public License version 2 or later</a>. Six of the twelve format readers were developed with reference to the upstream emulator’s source tree (named in those files’ headers); those upstreams are themselves GPL-2+, so the package as a whole is GPL.</p>
+<p><code>replayr</code> is licensed under the GNU General Public License version 2 or later. Six of the twelve format readers were developed with reference to the upstream emulator’s source tree (named in those files’ headers); those upstreams are themselves GPL-2+, so the package as a whole is GPL.</p>
 </div>
 <div class="section level2">
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
@@ -201,11 +196,13 @@
 <li>
 <strong><a href="https://github.com/dolphin-emu/dolphin" class="external-link">Dolphin Emulator Project</a></strong> – the <code>.dtm</code> GameCube movie format reader (<code>R/read_dtm.R</code>) was developed with reference to <code>Source/Core/Core/Movie.cpp</code>.</li>
 <li>
-<strong><a href="https://github.com/id-Software/DOOM" class="external-link">id Software’s Doom source</a></strong> – the <code>.lmp</code> demo format reader (<code>R/read_lmp.R</code>) was developed with reference to <code>linuxdoom-1.10/g_game.c</code> and the <a href="https://doomwiki.org/wiki/Demo" class="external-link">DoomWiki demo spec</a>.</li>
+<strong><a href="https://github.com/id-Software/DOOM" class="external-link">id Software’s Doom source</a></strong> – the <code>.lmp</code> demo format reader (<code>R/read_lmp.R</code>) was developed with reference to <code>linuxdoom-1.10/g_game.c</code> and the DoomWiki demo specification.</li>
 <li>
-<strong>PSXjin</strong> – the <code>.pjm</code> (text body) and <code>.pxm</code> (binary body) movie format readers were developed with reference to the PSXjin source tree.</li>
+<strong>PSXjin</strong> – the <code>.pjm</code> reader was developed with reference to the PSXjin source tree.</li>
 <li>
-<strong><a href="https://github.com/Ilari-Pihlajisto/lsnes" class="external-link">lsnes</a></strong> – the <code>.lsmv</code> movie format reader was developed with reference to the lsnes source tree.</li>
+<strong>PCSX-rerecording</strong> – the <code>.pxm</code> reader follows the PCSX-rr format and its documented controller-record layout.</li>
+<li>
+<strong><a href="https://repo.or.cz/lsnes.git" class="external-link">lsnes</a></strong> – the <code>.lsmv</code> movie format reader was developed with reference to the lsnes source tree.</li>
 <li>
 <strong><a href="https://github.com/TASEmulators/vba-rerecording" class="external-link">VBA-rerecording</a></strong> – the <code>.vbm</code> movie format reader was developed with reference to <code>movie.h</code>.</li>
 <li>
@@ -217,15 +214,7 @@
 <p>The <code>.fm2</code>, <code>.bk2</code>, <code>.fcm</code>, <code>.gmv</code>, <code>.m64</code>, and <code>.smv</code> readers were written from public format specifications and to our knowledge do not draw on any GPL emulator source, but they are still covered by the package’s GPL (&gt;= 2) license.</p>
 </div>
 </div>
-  </main><aside class="col-md-3"><div class="links">
-<h2 data-toc-skip>Links</h2>
-<ul class="list-unstyled">
-<li><a href="https://github.com/tp451/replayr/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/tp451/replayr/issues" class="external-link">Report a bug</a></li>
-</ul>
-</div>
-
-<div class="license">
+  </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>GPL (&gt;= 2)</li>
@@ -250,8 +239,6 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/tp451/replayr/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/tp451/replayr/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html" class="external-link"><img src="https://img.shields.io/badge/License-GPLv2%2B-blue.svg" alt="License: GPL v2 or later"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
 </div>

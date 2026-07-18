@@ -25,7 +25,7 @@ numeric-keypad slots 31-40](figures/universal_buttons_layout.svg)
 
 ## See also
 
-[`universal_button_names()`](https://tp451.github.io/replayr/reference/universal_button_names.md)
+[`universal_button_names()`](universal_button_names.md)
 
 ## Examples
 

@@ -2,8 +2,7 @@
 
 Varies per platform: 8 for NES / GB, 12 for SNES / GBA, 15 for Genesis,
 28 for N64 / GameCube, 30 for PSX. Slots are always a prefix of the
-[`universal_buttons()`](https://tp451.github.io/replayr/reference/universal_buttons.md)
-alphabet.
+[`universal_buttons()`](universal_buttons.md) alphabet.
 
 ## Usage
 
@@ -15,11 +14,9 @@ n_buttons(movie)
 
 - movie:
 
-  A
-  [replayr_movie](https://tp451.github.io/replayr/reference/replayr_movie.md)
-  (returned by
-  [`read_movie()`](https://tp451.github.io/replayr/reference/read_movie.md)
-  or any of the format-specific readers).
+  A [replayr_movie](replayr_movie.md) (returned by
+  [`read_movie()`](read_movie.md) or any of the format-specific
+  readers).
 
 ## Value
 
