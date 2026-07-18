@@ -13,8 +13,9 @@ read_vbm(path)
 A \code{replayr_movie} object.
 }
 \description{
-GB and GBC pubs (typeFlags bit 0 or 1) come out 8 buttons wide
-(universal slots 1..8). GBA pubs (typeFlags bit 2) come out 12 buttons
+GB, GBC, and SGB publications come out 8 buttons wide
+(universal slots 1..8). GBA publications come out 12 buttons
 wide (slots 1..12) so the L/R shoulders land at their canonical
-universal positions.
+universal positions. SGB multiplayer controller streams are returned with
+one player dimension per active controller flag.
 }

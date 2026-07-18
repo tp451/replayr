@@ -1,18 +1,15 @@
-test_that("read_fm2() parses a small NES movie", {
-  skip_if_no_fixture("sample.fm2")
+test_that("read_fm2() parses the bundled synthetic NES movie", {
   mv <- read_fm2(fixture_path("sample.fm2"))
   expect_s3_class(mv, "replayr_movie")
-  expect_gt(n_frames(mv), 100L)
+  expect_equal(n_frames(mv), 3600L)
+  expect_equal(n_players(mv), 2L)
   expect_equal(n_buttons(mv), 8L)
-  # NES Tetris uses the d-pad and a/b heavily; nothing fancy in the
-  # commands array.
   pc <- press_counts(mv, 1L)
   expect_true(any(pc > 0L))
   expect_named(pc)
 })
 
 test_that("read_movie() dispatches by extension", {
-  skip_if_no_fixture("sample.fm2")
   mv <- read_movie(fixture_path("sample.fm2"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], NULL)  # FM2 doesn't set _format

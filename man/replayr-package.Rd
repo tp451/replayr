@@ -14,7 +14,7 @@ input matrix indexed against a single 40-slot universal-button layout.
 \details{
 Supported formats: .fm2 (FCEUX), .bk2 (BizHawk), .fcm (FCEU),
 .lsmv (lsnes), .gmv (Gens-rerecording), .vbm (VBA-rerecording),
-.m64 (Mupen64), .smv (Snes9x-rerecording), .pxm (PSXjin binary),
+.m64 (Mupen64), .smv (Snes9x-rerecording), .pxm (PCSX-rerecording),
 .pjm (PSXjin text), .dtm (Dolphin GameCube), .lmp (Doom).
 }
 \section{Quick start}{
@@ -36,15 +36,6 @@ Start, Select, B, A); higher slots cover SNES, Genesis, GBA, N64,
 PSX, GameCube. See \code{\link[=universal_buttons]{universal_buttons()}} and \code{\link[=universal_button_names]{universal_button_names()}}.
 }
 
-\seealso{
-Useful links:
-\itemize{
-  \item \url{https://github.com/tp451/replayr}
-  \item \url{https://tp451.github.io/replayr}
-  \item Report bugs at \url{https://github.com/tp451/replayr/issues}
-}
-
-}
 \author{
 \strong{Maintainer}: Thorben Pelzer \email{thorben@pelzer.blog}
 

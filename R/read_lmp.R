@@ -10,8 +10,7 @@
 # per-player-per-tic ticcmd_t, 0x80 end marker). Boom / PrBoom+
 # extensions (leading 0xFF + signature + complevel + variant
 # header + optional 5-byte longtics) are detected and rejected
-# with a clear error -- support for those is a v0.4 follow-up
-# once we have test fixtures.
+# with a clear error.
 #
 # See inst/COPYRIGHTS for the full provenance manifest.
 #
@@ -47,32 +46,26 @@
 #' active-player count from `playeringame[]`).
 #'
 #' @details
-#' Doom's input model is fundamentally **digital**: vanilla
-#' Doom 1.9 is keyboard-driven, and the signed forwardmove /
-#' sidemove bytes in the wire format are just smoothed
-#' representations of held-key state (the engine ramps to the
-#' cap when a movement key is held and decays when released).
-#' Mouse input contributes to **angleturn only** -- never to
-#' forward / side movement. The reader therefore exposes inputs
-#' two ways:
+#' Doom records the resulting `ticcmd_t`, not the physical device events.
+#' Keyboard, mouse and joystick input may all contribute to its signed
+#' movement fields. The reader therefore exposes inputs two ways:
 #'
 #' * Universal `inputs` array: action buttons map to the
 #'   NES-shaped layout (ATTACK -> slot 8 "A", USE -> slot 7
 #'   "B"), and the **sign** of forwardmove / sidemove drives
 #'   the D-pad slots (forwardmove > 0 -> U, < 0 -> D;
 #'   sidemove > 0 -> R, < 0 -> L). This makes a Doom keypress
-#'   look like a Doom keypress and lets cross-format analyses
-#'   treat it uniformly with NES / SNES / arcade keyboard data.
+#'   or other movement command comparable with digital gamepad data; it
+#'   must not be interpreted as evidence that a keyboard key was held.
 #' * Original analog axes are preserved as `n_frames x 4`
 #'   integer matrices in `header$forwardmove`,
 #'   `header$sidemove`, and `header$angleturn`. Weapon-switch
 #'   state lives in `header$weaponselect` and BT_SPECIAL flags
 #'   in `header$has_special`.
 #'
-#' `angleturn` is intentionally **not** thresholded onto a
-#' button slot: it is the one channel that can carry mouse
-#' input in vanilla Doom, so a binary projection would
-#' misrepresent runs that used mouse turning.
+#' `angleturn` is intentionally **not** thresholded onto a button slot,
+#' because its magnitude contains useful turning information that a binary
+#' projection would discard.
 #'
 #' Boom / PrBoom+ extended demos (leading 0xFF byte) are not
 #' yet supported; this reader will error out with a clear
@@ -104,9 +97,7 @@ read_lmp <- function(path) {
          ": extended-format Doom demo detected (first byte 0x",
          sprintf("%02X", fb),
          if (nzchar(sig)) paste0(" signature '", sig, "'") else "",
-         "). Vanilla Doom 1.9 demos only in replayr v0.3; ",
-         "support for Boom / PrBoom+ / dsda-doom extended demos ",
-         "is a planned v0.4 follow-up.", call. = FALSE)
+         "). replayr supports vanilla Doom 1.9 demos only.", call. = FALSE)
   }
   if (fb < 1L || fb > 5L) {
     stop(path,
@@ -158,10 +149,7 @@ read_lmp <- function(path) {
     }
     for (p in active) {
       if (pos + 3L > end) {
-        # truncated mid-tic; the engine would refuse, we just stop.
-        tic <- tic - 1L
-        pos <- end + 1L
-        break
+        stop(path, ": truncated Doom demo in tic ", tic, call. = FALSE)
       }
       fb <- as.integer(data[pos]);     if (fb >= 128L) fb <- fb - 256L
       sb <- as.integer(data[pos + 1L]); if (sb >= 128L) sb <- sb - 256L
@@ -192,16 +180,15 @@ read_lmp <- function(path) {
   inputs <- .empty_inputs(n_frames, n_players, 8L)
   weapon_select <- matrix(NA_integer_, nrow = n_frames, ncol = n_players)
   has_special   <- matrix(FALSE,       nrow = n_frames, ncol = n_players)
+  commands <- integer(n_frames)
   if (n_frames > 0L) {
     for (p in seq_len(n_players)) {
       bp <- bts[, p]
       inputs[, p, 8L] <- bitwAnd(bp, 1L) != 0L     # ATTACK -> A
       inputs[, p, 7L] <- bitwAnd(bp, 2L) != 0L     # USE -> B
-      # Vanilla Doom is keyboard-driven for movement; mouse only
-      # touches angleturn. Project the sign of forwardmove and
-      # sidemove onto the D-pad so keypresses are surfaced
-      # uniformly with the other keyboard-shaped formats. The
-      # analog values themselves are preserved in header$.
+      # Project the sign of the resulting movement command onto the D-pad.
+      # This is a direction projection, not physical-device reconstruction;
+      # the original values remain available in the header matrices.
       fp <- fwd[, p]
       sp <- side[, p]
       inputs[, p, 4L] <- fp > 0L                   # forwardmove > 0 -> U
@@ -212,6 +199,8 @@ read_lmp <- function(path) {
       weapon_select[ch, p] <-
         bitwAnd(bitwShiftR(bp[ch], 3L), 7L)
       has_special[, p] <- bitwAnd(bp, 128L) != 0L
+      special_value <- ifelse(has_special[, p], bp, 0L)
+      commands <- bitwOr(commands, as.integer(special_value))
     }
   }
 
@@ -237,7 +226,7 @@ read_lmp <- function(path) {
 
   .new_movie(
     header           = header,
-    commands         = integer(n_frames),
+    commands         = commands,
     inputs           = inputs,
     source_path      = path,
     button_mnemonics = c("R", "L", "D", "U", "T", "S", "B", "A"),

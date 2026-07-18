@@ -7,7 +7,7 @@
 #'
 #' Supported formats: .fm2 (FCEUX), .bk2 (BizHawk), .fcm (FCEU),
 #' .lsmv (lsnes), .gmv (Gens-rerecording), .vbm (VBA-rerecording),
-#' .m64 (Mupen64), .smv (Snes9x-rerecording), .pxm (PSXjin binary),
+#' .m64 (Mupen64), .smv (Snes9x-rerecording), .pxm (PCSX-rerecording),
 #' .pjm (PSXjin text), .dtm (Dolphin GameCube), .lmp (Doom).
 #'
 #' @section Quick start:

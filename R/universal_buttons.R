@@ -96,11 +96,27 @@ supported_formats <- function() {
 # @param button_names Friendly names paired with `button_mnemonics`.
 .new_movie <- function(header, commands, inputs, source_path = NA_character_,
                        button_mnemonics = NULL, button_names = NULL) {
+  dims <- dim(inputs)
+  if (!is.logical(inputs) || length(dims) != 3L) {
+    stop("`inputs` must be a logical array with dimensions frames x players x buttons")
+  }
+  if (dims[2L] < 1L || dims[3L] < 1L) {
+    stop("`inputs` must contain at least one player and one button slot")
+  }
+  if (dims[3L] > length(universal_buttons())) {
+    stop("`inputs` has more button slots than the universal layout")
+  }
+  if (length(commands) != dims[1L]) {
+    stop("`commands` length must equal the number of input frames")
+  }
   if (is.null(button_mnemonics)) {
-    button_mnemonics <- universal_buttons()[seq_len(dim(inputs)[3])]
+    button_mnemonics <- universal_buttons()[seq_len(dims[3L])]
   }
   if (is.null(button_names)) {
-    button_names <- universal_button_names()[seq_len(dim(inputs)[3])]
+    button_names <- universal_button_names()[seq_len(dims[3L])]
+  }
+  if (length(button_mnemonics) != dims[3L] || length(button_names) != dims[3L]) {
+    stop("button mnemonic and name vectors must match the input button dimension")
   }
   obj <- list(
     header = as.list(header),

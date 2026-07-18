@@ -1,8 +1,6 @@
 # replayr <img src="man/figures/logo.svg" align="right" height="139" alt="replayr hex logo" />
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/tp451/replayr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tp451/replayr/actions/workflows/R-CMD-check.yaml)
-[![License: GPL v2 or later](https://img.shields.io/badge/License-GPLv2%2B-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
@@ -19,7 +17,7 @@ by the speedrun and tool-assisted-speedrun communities.
 | .vbm   | VBA-rerecording       | Game Boy / GBC / GBA                        |
 | .m64   | Mupen64               | N64                                         |
 | .smv   | Snes9x-rerecording    | SNES                                        |
-| .pxm   | PSXjin (binary body)  | PSX                                         |
+| .pxm   | PCSX-rerecording      | PSX                                         |
 | .pjm   | PSXjin (text body)    | PSX                                         |
 | .dtm   | Dolphin               | GameCube                                    |
 | .lmp   | Doom (vanilla 1.9)    | DOS / PC                                    |
@@ -44,11 +42,11 @@ with console Start/Select rather than getting their own slots.
 ```r
 library(replayr)
 
-# Use a bundled sample (one is shipped per format).
+# Use one of the bundled samples.
 fp <- system.file("extdata", "sample.fm2", package = "replayr")
 mv <- read_movie(fp)
 mv
-#> <replayr_movie [fm2] frames=1748 players=2 buttons=8 source=sample.fm2>
+#> <replayr_movie [fm2] frames=3600 players=2 buttons=8 source=sample.fm2>
 
 n_frames(mv)            # frame count
 press_counts(mv)        # named vector of per-button hold counts
@@ -74,14 +72,7 @@ movie actually uses (8 NES, 12 SNES, 15 Genesis, 28 N64/GameCube,
 
 ## Install
 
-From GitHub:
-
-```r
-# install.packages("remotes")
-remotes::install_github("tp451/replayr")
-```
-
-From a local clone:
+From a local source tree:
 
 ```r
 # install.packages("devtools")
@@ -94,11 +85,11 @@ devtools::install("path/to/replayr")
 devtools::test("path/to/replayr")
 ```
 
-The test suite is self-contained against the bundled fixtures. The
-.pxm, .pjm, and .dtm tests skip by default because their typical
-fixtures are large (~0.3-0.7 MB each); set
-`REPLAYR_FIXTURE_DIR` to a folder containing
-`raw_psx/<game>/<n>.pxm` etc. to enable them.
+The test suite is self-contained: twelve generated one-minute samples exercise
+every supported reader. They contain only synthetic controller input and no
+third-party movie data. Set `REPLAYR_FIXTURE_DIR` to a separately obtained
+local corpus if you want to run optional compatibility tests as well; corpus
+files are never bundled with replayr.
 
 ## Author
 
@@ -106,8 +97,7 @@ Thorben Pelzer (<thorben@pelzer.blog>).
 
 ## License
 
-`replayr` is licensed under the [GNU General Public License version
-2 or later](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
+`replayr` is licensed under the GNU General Public License version 2 or later.
 Six of the twelve format readers were developed with reference to
 the upstream emulator's source tree (named in those files'
 headers); those upstreams are themselves GPL-2+, so the package
@@ -126,11 +116,12 @@ formats open enough to be re-implemented:
 - **[id Software's Doom source](https://github.com/id-Software/DOOM)** -- the
   `.lmp` demo format reader (`R/read_lmp.R`) was developed with
   reference to `linuxdoom-1.10/g_game.c` and the
-  [DoomWiki demo spec](https://doomwiki.org/wiki/Demo).
-- **PSXjin** -- the `.pjm` (text body) and `.pxm` (binary body)
-  movie format readers were developed with reference to the
+  DoomWiki demo specification.
+- **PSXjin** -- the `.pjm` reader was developed with reference to the
   PSXjin source tree.
-- **[lsnes](https://github.com/Ilari-Pihlajisto/lsnes)** -- the
+- **PCSX-rerecording** -- the `.pxm` reader follows the PCSX-rr format and
+  its documented controller-record layout.
+- **[lsnes](https://repo.or.cz/lsnes.git)** -- the
   `.lsmv` movie format reader was developed with reference to the
   lsnes source tree.
 - **[VBA-rerecording](https://github.com/TASEmulators/vba-rerecording)**

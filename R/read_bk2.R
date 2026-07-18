@@ -12,7 +12,7 @@
 #
 # bk2 covers many platforms: NES, SNES, Atari 2600, Game Boy / GBC,
 # GBA, N64, PlayStation, ... -- so the LogKey-driven mapping is the
-# only sane way to interpret column data.
+# reliable way to interpret column data across these systems.
 #
 # Reference: BizHawk source (BizHawk.Client.Common, MovieControllerAdapter)
 # and the tasvideos wiki at /EmulatorResources/BizHawk/Bk2.
@@ -270,6 +270,18 @@
        n_logkey_groups = length(groups))
 }
 
+# Locate a bk2 member by its canonical name, tolerating two export
+# variants: a leading "<game folder>/" subdirectory prefix (some BizHawk builds
+# nest every member under a ROM-named directory) and a missing ".txt" extension
+# (older cores wrote "Input Log" / "Header" plain). Returns the actual member
+# name for utils::unzip, or NA if the member is truly absent.
+.bk2_find_member <- function(zip_names, canonical) {
+  stem <- sub("\\.txt$", "", canonical)
+  bn <- basename(zip_names)
+  hit <- which(bn == canonical | bn == stem)
+  if (length(hit)) zip_names[[hit[1L]]] else NA_character_
+}
+
 #' Read a BizHawk .bk2 movie file
 #'
 #' .bk2 is a ZIP archive whose `Input Log.txt` describes inputs and
@@ -285,18 +297,6 @@
 #' @param path Path to a .bk2 file.
 #' @return A `replayr_movie` object.
 #' @export
-# Locate a bk2 member by its canonical name, tolerating two real-world export
-# variants: a leading "<game folder>/" subdirectory prefix (some BizHawk builds
-# nest every member under a ROM-named directory) and a missing ".txt" extension
-# (older cores wrote "Input Log" / "Header" plain). Returns the actual member
-# name for utils::unzip, or NA if the member is truly absent.
-.bk2_find_member <- function(zip_names, canonical) {
-  stem <- sub("\\.txt$", "", canonical)
-  bn <- basename(zip_names)
-  hit <- which(bn == canonical | bn == stem)
-  if (length(hit)) zip_names[[hit[1L]]] else NA_character_
-}
-
 read_bk2 <- function(path) {
   header <- list("_format" = "bk2")
   zip_names <- utils::unzip(path, list = TRUE)$Name
@@ -354,10 +354,8 @@ read_bk2 <- function(path) {
   txt <- rawToChar(raw)
   # BizHawk writes members as UTF-8. The LogKey of Mednafen-family PSX cores
   # (Nymashock) names the face buttons with Unicode shape glyphs (Triangle
-  # Square Circle) that the PSX-core detection keys on. The old latin1 tag +
-  # enc2utf8 DOUBLE-encoded those glyphs (mojibake), so detection failed and
-  # Cross ("X") collided with the SNES X-face button. Prefer UTF-8; fall back
-  # to latin1 only for the rare member that is not valid UTF-8.
+  # Square Circle) used for PSX-core detection. Prefer UTF-8 and fall back to
+  # Latin-1 only when the member is not valid UTF-8.
   if (validUTF8(txt)) {
     Encoding(txt) <- "UTF-8"
     txt
@@ -370,6 +368,15 @@ read_bk2 <- function(path) {
 .parse_bk2_input_log <- function(text, header = list("_format" = "bk2")) {
   lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
   lines <- sub("\r$", "", lines)
+  platform_text <- tolower(paste(
+    unlist(header[intersect(names(header), c("Platform", "Core", "SystemID"))],
+           use.names = FALSE),
+    collapse = " "
+  ))
+  unsigned_analog <- grepl(
+    "psx|playstation|nymashock|octoshock|psxhawk",
+    platform_text
+  )
 
   logkey_line <- NULL
   for (ln in lines) {
@@ -453,15 +460,16 @@ read_bk2 <- function(path) {
     }
   }
 
-  # If LogKey-derived mapping is too sparse to reasonably cover the
-  # frame columns, fall back to NES positional mapping.
+  # A present but unintelligible LogKey must not silently become an NES movie:
+  # that would turn unknown columns into plausible-looking, incorrect buttons.
   if (!is.null(per_player_map)) {
     n_mapped_p0 <- length(per_player_map[[1L]])
     if (n_mapped_p0 == 0L ||
         (player_col_width > 0L && n_mapped_p0 < player_col_width %/% 2L + 1L)) {
-      per_player_map <- NULL
-      per_player_analog <- NULL
+      stop("bk2 LogKey is unsupported or too sparse for its input columns")
     }
+  } else if (!is.null(logkey_line)) {
+    stop("bk2 LogKey could not be parsed")
   }
 
   if (!is.null(per_player_map)) {
@@ -536,10 +544,16 @@ read_bk2 <- function(path) {
             if (!nzchar(s) || s == "." ) next
             v <- suppressWarnings(as.integer(s))
             if (is.na(v)) next
-            # Detect axis encoding: PSX uses unsigned 0..255 with 128 as
-            # center; N64 uses signed -128..127. Heuristic: if v > 127
-            # treat as PSX-style and bias by -128.
-            if (v > 127L) v <- v - 128L
+            # PSX cores log unsigned axes (128 is centre); N64 and most other
+            # cores log signed axes. Determine the convention from metadata,
+            # not from the current sample: unsigned values below 128 are just
+            # as important as values above it.
+            if (unsigned_analog) {
+              if (v < 0L || v > 255L) next
+              v <- v - 128L
+            } else if (v > 127L && v <= 255L) {
+              v <- v - 256L
+            }
             axis_vals[[entry$axis]] <- v
           }
           # Quantise main stick (lstick) to 8 directions, slots 21..28.

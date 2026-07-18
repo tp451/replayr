@@ -12,11 +12,9 @@ n_frames(movie)
 
 - movie:
 
-  A
-  [replayr_movie](https://tp451.github.io/replayr/reference/replayr_movie.md)
-  (returned by
-  [`read_movie()`](https://tp451.github.io/replayr/reference/read_movie.md)
-  or any of the format-specific readers).
+  A [replayr_movie](replayr_movie.md) (returned by
+  [`read_movie()`](read_movie.md) or any of the format-specific
+  readers).
 
 ## Value
 

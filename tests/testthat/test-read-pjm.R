@@ -1,34 +1,46 @@
+test_that("read_pjm() parses the bundled synthetic PlayStation movie", {
+  mv <- read_pjm(fixture_path("sample.pjm"))
+  expect_s3_class(mv, "replayr_movie")
+  expect_equal(mv$header[["_format"]], "pjm")
+  expect_equal(n_frames(mv), 3600L)
+  expect_equal(n_players(mv), 2L)
+  expect_equal(n_buttons(mv), 30L)
+  expect_gt(sum(press_counts(mv, 1L)), 0L)
+})
+
 # Build a minimal in-memory PSXjin text .pjm: a 60-byte header (magic +
 # version 2 + n_frames) followed by `<port1>|<port2>|<cmd>|CRLF` lines.
 # `p2 = NULL` writes an empty second port (the one-controller layout).
-.mk_pjm_text <- function(p1, p2 = NULL) {
+.mk_pjm_text <- function(p1, p2 = NULL, commands = rep(0L, length(p1))) {
   hdr <- raw(60)
   hdr[1:4] <- charToRaw("PJM ")
   hdr[5]   <- as.raw(2L)                                   # version u32 LE
   hdr[17:20] <- writeBin(length(p1), raw(), size = 4L, endian = "little")
   lines <- vapply(seq_along(p1), function(i) {
     port2 <- if (is.null(p2)) "" else p2[i]
-    paste0(p1[i], "|", port2, "|0|\r\n")
+    paste0(p1[i], "|", port2, "|", commands[i], "|\r\n")
   }, character(1))
   tf <- tempfile(fileext = ".pjm")
   writeBin(c(hdr, charToRaw(paste0(lines, collapse = ""))), tf)
   tf
 }
 
-# Build a minimal binary .pjm: 60-byte header + 5 bytes/frame (16-bit
-# DualShock word LE in bytes 0-1, bytes 2-4 reserved). `reserved` fills the
-# three reserved bytes (0 for the real layout; non-zero to exercise the guard).
-.mk_pjm_bin <- function(words, reserved = 0L) {
+# Build a minimal binary .pjm: P1/P2 digital words plus command byte.
+.mk_pjm_bin <- function(words, p2_words = rep(0L, length(words)),
+                        commands = rep(0L, length(words)), p2_connected = FALSE) {
   hdr <- raw(60)
   hdr[1:4] <- charToRaw("PJM ")
   hdr[5]   <- as.raw(2L)
   hdr[17:20] <- writeBin(length(words), raw(), size = 4L, endian = "little")
+  hdr[15:16] <- as.raw(c(4L, if (p2_connected) 4L else 0L))
   body <- raw(length(words) * 5L)
   for (i in seq_along(words)) {
     o <- (i - 1L) * 5L
     body[o + 1L] <- as.raw(bitwAnd(words[i], 0xffL))
     body[o + 2L] <- as.raw(bitwAnd(bitwShiftR(words[i], 8L), 0xffL))
-    if (reserved != 0L) { body[o + 3L] <- as.raw(reserved) }
+    body[o + 3L] <- as.raw(bitwAnd(p2_words[i], 0xffL))
+    body[o + 4L] <- as.raw(bitwAnd(bitwShiftR(p2_words[i], 8L), 0xffL))
+    body[o + 5L] <- as.raw(commands[i])
   }
   tf <- tempfile(fileext = ".pjm")
   writeBin(c(hdr, body), tf)
@@ -50,6 +62,12 @@ test_that("read_pjm() decodes the one-controller text layout", {
   expect_true(mv$inputs[1L, 1L, 1L])          # Right
   expect_equal(sum(mv$inputs[2L, , ]), 0L)     # released frame
   expect_equal(sum(mv$inputs), 2L)
+})
+
+test_that("read_pjm() preserves text command values", {
+  tf <- .mk_pjm_text(c(.pjm_mask(), .pjm_mask()), commands = c(0L, 7L))
+  on.exit(unlink(tf))
+  expect_equal(read_pjm(tf)$commands, c(0L, 7L))
 })
 
 test_that("read_pjm() decodes the two-controller text layout", {
@@ -89,12 +107,17 @@ test_that("read_pjm() decodes the binary body", {
   expect_equal(sum(mv$inputs[2L, , ]), 0L)
 })
 
-test_that("read_pjm() rejects the unsupported analog-binary variant", {
-  tf <- .mk_pjm_bin(rep(bitwShiftL(1L, 5L), 20L), reserved = 0x7fL)
-  expect_error(read_pjm(tf), "analog/multi-controller")
+test_that("read_pjm() decodes binary player two and commands", {
+  tf <- .mk_pjm_bin(0L, bitwShiftL(1L, 14L), commands = 9L,
+                    p2_connected = TRUE)
+  on.exit(unlink(tf))
+  mv <- read_pjm(tf)
+  expect_equal(n_players(mv), 2L)
+  expect_true(mv$inputs[1L, 2L, 7L])
+  expect_equal(mv$commands, 9L)
 })
 
-# ---- real-corpus fixtures (set REPLAYR_FIXTURE_DIR) ----
+# ---- optional external-corpus fixtures (set REPLAYR_FIXTURE_DIR) ----
 
 test_that("read_pjm() parses real two-controller / analog / binary movies", {
   cases <- list(

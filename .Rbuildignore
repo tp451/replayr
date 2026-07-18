@@ -3,7 +3,7 @@
 ^README\.Rmd$
 ^LICENSE\.md$
 ^\.github$
-^\.git$
+^\.git
 ^\.gitignore$
 ^doc$
 ^Meta$
@@ -12,3 +12,4 @@
 ^docs$
 ^pkgdown$
 ^\.devnotes$
+^\.claude$

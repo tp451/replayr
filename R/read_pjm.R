@@ -35,8 +35,8 @@
 #   frame's first 14 mask chars per port (analog decimals are ignored).
 #
 #   BINARY.  No text terminator; 5 bytes per frame at the END of the file
-#   (body_off = file_size - n_frames * 5): bytes 0-1 are the P1 16-bit
-#   DualShock word (active-high), bytes 2-4 reserved. Shared with .pxm.
+#   (body_off = file_size - n_frames * 5): P1 and P2 16-bit digital words
+#   followed by one command byte.
 #
 # PSX DualShock 14-button text column order:
 #   1 Square  2 Cross  3 Circle  4 Triangle  5 L1  6 R1  7 L2  8 R2
@@ -95,6 +95,7 @@ read_pjm <- function(path) {
   if (version != 2L) stop(path, ": unsupported PJM version ", version)
   n_frames_field <- .read_u32_le(data, 16L)
   rerec <- .read_u32_le(data, 20L)
+  controller_types <- as.integer(data[c(0x0EL, 0x0FL) + 1L])
   desc <- .read_cstring(data, 0x39L, 0xC8L)
   sz <- length(data)
   n_buttons <- 30L
@@ -102,7 +103,9 @@ read_pjm <- function(path) {
     "_format" = "pjm",
     version = as.character(version),
     rerecordCount = as.character(rerec),
-    description = desc
+    description = desc,
+    controllerType1 = as.character(controller_types[1L]),
+    controllerType2 = as.character(controller_types[2L])
   )
 
   # --- decide text vs binary by locating a `|`CRLF frame terminator ---
@@ -113,7 +116,8 @@ read_pjm <- function(path) {
   if (!is.null(layout)) {
     mv <- .read_pjm_text(data, layout, n_frames_field, n_buttons, header)
   } else {
-    mv <- .read_pjm_binary(data, n_frames_field, sz, n_buttons, header)
+    mv <- .read_pjm_binary(data, n_frames_field, sz, n_buttons, header,
+                           controller_types)
   }
   mv$source_path <- path
   mv
@@ -130,7 +134,9 @@ read_pjm <- function(path) {
   # second terminator within a plausible line-length window. The first
   # terminator occupies 0-based [t1, t1+2]; start the search one byte past it
   # (1-based data index t1+4 == 0-based t1+3) so the recovered stride is exact.
-  win <- data[(t1 + 4L):min(sz - 2L, t1 + 2004L)]
+  # Include the file's final CRLF: short synthetic and real two-frame movies
+  # may place the second terminator at end-of-file.
+  win <- data[(t1 + 4L):min(sz, t1 + 2006L)]
   t2rel <- .find_raw(win, as.raw(c(0x7c, 0x0d, 0x0a)))
   if (is.na(t2rel)) return(NULL)
   stride <- (t1 + 3L + t2rel) - t1
@@ -162,14 +168,20 @@ read_pjm <- function(path) {
   # drop trailing empty ports (one-controller movies have an empty port 2)
   keep <- rev(cumsum(rev(port_w > 0L)) > 0L)
   n_players <- max(1L, sum(keep))
+  cmd_width <- max(0L, ends[m] - starts[m] + 1L)
   list(first = first, stride = stride,
-       port_off = port_off[seq_len(n_players)], n_players = n_players)
+       port_off = port_off[seq_len(n_players)], n_players = n_players,
+       cmd_off = starts[m] - 1L, cmd_width = cmd_width)
 }
 
 .read_pjm_text <- function(data, lay, n_frames_field, n_buttons, header) {
   sz <- length(data)
   have <- (sz - lay$first) %/% lay$stride
-  n_frames <- if (n_frames_field > 0L) min(n_frames_field, have) else have
+  if (n_frames_field > have) {
+    stop("PJM text body is truncated (declares ", n_frames_field,
+         " frames, has ", have, ")")
+  }
+  n_frames <- if (n_frames_field > 0L) n_frames_field else have
   n_players <- lay$n_players
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
@@ -189,50 +201,69 @@ read_pjm <- function(path) {
         if (any(pressed)) inputs[pressed, pl, .PJM_POS_TO_UNI[k]] <- TRUE
       }
     }
+    if (lay$cmd_width > 0L) {
+      for (fi in seq_len(n_frames)) {
+        idx <- frame0[fi] + lay$cmd_off + seq_len(lay$cmd_width)
+        txt <- trimws(rawToChar(data[idx]))
+        if (!nzchar(txt) || txt == ".") next
+        value <- suppressWarnings(as.integer(txt))
+        if (is.na(value) || value < 0L || value > 255L) {
+          stop("PJM text command is not a byte value: ", txt)
+        }
+        commands[fi] <- value
+      }
+    }
   }
   .new_movie(header = header, commands = commands, inputs = inputs,
              button_mnemonics = universal_buttons()[seq_len(n_buttons)],
              button_names = universal_button_names()[seq_len(n_buttons)])
 }
 
-.read_pjm_binary <- function(data, n_frames_field, sz, n_buttons, header) {
-  n_frames <- n_frames_field
+.read_pjm_binary <- function(data, n_frames_field, sz, n_buttons, header,
+                             controller_types = c(0L, 0L)) {
+  if (n_frames_field > .Machine$integer.max) {
+    stop("PJM frame count is too large for R")
+  }
+  n_frames <- as.integer(n_frames_field)
   bpf <- 5L
   body_off <- sz - n_frames * bpf
   if (body_off < 24L) {
     stop("PJM binary body truncated or unknown stride ",
          sprintf("(file=%d, n_frames=%d)", sz, n_frames))
   }
-  # Honest guard: the 5-byte layout keeps bytes 2..4 reserved (~0). If a
-  # sizeable fraction of frames carry non-zero reserved bytes this is an
-  # analog / multi-controller binary variant we do not decode -- fail loudly
-  # rather than emit silently mis-aligned input.
+  if (any(!(controller_types %in% 0:7))) {
+    stop("PJM contains an unknown controller type")
+  }
+  if (any(controller_types %in% c(1L, 2L, 3L, 5L, 6L, 7L))) {
+    stop("PJM binary non-digital controller variants are not supported")
+  }
+  has_p2 <- controller_types[2L] == 4L
   if (n_frames > 0L) {
-    smp <- unique(as.integer(seq(1L, n_frames, length.out = min(n_frames, 300L))))
-    nz <- 0L
-    for (fi in smp) {
-      o <- body_off + (fi - 1L) * bpf
-      if (data[o + 3L] != as.raw(0L) || data[o + 4L] != as.raw(0L) ||
-          data[o + 5L] != as.raw(0L)) nz <- nz + 1L
-    }
-    if (nz > length(smp) * 0.05) {
-      stop(sprintf(
-        "PJM binary analog/multi-controller variant not supported (%d/%d sampled frames have non-zero reserved bytes)",
-        nz, length(smp)))
+    for (fi in seq_len(n_frames)) {
+      off <- body_off + (fi - 1L) * bpf
+      if (data[off + 3L] != as.raw(0L) || data[off + 4L] != as.raw(0L)) {
+        has_p2 <- TRUE
+        break
+      }
     }
   }
-  inputs <- .empty_inputs(n_frames, 1L, n_buttons)
+  n_players <- if (has_p2) 2L else 1L
+  inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
   if (n_frames > 0L) {
     for (fi in seq_len(n_frames)) {
       off <- body_off + (fi - 1L) * bpf
-      word <- as.integer(data[off + 1L]) + bitwShiftL(as.integer(data[off + 2L]), 8L)
-      for (bit in 0:15) {
-        if (bitwAnd(word, bitwShiftL(1L, bit)) == 0L) next
-        slot <- .PJM_BIT_TO_UNI[bit + 1L]
-        if (is.na(slot)) next
-        inputs[fi, 1L, slot] <- TRUE
+      for (pl in seq_len(n_players)) {
+        po <- off + (pl - 1L) * 2L
+        word <- as.integer(data[po + 1L]) + bitwShiftL(as.integer(data[po + 2L]), 8L)
+        for (bit in 0:15) {
+          if (bitwAnd(word, bitwShiftL(1L, bit)) == 0L) next
+          slot <- .PJM_BIT_TO_UNI[bit + 1L]
+          if (is.na(slot)) next
+          inputs[fi, pl, slot] <- TRUE
+        }
       }
+      commands[fi] <- as.integer(data[off + 5L])
     }
   }
   .new_movie(header = header, commands = commands, inputs = inputs,

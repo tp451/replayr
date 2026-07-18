@@ -24,3 +24,19 @@ test_that("supported_formats() lists exactly 12 extensions", {
   expect_length(fmt, 12)
   expect_true(all(startsWith(fmt, ".")))
 })
+
+test_that("movie constructor enforces array and metadata invariants", {
+  expect_error(
+    replayr:::.new_movie(list(), integer(0), matrix(FALSE, 0L, 2L)),
+    "logical array"
+  )
+  expect_error(
+    replayr:::.new_movie(list(), integer(0), array(FALSE, c(1L, 1L, 8L))),
+    "commands.*number"
+  )
+  expect_error(
+    replayr:::.new_movie(list(), 0L, array(FALSE, c(1L, 1L, 8L)),
+                         button_mnemonics = letters[1:7]),
+    "mnemonic.*dimension"
+  )
+})

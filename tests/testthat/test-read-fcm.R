@@ -1,15 +1,13 @@
-test_that("read_fcm() parses an FCEU NES movie", {
-  skip_if_no_fixture("sample.fcm")
+test_that("read_fcm() parses the bundled synthetic FCEU movie", {
   mv <- read_fcm(fixture_path("sample.fcm"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "fcm")
-  expect_gt(n_frames(mv), 0L)
+  expect_equal(n_frames(mv), 3600L)
   expect_equal(n_buttons(mv), 8L)
   expect_equal(n_players(mv), 4L)  # FCM reserves 4 ports
 })
 
 test_that("read_fcm() accepts version 1 and decodes it like version 2", {
-  skip_if_no_fixture("sample.fcm")
   fp <- fixture_path("sample.fcm")
   raw <- readBin(fp, "raw", n = file.info(fp)$size)
   ref <- read_fcm(fp)

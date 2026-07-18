@@ -1,24 +1,35 @@
-# Sample movie files
+# Synthetic sample movie files
 
-Each `sample.<ext>` is a real publication from tasvideos.org. They are
-included here so that the test suite can run without external data and
-to give end-users one runnable example per format. The binary content
-of each file is unchanged from its source.
+Every `sample.<ext>` file is deterministic synthetic controller input created
+for replayr. None contains a ROM, savestate, memory-card image, cheat data,
+audio, video, or data copied from a published movie. The fixtures and their
+generator are part of replayr and are distributed under the package's GPL (>=
+2) license.
 
-| File | Source publication |
-|------|---------------------|
-| sample.fm2  | NES Tengen Tetris (#2581) — FCEUX text format |
-| sample.bk2  | Atari 2600 Kangaroo (#3546) — BizHawk |
-| sample.fcm  | NES Kung Fu (#340) — FCEU binary |
-| sample.lsmv | SNES EarthBound (#2466) — lsnes |
-| sample.gmv  | Genesis Sonic 3 & Knuckles (#1713) — Gens-rerecording |
-| sample.vbm  | GB Zelda: Link's Awakening (#2076) — VBA-rerecording |
-| sample.m64  | N64 Super Mario 64 (#3264) — Mupen64 |
-| sample.smv  | SNES Tetris Attack (#1904) — Snes9x-rerecording |
+| File | Synthetic duration | Controller layout |
+|------|--------------------|-------------------|
+| `sample.fm2` | 3,600 frames | two NES gamepads |
+| `sample.bk2` | 3,600 frames | one NES gamepad |
+| `sample.fcm` | 3,600 frames | one active NES port; four reserved ports |
+| `sample.lsmv` | 3,600 frames | two SNES gamepads |
+| `sample.gmv` | 3,600 frames | two Genesis six-button gamepads |
+| `sample.vbm` | 3,600 frames | one Game Boy gamepad |
+| `sample.m64` | 3,600 frames | one N64 gamepad with synthetic stick motion |
+| `sample.smv` | 3,600 samples | one SNES gamepad |
+| `sample.pxm` | 3,600 frames | two PlayStation digital gamepads |
+| `sample.pjm` | 3,600 frames | two PlayStation digital gamepads |
+| `sample.dtm` | 3,600 frames | one GameCube gamepad with synthetic stick motion |
+| `sample.lmp` | 2,100 tics | one active Doom player; four reserved slots |
 
-Three formats (.pxm, .pjm, .dtm) have no bundled fixture because their
-typical file sizes (≥0.5 MB) would inflate the package. To run the
-optional tests for those formats, set the environment variable
-`REPLAYR_FIXTURE_DIR` to the absolute path of the corpus's `data/`
-folder before running `R CMD check` or `devtools::test()`. The tests
-will then look for `data/raw_psx/<game>/<n>.pxm` and so on.
+The 3,600-frame streams are approximately one minute at 60 Hz. Doom records
+input at 35 tics per second, so its one-minute stream contains 2,100 tics.
+
+Regenerate all fixtures from the package root with:
+
+```sh
+Rscript tools/generate_sample_movies.R
+```
+
+Optional compatibility checks can use a separately obtained local corpus by
+setting `REPLAYR_FIXTURE_DIR`. Such external files are never bundled with the
+package.

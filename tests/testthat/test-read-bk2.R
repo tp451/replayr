@@ -1,12 +1,10 @@
-test_that("read_bk2() parses an Atari 2600 movie", {
-  skip_if_no_fixture("sample.bk2")
+test_that("read_bk2() parses the bundled synthetic NES movie", {
   mv <- read_bk2(fixture_path("sample.bk2"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "bk2")
-  expect_gt(n_frames(mv), 0L)
-  expect_gte(n_buttons(mv), 8L)
-  # Atari 2600 controllers expose at least the d-pad (slots 1..4) and
-  # the Fire/Button slot (slot 8 in our universal layout).
+  expect_equal(n_frames(mv), 3600L)
+  expect_equal(n_players(mv), 1L)
+  expect_equal(n_buttons(mv), 8L)
   pc <- press_counts(mv, 1L)
   expect_true(sum(pc) > 0L)
 })
@@ -86,4 +84,26 @@ test_that("read_bk2() decodes a Nymashock PSX movie via its UTF-8 LogKey", {
   mv <- read_bk2(bk2)
   expect_true(mv$inputs[1, 1, 7])    # Cross on slot 7 (B)
   expect_false(mv$inputs[1, 1, 9])   # NOT the SNES X-face slot 9
+})
+
+test_that("BK2 PSX analog axes use unsigned 128-centred values", {
+  log <- paste0(
+    "[Input]\n",
+    "LogKey:#Reset|Power|#P1 LStick X|P1 LStick Y|P1 Up|\n",
+    "|..|0,128,.|\n"
+  )
+  mv <- replayr:::.parse_bk2_input_log(
+    log,
+    header = list("_format" = "bk2", Platform = "PSX", Core = "Nymashock")
+  )
+  expect_true(mv$inputs[1L, 1L, 25L]) # X=0 is full west, not neutral
+})
+
+test_that("BK2 does not reinterpret a sparse LogKey as NES columns", {
+  log <- paste0(
+    "[Input]\n",
+    "LogKey:#Reset|Power|#P1 Unknown One|P1 Unknown Two|P1 Up|\n",
+    "|..|..U|\n"
+  )
+  expect_error(replayr:::.parse_bk2_input_log(log), "too sparse")
 })

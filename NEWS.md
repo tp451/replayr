@@ -2,22 +2,27 @@
 
 ## Bug fixes
 
-* `read_bk2()` now reads zip members as UTF-8 (falling back to latin1 only
-  for members that are not valid UTF-8). The previous latin1 tag +
-  `enc2utf8()` double-encoded (mojibake'd) the Unicode face-button glyphs
-  (Triangle/Square/Circle) that Mednafen-family PSX cores (Nymashock) use in
-  their `LogKey`, so the PSX-core detection failed and the "X" (Cross) column
-  collided with the SNES X-face button while Triangle/Square/Circle went
-  unmapped. Nymashock PlayStation movies now decode their face buttons
-  correctly (verified against the Octoshock recording of the same game).
-
-* `read_gmv()` face buttons were rotated relative to BizHawk `.bk2` and the
-  physical Genesis controller. The Gens "SACBRLDU" byte spec labels the three
-  face bits B/C/A, but that labeling does not match BizHawk's A/B/C; across
-  five games recorded in both formats the primary-action button read
-  gmv-A == bk2-C, gmv-B == bk2-A, gmv-C == bk2-B. The three face bits now map
-  to the universal slot of the physical button they actually are, so a game's
-  attack/jump/magic decode identically from `.gmv` and `.bk2`.
+* Corrected header offsets, frame/sample counts, controller flags, multiplayer
+  handling, reset markers, controller record widths, and command-byte decoding
+  across the M64, VBM, SMV, GMV, PXM, PJM, DTM, FCM, BK2, LSMV, and LMP readers.
+* `.pxm` is now correctly identified and decoded as the PCSX-rerecording
+  format, including both controller ports, digital and analog controller
+  widths, 128-centred axes, and per-frame control bytes.
+* Ambiguous M64 and DTM multiplayer poll streams, and variable-width
+  peripherals not implemented by a reader, now raise explicit errors instead
+  of returning misassigned or misaligned input.
+* BK2 PlayStation analog axes now use their unsigned 0..255 convention for all
+  values, and an unsupported sparse `LogKey` can no longer fall back to an NES
+  positional interpretation.
+* Doom movement documentation now describes the recorded composite movement
+  commands rather than inferring a physical input device; BT_SPECIAL values
+  are retained in `commands`.
+* Reader outputs are validated for array shape, command length, and button
+  metadata consistency. Tests can no longer silently skip when `testthat` is
+  absent, and generated edge-case fixtures cover all twelve readers.
+* Replaced third-party publication fixtures with reproducible, approximately
+  one-minute synthetic controller streams for all twelve supported formats.
+  The package now ships no published movie data.
 
 # replayr 0.3.2
 
@@ -90,7 +95,7 @@
 
 * Boom / PrBoom+ / dsda-doom extended-format demos (leading
   `0xFF`, `0xCA`, or `0xCB`) are detected and rejected with a
-  clear error -- support for those is a planned v0.4 follow-up.
+  clear error.
 * Sub-vanilla files (first byte outside skill range 1..5) are
   also rejected with a clear diagnostic message.
 
@@ -103,15 +108,15 @@ Initial release.
 * Pure-R decoders for eleven emulator movie file formats:
   `.fm2` (FCEUX), `.bk2` (BizHawk), `.fcm` (FCEU), `.lsmv` (lsnes),
   `.gmv` (Gens-rerecording), `.vbm` (VBA-rerecording), `.m64`
-  (Mupen64), `.smv` (Snes9x-rerecording), `.pxm` and `.pjm`
-  (PSXjin), and `.dtm` (Dolphin GameCube).
+  (Mupen64), `.smv` (Snes9x-rerecording), `.pxm`
+  (PCSX-rerecording), `.pjm` (PSXjin), and `.dtm` (Dolphin GameCube).
 * `read_movie()` dispatches on file extension; per-format readers
   (`read_fm2()`, `read_bk2()`, etc.) are also exported for callers
   who already know the format.
 * Every parser returns the same `replayr_movie` S3 object: a per-
   frame `(n_frames, n_players, n_buttons)` logical input array, a
   per-frame integer commands vector, and a header list. The third
-  array dimension is always indexed against a single 30-slot
+  array dimension is always indexed against a single 40-slot
   universal-button layout (`universal_buttons()` /
   `universal_button_names()`).
 * Helpers: `n_frames()`, `n_players()`, `n_buttons()`, `player()`,
@@ -126,10 +131,12 @@ Initial release.
 
 ## Known limitations
 
-* `.dtm` Wii movies are not supported (GameCube only for now).
+* `.dtm` Wii and multi-controller poll streams are not supported.
+* Multi-controller `.m64` poll streams are not supported because records do
+  not identify their source controller.
 * `.lsmv` controller types other than the SNES standard gamepad
   (12-char masks; 16-char with the lsnes extension suffix) and the
   Game Boy / GBC libgambatte gamepad (8-char masks) raise an error.
-* A handful of `.pjm` files in the wild lack the `||0|\r\n` body
-  separator the parser scans for; those files raise an error in
-  both the upstream Python implementation and in `replayr`.
+* Variable-width SMV peripherals, PXM mouse/light-gun input, and binary PJM
+  analog-controller records are rejected rather than approximated.
+* Boom, PrBoom+, and dsda-doom extended `.lmp` demos are not supported.

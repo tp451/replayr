@@ -8,7 +8,7 @@
 #'     the source file. The synthetic `_format` entry records which
 #'     parser produced the movie (one of `"fm2"`, `"bk2"`, `"fcm"`,
 #'     `"lsmv"`, `"gmv"`, `"vbm"`, `"m64"`, `"smv"`, `"pxm"`, `"pjm"`,
-#'     `"dtm"`).}
+#'     `"dtm"`, `"lmp"`).}
 #'   \item{`commands`}{Integer vector of length `n_frames`. Per-frame
 #'     commands byte (Reset, Power, format-specific bits). Most TAS
 #'     frames are 0.}

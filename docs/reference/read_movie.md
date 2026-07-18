@@ -1,28 +1,14 @@
 # Read any supported movie file by extension
 
 Dispatches to the appropriate reader based on the file extension: .fm2
--\>
-[`read_fm2()`](https://tp451.github.io/replayr/reference/read_fm2.md),
-.bk2 -\>
-[`read_bk2()`](https://tp451.github.io/replayr/reference/read_bk2.md),
-.fcm -\>
-[`read_fcm()`](https://tp451.github.io/replayr/reference/read_fcm.md),
-.lsmv -\>
-[`read_lsmv()`](https://tp451.github.io/replayr/reference/read_lsmv.md),
-.gmv -\>
-[`read_gmv()`](https://tp451.github.io/replayr/reference/read_gmv.md),
-.vbm -\>
-[`read_vbm()`](https://tp451.github.io/replayr/reference/read_vbm.md),
-.m64 -\>
-[`read_m64()`](https://tp451.github.io/replayr/reference/read_m64.md),
-.smv -\>
-[`read_smv()`](https://tp451.github.io/replayr/reference/read_smv.md),
-.pxm -\>
-[`read_pxm()`](https://tp451.github.io/replayr/reference/read_pxm.md),
-.pjm -\>
-[`read_pjm()`](https://tp451.github.io/replayr/reference/read_pjm.md),
-.dtm -\>
-[`read_dtm()`](https://tp451.github.io/replayr/reference/read_dtm.md).
+-\> [`read_fm2()`](read_fm2.md), .bk2 -\> [`read_bk2()`](read_bk2.md),
+.fcm -\> [`read_fcm()`](read_fcm.md), .lsmv -\>
+[`read_lsmv()`](read_lsmv.md), .gmv -\> [`read_gmv()`](read_gmv.md),
+.vbm -\> [`read_vbm()`](read_vbm.md), .m64 -\>
+[`read_m64()`](read_m64.md), .smv -\> [`read_smv()`](read_smv.md), .pxm
+-\> [`read_pxm()`](read_pxm.md), .pjm -\> [`read_pjm()`](read_pjm.md),
+.dtm -\> [`read_dtm()`](read_dtm.md), .lmp -\>
+[`read_lmp()`](read_lmp.md).
 
 ## Usage
 
@@ -49,4 +35,4 @@ is `(n_frames, n_players, n_buttons)`; `n_buttons` varies per platform
 
 ## See also
 
-[`supported_formats()`](https://tp451.github.io/replayr/reference/supported_formats.md)
+[`supported_formats()`](supported_formats.md)

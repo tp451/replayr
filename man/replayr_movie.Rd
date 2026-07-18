@@ -13,7 +13,7 @@ The canonical return type of every reader in \code{replayr}. A
 the source file. The synthetic \verb{_format} entry records which
 parser produced the movie (one of \code{"fm2"}, \code{"bk2"}, \code{"fcm"},
 \code{"lsmv"}, \code{"gmv"}, \code{"vbm"}, \code{"m64"}, \code{"smv"}, \code{"pxm"}, \code{"pjm"},
-\code{"dtm"}).}
+\code{"dtm"}, \code{"lmp"}).}
 \item{\code{commands}}{Integer vector of length \code{n_frames}. Per-frame
 commands byte (Reset, Power, format-specific bits). Most TAS
 frames are 0.}

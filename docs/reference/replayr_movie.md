@@ -10,7 +10,7 @@ The canonical return type of every reader in `replayr`. A
   Named list of header key-value pairs lifted from the source file. The
   synthetic `_format` entry records which parser produced the movie (one
   of `"fm2"`, `"bk2"`, `"fcm"`, `"lsmv"`, `"gmv"`, `"vbm"`, `"m64"`,
-  `"smv"`, `"pxm"`, `"pjm"`, `"dtm"`).
+  `"smv"`, `"pxm"`, `"pjm"`, `"dtm"`, `"lmp"`).
 
 - `commands`:
 
@@ -35,17 +35,12 @@ The canonical return type of every reader in `replayr`. A
 
   Character vector. Friendly labels paired with `button_mnemonics`.
 
-Use
-[`n_frames()`](https://tp451.github.io/replayr/reference/n_frames.md),
-[`n_players()`](https://tp451.github.io/replayr/reference/n_players.md),
-[`n_buttons()`](https://tp451.github.io/replayr/reference/n_buttons.md)
-to read the array shape;
-[`player()`](https://tp451.github.io/replayr/reference/player.md) to
-extract one player's frames as a 2D matrix;
-[`press_counts()`](https://tp451.github.io/replayr/reference/press_counts.md)
-to summarise hold-counts per button.
+Use [`n_frames()`](n_frames.md), [`n_players()`](n_players.md),
+[`n_buttons()`](n_buttons.md) to read the array shape;
+[`player()`](player.md) to extract one player's frames as a 2D matrix;
+[`press_counts()`](press_counts.md) to summarise hold-counts per button.
 
 ## See also
 
-[`read_movie()`](https://tp451.github.io/replayr/reference/read_movie.md),
-[`universal_buttons()`](https://tp451.github.io/replayr/reference/universal_buttons.md)
+[`read_movie()`](read_movie.md),
+[`universal_buttons()`](universal_buttons.md)

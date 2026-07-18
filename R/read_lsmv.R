@@ -4,7 +4,7 @@
 # tree alongside the TASVideos wiki at
 # /EmulatorResources/Lsnes/Movieformat.
 #
-#   Source:    https://github.com/Ilari-Pihlajisto/lsnes
+#   Source:    https://repo.or.cz/lsnes.git
 #   License:   GPL v2 or later
 #
 # See inst/COPYRIGHTS for the full provenance manifest.
@@ -134,6 +134,13 @@ read_lsmv <- function(path) {
   port_widths <- nchar(port_pieces)
 
   accepted_widths <- c(8L, 12L, 16L)
+  unsupported_ports <- which(port_widths > 0L & !(port_widths %in% accepted_widths))
+  if (length(unsupported_ports)) {
+    stop(sprintf(
+      "unsupported lsmv controller widths %s; only 8- (GB), 12- or 16-char (SNES) gamepad masks are handled",
+      paste(port_widths[unsupported_ports], collapse = ", ")
+    ))
+  }
   accepted_ports <- which(port_widths %in% accepted_widths)
   if (length(accepted_ports) == 0L) {
     stop(sprintf(
@@ -143,6 +150,9 @@ read_lsmv <- function(path) {
   }
   n_players <- length(accepted_ports)
   primary_w <- port_widths[accepted_ports[1L]]
+  if (length(unique(port_widths[accepted_ports])) > 1L) {
+    stop("mixed lsmv controller widths are not supported")
+  }
 
   gametype <- ""
   if (!is.null(header$gametype)) gametype <- tolower(header$gametype)

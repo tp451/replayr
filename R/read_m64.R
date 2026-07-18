@@ -5,14 +5,15 @@
 #   0x000-0x003  4   magic "M64\x1A"
 #   0x004-0x007  u32 version (==3)
 #   0x008-0x00B  u32 movie UID
-#   0x00C-0x00F  u32 number of input samples (frames polled)
+#   0x00C-0x00F  u32 number of vertical interrupts
 #   0x010-0x013  u32 rerecord count
 #   0x014        u8  VI per second (60 NTSC / 50 PAL)
 #   0x015        u8  controller count
+#   0x018-0x01B  u32 number of input samples
 #   0x0C4-0x0E3  ROM internal name (32 bytes ASCII, NUL-padded)
 #   0x222-0x2FF  author (UTF-8)
 #   0x300-0x3FF  description (256 bytes)
-#   0x400+       input data: 4 bytes per sample per controller
+#   0x400+       input data: 4 bytes per input sample
 #
 # Per-input layout (4 bytes; controller 1 first):
 #   byte 0  buttons low:
@@ -58,8 +59,7 @@
 # Sector -> 1-based universal slot in (E, NE, N, NW, W, SW, S, SE) order.
 .STICK_SECTOR_TO_UNI <- c(21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L)
 
-# Magnitude threshold below which the stick is treated as neutral. Same
-# value as the Python parser uses (~16 / 128 = ~12.5% deflection).
+# Magnitude threshold below which the stick is treated as neutral.
 .M64_STICK_DEADZONE <- 16L
 
 #' Read a Mupen64 .m64 movie file
@@ -68,7 +68,10 @@
 #' universal slots 1..14 (with C-buttons at 17..20); the analog stick is
 #' quantised to 8 directions and routed to slots 21..28. Output is 28
 #' buttons wide. Stick deflections below ~12.5% magnitude are treated
-#' as neutral.
+#' as neutral. Multi-controller M64 streams are rejected because the format
+#' does not store controller identifiers: samples occur in the order the game
+#' polls its connected controllers, which cannot be reconstructed reliably
+#' without running the game.
 #'
 #' @param path Path to a .m64 file.
 #' @return A `replayr_movie` object.
@@ -81,24 +84,34 @@ read_m64 <- function(path) {
   version <- .read_u32_le(data, 4L)
   if (version != 3L) stop(path, ": unsupported M64 version ", version)
   uid <- .read_u32_le(data, 8L)
-  n_samples_field <- .read_u32_le(data, 12L)
+  vi_count <- .read_u32_le(data, 12L)
   rerec <- .read_u32_le(data, 16L)
   fps <- as.integer(data[0x15L])
   n_ctrl <- as.integer(data[0x16L])
+  n_samples_field <- .read_u32_le(data, 0x18L)
 
-  body <- data[(0x400L + 1L):length(data)]
-  sample_size <- 4L
-  ctrl_factor <- max(n_ctrl, 1L)
-  n_frames <- length(body) %/% (sample_size * ctrl_factor)
-  if (n_samples_field > 0L && n_samples_field <= n_frames) {
-    n_frames <- n_samples_field
+  if (n_ctrl < 1L || n_ctrl > 4L) {
+    stop(path, ": invalid M64 controller count ", n_ctrl)
   }
+  if (n_ctrl != 1L) {
+    stop(path, ": multi-controller M64 movies are not supported because ",
+         "the input stream does not identify which controller each sample belongs to")
+  }
+
+  body <- if (length(data) > 0x400L) data[(0x400L + 1L):length(data)] else raw(0)
+  sample_size <- 4L
+  have_samples <- length(body) %/% sample_size
+  if (n_samples_field > have_samples) {
+    stop(sprintf("%s: M64 input stream is truncated (header=%d samples, file=%d)",
+                 path, n_samples_field, have_samples))
+  }
+  n_frames <- if (n_samples_field > 0L) n_samples_field else have_samples
 
   n_players <- 1L
   n_buttons <- 28L
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
-  stride <- sample_size * ctrl_factor
+  stride <- sample_size
 
   if (n_frames > 0L) {
     for (fi in seq_len(n_frames)) {
@@ -109,6 +122,9 @@ read_m64 <- function(path) {
       sy <- as.integer(body[off + 4L])
       if (sx >= 0x80L) sx <- sx - 0x100L
       if (sy >= 0x80L) sy <- sy - 0x100L
+
+      # Both reserved button bits set are Mupen64's reset marker.
+      if (bitwAnd(b_high, 0xC0L) == 0xC0L) commands[fi] <- 1L
 
       for (bit in 0:7) {
         if (bitwAnd(b_low, bitwShiftL(1L, bit)) != 0L) {
@@ -138,6 +154,8 @@ read_m64 <- function(path) {
     rerecordCount = as.character(rerec),
     fps = as.character(fps),
     controllerCount = as.character(n_ctrl),
+    viCount = as.character(vi_count),
+    inputSampleCount = as.character(n_frames),
     romName = rom_name,
     author = author
   )

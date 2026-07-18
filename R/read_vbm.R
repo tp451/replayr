@@ -10,8 +10,8 @@
 # See inst/COPYRIGHTS for the full provenance manifest.
 #
 # VBA-rerecording .vbm movie format. Used for both Game Boy / GBC
-# (typeFlags bits 0/1) and Game Boy Advance (typeFlags bit 2) TAS
-# publications. Reference: VBA-rerecording source (movie.h).
+# and Game Boy Advance TAS publications. Reference: VBA-rerecording source
+# (`movie.h`).
 #
 # Layout:
 #   0x00-0x03  4   magic "VBM\x1A"
@@ -19,9 +19,10 @@
 #   0x08-0x0B  u32 movie UID (timestamp)
 #   0x0C-0x0F  u32 number of frames
 #   0x10-0x13  u32 rerecord count
-#   0x16       1   typeFlags  (bit 0: GB, bit 1: GBC, bit 2: GBA, ...)
+#   0x15       1   controller flags (bits 0..3 = controllers 1..4)
+#   0x16       1   system flags (bit 0: GBA, bit 1: GBC, bit 2: SGB)
 #   0x3C-0x3F  u32 controller-data offset (NOT always 0x100)
-#   0x100+     controller data, 2 bytes (uint16 LE) per frame per controller
+#   0x100+     controller data, 2 bytes (uint16 LE) per active controller
 #
 # Per-frame controller word, *active-high* (bit set == pressed):
 #   bit 0: A       bit 1: B       bit 2: Select   bit 3: Start
@@ -49,10 +50,11 @@
 
 #' Read a VBA-rerecording .vbm movie file
 #'
-#' GB and GBC pubs (typeFlags bit 0 or 1) come out 8 buttons wide
-#' (universal slots 1..8). GBA pubs (typeFlags bit 2) come out 12 buttons
+#' GB, GBC, and SGB publications come out 8 buttons wide
+#' (universal slots 1..8). GBA publications come out 12 buttons
 #' wide (slots 1..12) so the L/R shoulders land at their canonical
-#' universal positions.
+#' universal positions. SGB multiplayer controller streams are returned with
+#' one player dimension per active controller flag.
 #'
 #' @param path Path to a .vbm file.
 #' @return A `replayr_movie` object.
@@ -67,38 +69,59 @@ read_vbm <- function(path) {
   uid <- .read_u32_le(data, 8L)
   n_frames <- .read_u32_le(data, 12L)
   rerec <- .read_u32_le(data, 16L)
-  type_flags <- as.integer(data[0x17L])
+  controller_flags <- as.integer(data[0x16L])
+  system_flags <- as.integer(data[0x17L])
 
-  is_gba <- bitwAnd(type_flags, 0x04L) != 0L
+  is_gba <- bitwAnd(system_flags, 0x01L) != 0L
+  is_gbc <- bitwAnd(system_flags, 0x02L) != 0L
+  is_sgb <- bitwAnd(system_flags, 0x04L) != 0L
+  if (sum(c(is_gba, is_gbc, is_sgb)) > 1L) {
+    stop(path, ": invalid VBM system flags ", sprintf("0x%02x", system_flags))
+  }
   n_buttons <- if (is_gba) 12L else 8L
-  n_players <- 1L
+  active_controllers <- which(bitwAnd(controller_flags, bitwShiftL(1L, 0:3)) != 0L)
+  if (length(active_controllers) == 0L) active_controllers <- 1L
+  n_players <- length(active_controllers)
+  if (is_gba && n_players != 1L) {
+    stop(path, ": GBA VBM movies cannot contain multiple controllers")
+  }
 
   controller_data_offset <- .read_u32_le(data, 0x3CL)
   if (controller_data_offset == 0L || controller_data_offset > length(data)) {
     controller_data_offset <- 0x100L
   }
-  body <- data[(controller_data_offset + 1L):length(data)]
-  have_frames <- length(body) %/% 2L
-  if (have_frames < n_frames) n_frames <- have_frames
+  body <- if (controller_data_offset < length(data)) {
+    data[(controller_data_offset + 1L):length(data)]
+  } else raw(0)
+  bytes_per_frame <- 2L * n_players
+  if (length(body) %% bytes_per_frame != 0L) {
+    stop(path, ": VBM controller stream has a partial final frame")
+  }
+  have_frames <- length(body) %/% bytes_per_frame
+  # VBA playback derives movie length from the controller stream; the header
+  # frame count is metadata and is not authoritative.
+  declared_frames <- n_frames
+  n_frames <- have_frames
 
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
 
   if (n_frames > 0L) {
     for (fi in seq_len(n_frames)) {
-      off <- (fi - 1L) * 2L
-      word <- as.integer(body[off + 1L]) +
-              bitwShiftL(as.integer(body[off + 2L]), 8L)
-      for (bit in 0:15) {
-        if (bitwAnd(word, bitwShiftL(1L, bit)) == 0L) next
-        slot <- .VBM_BIT_TO_UNI[bit + 1L]
-        if (is.na(slot)) {
-          # System / command bit; pack into commands.
-          commands[fi] <- bitwOr(commands[fi], bitwShiftL(1L, bit))
-          next
+      frame_off <- (fi - 1L) * bytes_per_frame
+      for (pi in seq_len(n_players)) {
+        off <- frame_off + (pi - 1L) * 2L
+        word <- as.integer(body[off + 1L]) +
+                bitwShiftL(as.integer(body[off + 2L]), 8L)
+        for (bit in 0:15) {
+          if (bitwAnd(word, bitwShiftL(1L, bit)) == 0L) next
+          slot <- .VBM_BIT_TO_UNI[bit + 1L]
+          if (is.na(slot)) {
+            commands[fi] <- bitwOr(commands[fi], bitwShiftL(1L, bit))
+            next
+          }
+          if (slot <= n_buttons) inputs[fi, pi, slot] <- TRUE
         }
-        if (slot > n_buttons) next
-        inputs[fi, 1L, slot] <- TRUE
       }
     }
   }
@@ -110,8 +133,12 @@ read_vbm <- function(path) {
     version = as.character(version),
     uid = as.character(uid),
     rerecordCount = as.character(rerec),
-    typeFlags = sprintf("0x%x", type_flags),
+    controllerFlags = sprintf("0x%x", controller_flags),
+    systemFlags = sprintf("0x%x", system_flags),
+    declaredFrameCount = as.character(declared_frames),
     isGBA = if (is_gba) "1" else "0",
+    isGBC = if (is_gbc) "1" else "0",
+    isSGB = if (is_sgb) "1" else "0",
     romName = rom_name,
     author = author
   )

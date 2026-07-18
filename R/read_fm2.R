@@ -43,14 +43,8 @@
 #' @export
 read_fm2 <- function(path) {
   text <- readLines(path, warn = FALSE, encoding = "UTF-8")
-  # Some .fm2 headers embed bytes that are not valid UTF-8 -- e.g. a Shift-JIS
-  # `romFilename` for a Japanese ROM, or an 8-bit `subtitle`. Left as-is, the
-  # very first regex to touch such a line (the CR/LF strip in
-  # `.parse_fm2_text()`) aborts the whole read with "unable to translate
-  # '<bytes>' to a wide string". Re-decode only the offending lines as latin1
-  # so every byte maps to a character; the fields that carry these bytes are
-  # non-essential metadata, and valid UTF-8 lines (accented author names, etc.)
-  # are left untouched.
+  # Some headers contain non-UTF-8 bytes in metadata such as ROM filenames.
+  # Re-decode only invalid lines as Latin-1; valid UTF-8 metadata is unchanged.
   invalid <- is.na(iconv(text, from = "UTF-8", to = "UTF-8"))
   if (any(invalid)) {
     text[invalid] <- iconv(text[invalid], from = "latin1", to = "UTF-8")

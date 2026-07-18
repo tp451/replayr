@@ -3,9 +3,7 @@
 #
 # Versions 1 and 2 share this header layout and the delta-encoded body
 # below; the version bump added header metadata (savestate handling) without
-# changing the input encoding. Both decode identically here -- verified on
-# real v1 files (e.g. Dragon's Lair, Power Blade) whose decoded press rates
-# and frame counts match the header.
+# changing the input encoding, so both versions share this decoder.
 #
 # Header (>= 56 bytes):
 #   0x00  4   magic "FCM\x1a"
@@ -25,8 +23,8 @@
 #   bits 4..3  player index (0..3, button records only)
 #   bits 2..0  button index (0..7, button records only)
 # When the command flag is set, bits 0..4 are a command code (1=reset,
-# 2=power). The delta field is the number of frames of the *previous*
-# state to apply before this record takes effect.
+# 2=power; higher format-defined codes also occur). A record changes the
+# current state and its delta gives the run length for that state.
 
 # 0-based FCM button slot -> 1-based universal slot.
 .FCM_BTN_TO_UNI <- c(
@@ -64,6 +62,10 @@ read_fcm <- function(path) {
   rerec <- .read_u32_le(data, 16L)
   ctrl_len <- .read_u32_le(data, 20L)
   ctrl_off <- .read_u32_le(data, 28L)
+  if (ctrl_off < 56L || ctrl_off > length(data) ||
+      ctrl_len > length(data) - ctrl_off) {
+    stop(path, ": invalid or truncated FCM controller-data range")
+  }
   md5 <- paste(sprintf("%02x", as.integer(data[33:48])), collapse = "")
   emu_ver <- .read_u32_le(data, 48L)
   rom_name <- .read_cstring(data, 0x34L, max(0L, length(data) - 0x34L))
@@ -116,10 +118,8 @@ read_fcm <- function(path) {
 
     if (bitwAnd(ub, 0x80L) != 0L) {
       cmd <- bitwAnd(ub, 0x1fL)
-      if (cmd == 1L) {
-        cur_command <- bitwOr(cur_command, 0x01L)
-      } else if (cmd == 2L) {
-        cur_command <- bitwOr(cur_command, 0x02L)
+      if (cmd >= 1L && cmd <= 31L) {
+        cur_command <- bitwOr(cur_command, bitwShiftL(1L, cmd - 1L))
       }
     } else {
       player <- bitwAnd(bitwShiftR(ub, 3L), 0x03L) + 1L  # 1-based

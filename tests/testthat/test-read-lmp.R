@@ -1,8 +1,6 @@
-# Tests for the Doom .lmp reader. Vanilla Doom 1.9 demos are not
-# part of the package fixtures because the canonical samples
-# (DEMO1.LMP etc.) live inside commercial IWADs that are not
-# redistributable. Tests skip gracefully when no .lmp files are
-# present in doom_demos/lmp/.
+# Tests for the Doom .lmp reader. The bundled sample is a generated one-minute
+# controller stream and contains no IWAD or published-demo data. Optional
+# locally supplied demos provide additional compatibility coverage.
 #
 # The doom_demos/lmp/extended/ subfolder contains five PrBoom+ /
 # dsda-doom test demos that the v0.3 parser is expected to REJECT
@@ -26,11 +24,46 @@ test_that("read_lmp errors clearly on missing file", {
   expect_error(read_lmp(tempfile()), "file not found")
 })
 
+test_that("read_lmp() parses the bundled synthetic Doom demo", {
+  mv <- read_lmp(fixture_path("sample.lmp"))
+  expect_s3_class(mv, "replayr_movie")
+  expect_identical(mv$header[["_format"]], "lmp")
+  expect_equal(n_frames(mv), 2100L)
+  expect_equal(n_players(mv), 4L)
+  expect_equal(n_buttons(mv), 8L)
+  expect_gt(sum(press_counts(mv, 1L)), 0L)
+})
+
 test_that("read_lmp rejects too-small files", {
   tmp <- tempfile(fileext = ".lmp")
   writeBin(as.raw(c(1, 2, 3, 4, 5)), tmp)
   expect_error(read_lmp(tmp), "too small")
   unlink(tmp)
+})
+
+.mk_lmp <- function(records, active = c(1L, 0L, 0L, 0L), end = TRUE) {
+  hdr <- as.raw(c(1, 1, 1, 0, 0, 0, 0, 0, active))
+  tf <- tempfile(fileext = ".lmp")
+  bytes <- c(hdr, as.raw(records), if (end) as.raw(0x80L) else raw(0))
+  writeBin(bytes, tf)
+  tf
+}
+
+test_that("read_lmp() projects movement and preserves BT_SPECIAL", {
+  tf <- .mk_lmp(c(10, 251, 3, 0x81))
+  on.exit(unlink(tf))
+  mv <- read_lmp(tf)
+  expect_true(mv$inputs[1L, 1L, 4L])
+  expect_true(mv$inputs[1L, 1L, 2L])
+  expect_true(mv$inputs[1L, 1L, 8L])
+  expect_equal(mv$commands, 0x81L)
+  expect_equal(mv$header$angleturn[1L, 1L], 3L)
+})
+
+test_that("read_lmp() rejects a truncated multiplayer tic", {
+  tf <- .mk_lmp(c(0, 0, 0, 0, 1, 2), active = c(1L, 1L, 0L, 0L), end = FALSE)
+  on.exit(unlink(tf))
+  expect_error(read_lmp(tf), "truncated Doom demo")
 })
 
 test_that("read_lmp rejects PrBoom+ extended-format demos with a clear message", {
@@ -65,9 +98,7 @@ test_that("read_lmp parses a vanilla Doom demo into the standard movie shape", {
 })
 
 test_that("read_movie dispatches .lmp to read_lmp", {
-  skip_if_not(length(vanilla_files) > 0L,
-              "Vanilla Doom .lmp not available")
-  mv <- read_movie(vanilla_files[1])
+  mv <- read_movie(fixture_path("sample.lmp"))
   expect_identical(mv$header[["_format"]], "lmp")
 })
 
