@@ -27,6 +27,6 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
 NeedsCompilation: no
-Packaged: 2026-07-18 08:49:38 UTC; golds
+Packaged: 2026-07-18 10:19:13 UTC; golds
 Author: Thorben Pelzer [aut, cre]
 Maintainer: Thorben Pelzer <thorben@pelzer.blog>

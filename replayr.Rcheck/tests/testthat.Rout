@@ -21,7 +21,7 @@ package 'testthat' was built under R version 4.6.1
 > library(replayr)
 > 
 > test_check("replayr")
-[ FAIL 0 | WARN 0 | SKIP 7 | PASS 199 ]
+[ FAIL 0 | WARN 0 | SKIP 7 | PASS 196 ]
 
 ══ Skipped tests (7) ═══════════════════════════════════════════════════════════
 • Extended-format demo fixtures not available (1): 'test-read-lmp.R:70:3'
@@ -34,8 +34,8 @@ package 'testthat' was built under R version 4.6.1
 • set REPLAYR_FIXTURE_DIR to enable the NUL-header test (1):
   'test-read-bk2.R:17:3'
 
-[ FAIL 0 | WARN 0 | SKIP 7 | PASS 199 ]
+[ FAIL 0 | WARN 0 | SKIP 7 | PASS 196 ]
 > 
 > proc.time()
    user  system elapsed 
-   2.56    1.37    4.12 
+   2.46    1.54    4.50 

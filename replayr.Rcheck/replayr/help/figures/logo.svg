@@ -3,12 +3,6 @@
      shape-rendering="crispEdges">
   <defs>
     <style type="text/css"><![CDATA[
-      @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
-      .wordmark {
-        font-family: "Press Start 2P", "PressStart2P", "VT323", monospace;
-        font-weight: normal;
-        letter-spacing: 0;
-      }
       .scanline { stroke: #1A37BE; stroke-width: 1; fill: none; opacity: 0.35; }
     ]]></style>
   </defs>
@@ -22,20 +16,13 @@
     <line x1="40" y1="380" x2="560" y2="380"/>
     <line x1="40" y1="420" x2="560" y2="420"/>
   </g>
-  <!-- D-pad cross (light grey). Vertical arm spans y=240..400;
-       horizontal arm spans x=140..260 at y=280..360. Centre at
-       (200, 320). -->
-  <rect x="180" y="240" width="40" height="40" fill="#B7B7B7"/>
-  <rect x="180" y="280" width="40" height="40" fill="#B7B7B7"/>
-  <rect x="180" y="320" width="40" height="40" fill="#B7B7B7"/>
-  <rect x="180" y="360" width="40" height="40" fill="#B7B7B7"/>
-  <rect x="140" y="280" width="40" height="40" fill="#B7B7B7"/>
-  <rect x="140" y="320" width="40" height="40" fill="#B7B7B7"/>
-  <rect x="220" y="280" width="40" height="40" fill="#B7B7B7"/>
-  <rect x="220" y="320" width="40" height="40" fill="#B7B7B7"/>
+  <!-- D-pad cross (light grey). Both arms are 80 pixels thick and
+       160 pixels long. Its centre is shifted left to (180, 320). -->
+  <rect x="140" y="240" width="80" height="160" fill="#B7B7B7"/>
+  <rect x="100" y="280" width="160" height="80" fill="#B7B7B7"/>
   <!-- D-pad notches -->
-  <rect x="190" y="290" width="20" height="20" fill="#000000"/>
-  <rect x="190" y="330" width="20" height="20" fill="#000000"/>
+  <rect x="170" y="290" width="20" height="20" fill="#000000"/>
+  <rect x="170" y="330" width="20" height="20" fill="#000000"/>
   <!-- A and B buttons (light red, 80x80) at the same height as the
        D-pad's horizontal arm: y=280..360, vertically centred at
        y=320 like the cross. -->
@@ -45,6 +32,8 @@
   <rect x="370" y="310" width="20" height="20" fill="#000000"/>
   <rect x="470" y="310" width="20" height="20" fill="#000000"/>
 
-  <text class="wordmark" x="300" y="565" text-anchor="middle"
-        font-size="60" fill="#FFFFFF">replayr</text>
+  <!-- Vector pixel wordmark. Keeping the letters as paths makes the logo and
+       every favicon independent of locally installed or web-hosted fonts. -->
+  <path fill="#FFFFFF" transform="translate(95 500) scale(10)"
+        d="M0 0h1v1h-1z M1 0h1v1h-1z M2 0h1v1h-1z M3 0h1v1h-1z M0 1h1v1h-1z M4 1h1v1h-1z M0 2h1v1h-1z M0 3h1v1h-1z M0 4h1v1h-1z M0 5h1v1h-1z M0 6h1v1h-1z M7 0h1v1h-1z M8 0h1v1h-1z M9 0h1v1h-1z M6 1h1v1h-1z M10 1h1v1h-1z M6 2h1v1h-1z M6 3h1v1h-1z M7 3h1v1h-1z M8 3h1v1h-1z M9 3h1v1h-1z M10 3h1v1h-1z M6 4h1v1h-1z M6 5h1v1h-1z M10 5h1v1h-1z M7 6h1v1h-1z M8 6h1v1h-1z M9 6h1v1h-1z M12 0h1v1h-1z M13 0h1v1h-1z M14 0h1v1h-1z M15 0h1v1h-1z M12 1h1v1h-1z M16 1h1v1h-1z M12 2h1v1h-1z M16 2h1v1h-1z M12 3h1v1h-1z M13 3h1v1h-1z M14 3h1v1h-1z M15 3h1v1h-1z M12 4h1v1h-1z M12 5h1v1h-1z M12 6h1v1h-1z M18 0h1v1h-1z M19 0h1v1h-1z M19 1h1v1h-1z M19 2h1v1h-1z M19 3h1v1h-1z M19 4h1v1h-1z M19 5h1v1h-1z M22 5h1v1h-1z M20 6h1v1h-1z M21 6h1v1h-1z M25 0h1v1h-1z M26 0h1v1h-1z M27 0h1v1h-1z M24 1h1v1h-1z M28 1h1v1h-1z M28 2h1v1h-1z M25 3h1v1h-1z M26 3h1v1h-1z M27 3h1v1h-1z M28 3h1v1h-1z M24 4h1v1h-1z M28 4h1v1h-1z M24 5h1v1h-1z M27 5h1v1h-1z M28 5h1v1h-1z M25 6h1v1h-1z M26 6h1v1h-1z M28 6h1v1h-1z M30 0h1v1h-1z M34 0h1v1h-1z M30 1h1v1h-1z M34 1h1v1h-1z M30 2h1v1h-1z M34 2h1v1h-1z M31 3h1v1h-1z M32 3h1v1h-1z M33 3h1v1h-1z M34 3h1v1h-1z M34 4h1v1h-1z M30 5h1v1h-1z M34 5h1v1h-1z M31 6h1v1h-1z M32 6h1v1h-1z M33 6h1v1h-1z M36 0h1v1h-1z M37 0h1v1h-1z M38 0h1v1h-1z M39 0h1v1h-1z M36 1h1v1h-1z M40 1h1v1h-1z M36 2h1v1h-1z M36 3h1v1h-1z M36 4h1v1h-1z M36 5h1v1h-1z M36 6h1v1h-1z"/>
 </svg>

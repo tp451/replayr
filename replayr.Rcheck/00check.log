@@ -6,12 +6,12 @@
     GNU Fortran (GCC) 14.3.0
 * running under: Windows 11 x64 (build 26200)
 * using session charset: UTF-8
-* current time: 2026-07-18 08:49:39 UTC
+* current time: 2026-07-18 10:19:14 UTC
 * using option '--as-cran'
 * checking for file 'replayr/DESCRIPTION' ... OK
 * this is package 'replayr' version '0.3.3'
 * package encoding: UTF-8
-* checking CRAN incoming feasibility ... [18s] NOTE
+* checking CRAN incoming feasibility ... [20s] NOTE
 Maintainer: 'Thorben Pelzer <thorben@pelzer.blog>'
 
 New submission
