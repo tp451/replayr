@@ -17,7 +17,7 @@ to NES positional UDLRTSBA mapping."><meta property="og:image" content="/logo.sv
 
     <a class="navbar-brand me-2" href="../index.html">replayr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3.9006</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,11 @@ to NES positional UDLRTSBA mapping.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Analog-stick columns (N64 / PSX) are quantised to 8 directions onto
-slots 21..28; the c-stick / right stick goes onto slots 17..20.</p>
+slots 21..28; the c-stick / right stick goes onto slots 17..20.
+NES paddle positions (0..160) become signed changes: increasing position
+activates Stick-E and decreasing position activates Stick-W for that sample.
+A stationary paddle activates neither direction. This is movement sampling,
+not a claim that holding a paddle position is holding a gamepad direction.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -26,4 +26,9 @@ A `replayr_movie` object.
 ## Details
 
 Analog-stick columns (N64 / PSX) are quantised to 8 directions onto
-slots 21..28; the c-stick / right stick goes onto slots 17..20.
+slots 21..28; the c-stick / right stick goes onto slots 17..20. NES
+paddle positions (0..160) become signed changes: increasing position
+activates Stick-E and decreasing position activates Stick-W for that
+sample. A stationary paddle activates neither direction. This is
+movement sampling, not a claim that holding a paddle position is holding
+a gamepad direction.

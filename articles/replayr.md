@@ -143,47 +143,47 @@ gameplay verbs.
 data.frame(slot = seq_along(universal_buttons()),
            mnemonic = universal_buttons(),
            label = universal_button_names())
-#>    slot mnemonic      label
-#> 1     1        R      Right
-#> 2     2        L       Left
-#> 3     3        D       Down
-#> 4     4        U         Up
-#> 5     5        T      Start
-#> 6     6        S     Select
-#> 7     7        B          B
-#> 8     8        A          A
-#> 9     9        x          X
-#> 10   10        y          Y
-#> 11   11        p L-shoulder
-#> 12   12        q R-shoulder
-#> 13   13        C          C
-#> 14   14        Z          Z
-#> 15   15        M       Mode
-#> 16   16        #      extra
-#> 17   17        >    C-Right
-#> 18   18        <     C-Left
-#> 19   19        v     C-Down
-#> 20   20        ^       C-Up
-#> 21   21        e    Stick-E
-#> 22   22        f   Stick-NE
-#> 23   23        n    Stick-N
-#> 24   24        g   Stick-NW
-#> 25   25        w    Stick-W
-#> 26   26        h   Stick-SW
-#> 27   27        s    Stick-S
-#> 28   28        i   Stick-SE
-#> 29   29        [         L2
-#> 30   30        ]         R2
-#> 31   31        0   Keypad-0
-#> 32   32        1   Keypad-1
-#> 33   33        2   Keypad-2
-#> 34   34        3   Keypad-3
-#> 35   35        4   Keypad-4
-#> 36   36        5   Keypad-5
-#> 37   37        6   Keypad-6
-#> 38   38        7   Keypad-7
-#> 39   39        8   Keypad-8
-#> 40   40        9   Keypad-9
+#>    slot mnemonic       label
+#> 1     1        R       Right
+#> 2     2        L        Left
+#> 3     3        D        Down
+#> 4     4        U          Up
+#> 5     5        T       Start
+#> 6     6        S      Select
+#> 7     7        B           B
+#> 8     8        A           A
+#> 9     9        x           X
+#> 10   10        y           Y
+#> 11   11        p  L-shoulder
+#> 12   12        q  R-shoulder
+#> 13   13        C           C
+#> 14   14        Z           Z
+#> 15   15        M        Mode
+#> 16   16        #       extra
+#> 17   17        >     C-Right
+#> 18   18        <      C-Left
+#> 19   19        v      C-Down
+#> 20   20        ^        C-Up
+#> 21   21        e     Stick-E
+#> 22   22        f    Stick-NE
+#> 23   23        n     Stick-N
+#> 24   24        g    Stick-NW
+#> 25   25        w     Stick-W
+#> 26   26        h    Stick-SW
+#> 27   27        s     Stick-S
+#> 28   28        i    Stick-SE
+#> 29   29        [          L2
+#> 30   30        ]          R2
+#> 31   31        0 Keypad-0/L3
+#> 32   32        1 Keypad-1/R3
+#> 33   33        2    Keypad-2
+#> 34   34        3    Keypad-3
+#> 35   35        4    Keypad-4
+#> 36   36        5    Keypad-5
+#> 37   37        6    Keypad-6
+#> 38   38        7    Keypad-7
+#> 39   39        8    Keypad-8
+#> 40   40        9    Keypad-9
 ```
 
 A platform fills only the slots it needs:

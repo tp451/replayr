@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">replayr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3.9006</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,10 +32,56 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.3.9006" id="replayr-0339006">replayr 0.3.3.9006<a class="anchor" aria-label="anchor" href="#replayr-0339006"></a></h2>
+<ul><li>Decode NES Arkanoid paddle columns without shifting the Fire button. Paddle positions in the 0..160 range become signed movement samples; stationary positions are not interpreted as held directional controls. Other paddle platforms fail explicitly until their conventions are supported.</li>
+<li>Preserve PSX L3/R3 in BK2, PJM and PXM, recognize Nymashock’s long-form axes and distinguish its 2.8 16-bit axes from the 2.9+ 8-bit format. For binary PJM/PXM standard digital pads, retain reserved-bit counts as metadata without inventing stick-click buttons absent from that device.</li>
+<li>Follow BizHawk’s ordered LogKey stream across extra/misplaced separators. Report trailing characters that BizHawk does not consume; do not invent controllers from those characters. Reject undeclared numeric fields and active unknown controls.</li>
+<li>Match Octoshock’s byte conversion for out-of-range logged axes (256 becomes zero), report each conversion, and retain strict range checks for Nyma.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.3.9005" id="replayr-0339005">replayr 0.3.3.9005<a class="anchor" aria-label="anchor" href="#replayr-0339005"></a></h2>
+<ul><li>Correct FCM event timing: each delta is the wait before its button change. Simultaneous zero-delta events now preserve actual button combinations.</li>
+<li>Match FCEUX’s legacy zero-delta extension handling for old FCEU movies, preventing stream misalignment and spurious extra-controller input.</li>
+<li>Do not interpret version-1 FCM metadata as version-2 ROM header fields.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.3.9004" id="replayr-0339004">replayr 0.3.3.9004<a class="anchor" aria-label="anchor" href="#replayr-0339004"></a></h2>
+<ul><li>
+<code><a href="../reference/read_dtm.html">read_dtm()</a></code> accepts an explicit caller-supplied repeating controller order. Default multi-controller reads still stop because DTM stores no port IDs. The assumption is recorded in the header and partial cycles are rejected.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.3.9003" id="replayr-0339003">replayr 0.3.3.9003<a class="anchor" aria-label="anchor" href="#replayr-0339003"></a></h2>
+<ul><li>Retain TESTJ GMV compatibility using Gens’ post-TESTA flag layout.</li>
+<li>Distinguish incomplete SMV input records from unused trailing bytes after a complete declared input range. Preserve the declared range and record the unused tail length without interpreting that tail as gameplay.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.3.9002" id="replayr-0339002">replayr 0.3.3.9002<a class="anchor" aria-label="anchor" href="#replayr-0339002"></a></h2>
+<ul><li>Recover a complete FCM final delta when the header byte range ends inside that record and its physical bytes exactly complete the declared duration. Stale bytes after the movie are not appended to the input track.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.3.9001" id="replayr-0339001">replayr 0.3.3.9001<a class="anchor" aria-label="anchor" href="#replayr-0339001"></a></h2>
+<ul><li>Support pre-TEST9 GMV streams without interpreting reserved header bytes as controller configuration; retain recorded extra buttons and report unknown controller type and frame rate.</li>
+<li>Read localized NES BK2 button names. An empty LogKey requires an explicit NES header and the complete standard two-port row layout before positional decoding.</li>
+<li>Report bounded whole-record SMV (one sample) and DTM (two polls) length shortfalls without adding data. Partial records and larger losses remain errors.</li>
+<li>Validate every FCM delta record; tolerate an overstated byte count only if complete available records cover the entire declared duration.</li>
+<li>Interpret complete all-NUL PJM records as PSXjin does (non-dot means pressed), with a warning and header audit count. Do not replace them with neutral input.</li>
+<li>Add real-corpus and malformed-input regression checks for these cases.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.3.9000" id="replayr-0339000">replayr 0.3.3.9000<a class="anchor" aria-label="anchor" href="#replayr-0339000"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-3-3-9000">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-3-9000"></a></h3>
+<ul><li>PSXjin text input now uses the source-defined R1/L1/R2/L2 order and reads <code>#</code> as Square, not a reset marker. Analog text ports use their full 16-bit mask and retain quantised left/right stick directions. A complete final record without CRLF is accepted with its missing newline length recorded; missing controller or command content remains an error. Binary input uses the header’s controller-data offset and configured record widths, including analog pads. Complete text records beyond a stale smaller header count are retained. Active unrepresented stick-click buttons raise an explicit error instead of disappearing silently.</li>
+<li>Vectorized PXM button and stick decoding avoids repeatedly copying the whole input array for every frame. Regression tests compare directions exactly with the previous implementation, including deadzone boundaries.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.3" id="replayr-033">replayr 0.3.3<a class="anchor" aria-label="anchor" href="#replayr-033"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-0-3-3">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-3"></a></h3>
-<ul><li>Corrected header offsets, frame/sample counts, controller flags, multiplayer handling, reset markers, controller record widths, and command-byte decoding across the M64, VBM, SMV, GMV, PXM, PJM, DTM, FCM, BK2, LSMV, and LMP readers.</li>
+<ul><li>
+<code><a href="../reference/read_pjm.html">read_pjm()</a></code> now accepts a PSXjin text movie that ends on a complete controller-record boundary at most two frames before its declared length. The reader warns, returns only the physical records, and records the declared count, available count, and shortfall in the movie header. Partial final records and larger truncations remain errors.</li>
+<li>Corrected header offsets, frame/sample counts, controller flags, multiplayer handling, reset markers, controller record widths, and command-byte decoding across the M64, VBM, SMV, GMV, PXM, PJM, DTM, FCM, BK2, LSMV, and LMP readers.</li>
 <li>
 <code>.pxm</code> is now correctly identified and decoded as the PCSX-rerecording format, including both controller ports, digital and analog controller widths, 128-centred axes, and per-frame control bytes.</li>
 <li>Ambiguous M64 and DTM multiplayer poll streams, and variable-width peripherals not implemented by a reader, now raise explicit errors instead of returning misassigned or misaligned input.</li>

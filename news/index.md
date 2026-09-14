@@ -1,9 +1,105 @@
 # Changelog
 
+## replayr 0.3.3.9006
+
+- Decode NES Arkanoid paddle columns without shifting the Fire button.
+  Paddle positions in the 0..160 range become signed movement samples;
+  stationary positions are not interpreted as held directional controls.
+  Other paddle platforms fail explicitly until their conventions are
+  supported.
+- Preserve PSX L3/R3 in BK2, PJM and PXM, recognize Nymashock’s
+  long-form axes and distinguish its 2.8 16-bit axes from the 2.9+ 8-bit
+  format. For binary PJM/PXM standard digital pads, retain reserved-bit
+  counts as metadata without inventing stick-click buttons absent from
+  that device.
+- Follow BizHawk’s ordered LogKey stream across extra/misplaced
+  separators. Report trailing characters that BizHawk does not consume;
+  do not invent controllers from those characters. Reject undeclared
+  numeric fields and active unknown controls.
+- Match Octoshock’s byte conversion for out-of-range logged axes (256
+  becomes zero), report each conversion, and retain strict range checks
+  for Nyma.
+
+## replayr 0.3.3.9005
+
+- Correct FCM event timing: each delta is the wait before its button
+  change. Simultaneous zero-delta events now preserve actual button
+  combinations.
+- Match FCEUX’s legacy zero-delta extension handling for old FCEU
+  movies, preventing stream misalignment and spurious extra-controller
+  input.
+- Do not interpret version-1 FCM metadata as version-2 ROM header
+  fields.
+
+## replayr 0.3.3.9004
+
+- [`read_dtm()`](../reference/read_dtm.md) accepts an explicit
+  caller-supplied repeating controller order. Default multi-controller
+  reads still stop because DTM stores no port IDs. The assumption is
+  recorded in the header and partial cycles are rejected.
+
+## replayr 0.3.3.9003
+
+- Retain TESTJ GMV compatibility using Gens’ post-TESTA flag layout.
+- Distinguish incomplete SMV input records from unused trailing bytes
+  after a complete declared input range. Preserve the declared range and
+  record the unused tail length without interpreting that tail as
+  gameplay.
+
+## replayr 0.3.3.9002
+
+- Recover a complete FCM final delta when the header byte range ends
+  inside that record and its physical bytes exactly complete the
+  declared duration. Stale bytes after the movie are not appended to the
+  input track.
+
+## replayr 0.3.3.9001
+
+- Support pre-TEST9 GMV streams without interpreting reserved header
+  bytes as controller configuration; retain recorded extra buttons and
+  report unknown controller type and frame rate.
+- Read localized NES BK2 button names. An empty LogKey requires an
+  explicit NES header and the complete standard two-port row layout
+  before positional decoding.
+- Report bounded whole-record SMV (one sample) and DTM (two polls)
+  length shortfalls without adding data. Partial records and larger
+  losses remain errors.
+- Validate every FCM delta record; tolerate an overstated byte count
+  only if complete available records cover the entire declared duration.
+- Interpret complete all-NUL PJM records as PSXjin does (non-dot means
+  pressed), with a warning and header audit count. Do not replace them
+  with neutral input.
+- Add real-corpus and malformed-input regression checks for these cases.
+
+## replayr 0.3.3.9000
+
+### Bug fixes
+
+- PSXjin text input now uses the source-defined R1/L1/R2/L2 order and
+  reads `#` as Square, not a reset marker. Analog text ports use their
+  full 16-bit mask and retain quantised left/right stick directions. A
+  complete final record without CRLF is accepted with its missing
+  newline length recorded; missing controller or command content remains
+  an error. Binary input uses the header’s controller-data offset and
+  configured record widths, including analog pads. Complete text records
+  beyond a stale smaller header count are retained. Active unrepresented
+  stick-click buttons raise an explicit error instead of disappearing
+  silently.
+- Vectorized PXM button and stick decoding avoids repeatedly copying the
+  whole input array for every frame. Regression tests compare directions
+  exactly with the previous implementation, including deadzone
+  boundaries.
+
 ## replayr 0.3.3
 
 ### Bug fixes
 
+- [`read_pjm()`](../reference/read_pjm.md) now accepts a PSXjin text
+  movie that ends on a complete controller-record boundary at most two
+  frames before its declared length. The reader warns, returns only the
+  physical records, and records the declared count, available count, and
+  shortfall in the movie header. Partial final records and larger
+  truncations remain errors.
 - Corrected header offsets, frame/sample counts, controller flags,
   multiplayer handling, reset markers, controller record widths, and
   command-byte decoding across the M64, VBM, SMV, GMV, PXM, PJM, DTM,
