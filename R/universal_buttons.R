@@ -14,7 +14,8 @@
 #' One-character symbol per universal-button slot. Length 40. Indexed by
 #' slot number using one-based R semantics: slot 1 = "R" (Right),
 #' slot 8 = "A", and so on. Slots 31..40 are the Intellivision /
-#' ColecoVision numeric keypad (digits 0-9). INTV's Enter/Clear and
+#' ColecoVision numeric keypad (digits 0-9). PSX uses slots 31/32 for
+#' L3/R3 stick clicks; these do not coexist with keypad hardware. INTV's Enter/Clear and
 #' Coleco's Star/Pound do not have dedicated slots — they fold into
 #' Start (slot 5) and Select (slot 6) since they're functionally
 #' Start/Select on those platforms (pressed once at boot).
@@ -60,7 +61,7 @@ universal_button_names <- function() {
     "Stick-E", "Stick-NE", "Stick-N", "Stick-NW",
     "Stick-W", "Stick-SW", "Stick-S", "Stick-SE",
     "L2", "R2",
-    "Keypad-0", "Keypad-1", "Keypad-2", "Keypad-3", "Keypad-4",
+    "Keypad-0/L3", "Keypad-1/R3", "Keypad-2", "Keypad-3", "Keypad-4",
     "Keypad-5", "Keypad-6", "Keypad-7", "Keypad-8", "Keypad-9"
   )
 }

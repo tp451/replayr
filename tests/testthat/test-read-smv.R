@@ -37,3 +37,25 @@ test_that("read_smv() rejects variable-width peripherals", {
   on.exit(unlink(tf))
   expect_error(read_smv(tf), "unsupported SMV peripheral")
 })
+
+test_that('SMV reports one whole missing sample but rejects partial or larger loss', {
+  tf<-.mk_smv(c(0L,256L),frame_count=2L);on.exit(unlink(tf))
+  expect_warning(mv<-read_smv(tf),'no input invented')
+  expect_equal(n_frames(mv),2L)
+  expect_identical(mv$header$trailingSampleShortfall,'1')
+  bytes<-readBin(tf,'raw',n=file.info(tf)$size)
+  writeBin(head(bytes,-1L),tf)
+  expect_error(read_smv(tf),'partial final')
+  writeBin(head(bytes,-2L),tf)
+  expect_error(read_smv(tf),'truncated SMV')
+})
+
+test_that('SMV ignores unused tail bytes after the complete declared range', {
+  tf<-.mk_smv(c(0L,256L));on.exit(unlink(tf))
+  bytes<-readBin(tf,'raw',n=file.info(tf)$size)
+  writeBin(c(bytes,as.raw(c(255,255,255))),tf)
+  mv<-read_smv(tf)
+  expect_equal(n_frames(mv),2L)
+  expect_equal(sum(mv$inputs),1L)
+  expect_identical(mv$header$unusedTrailingBytes,'3')
+})

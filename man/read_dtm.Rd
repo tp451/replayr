@@ -4,10 +4,13 @@
 \alias{read_dtm}
 \title{Read a Dolphin .dtm GameCube movie file}
 \usage{
-read_dtm(path)
+read_dtm(path, controller_order = NULL)
 }
 \arguments{
 \item{path}{Path to a .dtm file.}
+\item{controller_order}{Optional repeating sequence of enabled physical ports
+(1--4). This is an explicit caller assumption, not stored controller identity.
+Multi-controller reads require it. Incomplete cycles are rejected.}
 }
 \value{
 A \code{replayr_movie} object.

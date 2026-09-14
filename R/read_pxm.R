@@ -25,7 +25,7 @@
 
 # Bit 0..15 in the active-high PSX button word -> universal slot.
 .PSX_BIT_TO_UNI <- c(
-  6L, NA_integer_, NA_integer_, 5L,
+  6L, 31L, 32L, 5L,
   4L, 1L, 3L, 2L,
   29L, 30L, 11L, 12L,
   9L, 8L, 7L, 10L
@@ -62,10 +62,33 @@
   inputs
 }
 
+# Vectorized equivalent of .pxm_quantise_sticks: avoid copying the entire movie
+# array for each frame of a long analog recording.
+.pxm_stick_matrix <- function(axes, deadzone = 32L) {
+  axes <- matrix(axes,ncol=4L)
+  result <- matrix(FALSE, nrow(axes), 30L)
+  lx <- axes[,1L]-128L; ly <- 128L-axes[,2L]
+  rx <- axes[,3L]-128L; ry <- 128L-axes[,4L]
+  active <- which(lx*lx+ly*ly >= deadzone*deadzone)
+  if(length(active)) {
+    sectors <- as.integer((atan2(ly[active],lx[active])+pi/8) %/% (pi/4)) %% 8L
+    result[cbind(active,.STICK_SECTOR_TO_UNI[sectors+1L])] <- TRUE
+  }
+  active <- which(rx*rx+ry*ry >= deadzone*deadzone)
+  if(length(active)) {
+    slots <- ifelse(abs(rx[active])>=abs(ry[active]),
+                    ifelse(rx[active]>0,17L,18L),ifelse(ry[active]>0,20L,19L))
+    result[cbind(active,slots)] <- TRUE
+  }
+  result
+}
+
 #' Read a PCSX-rerecording .pxm movie file
 #'
 #' Reads standard digital and analog-controller PXM movies. Button input maps
-#' to the 30-slot PSX universal layout; analog sticks are quantised in the same
+#' to the 32-slot PSX universal layout, including L3/R3 on analog devices.
+#' Standard digital pad reserved bits are counted in header metadata, not
+#' interpreted as stick-click buttons. Analog sticks are quantised in the same
 #' way as other replayr PSX readers. The final per-frame control byte is exposed
 #' through `movie$commands`. Mouse, NegCon, and light-gun controller types are
 #' rejected instead of being silently mis-decoded.
@@ -121,26 +144,33 @@ read_pxm <- function(path) {
   }
 
   n_players <- max(active_ports)
-  n_buttons <- 30L
+  n_buttons <- 32L
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
   port_offsets <- c(0L, widths[1L])
+  reserved_digital_bits <- integer(n_players)
 
   if (n_frames > 0L) {
-    for (fi in seq_len(n_frames)) {
-      frame_off <- controller_data_offset + (fi - 1L) * stride
-      for (port in active_ports) {
-        off <- frame_off + port_offsets[port]
-        word <- as.integer(data[off + 1L]) +
-                bitwShiftL(as.integer(data[off + 2L]), 8L)
-        inputs <- .pxm_decode_buttons(inputs, fi, port, word)
-        if (controller_types[port] %in% c(5L, 7L)) {
-          axes <- data[(off + 3L):(off + 6L)]
-          inputs <- .pxm_quantise_sticks(inputs, fi, port, axes)
-        }
+    frame_off <- controller_data_offset + (seq_len(n_frames) - 1L) * stride
+    for (port in active_ports) {
+      off <- frame_off + port_offsets[port]
+      words <- as.integer(data[off+1L])+256L*as.integer(data[off+2L])
+      if(controller_types[port]==4L)
+        reserved_digital_bits[port] <- sum(bitwAnd(words,2L)!=0L)+sum(bitwAnd(words,4L)!=0L)
+      for(bit in 0:15) {
+        # Standard digital pads have no stick-click buttons. PXM documents
+        # bits 1/2 as unknown for type 4, not as L3/R3.
+        if(controller_types[port]==4L && bit %in% c(1L,2L))next
+        slot <- .PSX_BIT_TO_UNI[bit+1L]
+        if(!is.na(slot))inputs[,port,slot] <- bitwAnd(words,2^bit)!=0L
       }
-      commands[fi] <- as.integer(data[frame_off + sum(widths) + 1L])
+      if(controller_types[port] %in% c(5L,7L)) {
+        axes <- vapply(3:6,function(k)as.integer(data[off+k]),integer(n_frames))
+        stick <- .pxm_stick_matrix(axes)
+        for(slot in 17:28)inputs[,port,slot] <- stick[,slot]
+      }
     }
+    commands <- as.integer(data[frame_off + sum(widths) + 1L])
   }
 
   author <- ""
@@ -159,6 +189,7 @@ read_pxm <- function(path) {
     flags = sprintf("0x%x", flags),
     controllerType1 = as.character(controller_types[1L]),
     controllerType2 = as.character(controller_types[2L]),
+    reservedDigitalPadBitCounts = reserved_digital_bits,
     rerecordCount = as.character(rerec),
     controllerDataOffset = as.character(controller_data_offset),
     author = author

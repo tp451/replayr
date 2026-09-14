@@ -83,9 +83,13 @@
 #' error.
 #'
 #' @param path Path to a .dtm file.
+#' @param controller_order Optional repeating sequence of physical controller
+#'   ports (1--4). Required for multi-controller movies because DTM does not
+#'   record port IDs. Supplying this is an explicit caller assumption, not a
+#'   determination made by the reader. Incomplete cycles are rejected.
 #' @return A `replayr_movie` object.
 #' @export
-read_dtm <- function(path) {
+read_dtm <- function(path, controller_order = NULL) {
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x100L || !identical(data[1:4], charToRaw("DTM\x1A"))) {
     stop(path, ": not a DTM file")
@@ -105,18 +109,33 @@ read_dtm <- function(path) {
   # DTM records controller polls sequentially and does not tag them with a port
   # number. Games need not poll every connected port once per frame, so fixed
   # grouping would silently assign records to the wrong players.
-  if (n_gc_ports != 1L) {
+  enabled_ports <- which(bitwAnd(ctrl_mask,bitwShiftL(1L,0:3))!=0L)
+  if (n_gc_ports != 1L && is.null(controller_order)) {
     stop(path, ": multi-controller DTM poll streams are not supported")
   }
+  supplied_order <- !is.null(controller_order)
+  if (is.null(controller_order)) controller_order <- enabled_ports
+  if (!is.numeric(controller_order) || anyNA(controller_order) ||
+      any(controller_order != as.integer(controller_order)) ||
+      anyDuplicated(controller_order) ||
+      !identical(sort(as.integer(controller_order)),as.integer(enabled_ports)))
+    stop(path, ': controller_order must list every enabled port exactly once')
+  controller_order <- as.integer(controller_order)
 
   body <- if (length(data) > 0x100L) data[(0x100L + 1L):length(data)] else raw(0)
   bytes_per_frame <- 8L
   have_frames <- length(body) %/% bytes_per_frame
-  if (input_count > have_frames) {
+  if(length(body) %% bytes_per_frame) stop(path, ': partial final DTM poll')
+  shortfall <- max(0, input_count - have_frames)
+  if (shortfall > 2L) {
     stop(path, ": truncated DTM input stream (declares ", input_count,
          " polls, has ", have_frames, ")")
   }
-  n_frames <- if (input_count > 0) as.integer(input_count) else have_frames
+  if(shortfall) warning(path, ': DTM header exceeds the complete stream by ',shortfall,
+                       ' polls; no input invented',call.=FALSE)
+  n_frames <- if (input_count > 0) min(as.integer(input_count), have_frames) else have_frames
+  if (n_frames %% length(controller_order))
+    stop(path, ': incomplete caller-supplied controller cycle')
   DTM_FRAME_LIMIT <- 2000000L
   if (n_frames > DTM_FRAME_LIMIT) {
     stop(path, ": DTM input stream exceeds the supported two-million-poll limit")
@@ -165,13 +184,28 @@ read_dtm <- function(path) {
     }
   }
 
+  if(length(controller_order)>1L) {
+    polls<-inputs;poll_commands<-commands
+    cycles<-n_frames %/% length(controller_order)
+    inputs<-.empty_inputs(cycles,max(controller_order),n_buttons)
+    commands<-integer(cycles)
+    if(cycles>0L)for(j in seq_along(controller_order)) {
+      ix<-seq.int(j,n_frames,by=length(controller_order))
+      inputs[,controller_order[j],]<-polls[ix,1,,drop=FALSE]
+      commands<-bitwOr(commands,poll_commands[ix])
+    }
+  }
   header <- list(
     "_format" = "dtm",
     romId = rom_id,
     rerecordCount = as.character(rerec),
     frameCount = as.character(frame_count),
     inputCount = as.character(input_count),
-    controllerMask = sprintf("0x%02x", ctrl_mask)
+    availablePollCount = as.character(have_frames),
+    trailingPollShortfall = as.character(shortfall),
+    controllerMask = sprintf("0x%02x", ctrl_mask),
+    controllerOrder = paste(controller_order,collapse=','),
+    controllerAssignment = if(supplied_order) 'caller-supplied repeating order; not stored in DTM' else 'single enabled controller'
   )
   mv <- .new_movie(
     header = header,

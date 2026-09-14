@@ -9,6 +9,17 @@ test_that("read_gmv() parses the bundled synthetic Genesis movie", {
   expect_equal(n_players(mv), 2L)
 })
 
+test_that('TESTJ uses the post-TESTA controller and flag layout', {
+  hdr<-raw(64L);hdr[1:16]<-charToRaw('Gens Movie TESTJ')
+  hdr[21:22]<-charToRaw('66');hdr[23]<-as.raw(128)
+  tf<-tempfile(fileext='.gmv');on.exit(unlink(tf))
+  writeBin(c(hdr,as.raw(c(255,255,254))),tf)
+  mv<-read_gmv(tf)
+  expect_true(mv$inputs[1,1,9])
+  expect_identical(mv$header$fps,'50')
+  expect_identical(mv$header$p1PadType,'6')
+})
+
 test_that("read_gmv() decodes six-button extras and three-player mode", {
   hdr <- raw(64L)
   hdr[1:15] <- charToRaw("Gens Movie TEST")

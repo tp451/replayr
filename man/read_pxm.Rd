@@ -14,7 +14,9 @@ A \code{replayr_movie} object.
 }
 \description{
 Reads standard digital and analog-controller PXM movies. Button input maps
-to the 30-slot PSX universal layout; analog sticks are quantised in the same
+to the 32-slot PSX universal layout, including L3/R3 on analog devices.
+Standard digital pad reserved bits are counted in header metadata, not
+interpreted as stick-click buttons. Analog sticks are quantised in the same
 way as other replayr PSX readers. The final per-frame control byte is exposed
 through \code{movie$commands}. Mouse, NegCon, and light-gun controller types are
 rejected instead of being silently mis-decoded.

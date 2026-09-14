@@ -97,11 +97,18 @@ read_smv <- function(path) {
   # SMV stores an initial state before frame zero, so standard-pad movies have
   # frame_count + 1 input samples. Never silently truncate a declared movie.
   required_frames <- n_frames_field + 1
-  if (required_frames > have_frames) {
+  # A rerecorded SMV can retain unused bytes after its declared input range.
+  # Only an incomplete sample INSIDE that range is truncation. Do not decode
+  # stale tail bytes, or reject a complete movie because its unused tail is odd.
+  if(have_frames < required_frames && length(body) %% bytes_per_frame)
+    stop(path, ': partial final SMV sample')
+  shortfall <- max(0, required_frames - have_frames)
+  if (shortfall > 1L) {
     stop(path, ": truncated SMV input stream (needs ", required_frames,
          " samples, has ", have_frames, ")")
   }
-  n_frames <- required_frames
+  if(shortfall) warning(path, ': SMV header exceeds the complete stream by one sample; no input invented', call.=FALSE)
+  n_frames <- min(required_frames, have_frames)
 
   n_buttons <- 12L
   n_players <- polled
@@ -166,6 +173,10 @@ read_smv <- function(path) {
     opts = sprintf("0x%x", opts),
     sync = sprintf("0x%x", sync),
     inputSampleCount = if (is.na(input_sample_count)) "" else as.character(input_sample_count),
+    declaredFrameCount = as.character(n_frames_field),
+    availableSampleCount = as.character(have_frames),
+    trailingSampleShortfall = as.character(shortfall),
+    unusedTrailingBytes = as.character(max(0L,length(body)-n_frames*bytes_per_frame)),
     controllerTypes = paste(controller_types, collapse = ","),
     romName = rom_name
   )

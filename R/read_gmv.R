@@ -61,11 +61,17 @@ read_gmv <- function(path) {
     stop(path, ": not a GMV file")
   }
   version <- rawToChar(data[16])
+  version_num <- as.integer(data[16]) - utf8ToInt('0')
+  if (!version %in% c(as.character(0:9), 'A', 'J')) stop(path, ': unsupported GMV version')
   rerec <- .read_u32_le(data, 0x10L)
   p1_pad <- rawToChar(data[0x15L])
   p2_pad <- rawToChar(data[0x16L])
-  flags <- as.integer(data[0x17L])
-  if (!(p1_pad %in% c("3", "6")) || !(p2_pad %in% c("3", "6"))) {
+  # Gens GetMovieInfo reads pad types only from TEST9 onward, and flags
+  # only from TESTA. Earlier files still record all three input bytes;
+  # retain their extra-button bits without claiming a known hardware type.
+  if (version_num < 9L) p1_pad <- p2_pad <- 'unspecified'
+  flags <- if(version_num >= 17L) as.integer(data[0x17L]) else 0L
+  if (!(p1_pad %in% c("3", "6", 'unspecified')) || !(p2_pad %in% c("3", "6", 'unspecified'))) {
     stop(path, ": unsupported GMV controller type")
   }
   is_three_player <- bitwAnd(flags, 0x20L) != 0L
@@ -110,7 +116,7 @@ read_gmv <- function(path) {
           if (bitwAnd(b2, bitwShiftL(1L, bit)) == 0L) {
             ps <- .GMV_6B_BIT_TO_PLAYER_SLOT[[bit + 1L]]
             pad_type <- if (ps[1L] == 1L) p1_pad else p2_pad
-            if (pad_type == "6") inputs[fi, ps[1L], ps[2L]] <- TRUE
+            if (pad_type %in% c("6", 'unspecified')) inputs[fi, ps[1L], ps[2L]] <- TRUE
           }
         }
       }
@@ -121,7 +127,7 @@ read_gmv <- function(path) {
     "_format" = "gmv",
     version = version,
     rerecordCount = as.character(rerec),
-    fps = if (is_pal) "50" else "60",
+    fps = if (version_num < 17L) '' else if (is_pal) "50" else "60",
     p1PadType = p1_pad,
     p2PadType = p2_pad,
     threePlayer = as.character(is_three_player),
