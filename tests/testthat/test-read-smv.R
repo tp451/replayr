@@ -5,7 +5,6 @@ test_that("replayr:::.decode_smv() parses the bundled synthetic SNES movie", {
   expect_equal(n_frames(mv), 3600L)
   expect_equal(n_buttons(mv), 12L)
 })
-
 .mk_smv <- function(words, frame_count = length(words) - 1L,
                     controller_type = 1L) {
   hdr <- raw(0x40L)
@@ -21,7 +20,6 @@ test_that("replayr:::.decode_smv() parses the bundled synthetic SNES movie", {
   writeBin(c(hdr, as.raw(body)), tf)
   tf
 }
-
 test_that("replayr:::.decode_smv() includes the initial sample and recognises reset", {
   tf <- .mk_smv(c(0xffffL, 0x8000L))
   on.exit(unlink(tf))
@@ -31,31 +29,30 @@ test_that("replayr:::.decode_smv() includes the initial sample and recognises re
   expect_equal(sum(mv$inputs[1L, , ]), 0L)
   expect_true(mv$inputs[2L, 1L, 7L])
 })
-
 test_that("replayr:::.decode_smv() rejects variable-width peripherals", {
   tf <- .mk_smv(c(0L), controller_type = 2L)
   on.exit(unlink(tf))
   expect_error(replayr:::.decode_smv(tf), "unsupported SMV peripheral")
 })
-
 test_that('SMV reports one whole missing sample but rejects partial or larger loss', {
-  tf<-.mk_smv(c(0L,256L),frame_count=2L);on.exit(unlink(tf))
-  expect_warning(mv<-replayr:::.decode_smv(tf),'no input invented')
-  expect_equal(n_frames(mv),2L)
-  expect_identical(mv$header$trailingSampleShortfall,'1')
-  bytes<-readBin(tf,'raw',n=file.info(tf)$size)
-  writeBin(head(bytes,-1L),tf)
-  expect_error(replayr:::.decode_smv(tf),'partial final')
-  writeBin(head(bytes,-2L),tf)
-  expect_error(replayr:::.decode_smv(tf),'truncated SMV')
+  tf <- .mk_smv(c(0L, 256L), frame_count = 2L)
+  on.exit(unlink(tf))
+  expect_warning(mv <- replayr:::.decode_smv(tf), 'no input invented')
+  expect_equal(n_frames(mv), 2L)
+  expect_identical(mv$header$trailingSampleShortfall, '1')
+  bytes <- readBin(tf, 'raw', n = file.info(tf)$size)
+  writeBin(head(bytes, -1L), tf)
+  expect_error(replayr:::.decode_smv(tf), 'partial final')
+  writeBin(head(bytes, -2L), tf)
+  expect_error(replayr:::.decode_smv(tf), 'truncated SMV')
 })
-
 test_that('SMV ignores unused tail bytes after the complete declared range', {
-  tf<-.mk_smv(c(0L,256L));on.exit(unlink(tf))
-  bytes<-readBin(tf,'raw',n=file.info(tf)$size)
-  writeBin(c(bytes,as.raw(c(255,255,255))),tf)
-  mv<-replayr:::.decode_smv(tf)
-  expect_equal(n_frames(mv),2L)
-  expect_equal(sum(mv$inputs),1L)
-  expect_identical(mv$header$unusedTrailingBytes,'3')
+  tf <- .mk_smv(c(0L, 256L))
+  on.exit(unlink(tf))
+  bytes <- readBin(tf, 'raw', n = file.info(tf)$size)
+  writeBin(c(bytes, as.raw(c(255, 255, 255))), tf)
+  mv <- replayr:::.decode_smv(tf)
+  expect_equal(n_frames(mv), 2L)
+  expect_equal(sum(mv$inputs), 1L)
+  expect_identical(mv$header$unusedTrailingBytes, '3')
 })

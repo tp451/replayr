@@ -69,6 +69,7 @@ read_movie <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", 
     pjm = read_pjm,
     dtm = read_dtm,
     lmp = read_lmp,
-    stop(sprintf("unsupported movie format: .%s (%s)", ext, basename(path))))
+    stop(sprintf("unsupported movie format: .%s (%s)", ext, basename(path)))
+  )
   reader(path, analog = analog, deadzone = deadzone, triggers = triggers, ...)
 }

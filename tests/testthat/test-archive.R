@@ -11,16 +11,15 @@ make_recording_archive <- function(names = "one.fm2", payload = NULL) {
   zip::zip(path, files = names, root = root, compression_level = 0L)
   path
 }
-
 replace_archive_bytes <- function(path, from, to) {
   bytes <- readBin(path, "raw", file.info(path)$size)
-  from <- charToRaw(from); to <- charToRaw(to)
+  from <- charToRaw(from)
+  to <- charToRaw(to)
   stopifnot(length(from) == length(to))
   for (at in grepRaw(from, bytes, fixed = TRUE, all = TRUE))
     bytes[seq.int(at, length.out = length(from))] <- to
   writeBin(bytes, path)
 }
-
 test_that("ZIP selection preserves source identity and requires an unambiguous member", {
   path <- make_recording_archive(c("one.fm2", "two.fm2"))
   on.exit(unlink(path))
@@ -36,7 +35,6 @@ test_that("ZIP selection preserves source identity and requires an unambiguous m
   replace_archive_bytes(path, "two.fm2", "one.fm2")
   expect_error(read_movie(path, member = "one.fm2"), "Duplicate archive")
 })
-
 test_that("ZIP checksums are verified and extraction directories are cleaned", {
   path <- make_recording_archive()
   on.exit(unlink(path))
@@ -47,12 +45,12 @@ test_that("ZIP checksums are verified and extraction directories are cleaned", {
   expect_error(read_movie(path), "corrupt|extract|CRC|checksum")
   expect_setequal(list.dirs(tempdir(), recursive = FALSE), before)
 })
-
 test_that("ZIP member type and case collisions are checked before extraction", {
   paths <- character()
   on.exit(unlink(paths))
   for (type in c("symlink", "directory")) {
-    path <- make_recording_archive(); paths <- c(paths, path)
+    path <- make_recording_archive()
+    paths <- c(paths, path)
     bytes <- readBin(path, "raw", file.info(path)$size)
     central <- grepRaw(as.raw(c(80, 75, 1, 2)), bytes, fixed = TRUE)[1L]
     bytes[central + 5L] <- as.raw(3L) # Unix creator, with source file type in st_mode.
@@ -60,11 +58,11 @@ test_that("ZIP member type and case collisions are checked before extraction", {
     writeBin(bytes, path)
     expect_error(read_movie(path, member = "one.fm2"), "regular file")
   }
-  path <- make_recording_archive(c("one.fm2", "two.fm2")); paths <- c(paths, path)
+  path <- make_recording_archive(c("one.fm2", "two.fm2"))
+  paths <- c(paths, path)
   replace_archive_bytes(path, "two.fm2", "ONE.FM2")
   expect_error(read_movie(path, member = "one.fm2"), "Duplicate archive")
 })
-
 test_that("ZIP imports handle absent recordings and flatten directory paths", {
   path <- make_recording_archive("notes.txt")
   nested <- make_recording_archive("folder/one.fm2")
@@ -80,7 +78,6 @@ test_that("ZIP imports handle absent recordings and flatten directory paths", {
   expect_identical(n_frames(movie), 1L)
   expect_identical(movie$source_member, "../xxx/one.fm2")
 })
-
 test_that("ZIP imports reject corrupt sizes and Windows-special file names", {
   path <- make_recording_archive()
   special <- make_recording_archive()

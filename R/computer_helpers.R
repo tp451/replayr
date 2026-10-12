@@ -4,34 +4,36 @@
 .computer_number <- function(x, what, min = -Inf, max = Inf, whole = TRUE) {
   out <- suppressWarnings(as.numeric(x))
   if (anyNA(out) || any(!is.finite(out)) || any(out < min | out > max) ||
-      (whole && any(out != trunc(out)))) stop("Invalid ", what, call. = FALSE)
+    (whole && any(out != trunc(out)))) stop("Invalid ", what, call. = FALSE)
   out
 }
-
 .computer_ini <- function(lines) {
-  result <- list(); section <- "General"
+  result <- list()
+  section <- "General"
   for (line in lines) {
     line <- trimws(line)
     if (!nzchar(line) || startsWith(line, ";") || startsWith(line, "#")) next
-    if (grepl("^\\[.*\\]$", line)) { section <- substr(line, 2L, nchar(line)-1L); next }
+    if (grepl("^\\[.*\\]$", line)) {
+      section <- substr(line, 2L, nchar(line) - 1L)
+      next
+    }
     at <- regexpr("=", line, fixed = TRUE)
     if (at < 1L) next
-    key <- trimws(substr(line, 1L, at-1L)); value <- trimws(substring(line, at+1L))
+    key <- trimws(substr(line, 1L, at - 1L))
+    value <- trimws(substring(line, at + 1L))
     if (is.null(result[[section]])) result[[section]] <- list()
     result[[section]][[key]] <- value
   }
   result
 }
-
 .computer_tar_path <- function(x) {
   x <- sub("/$", "", sub("^(\\./)+", "", x))
   bits <- strsplit(x, "/", fixed = TRUE)[[1L]]
   if (!nzchar(x) || startsWith(x, "/") || grepl("[\\\\:\\x00-\\x1f]", x, perl = TRUE) ||
-      any(bits %in% c("", ".", "..")))
+    any(bits %in% c("", ".", "..")))
     stop("Unsafe recording archive or include path: ", x, call. = FALSE)
   x
 }
-
 # Read tar members in memory: archive paths are never used for file writes.
 .computer_tar_regular <- function(path, files = NULL) {
   con <- gzfile(path, "rb")
@@ -64,7 +66,10 @@
     digits <- utf8ToInt(text) - 48L
     sum(digits * 8^rev(seq_along(digits) - 1L))
   }
-  scripts <- list(); metadata <- list(); seen <- character(); total <- 0
+  scripts <- list()
+  metadata <- list()
+  seen <- character()
+  total <- 0
   repeat {
     block <- take(512L)
     if (all(block == as.raw(0L))) {
@@ -78,10 +83,14 @@
       }
       break
     }
-    check <- octal(block[149:156]); copy <- block; copy[149:156] <- as.raw(32L)
+    check <- octal(block[149:156])
+    copy <- block
+    copy[149:156] <- as.raw(32L)
     if (sum(as.integer(copy)) != check) stop("Invalid recording tar header checksum", call. = FALSE)
-    type <- as.integer(block[157L]); size <- octal(block[125:136])
-    name <- field(block[1:100]); prefix <- field(block[346:500])
+    type <- as.integer(block[157L])
+    size <- octal(block[125:136])
+    name <- field(block[1:100])
+    prefix <- field(block[346:500])
     if (nzchar(prefix)) name <- paste(prefix, name, sep = "/")
     name <- if (type == 53L && name %in% c(".", "./")) "." else .computer_tar_path(name)
     if (tolower(name) %in% seen) stop("Duplicate recording archive member: ", name, call. = FALSE)
@@ -95,14 +104,15 @@
     data <- take(size)
     if (size %% 512) take(512 - size %% 512)
     total <- total + size
-    metadata[[length(metadata) + 1L]] <- data.frame(member = name, size = size,
-      type = if (type == 53L) "directory" else "file", stringsAsFactors = FALSE)
+    metadata[[length(metadata) + 1L]] <- data.frame(
+      member = name, size = size,
+      type = if (type == 53L) "directory" else "file", stringsAsFactors = FALSE
+    )
     if (type != 53L && (is.null(files) || name %in% files)) scripts[[name]] <- data
   }
   list(members = scripts, metadata = if (length(metadata)) do.call(rbind, metadata) else
     data.frame(member = character(), size = numeric(), type = character()))
 }
-
 # Selected members are decoded only after all tar headers have been checked.
 .computer_tar_text <- function(path, files) {
   archive <- .computer_tar_regular(path, files = files)
@@ -111,15 +121,17 @@
   stats::setNames(lapply(files, function(name) {
     bytes <- archive$members[[name]]
     if (any(bytes == as.raw(0L))) stop("Archive text contains a NUL byte: ", name, call. = FALSE)
-    text <- rawToChar(bytes); Encoding(text) <- "UTF-8"
+    text <- rawToChar(bytes)
+    Encoding(text) <- "UTF-8"
     if (!validUTF8(text)) stop("Archive text is not UTF-8: ", name, call. = FALSE)
     text <- sub("^\ufeff", "", text)
     strsplit(gsub("\r\n", "\n", text, fixed = TRUE), "\n", fixed = TRUE)[[1L]]
   }), files)
 }
-
 .computer_count_note <- function(declared, actual, label) {
   if (!is.null(declared) && !is.na(declared) && declared != actual)
     warning(label, " declares ", declared, " observations but stores ", actual,
-            "; all complete observations were retained", call. = FALSE)
+      "; all complete observations were retained",
+      call. = FALSE
+    )
 }

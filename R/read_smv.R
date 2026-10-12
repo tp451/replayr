@@ -21,34 +21,24 @@
 #   bit 12: Start        bit 13: Select
 #   bit 14: Y            bit 15: B
 #   bits 0-3: reserved.
-
-# Bit-index 0..15 -> 1-based universal slot, NA for reserved.
+# Bit-index 0..15 -> 1-based private decoder slot, NA for reserved.
 .SMV_BIT_TO_UNI <- c(
-  NA_integer_, NA_integer_, NA_integer_, NA_integer_,  # bits 0-3 reserved
-  12L,  # bit  4: R-shoulder -> slot 12
-  11L,  # bit  5: L-shoulder -> slot 11
-  9L,   # bit  6: X          -> slot 9
-  8L,   # bit  7: A          -> slot 8
-  1L,   # bit  8: Right      -> slot 1
-  2L,   # bit  9: Left       -> slot 2
-  3L,   # bit 10: Down       -> slot 3
-  4L,   # bit 11: Up         -> slot 4
-  5L,   # bit 12: Start      -> slot 5
-  6L,   # bit 13: Select     -> slot 6
-  10L,  # bit 14: Y          -> slot 10
-  7L    # bit 15: B          -> slot 7
+  NA_integer_, NA_integer_, NA_integer_, NA_integer_, # bits 0-3 reserved
+  12L, # bit  4: R-shoulder -> slot 12
+  11L, # bit  5: L-shoulder -> slot 11
+  9L, # bit  6: X          -> slot 9
+  8L, # bit  7: A          -> slot 8
+  1L, # bit  8: Right      -> slot 1
+  2L, # bit  9: Left       -> slot 2
+  3L, # bit 10: Down       -> slot 3
+  4L, # bit 11: Up         -> slot 4
+  5L, # bit 12: Start      -> slot 5
+  6L, # bit 13: Select     -> slot 6
+  10L, # bit 14: Y          -> slot 10
+  7L # bit 15: B          -> slot 7
 )
-
-#' Read a Snes9x-rerecording .smv movie file
-#'
-#' SNES gamepads come out 12 buttons wide (universal slots 1..12) so
-#' .smv publications share the same shape as .lsmv and .bk2 SNES pubs.
-#' The controller mask at offset 0x14 selects which ports the file polls;
-#' each polled port becomes one player in the output.
-#'
-#' @param path Path to a .smv file.
-#' @return A `replayr_movie` object.
-#' @noRd
+# Decode standard-pad records, including the initial state before frame
+# zero. Reset markers become commands rather than pressed controls.
 .decode_smv <- function(path) {
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x20L || !identical(data[1:4], charToRaw("SMV\x1A"))) {
@@ -68,7 +58,6 @@
   if (ctrl_off < 0x20L || ctrl_off > length(data)) {
     stop(path, ": invalid SMV controller-data offset")
   }
-
   input_sample_count <- NA_real_
   controller_types <- integer(0)
   if (version >= 4L) {
@@ -80,17 +69,17 @@
     # rejected instead of silently shifting every subsequent frame.
     unsupported <- controller_types[!(controller_types %in% c(0L, 1L, 5L))]
     if (length(unsupported)) {
-      stop(path, ": unsupported SMV peripheral type(s): ",
-           paste(unique(unsupported), collapse = ", "))
+      stop(
+        path, ": unsupported SMV peripheral type(s): ",
+        paste(unique(unsupported), collapse = ", ")
+      )
     }
   }
-
   # Count polled ports from ctrl_mask bits.
   polled <- sum(bitwAnd(ctrl_mask, bitwShiftL(1L, 0:7)) != 0L)
   if (polled == 0L) {
     stop(sprintf("%s: SMV with no polled controllers (mask=0x%x)", path, ctrl_mask))
   }
-
   body <- if (ctrl_off < length(data)) data[(ctrl_off + 1L):length(data)] else raw(0)
   bytes_per_frame <- 2L * polled
   have_frames <- length(body) %/% bytes_per_frame
@@ -100,22 +89,21 @@
   # A rerecorded SMV can retain unused bytes after its declared input range.
   # Only an incomplete sample INSIDE that range is truncation. Do not decode
   # stale tail bytes, or reject a complete movie because its unused tail is odd.
-  if(have_frames < required_frames && length(body) %% bytes_per_frame)
+  if (have_frames < required_frames && length(body) %% bytes_per_frame)
     stop(path, ': partial final SMV sample')
   shortfall <- max(0, required_frames - have_frames)
   if (shortfall > 1L) {
-    stop(path, ": truncated SMV input stream (needs ", required_frames,
-         " samples, has ", have_frames, ")")
+    stop(
+      path, ": truncated SMV input stream (needs ", required_frames,
+      " samples, has ", have_frames, ")"
+    )
   }
-  if(shortfall) warning(path, ': SMV header exceeds the complete stream by one sample; no input invented', call.=FALSE)
+  if (shortfall) warning(path, ': SMV header exceeds the complete stream by one sample; no input invented', call. = FALSE)
   n_frames <- min(required_frames, have_frames)
-
   n_buttons <- 12L
   n_players <- polled
-
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
-
   if (n_frames > 0L) {
     for (fi in seq_len(n_frames)) {
       off <- (fi - 1L) * bytes_per_frame
@@ -123,7 +111,7 @@
       for (pi in seq_len(polled)) {
         po <- off + (pi - 1L) * 2L
         word <- as.integer(body[po + 1L]) +
-                bitwShiftL(as.integer(body[po + 2L]), 8L)
+          bitwShiftL(as.integer(body[po + 2L]), 8L)
         words[pi] <- word
         for (bit in 0:15) {
           if (bitwAnd(word, bitwShiftL(1L, bit)) == 0L) next
@@ -139,7 +127,6 @@
       }
     }
   }
-
   # Best-effort ROM name extraction. Different SMV versions push the
   # name to different offsets; scan the 0x23..0x60 region for the first
   # run of printable ASCII bytes >= 4 chars long.
@@ -148,7 +135,7 @@
   scan_end <- min(length(data), 0x60L)
   scan_chunk <- if (scan_start <= scan_end) data[scan_start:scan_end] else raw(0)
   ascii_mask <- as.integer(scan_chunk) >= 0x20L &
-                as.integer(scan_chunk) <= 0x7EL
+    as.integer(scan_chunk) <= 0x7EL
   if (any(ascii_mask)) {
     # Find first run of 4+ TRUE values.
     rl <- rle(ascii_mask)
@@ -163,7 +150,6 @@
       rom_name <- sub("[[:space:]]+$", "", rom_name)
     }
   }
-
   header <- list(
     "_format" = "smv",
     version = as.character(version),
@@ -176,7 +162,7 @@
     declaredFrameCount = as.character(n_frames_field),
     availableSampleCount = as.character(have_frames),
     trailingSampleShortfall = as.character(shortfall),
-    unusedTrailingBytes = as.character(max(0L,length(body)-n_frames*bytes_per_frame)),
+    unusedTrailingBytes = as.character(max(0L, length(body) - n_frames * bytes_per_frame)),
     controllerTypes = paste(controller_types, collapse = ","),
     romName = rom_name
   )

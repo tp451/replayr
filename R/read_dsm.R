@@ -34,20 +34,25 @@
     })
     channels <- matrix(suppressWarnings(as.integer(unlist(values))), ncol = expected, byrow = TRUE)
     if (anyNA(channels[, 1:3, drop = FALSE]) ||
-        (expected == 4L && anyNA(channels[widths == 4L, 4L])) ||
-        any(channels < 0L | channels > 255L, na.rm = TRUE)) stop(path, ": invalid DSM numeric channel")
+      (expected == 4L && anyNA(channels[widths == 4L, 4L])) ||
+      any(channels < 0L | channels > 255L, na.rm = TRUE)) stop(path, ": invalid DSM numeric channel")
     colnames(channels) <- c("touch_x", "touch_y", "touch_pressed", "microphone_sample")[seq_len(expected)]
     header$microphoneSampleStored <- expected == 4L
   }
   if (any(!channels[, "touch_pressed"] %in% 0:1)) stop(path, ": invalid DSM touch state")
-  keys <- c("dpad_right", "dpad_left", "dpad_down", "dpad_up", "select", "start",
-            "b", "a", "y", "x", "l1", "r1", "debug", "touch", "microphone", "lid_closed")
-  states <- cbind(pad, channels[, "touch_pressed"] != 0L,
-                  bitwAnd(commands, 1L) != 0L, bitwAnd(commands, 4L) != 0L)
+  keys <- c(
+    "dpad_right", "dpad_left", "dpad_down", "dpad_up", "select", "start",
+    "b", "a", "y", "x", "l1", "r1", "debug", "touch", "microphone", "lid_closed"
+  )
+  states <- cbind(
+    pad, channels[, "touch_pressed"] != 0L,
+    bitwAnd(commands, 1L) != 0L, bitwAnd(commands, 4L) != 0L
+  )
   header$system <- "DS"
   header$commandEncoding <- "DeSmuME: microphone=1, reset=2, lid=4"
   header$touchUnits <- "screen coordinates: origin top-left, nominal extent 256 by 192"
   if (binary && header$version == "2") header$microphoneSampleStored <- FALSE
   .new_named_movie(header, commands, array(states, c(nrow(states), 1L, ncol(states))), keys, path,
-                   analog = list(channels))
+    analog = list(channels)
+  )
 }

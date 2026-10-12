@@ -29,36 +29,25 @@
 #   bit 4: Right   bit 5: Left    bit 6: Up       bit 7: Down
 #   bit 8: R       bit 9: L       (GBA only)
 #   bits 10-12: speedup / capture / GBA-reset (system, ignored)
-
-# Bit-index 0..15 -> 1-based universal slot, or NA for system / reserved bits.
+# Bit-index 0..15 -> 1-based private decoder slot, or NA for system / reserved bits.
 .VBM_BIT_TO_UNI <- c(
-  8L,   # bit 0: A           -> slot 8
-  7L,   # bit 1: B           -> slot 7
-  6L,   # bit 2: Select      -> slot 6
-  5L,   # bit 3: Start       -> slot 5
-  1L,   # bit 4: Right       -> slot 1
-  2L,   # bit 5: Left        -> slot 2
-  4L,   # bit 6: Up          -> slot 4
-  3L,   # bit 7: Down        -> slot 3
-  12L,  # bit 8: R-shoulder  -> slot 12 (GBA)
-  11L,  # bit 9: L-shoulder  -> slot 11 (GBA)
-  NA_integer_,  # bit 10: speedup
-  NA_integer_,  # bit 11: capture
-  NA_integer_,  # bit 12: GBA reset
-  NA_integer_, NA_integer_, NA_integer_  # bits 13-15: reserved
+  8L, # bit 0: A           -> slot 8
+  7L, # bit 1: B           -> slot 7
+  6L, # bit 2: Select      -> slot 6
+  5L, # bit 3: Start       -> slot 5
+  1L, # bit 4: Right       -> slot 1
+  2L, # bit 5: Left        -> slot 2
+  4L, # bit 6: Up          -> slot 4
+  3L, # bit 7: Down        -> slot 3
+  12L, # bit 8: R-shoulder  -> slot 12 (GBA)
+  11L, # bit 9: L-shoulder  -> slot 11 (GBA)
+  NA_integer_, # bit 10: speedup
+  NA_integer_, # bit 11: capture
+  NA_integer_, # bit 12: GBA reset
+  NA_integer_, NA_integer_, NA_integer_ # bits 13-15: reserved
 )
-
-#' Read a VBA-rerecording .vbm movie file
-#'
-#' GB, GBC, and SGB publications come out 8 buttons wide
-#' (universal slots 1..8). GBA publications come out 12 buttons
-#' wide (slots 1..12) so the L/R shoulders land at their canonical
-#' universal positions. SGB multiplayer controller streams are returned with
-#' one player dimension per active controller flag.
-#'
-#' @param path Path to a .vbm file.
-#' @return A `replayr_movie` object.
-#' @noRd
+# Read complete controller records from the declared input offset.
+# Preserve the header frame count alongside the stored record count.
 .decode_vbm <- function(path) {
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x100L || !identical(data[1:4], charToRaw("VBM\x1A"))) {
@@ -71,7 +60,6 @@
   rerec <- .read_u32_le(data, 16L)
   controller_flags <- as.integer(data[0x16L])
   system_flags <- as.integer(data[0x17L])
-
   is_gba <- bitwAnd(system_flags, 0x01L) != 0L
   is_gbc <- bitwAnd(system_flags, 0x02L) != 0L
   is_sgb <- bitwAnd(system_flags, 0x04L) != 0L
@@ -85,7 +73,6 @@
   if (is_gba && n_players != 1L) {
     stop(path, ": GBA VBM movies cannot contain multiple controllers")
   }
-
   controller_data_offset <- .read_u32_le(data, 0x3CL)
   if (controller_data_offset == 0L || controller_data_offset > length(data)) {
     controller_data_offset <- 0x100L
@@ -102,17 +89,15 @@
   # frame count is metadata and is not authoritative.
   declared_frames <- n_frames
   n_frames <- have_frames
-
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
-
   if (n_frames > 0L) {
     for (fi in seq_len(n_frames)) {
       frame_off <- (fi - 1L) * bytes_per_frame
       for (pi in seq_len(n_players)) {
         off <- frame_off + (pi - 1L) * 2L
         word <- as.integer(body[off + 1L]) +
-                bitwShiftL(as.integer(body[off + 2L]), 8L)
+          bitwShiftL(as.integer(body[off + 2L]), 8L)
         for (bit in 0:15) {
           if (bitwAnd(word, bitwShiftL(1L, bit)) == 0L) next
           slot <- .VBM_BIT_TO_UNI[bit + 1L]
@@ -125,7 +110,6 @@
       }
     }
   }
-
   rom_name <- .read_cstring(data, 0x24L, 12L)
   author <- .read_cstring(data, 0x40L, 64L)
   header <- list(

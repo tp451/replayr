@@ -189,9 +189,11 @@ platform labels:
 These are the archive's game-platform labels. Some recordings capture a host
 application, such as MAME or Ruffle under libTAS, so their key codes describe
 that application. Linux and Windows games are represented under IBM PC
-compatible. The [compatibility catalogue](https://github.com/tp451/replayr/blob/main/COMPATIBILITY.md)
+compatible. The [compatibility catalogue](compatibility.html)
 lists every platform–format combination, the accepted versions and controller
-layouts within each format, and the evidence for each claim.
+layouts within each format, and the evidence for each claim. It is included
+with the package and can also be opened with
+`vignette("compatibility", package = "replayr")`.
 
 For example, FM2 and FM3 support text and binary FCEUX input logs; BKM and early
 TAS use BizHawk's older field order, while BK2, GBMV, and TASPROJ use named

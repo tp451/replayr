@@ -6,18 +6,18 @@ Wii layout: Dolphin DesiredWiimoteState.cpp, SerializeDesiredState.
 https://github.com/dolphin-emu/dolphin/blob/e2ad09306e6d371f7272205bdc363da9fe05fe08/Source/Core/Core/HW/WiimoteEmu/DesiredWiimoteState.cpp
 Mouse fields: BizHawk Saturnus mouse, named BK2 LogKey columns.
 """
+
 from pathlib import Path
 import csv
 import struct
 import zipfile
 
-root = Path(__file__).resolve().parents[1] / 'inst' / 'extdata' / 'paper'
+root = Path(__file__).resolve().parents[1] / "inst" / "extdata" / "paper"
 root.mkdir(parents=True, exist_ok=True)
 
 
 def camera_point(x, y, size):
-    return bytes((x & 255, y & 255,
-                  (size & 15) | ((x >> 8) << 4) | ((y >> 8) << 6)))
+    return bytes((x & 255, y & 255, (size & 15) | ((x >> 8) << 4) | ((y >> 8) << 6)))
 
 
 def gyro_axis(value, slow):
@@ -30,8 +30,9 @@ for i in range(180):
     # Pointing starts after a stationary interval; A is held during the sweep.
     sweep = 60 <= i < 120
     a = int(sweep)
-    accel_x = 512 + (4 * (i - 120) if 120 <= i < 140 else
-                     4 * (160 - i) if 140 <= i < 160 else 0)
+    accel_x = 512 + (
+        4 * (i - 120) if 120 <= i < 140 else 4 * (160 - i) if 140 <= i < 160 else 0
+    )
     accel_y, accel_z = 512, 616
     ir_x = 256 if i < 60 else 256 + 8 * (i - 60) if sweep else 728
     ir_y = 384
@@ -39,30 +40,45 @@ for i in range(180):
     roll = 8192 - (4 * (i - 120) if 120 <= i < 150 else 0)
     yaw = 8600 if sweep else 8192
     # All three axes use the slow range throughout this example.
-    low = ((accel_x & 3) | (((accel_y >> 1) & 1) << 2) |
-           (((accel_z >> 1) & 1) << 3))
-    packet = bytearray((15, a, low << 4,
-                        accel_x >> 2, accel_y >> 2, accel_z >> 2))
+    low = (accel_x & 3) | (((accel_y >> 1) & 1) << 2) | (((accel_z >> 1) & 1) << 3)
+    packet = bytearray((15, a, low << 4, accel_x >> 2, accel_y >> 2, accel_z >> 2))
     packet += camera_point(ir_x, ir_y, 4) + camera_point(ir_x + 32, ir_y, 4)
     packet += bytes([255] * 6)  # Points 3 and 4 are absent.
     packet += gyro_axis(pitch, True) + gyro_axis(roll, True) + gyro_axis(yaw, True)
     assert len(packet) == 24
     body += bytes([len(packet)]) + packet
-    expected.append((i + 1, a, accel_x, 513, 617, ir_x, ir_y,
-                     pitch, roll, yaw, 1, 1, 1))
+    expected.append(
+        (i + 1, a, accel_x, 513, 617, ir_x, ir_y, pitch, roll, yaw, 1, 1, 1)
+    )
 
 header = bytearray(256)
-header[:4] = b'DTM\x1a'
-header[4:10] = b'ARTW01'
+header[:4] = b"DTM\x1a"
+header[4:10] = b"ARTW01"
 header[10:12] = bytes((1, 16))
-struct.pack_into('<Q', header, 13, 180)
-struct.pack_into('<Q', header, 21, 180)
-(root / 'wii-motion.dtm').write_bytes(header + body)
-with (root / 'wii-motion-expected.csv').open('w', newline='', encoding='ascii') as stream:
+struct.pack_into("<Q", header, 13, 180)
+struct.pack_into("<Q", header, 21, 180)
+(root / "wii-motion.dtm").write_bytes(header + body)
+with (root / "wii-motion-expected.csv").open(
+    "w", newline="", encoding="ascii"
+) as stream:
     writer = csv.writer(stream)
-    writer.writerow(('poll', 'a', 'accel_x', 'accel_y', 'accel_z', 'ir1_x', 'ir1_y',
-                     'gyro_pitch', 'gyro_roll', 'gyro_yaw', 'gyro_pitch_slow',
-                     'gyro_roll_slow', 'gyro_yaw_slow'))
+    writer.writerow(
+        (
+            "poll",
+            "a",
+            "accel_x",
+            "accel_y",
+            "accel_z",
+            "ir1_x",
+            "ir1_y",
+            "gyro_pitch",
+            "gyro_roll",
+            "gyro_yaw",
+            "gyro_pitch_slow",
+            "gyro_roll_slow",
+            "gyro_yaw_slow",
+        )
+    )
     writer.writerows(expected)
 
 rows = []
@@ -77,16 +93,32 @@ for i in range(240):
         dx, dy, left = 0, 0, False
     rows.append(f'|..|{dx},{dy},{"L" if left else "."}...|')
 members = {
-    'Header.txt': '\n'.join(('MovieVersion BizHawk synthetic', 'Platform SAT',
-        'Core Saturnus', 'GameName Artificial mouse drag', 'Author Thorben Pelzer')) + '\n',
-    'Input Log.txt': '\n'.join(('[Input]',
-        'LogKey:#Power|Reset|#P1 Motion Left / Right|P1 Motion Up / Down|P1 Left Button|P1 Middle Button|P1 Right Button|P1 Start|',
-        *rows, '[/Input]')) + '\n'}
-with zipfile.ZipFile(root / 'mouse-drag.bk2', 'w') as archive:
+    "Header.txt": "\n".join(
+        (
+            "MovieVersion BizHawk synthetic",
+            "Platform SAT",
+            "Core Saturnus",
+            "GameName Artificial mouse drag",
+            "Author Thorben Pelzer",
+        )
+    )
+    + "\n",
+    "Input Log.txt": "\n".join(
+        (
+            "[Input]",
+            "LogKey:#Power|Reset|#P1 Motion Left / Right|P1 Motion Up / Down|P1 Left Button|P1 Middle Button|P1 Right Button|P1 Start|",
+            *rows,
+            "[/Input]",
+        )
+    )
+    + "\n",
+}
+with zipfile.ZipFile(root / "mouse-drag.bk2", "w") as archive:
     for name, text in members.items():
         info = zipfile.ZipInfo(name, (2020, 1, 1, 0, 0, 0))
         archive.writestr(info, text)
-(root / 'motion-examples.txt').write_text('''Original mouse and Wii motion examples
+(root / "motion-examples.txt").write_text(
+    """Original mouse and Wii motion examples
 
 These inputs were authored for replayr and are licensed under GPL (>= 2).
 No third-party recording was used to generate them.
@@ -106,5 +138,7 @@ Infrared points 3 and 4 are absent, encoded as 1023, 1023, and size 15.
 
 Regenerate from the package root:
   python tools/generate-motion-examples.py
-''', encoding='ascii')
-print('Generated original Wii motion and mouse-drag examples.')
+""",
+    encoding="ascii",
+)
+print("Generated original Wii motion and mouse-drag examples.")

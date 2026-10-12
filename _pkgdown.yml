@@ -1,3 +1,5 @@
+llm-docs: false
+
 template:
   bootstrap: 5
 
@@ -70,3 +72,4 @@ articles:
     navbar: ~
     contents:
       - replayr
+      - compatibility

@@ -20,7 +20,8 @@
   }
   data <- c(data, raw(1024L))
   path <- tempfile(fileext = ".dft")
-  con <- gzfile(path, "wb"); writeBin(data, con); close(con)
+  con <- gzfile(path, "wb")
+  writeBin(data, con)
+  close(con)
   path
 }
-

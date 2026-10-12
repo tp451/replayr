@@ -12,12 +12,10 @@
 #    mnemonic of button i if held, or a placeholder (`.`, ` `, `0`).
 #
 # Button column order is RLDUTSBA -- Right, Left, Down, Up, sTart, Select,
-# B, A. We map straight onto universal slots 1..8 (R semantics).
-
+# B, A. These occupy private decoder slots 1..8.
 # Canonical NES button column order. Single-letter mnemonics indexed
 # positionally to match FM2 column character positions.
 .NES_BUTTONS <- c("R", "L", "D", "U", "T", "S", "B", "A")
-
 # Parse one 8-character button column into a length-8 logical vector.
 # A position is "pressed" if its character matches the canonical NES
 # mnemonic for that slot (case-insensitive). Anything else (`.`, ` `,
@@ -30,27 +28,17 @@
   chars <- strsplit(col, "", fixed = TRUE)[[1]]
   toupper(chars) == .NES_BUTTONS
 }
-
-#' Read an FCEUX .fm2 movie file
-#'
-#' Parses the text header into a list and the input log into a logical
-#' 3D array indexed `(frame, player, button)`. Buttons are positional in
-#' RLDUTSBA order so the output's third dimension lines up with the first
-#' eight slots of the universal layout.
-#'
-#' @param path Path to a .fm2 file.
-#' @return A `replayr_movie` object.
-#' @noRd
+# Decode FM2 text into the private NES slots. Header and input parsing
+# are separate so text records can also be read from FM3 projects.
 .decode_fm2 <- function(path) {
   probe <- readBin(path, "raw", min(file.info(path)$size, 65536L))
   delimiters <- which(probe == as.raw(124L))
-  if(length(delimiters)) probe <- head(probe, delimiters[1L]-1L)
-  if(!any(probe == as.raw(0L))) {
+  if (length(delimiters)) probe <- head(probe, delimiters[1L] - 1L)
+  if (!any(probe == as.raw(0L))) {
     text_header <- rawToChar(probe)
-    if(grepl("(^|\\n)binary +1|(^|\\n)port[01] +2", text_header, useBytes = TRUE))
+    if (grepl("(^|\\n)binary +1|(^|\\n)port[01] +2", text_header, useBytes = TRUE))
       return(.decode_fceux_extended(path, "fm2"))
   }
-
   text <- readLines(path, warn = FALSE, encoding = "UTF-8")
   # Some headers contain non-UTF-8 bytes in metadata such as ROM filenames.
   # Re-decode only invalid lines as Latin-1; valid UTF-8 metadata is unchanged.
@@ -62,25 +50,21 @@
   mv$source_path <- path
   mv
 }
-
 # Body of the .fm2 parser: works on a character vector of lines so the
 # tests can hit the parser without touching the filesystem.
 .parse_fm2_text <- function(lines) {
   header <- list()
   cmd_list <- integer(length(lines))
-  # Pre-allocate; we'll trim at the end. Most .fm2 files are <500k frames.
+  # Allocate for every input line, then trim unused rows after parsing.
   rows <- vector("list", length(lines))
   rows_n <- 0L
   n_players_seen <- NA_integer_
-
   for (raw in lines) {
     line <- sub("[\r\n]+$", "", raw)
     if (!nzchar(line)) next
     if (startsWith(line, "|")) {
       parts <- strsplit(line, "|", fixed = TRUE)[[1]]
-      # `strsplit` on "|a|b||" gives c("", "a", "b", "", "") in R;
-      # drop the leading empty (from the leading pipe) and any trailing
-      # empties (from trailing pipes).
+      # Remove empty fields produced by the leading and trailing pipes.
       if (length(parts) >= 1L && parts[1L] == "") parts <- parts[-1L]
       while (length(parts) > 0L && parts[length(parts)] == "") {
         parts <- parts[-length(parts)]
@@ -95,8 +79,10 @@
       } else if (length(player_cols) != n_players_seen) {
         # Pad / trim so the array stays rectangular even with malformed lines.
         if (length(player_cols) < n_players_seen) {
-          player_cols <- c(player_cols,
-                           rep(strrep(".", 8L), n_players_seen - length(player_cols)))
+          player_cols <- c(
+            player_cols,
+            rep(strrep(".", 8L), n_players_seen - length(player_cols))
+          )
         } else {
           player_cols <- player_cols[seq_len(n_players_seen)]
         }
@@ -121,7 +107,6 @@
       }
     }
   }
-
   rows <- rows[seq_len(rows_n)]
   n_frames <- rows_n
   n_players <- if (is.na(n_players_seen)) 1L else n_players_seen
@@ -134,9 +119,12 @@
     }
   }
   commands <- cmd_list[seq_len(n_frames)]
-  .new_movie(header = header, commands = commands, inputs = inputs,
-             button_mnemonics = .NES_BUTTONS,
-             button_names = c("Right", "Left", "Down", "Up",
-                              "Start", "Select", "B", "A"))
+  .new_movie(
+    header = header, commands = commands, inputs = inputs,
+    button_mnemonics = .NES_BUTTONS,
+    button_names = c(
+      "Right", "Left", "Down", "Up",
+      "Start", "Select", "B", "A"
+    )
+  )
 }
-

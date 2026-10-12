@@ -36,6 +36,12 @@
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="../articles/replayr.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/compatibility.html">Recording compatibility</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -378,10 +384,11 @@ Sega Master System; Sega Saturn; Sega SG-1000.</td>
 <p>These are the archive’s game-platform labels. Some recordings capture
 a host application, such as MAME or Ruffle under libTAS, so their key
 codes describe that application. Linux and Windows games are represented
-under IBM PC compatible. The <a href="https://github.com/tp451/replayr/blob/main/COMPATIBILITY.md" class="external-link">compatibility
+under IBM PC compatible. The <a href="compatibility.html">compatibility
 catalogue</a> lists every platform–format combination, the accepted
 versions and controller layouts within each format, and the evidence for
-each claim.</p>
+each claim. It is included with the package and can also be opened with
+<code><a href="../articles/compatibility.html">vignette("compatibility", package = "replayr")</a></code>.</p>
 <p>For example, FM2 and FM3 support text and binary FCEUX input logs;
 BKM and early TAS use BizHawk’s older field order, while BK2, GBMV, and
 TASPROJ use named fields in ZIP containers. PlayStation PXM and PJM

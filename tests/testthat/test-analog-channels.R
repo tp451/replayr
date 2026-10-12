@@ -11,12 +11,10 @@ test_that("raw analogue values are the default and survive projection", {
   expect_error(read_movie(path, analog = "guess"), "analog must")
   expect_error(analog_channels(raw, 1.5), "one player")
 })
-
 test_that("digital recordings expose no invented analogue channels", {
   movie <- read_movie(fixture_path("sample.fm2"))
   expect_equal(dim(analog_channels(movie)), c(n_frames(movie), 0L))
 })
-
 test_that("DTM retains trigger magnitudes and both sticks", {
   h <- raw(256L)
   h[1:4] <- charToRaw("DTM\x1a")
@@ -34,22 +32,24 @@ test_that("DTM retains trigger magnitudes and both sticks", {
   expect_true(player(projected)[1, button_layout(projected)$key == "l2"])
   expect_true(player(projected)[1, button_layout(projected)$key == "left_e"])
 })
-
 test_that("DTM analogue rows follow the caller's controller order", {
-  h <- raw(256L); h[1:4] <- charToRaw("DTM\x1a")
-  h[5:10] <- charToRaw("SYNTH1"); h[12] <- as.raw(5L)
+  h <- raw(256L)
+  h[1:4] <- charToRaw("DTM\x1a")
+  h[5:10] <- charToRaw("SYNTH1")
+  h[12] <- as.raw(5L)
   h[22:29] <- c(writeBin(2L, raw(), size = 4L, endian = "little"), raw(4))
-  path <- tempfile(fileext = ".dtm"); on.exit(unlink(path))
-  writeBin(c(h, as.raw(c(0,0,11,12,13,14,15,16,0,0,21,22,23,24,25,26))), path)
+  path <- tempfile(fileext = ".dtm")
+  on.exit(unlink(path))
+  writeBin(c(h, as.raw(c(0, 0, 11, 12, 13, 14, 15, 16, 0, 0, 21, 22, 23, 24, 25, 26))), path)
   movie <- read_movie(path, controller_order = c(3L, 1L))
   expect_equal(unname(analog_channels(movie, 3)[1, ]), 11:16)
   expect_equal(unname(analog_channels(movie, 1)[1, ]), 21:26)
   expect_equal(dim(analog_channels(movie, 2)), c(1L, 0L))
 })
-
 test_that("PXM and binary PJM preserve axis values and separate stick clicks", {
   for (format in c("PXM ", "PJM ")) {
-    h <- raw(52L); h[1:4] <- charToRaw(format)
+    h <- raw(52L)
+    h[1:4] <- charToRaw(format)
     h[5:8] <- writeBin(2L, raw(), size = 4L, endian = "little")
     h[15:16] <- as.raw(c(7L, 8L))
     if (format == "PXM ") h[16] <- as.raw(0L)
@@ -67,49 +67,53 @@ test_that("PXM and binary PJM preserve axis values and separate stick clicks", {
     unlink(path)
   }
 })
-
 test_that("text PJM retains unsigned axis magnitudes", {
-  h <- raw(52L); h[1:4] <- charToRaw("PJM ")
+  h <- raw(52L)
+  h[1:4] <- charToRaw("PJM ")
   h[5:8] <- writeBin(2L, raw(), size = 4L, endian = "little")
-  h[15:16] <- as.raw(c(7, 8)); h[17:20] <- writeBin(1L, raw(), size = 4L, endian = "little")
+  h[15:16] <- as.raw(c(7, 8))
+  h[17:20] <- writeBin(1L, raw(), size = 4L, endian = "little")
   h[45:48] <- writeBin(52L, raw(), size = 4L, endian = "little")
-  path <- tempfile(fileext = ".pjm"); on.exit(unlink(path))
+  path <- tempfile(fileext = ".pjm")
+  on.exit(unlink(path))
   body <- paste0(strrep(".", 16), " 207  91  43 169|0|\r\n")
   writeBin(c(h, charToRaw(body)), path)
   movie <- read_pjm(path)
   expect_equal(unname(analog_channels(movie)[1, ]), c(207, 91, 43, 169))
   expect_false(any(movie$inputs))
 })
-
 test_that("BK2 keeps all logged numeric channels and their labels", {
-  log <- paste(c("[Input]",
+  log <- paste(c(
+    "[Input]",
     "LogKey:#Reset|Power|#P1 LStick X|P1 LStick Y|P1 Tilt X|P1 L3|P1 R3|P1 Up|",
-    "|..|207,91,123,lr.|"), collapse = "\n")
+    "|..|207,91,123,lr.|"
+  ), collapse = "\n")
   header <- list("_format" = "bk2", Platform = "PSX", Core = "Octoshock")
   raw <- replayr:::.parse_bk2_input_log(log, header)
   projected <- replayr:::.parse_bk2_input_log(log, header, analog = "quantized")
-  expect_equal(analog_channels(raw)[1, ], c("P1 LStick X"=207, "P1 LStick Y"=91, "P1 Tilt X"=123))
+  expect_equal(analog_channels(raw)[1, ], c("P1 LStick X" = 207, "P1 LStick Y" = 91, "P1 Tilt X" = 123))
   expect_identical(analog_channels(raw), analog_channels(projected))
   compact <- replayr:::.configure_movie(raw)
   expect_setequal(button_layout(compact)$key[which(compact$inputs[1, 1, ])], c("l3", "r3"))
   expect_true(any(projected$inputs[, , 21:28]))
 })
-
 test_that("Doom 1.9 uses a versioned header and preserves commands", {
-  path <- tempfile(fileext = ".lmp"); on.exit(unlink(path))
-  writeBin(as.raw(c(109, 2, 1, 1, 0, 0, 0, 0, 0, 1,0,0,0, 25,251,9,1, 128)), path)
+  path <- tempfile(fileext = ".lmp")
+  on.exit(unlink(path))
+  writeBin(as.raw(c(109, 2, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 25, 251, 9, 1, 128)), path)
   raw <- read_lmp(path)
   projected <- read_lmp(path, analog = "cardinal8")
   expect_equal(raw$header$version, "109")
   expect_equal(raw$header$skill, "2")
   expect_equal(unname(analog_channels(raw)[1, ]), c(25, -5, 9))
   expect_identical(analog_channels(raw), analog_channels(projected))
-  expect_setequal(raw$button_ids[which(raw$inputs[1,1,])], 8L)
+  expect_setequal(raw$button_ids[which(raw$inputs[1, 1, ])], 8L)
   expect_identical(projected$inputs, raw$inputs)
   expect_equal(ncol(stick_channels(projected)), 0L)
   bytes <- readBin(path, "raw", n = 100)
   writeBin(head(bytes, -1), path)
   expect_error(read_lmp(path), "end marker")
-  bytes[1] <- as.raw(110); writeBin(bytes, path)
+  bytes[1] <- as.raw(110)
+  writeBin(bytes, path)
   expect_error(read_lmp(path), "version 110")
 })

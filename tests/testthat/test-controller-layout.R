@@ -4,17 +4,19 @@ make_stick_movie <- function(format = "m64", two = FALSE) {
   axes <- cbind(lstick_x = x, lstick_y = y)
   width <- 28L
   if (two) {
-    axes <- cbind(lstick_x = 128 + x, lstick_y = 128 - y,
-                  rstick_x = 128 - y, rstick_y = 128 - x)
+    axes <- cbind(
+      lstick_x = 128 + x, lstick_y = 128 - y,
+      rstick_x = 128 - y, rstick_y = 128 - x
+    )
     width <- 42L
   }
   input <- array(FALSE, c(9L, 1L, width))
   input[2L, 1L, 1L] <- TRUE
   if (two) input[3L, 1L, 41:42] <- TRUE
   replayr:::.new_movie(list(`_format` = format, controllerType1 = "7"), integer(9), input,
-                      analog = list(axes))
+    analog = list(axes)
+  )
 }
-
 test_that("registry has distinct identities and separate sticks", {
   registry <- button_layout()
   expect_equal(anyDuplicated(registry$id), 0L)
@@ -29,7 +31,6 @@ test_that("registry has distinct identities and separate sticks", {
   expect_identical(registry$kind[40:52], rep("numbered", 13L))
   expect_identical(registry$key[53], "microphone")
 })
-
 test_that("continuous modes have known orientation, neutral and magnitude", {
   source <- make_stick_movie()
   expected <- c(NA, 0, 45, 90, 135, 180, 225, 270, 315)
@@ -38,13 +39,14 @@ test_that("continuous modes have known orientation, neutral and magnitude", {
   expect_equal(colnames(stick_channels(angle)), "left_angle")
   expect_equal(stick_channels(angle)[, 1L], expected)
   expect_equal(stick_channels(full)[, "left_angle"], expected)
-  expect_equal(stick_channels(full)[, "left_magnitude"],
-               c(0, .5, sqrt(.5), .5, sqrt(.5), .5, sqrt(.5), .5, sqrt(.5)))
+  expect_equal(
+    stick_channels(full)[, "left_magnitude"],
+    c(0, .5, sqrt(.5), .5, sqrt(.5), .5, sqrt(.5), .5, sqrt(.5))
+  )
   expect_identical(analog_channels(angle), analog_channels(full))
   expect_equal(n_buttons(angle), 14L)
   expect_false(any(button_layout(angle)$kind %in% c("left_direction", "right_direction")))
 })
-
 test_that("four and eight directions are mutually exclusive and separate from C buttons", {
   source <- make_stick_movie()
   four <- replayr:::.configure_movie(source, "cardinal4")
@@ -60,7 +62,6 @@ test_that("four and eight directions are mutually exclusive and separate from C 
   expect_equal(n_buttons(eight), 22L)
   expect_true(all(20:23 %in% layout$id))
 })
-
 test_that("both sticks independently support all four selected modes", {
   source <- make_stick_movie("pxm", TRUE)
   for (left in c("cardinal4", "cardinal8", "angle", "angle+magnitude")) {
@@ -78,7 +79,6 @@ test_that("both sticks independently support all four selected modes", {
   mixed <- replayr:::.configure_movie(source, c(left = "angle+magnitude", right = "angle"))
   expect_equal(colnames(stick_channels(mixed)), c("left_angle", "left_magnitude", "right_angle"))
 })
-
 test_that("deadzone, missing data and invalid settings are explicit", {
   source <- make_stick_movie()
   movie <- replayr:::.configure_movie(source, "angle+magnitude", deadzone = .75)
@@ -91,11 +91,11 @@ test_that("deadzone, missing data and invalid settings are explicit", {
   expect_error(replayr:::.configure_movie(source, c("angle", "cardinal4")), "named")
   expect_error(replayr:::.configure_movie(source, "angle", deadzone = -1), "deadzone")
 })
-
 test_that("core gamepad examples expose compact capabilities and preserve source values", {
   formats <- paste0(".", tools::file_ext(list.files(
     system.file("extdata", package = "replayr", mustWork = TRUE),
-    pattern = "^sample[.]", full.names = TRUE)))
+    pattern = "^sample[.]", full.names = TRUE
+  )))
   for (ext in formats) {
     path <- system.file("extdata", paste0("sample", ext), package = "replayr")
     movie <- read_movie(path)
@@ -113,34 +113,34 @@ test_that("core gamepad examples expose compact capabilities and preserve source
     }
   }
 })
-
 test_that("BK2 N64 Boolean directions override axes without becoming physical buttons", {
-  log <- paste(c("[Input]", "LogKey:#Reset|Power|#P1 X Axis|P1 Y Axis|P1 A Up|P1 A Down|P1 A Left|P1 A Right|P1 A|",
-                 "|..|30,40,.....|", "|..|30,40,U....|", "|..|30,40,UDLR.|"),collapse="\n")
-  source <- replayr:::.parse_bk2_input_log(log,list("_format"="bk2",Platform="N64",emuVersion="Version 1.11.6"))
-  raw <- replayr:::.configure_movie(source,"raw")
-  movie <- replayr:::.configure_movie(source,"angle+magnitude")
-  expect_equal(n_buttons(raw),1L)
-  expect_identical(analog_channels(movie),analog_channels(raw))
-  expect_equal(analog_channels(movie)[3,],c("P1 X Axis"=30,"P1 Y Axis"=40))
-  expect_equal(stick_channels(movie)[3,"left_angle"],c(left_angle=135))
-  expect_equal(stick_channels(movie)[3,"left_magnitude"],c(left_magnitude=sqrt(2)*127/128))
-  expect_equal(colSums(movie$stick_overrides[[1]]),c(right=1,up=2,left=1,down=1))
+  log <- paste(c(
+    "[Input]", "LogKey:#Reset|Power|#P1 X Axis|P1 Y Axis|P1 A Up|P1 A Down|P1 A Left|P1 A Right|P1 A|",
+    "|..|30,40,.....|", "|..|30,40,U....|", "|..|30,40,UDLR.|"
+  ), collapse = "\n")
+  source <- replayr:::.parse_bk2_input_log(log, list("_format" = "bk2", Platform = "N64", emuVersion = "Version 1.11.6"))
+  raw <- replayr:::.configure_movie(source, "raw")
+  movie <- replayr:::.configure_movie(source, "angle+magnitude")
+  expect_equal(n_buttons(raw), 1L)
+  expect_identical(analog_channels(movie), analog_channels(raw))
+  expect_equal(analog_channels(movie)[3, ], c("P1 X Axis" = 30, "P1 Y Axis" = 40))
+  expect_equal(stick_channels(movie)[3, "left_angle"], c(left_angle = 135))
+  expect_equal(stick_channels(movie)[3, "left_magnitude"], c(left_magnitude = sqrt(2) * 127 / 128))
+  expect_equal(colSums(movie$stick_overrides[[1]]), c(right = 1, up = 2, left = 1, down = 1))
   source$header$emuVersion <- "Version 2.9.1"
-  newer <- replayr:::.configure_movie(source,"angle+magnitude")
-  expect_equal(unname(stick_channels(newer)[3,"left_angle"]),atan2(127,-128)*180/pi)
-  for (mode in c("cardinal4","cardinal8")) {
-    projected <- replayr:::.configure_movie(source,mode)
-    ids <- button_layout(projected)$kind=="left_direction"
-    expect_equal(rowSums(player(projected)[,ids,drop=FALSE]),rep(1,3))
+  newer <- replayr:::.configure_movie(source, "angle+magnitude")
+  expect_equal(unname(stick_channels(newer)[3, "left_angle"]), atan2(127, -128) * 180 / pi)
+  for (mode in c("cardinal4", "cardinal8")) {
+    projected <- replayr:::.configure_movie(source, mode)
+    ids <- button_layout(projected)$kind == "left_direction"
+    expect_equal(rowSums(player(projected)[, ids, drop = FALSE]), rep(1, 3))
   }
 })
-
 test_that("unknown N64 override calibration preserves raw data", {
-  log <- paste(c("[Input]", "LogKey:#Reset|Power|#P1 X Axis|P1 Y Axis|P1 A Up|P1 A|", "|..|0,0,U.|"),collapse="\n")
-  source <- replayr:::.parse_bk2_input_log(log,list("_format"="bk2",Platform="N64"))
-  raw <- replayr:::.configure_movie(source,"raw")
-  expect_true(raw$stick_overrides[[1]][1,"up"])
-  expect_error(replayr:::.configure_movie(source,"angle"),"known BizHawk")
-  expect_error(player(raw,1.5),"integer")
+  log <- paste(c("[Input]", "LogKey:#Reset|Power|#P1 X Axis|P1 Y Axis|P1 A Up|P1 A|", "|..|0,0,U.|"), collapse = "\n")
+  source <- replayr:::.parse_bk2_input_log(log, list("_format" = "bk2", Platform = "N64"))
+  raw <- replayr:::.configure_movie(source, "raw")
+  expect_true(raw$stick_overrides[[1]][1, "up"])
+  expect_error(replayr:::.configure_movie(source, "angle"), "known BizHawk")
+  expect_error(player(raw, 1.5), "integer")
 })

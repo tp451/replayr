@@ -1,3 +1,6 @@
+# Public readers separate decoding from layout configuration. Decoders retain
+# source values and controller identities; .configure_movie() assigns compact
+# columns, shared IDs, and the requested analogue representation.
 #' Read a FM2 recording
 #'
 #' FCEUX text movies; NES and Famicom button states.
@@ -10,7 +13,6 @@ read_fm2 <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_fm2(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a BK2 recording
 #'
 #' BizHawk ZIP movies. LogKey names determine digital controls and numeric channels. Known N64 and PlayStation stick encodings can be transformed; other numeric channels remain raw.
@@ -32,7 +34,6 @@ read_bk2 <- function(path, analog = "raw", deadzone = NULL, triggers = "raw",
   .stick_modes(analog)
   .configure_movie(.decode_bk2(path, analog = "raw", max_input_bytes = max_input_bytes, ...), analog, deadzone, triggers)
 }
-
 #' Read a FCM recording
 #'
 #' FCEU binary NES movies, including supported delta-stream versions.
@@ -45,7 +46,6 @@ read_fcm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_fcm(path, ...), analog, deadzone, triggers)
 }
-
 #' Read an lsnes LSMV recording
 #'
 #' Reads ZIP input logs with `controlsversion` 0: Game Boy/Game Boy Color pads,
@@ -83,7 +83,6 @@ read_lsmv <- function(path, analog = "raw", deadzone = NULL, triggers = "raw",
   .stick_modes(analog)
   .configure_movie(.decode_lsmv(path, max_input_bytes = max_input_bytes, ...), analog, deadzone, triggers)
 }
-
 #' Read a GMV recording
 #'
 #' Gens recordings with three- or six-button controllers. Controller capability comes from the header, with older unspecified types retained explicitly.
@@ -96,7 +95,6 @@ read_gmv <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_gmv(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a VBM recording
 #'
 #' VBA recordings for Game Boy, Game Boy Color and Game Boy Advance.
@@ -109,7 +107,6 @@ read_vbm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_vbm(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a M64 recording
 #'
 #' Mupen64 version 3 recordings. A single enabled controller returns a
@@ -139,10 +136,11 @@ read_vbm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
 read_m64 <- function(path, analog = "raw", deadzone = NULL, triggers = "raw",
                      controller_order = NULL, ...) {
   .stick_modes(analog)
-  .configure_movie(.decode_m64(path, analog = "raw", controller_order = controller_order, ...),
-                   analog, deadzone, triggers)
+  .configure_movie(
+    .decode_m64(path, analog = "raw", controller_order = controller_order, ...),
+    analog, deadzone, triggers
+  )
 }
-
 #' Read a SMV recording
 #'
 #' Supported Snes9x versions and joypad controllers.
@@ -155,7 +153,6 @@ read_smv <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_smv(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a PXM recording
 #'
 #' PCSX standard digital and analogue-controller records. Unsupported devices are rejected; reserved standard-pad bits do not become stick clicks.
@@ -168,7 +165,6 @@ read_pxm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_pxm(path, analog = "raw", ...), analog, deadzone, triggers)
 }
-
 #' Read a PJM recording
 #'
 #' PSXjin text and binary recordings with standard or analogue controllers.
@@ -186,7 +182,6 @@ read_pjm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_pjm(path, analog = "raw", ...), analog, deadzone, triggers)
 }
-
 #' Read a DTM recording
 #'
 #' Dolphin GameCube and Wii recordings. Multiple enabled ports return an ordered
@@ -212,7 +207,7 @@ read_pjm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
 #' gamepad IDs, and libTAS Guide uses Mode. Light-gun triggers use A (8);
 #' GunCon side A/B and offscreen shot use B/X/Y (7/9/10). Mouse left, right,
 #' and middle buttons use A/B/X. See [button_layout()] for shared identities.
-#' 
+#'
 #' When multiple source buttons share an ID, the column is active if either
 #' is pressed. `source_inputs` and `source_layout` preserve the separate
 #' states and their mapping whenever aliases are combined. Wii device states
@@ -275,7 +270,6 @@ read_dtm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", co
   .stick_modes(analog)
   .configure_movie(.decode_dtm(path, controller_order = controller_order, analog = "raw", dtm_variant = dtm_variant, wii_variant = wii_variant, wii_extension = wii_extension, wii_key = wii_key, ...), analog, deadzone, triggers)
 }
-
 #' Read a Doom or Boom demo
 #'
 #' Imports vanilla Doom 1.9 demos (version 109) and Boom 2.00-2.02 demos
@@ -300,7 +294,6 @@ read_lmp <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_lmp(path, analog = "raw", ...), analog, deadzone, triggers)
 }
-
 #' Read a Famtasia recording
 #'
 #' Imports NES and Famicom Disk System input, with one row per recorded
@@ -318,7 +311,6 @@ read_fmv <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_fmv(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a Dega recording
 #'
 #' Imports Master System and Game Gear input, including older MMV headers.
@@ -338,7 +330,6 @@ read_mmv <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_mmv(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a DeSmuME recording
 #'
 #' Imports Nintendo DS DSM versions 1 and 2 in text or binary form, with one
@@ -362,7 +353,6 @@ read_dsm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_dsm(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a PCEjin or VBjin recording
 #'
 #' Imports version-1 text and binary recordings from PCEjin and VBjin, with
@@ -381,7 +371,6 @@ read_mc2 <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_mc2(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a Yabause rerecording movie
 #'
 #' Imports enhanced YMV version-1 text and binary recordings for one Saturn
@@ -398,7 +387,6 @@ read_ymv <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_ymv(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a Mednafen rerecording movie
 #'
 #' Imports MCM version 1 with fixed gamepad layouts for PC Engine, PC-FX,
@@ -419,7 +407,6 @@ read_mcm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_mcm(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a libTAS recording
 #'
 #' Reads native LTM archives containing `config.ini` and `inputs`. Supports
@@ -448,7 +435,6 @@ read_ltm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_ltm(path, ...), analog, deadzone, triggers)
 }
-
 #' Read an Hourglass recording
 #'
 #' Reads WTF files with the `66 54 77 02` signature and the equivalent HGM
@@ -471,7 +457,6 @@ read_wtf <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_wtf(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a JPC-RR recording
 #'
 #' Reads JRSR text archives containing an `events` section. Keyboard edges,
@@ -499,7 +484,6 @@ read_jrsr <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", .
   .stick_modes(analog)
   .configure_movie(.decode_jrsr(path, ...), analog, deadzone, triggers)
 }
-
 #' Read an openMSX replay
 #'
 #' Reads gzip-compressed openMSX XML replay files. Supported event schemas
@@ -529,7 +513,6 @@ read_omr <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_omr(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a BKM recording
 #'
 #' Legacy BizHawk text recordings.
@@ -542,7 +525,6 @@ read_bkm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_bkm(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a GBMV recording
 #'
 #' GBAHawk ZIP recordings.
@@ -555,7 +537,6 @@ read_gbmv <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", .
   .stick_modes(analog)
   .configure_movie(.decode_gbmv(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a FM3 recording
 #'
 #' FCEUX TAS Editor projects, with the movie length separating input records from editor data.
@@ -566,7 +547,6 @@ read_fm3 <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_fm3(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a TAS recording
 #'
 #' Early BizHawk text recordings.
@@ -577,7 +557,6 @@ read_tas <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_tas(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a TASPROJ recording
 #'
 #' BizHawk TAS Studio projects.
@@ -588,7 +567,6 @@ read_tasproj <- function(path, analog = "raw", deadzone = NULL, triggers = "raw"
   .stick_modes(analog)
   .configure_movie(.decode_tasproj(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a Citra device-poll recording
 #'
 #' Imports Nintendo 3DS CTM recordings as ordered device polls. Pad and Circle
@@ -609,7 +587,6 @@ read_ctm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_ctm(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a CoffeeTools recording
 #'
 #' Reads CTAS versions 3 and 4 for UFO 50. Each row contains one frame's
@@ -636,7 +613,6 @@ read_ctas <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", .
   .stick_modes(analog)
   .configure_movie(.decode_ctas(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a gz input macro
 #'
 #' Imports gz Nintendo 64 macros, with one row per recorded game update.
@@ -655,7 +631,6 @@ read_gzm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_gzm(path, ...), analog, deadzone, triggers)
 }
-
 #' Read an enhanced ZSNES recording
 #'
 #' Imports enhanced ZMV recordings for up to five SNES gamepads. Repeat
@@ -674,7 +649,6 @@ read_zmv <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", ..
   .stick_modes(analog)
   .configure_movie(.decode_zmv(path, ...), analog, deadzone, triggers)
 }
-
 #' Read a MAME recording
 #'
 #' Reads MAME-RR input-port records. Known games use the bundled port layouts;
@@ -690,7 +664,6 @@ read_mar <- function(path, analog = "raw", deadzone = NULL, triggers = "raw",
   .stick_modes(analog)
   .configure_movie(.decode_mar(path, input_schema = input_schema, ...), analog, deadzone, triggers)
 }
-
 #' Read a FinalBurn Alpha recording
 #'
 #' Imports FinalBurn Alpha FBM input streams using an explicit game input
@@ -723,10 +696,11 @@ read_mar <- function(path, analog = "raw", deadzone = NULL, triggers = "raw",
 read_fbm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw",
                      game = NULL, input_schema = NULL, ...) {
   .stick_modes(analog)
-  .configure_movie(.decode_fbm(path, game = game, input_schema = input_schema, ...),
-                   analog, deadzone, triggers)
+  .configure_movie(
+    .decode_fbm(path, game = game, input_schema = input_schema, ...),
+    analog, deadzone, triggers
+  )
 }
-
 #' Read a Dustmod input script archive
 #'
 #' Imports DFT archives by following their entry script and INCLUDE commands.

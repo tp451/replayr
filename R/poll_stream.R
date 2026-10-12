@@ -23,9 +23,7 @@
 #' @name replayr_poll_stream
 #' @seealso read_m64, read_dtm
 NULL
-
 .is_recording <- function(x) inherits(x, c("replayr_movie", "replayr_poll_stream"))
-
 #' Extract an unassigned controller-poll stream
 #'
 #' @param x A [replayr_poll_stream].
@@ -45,27 +43,29 @@ polls <- function(x) {
   n <- n_frames(x)
   buttons <- matrix(x$inputs[, 1L, , drop = FALSE], nrow = n, ncol = n_buttons(x))
   colnames(buttons) <- x$button_keys
-  result <- data.frame(poll = seq_len(n), port = rep(NA_integer_, n), buttons,
-                       analog_channels(x), stick_channels(x), commands = x$commands,
-                       check.names = FALSE)
+  result <- data.frame(
+    poll = seq_len(n), port = rep(NA_integer_, n), buttons,
+    analog_channels(x), stick_channels(x), commands = x$commands,
+    check.names = FALSE
+  )
   if (!is.null(x$poll_fields)) result <- cbind(result, x$poll_fields)
   if (identical(x$header[["_format"]], "dtm") &&
-      identical(x$header$dtmVariant, "standard")) {
+    identical(x$header$dtmVariant, "standard")) {
     high <- as.integer(x$poll_bytes[, 2L])
     result$is_connected <- bitwAnd(high, 64L) != 0L
     result$get_origin <- bitwAnd(high, 128L) != 0L
   }
   result
 }
-
 #' @export
 format.replayr_poll_stream <- function(x, ...) {
-  sprintf("<replayr_poll_stream [%s] polls=%d buttons=%d enabled_ports=%s assignment=%s>",
-          x$header[["_format"]], n_frames(x), n_buttons(x),
-          paste(x$header$enabledPorts, collapse = ","),
-          x$header$assignmentReason %||% x$header$controllerAssignment %||% "device polls")
+  sprintf(
+    "<replayr_poll_stream [%s] polls=%d buttons=%d enabled_ports=%s assignment=%s>",
+    x$header[["_format"]], n_frames(x), n_buttons(x),
+    paste(x$header$enabledPorts, collapse = ","),
+    x$header$assignmentReason %||% x$header$controllerAssignment %||% "device polls"
+  )
 }
-
 #' @export
 print.replayr_poll_stream <- function(x, ...) {
   cat(format(x), "\n", sep = "")

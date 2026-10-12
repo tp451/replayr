@@ -2,20 +2,16 @@
 #
 # Run from the package root after changing man/figures/logo.svg. pkgdown copies
 # the generated files from pkgdown/favicon/ into docs/ during build_site().
-
 if (!requireNamespace("rsvg", quietly = TRUE) ||
-    !requireNamespace("magick", quietly = TRUE)) {
+  !requireNamespace("magick", quietly = TRUE)) {
   stop("install the 'rsvg' and 'magick' packages before generating favicons")
 }
-
 source_svg <- file.path("man", "figures", "logo.svg")
 out_dir <- file.path("pkgdown", "favicon")
 if (!file.exists(source_svg) || !dir.exists(out_dir)) {
   stop("run this script from the package root")
 }
-
 invisible(file.copy(source_svg, file.path(out_dir, "favicon.svg"), overwrite = TRUE))
-
 # Render once at high resolution, then fit it inside square transparent
 # canvases without changing the hexagon's aspect ratio.
 logo <- magick::image_read_svg(source_svg, width = 1200)
@@ -28,7 +24,6 @@ square_icon <- function(size, fill = 0.90) {
     color = "none"
   )
 }
-
 png_assets <- c(
   "favicon-96x96.png" = 96L,
   "apple-touch-icon.png" = 180L,
@@ -43,7 +38,6 @@ for (filename in names(png_assets)) {
     format = "png"
   )
 }
-
 # A multi-resolution ICO keeps browser tabs sharp at common Windows sizes.
 ico <- do.call(c, lapply(c(16L, 32L, 48L), square_icon))
 magick::image_write(
@@ -51,5 +45,4 @@ magick::image_write(
   path = file.path(out_dir, "favicon.ico"),
   format = "ico"
 )
-
 message("Generated favicon assets in ", normalizePath(out_dir))

@@ -1,7 +1,7 @@
 # Dega format: https://tasvideos.org/EmulatorResources/MMV
 .decode_mmv <- function(path) {
   data <- readBin(path, "raw", n = file.info(path)$size)
-  if (length(data) < 96L || !identical(data[1:4], as.raw(c(77,77,86,0)))) stop(path, ": not an MMV file")
+  if (length(data) < 96L || !identical(data[1:4], as.raw(c(77, 77, 86, 0)))) stop(path, ": not an MMV file")
   version <- .read_u32_le(data, 4L)
   offset <- .read_u32_le(data, 24L)
   width <- .read_u32_le(data, 28L)
@@ -28,13 +28,15 @@
   labels <- c("Up", "Down", "Left", "Right", "1", "2", if (gg) "Start" else "Pause")
   inputs <- array(FALSE, c(nrow(packets), length(ports), length(keys)))
   for (p in ports) inputs[, p, ] <- .legacy_bits(packets[, p], c(0:5, if (gg) 7L else 6L))
-  header <- list(`_format` = "mmv", system = if (gg) "GG" else "SMS", emuVersion = version,
-                 declaredFrameCount = .read_u32_le(data, 8L), frameCount = nrow(packets),
-                 rerecordCount = .read_u32_le(data, 12L), startsFromReset = .read_u32_le(data, 16L) != 0L,
-                 stateOffset = .read_u32_le(data, 20L), inputOffset = offset,
-                 isPal = bitwAnd(flags, 2L) != 0L, isJapan = bitwAnd(flags, 4L) != 0L,
-                 author = .read_cstring(data, 32L, 64L), romFilename = if (header_size >= 228L) .read_cstring(data, 100L, 128L) else NULL,
-                 romMD5 = if (header_size >= 244L) paste(sprintf("%02x", as.integer(data[229:244])), collapse = "") else NULL)
+  header <- list(
+    `_format` = "mmv", system = if (gg) "GG" else "SMS", emuVersion = version,
+    declaredFrameCount = .read_u32_le(data, 8L), frameCount = nrow(packets),
+    rerecordCount = .read_u32_le(data, 12L), startsFromReset = .read_u32_le(data, 16L) != 0L,
+    stateOffset = .read_u32_le(data, 20L), inputOffset = offset,
+    isPal = bitwAnd(flags, 2L) != 0L, isJapan = bitwAnd(flags, 4L) != 0L,
+    author = .read_cstring(data, 32L, 64L), romFilename = if (header_size >= 228L) .read_cstring(data, 100L, 128L) else NULL,
+    romMD5 = if (header_size >= 244L) paste(sprintf("%02x", as.integer(data[229:244])), collapse = "") else NULL
+  )
   # Dega's MvidPreFrame reads until EOF rather than stopping at vidFrameCount.
   # Preserve the original count without warning about this accepted variant.
   header$availableFrameCount <- nrow(packets)

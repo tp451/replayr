@@ -3,15 +3,16 @@
 .warning_mmv <- function(declared, packets, tail = raw()) {
   header <- raw(244L)
   header[1:4] <- as.raw(c(77, 77, 86, 0))
-  for (item in list(c(4L, 0x1160L), c(8L, declared), c(16L, 1L),
-                    c(24L, 244L), c(28L, 2L))) {
+  for (item in list(
+    c(4L, 0x1160L), c(8L, declared), c(16L, 1L),
+    c(24L, 244L), c(28L, 2L)
+  )) {
     header[item[1L] + 1:4] <- writeBin(as.integer(item[2L]), raw(), size = 4L, endian = "little")
   }
   path <- tempfile(fileext = ".mmv")
   writeBin(c(header, as.raw(t(packets)), tail), path)
   path
 }
-
 test_that("MMV uses complete packets at EOF while preserving a stale header count", {
   packets <- rbind(c(0, 0), c(16, 32), c(8, 1))
   paths <- character()
@@ -31,7 +32,6 @@ test_that("MMV uses complete packets at EOF while preserving a stale header coun
     expect_true(player(movie, 2L)[3L, match("dpad_up", keys)])
   }
 })
-
 test_that("MMV still warns about incomplete input and preserves the actual byte", {
   path <- .warning_mmv(1L, rbind(c(0, 0), c(16, 32)), as.raw(10))
   on.exit(unlink(path))
@@ -40,12 +40,11 @@ test_that("MMV still warns about incomplete input and preserves the actual byte"
   expect_identical(movie$source_tail, as.raw(10))
   expect_equal(sum(movie$inputs), 2L)
 })
-
 test_that("PJM ignored separators and NUL button bytes have explicit public identities", {
   header <- raw(60L)
   header[1:4] <- charToRaw("PJM ")
   header[5L] <- as.raw(2L)
-  header[13L] <- as.raw(64L)  # MOVIE_FLAG_IS_TEXT
+  header[13L] <- as.raw(64L) # MOVIE_FLAG_IS_TEXT
   header[15:16] <- as.raw(c(4L, 8L))
   header[17:20] <- writeBin(50L, raw(), size = 4L, endian = "little")
   header[45:48] <- writeBin(60L, raw(), size = 4L, endian = "little")
@@ -68,7 +67,6 @@ test_that("PJM ignored separators and NUL button bytes have explicit public iden
   expect_equal(sum(movie$inputs), 2L)
   expect_identical(movie$header$noncanonicalSeparatorRecords, "1")
 })
-
 test_that("declared PJM text can consist entirely of a NUL record", {
   header <- raw(60L)
   header[1:4] <- charToRaw("PJM ")
@@ -87,20 +85,19 @@ test_that("declared PJM text can consist entirely of a NUL record", {
   expect_identical(movie$commands, 0L)
   expect_identical(movie$header$allNulRecordCount, "1")
 })
-
 test_that("declared PJM text distinguishes both multitap groups", {
   header <- raw(60L)
   header[1:4] <- charToRaw("PJM ")
   header[5L] <- as.raw(2L)
-  header[13:14] <- as.raw(c(192L, 1L))  # Text and both port multitaps.
+  header[13:14] <- as.raw(c(192L, 1L)) # Text and both port multitaps.
   header[15:16] <- as.raw(c(4L, 4L))
   header[17L] <- as.raw(1L)
   header[45L] <- as.raw(60L)
   fields <- rep("..............|", 8L)
-  fields[1L] <- "#.............|"  # Port 1, first pad: Square.
-  fields[4L] <- ".X............|"  # Port 1, fourth pad: Cross.
-  fields[5L] <- "..O...........|"  # Port 2, first pad: Circle.
-  fields[8L] <- "...^..........|"  # Port 2, fourth pad: Triangle.
+  fields[1L] <- "#.............|" # Port 1, first pad: Square.
+  fields[4L] <- ".X............|" # Port 1, fourth pad: Cross.
+  fields[5L] <- "..O...........|" # Port 2, first pad: Circle.
+  fields[8L] <- "...^..........|" # Port 2, fourth pad: Triangle.
   path <- tempfile(fileext = ".pjm")
   on.exit(unlink(path))
   writeBin(c(header, charToRaw(paste0(paste0(fields, collapse = ""), "0|\r\n"))), path)
@@ -108,8 +105,10 @@ test_that("declared PJM text distinguishes both multitap groups", {
   expect_equal(n_players(movie), 8L)
   expect_equal(n_frames(movie), 1L)
   keys <- button_layout(movie)$key
-  for (pair in list(c(1L, match("y", keys)), c(4L, match("b", keys)),
-                    c(5L, match("a", keys)), c(8L, match("x", keys)))) {
+  for (pair in list(
+    c(1L, match("y", keys)), c(4L, match("b", keys)),
+    c(5L, match("a", keys)), c(8L, match("x", keys))
+  )) {
     expect_true(movie$inputs[1L, pair[1L], pair[2L]])
   }
   expect_equal(sum(movie$inputs), 4L)

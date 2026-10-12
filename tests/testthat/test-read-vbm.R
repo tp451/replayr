@@ -6,7 +6,6 @@ test_that("replayr:::.decode_vbm() parses the bundled synthetic Game Boy movie",
   expect_equal(n_buttons(mv), 8L)
   expect_equal(mv$header$isGBA, "0")
 })
-
 .mk_vbm <- function(words, controller_flags = 1L, system_flags = 0L) {
   hdr <- raw(0x100L)
   hdr[1:4] <- charToRaw("VBM\x1a")
@@ -20,7 +19,6 @@ test_that("replayr:::.decode_vbm() parses the bundled synthetic Game Boy movie",
   writeBin(c(hdr, as.raw(body)), tf)
   tf
 }
-
 test_that("replayr:::.decode_vbm() decodes grouped SGB controllers", {
   tf <- .mk_vbm(c(1L, 2L), controller_flags = 3L, system_flags = 4L)
   on.exit(unlink(tf))
@@ -30,7 +28,6 @@ test_that("replayr:::.decode_vbm() decodes grouped SGB controllers", {
   expect_true(mv$inputs[1L, 2L, 7L])
   expect_equal(mv$header$isSGB, "1")
 })
-
 test_that("replayr:::.decode_vbm() reads GBA shoulder buttons from system flags", {
   tf <- .mk_vbm(bitwShiftL(1L, 9L), system_flags = 1L)
   on.exit(unlink(tf))

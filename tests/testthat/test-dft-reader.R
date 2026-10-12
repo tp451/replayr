@@ -1,6 +1,6 @@
 .dft_fixture <- function() system.file("extdata", "computers", "menu-double-tap.dft",
-  package = "replayr", mustWork = TRUE)
-
+  package = "replayr", mustWork = TRUE
+)
 test_that("Dustmod expands scripts while retaining directional double taps and commands", {
   x <- .configure_movie(.decode_dft(.dft_fixture()), analog = "raw")
   keys <- button_layout(x)$key
@@ -16,14 +16,17 @@ test_that("Dustmod expands scripts while retaining directional double taps and c
   expect_true(is.na(x$source_values[1L, "taunt"]))
   expect_equal(which(x$inputs[, 1L, match("dustforce_restart", keys)]), 10L)
   expect_equal(x$source_locations$line[c(1, 3, 5, 10, 11)], c(2L, 4L, 6L, 5L, 2L))
-  expect_identical(x$source_scripts[["demo/move.txt"]],
-    "# Move and jump right, release, then double tap right and down.\n0 1 0 0 1 0 0 0 0\n000000000\n0200000000\n0002000000\n")
-  expect_equal(x$source_commands$command,
-    c("LOAD", "STATS", "INCLUDE", "MOUSE", "SYNCLOAD", "INCLUDE", "INCLUDE", "MOUSE"))
+  expect_identical(
+    x$source_scripts[["demo/move.txt"]],
+    "# Move and jump right, release, then double tap right and down.\n0 1 0 0 1 0 0 0 0\n000000000\n0200000000\n0002000000\n"
+  )
+  expect_equal(
+    x$source_commands$command,
+    c("LOAD", "STATS", "INCLUDE", "MOUSE", "SYNCLOAD", "INCLUDE", "INCLUDE", "MOUSE")
+  )
   expect_equal(x$source_commands$before_row, c(1, 1, 1, 5, 7, 7, 11, 15))
   expect_equal(x$commands, integer(14))
 })
-
 test_that("Dustmod mouse observations apply only to the addressed script row", {
   x <- .decode_dft(.dft_fixture())
   expect_equal(which(x$mouse_observed), 5L)
@@ -37,10 +40,10 @@ test_that("Dustmod mouse observations apply only to the addressed script row", {
   expect_false(any(x$inputs[, 1L, match("mouse_right", keys)]))
   expect_equal(tail(x$source_commands$before_row, 1L), 15L)
 })
-
 test_that("Dustmod rejects broken include graphs and ambiguous entry scripts", {
   run <- function(scripts, pattern, entry = NULL) {
-    path <- .computer_test_tar(scripts); on.exit(unlink(path))
+    path <- .computer_test_tar(scripts)
+    on.exit(unlink(path))
     expect_error(.decode_dft(path, entry), pattern)
   }
   run(list("main.txt" = "INCLUDE:missing.txt\n"), "Missing DFT included")
@@ -55,7 +58,6 @@ test_that("Dustmod rejects broken include graphs and ambiguous entry scripts", {
   run(list("main.txt" = "MOUSE:NaN:2:1\n000000000\n"), "Invalid DFT mouse")
   run(list("main.txt" = "MOUSE:1:2:2\n000000000\n"), "Invalid DFT mouse")
 })
-
 test_that("Dustmod accepts idle and command-only scripts without inventing frames", {
   path <- .computer_test_tar(list("main.txt" = "# A pause marker.\nSYNCLOAD\n"))
   on.exit(unlink(path))
@@ -71,10 +73,10 @@ test_that("Dustmod accepts idle and command-only scripts without inventing frame
   expect_equal(y$mouse_observed, c(TRUE, FALSE))
   expect_true(y$header$runtime_duration_known)
 })
-
 test_that("Dustmod validates tar members without extracting paths or following links", {
   bad <- function(scripts, pattern, types = rep("0", length(scripts)), checksum = FALSE) {
-    path <- .computer_test_tar(scripts, types, checksum); on.exit(unlink(path))
+    path <- .computer_test_tar(scripts, types, checksum)
+    on.exit(unlink(path))
     expect_error(.decode_dft(path), pattern)
   }
   bad(list("../main.txt" = "000000000\n"), "Unsafe")
@@ -84,7 +86,8 @@ test_that("Dustmod validates tar members without extracting paths or following l
   bad(list("main.txt" = ""), "member type", "2")
   bad(list("main.txt" = ""), "member type", "1")
   bad(list("main.txt" = "000000000\n"), "checksum", checksum = TRUE)
-  path <- .computer_test_tar(list("main.txt" = "000000000\n")); on.exit(unlink(path))
+  path <- .computer_test_tar(list("main.txt" = "000000000\n"))
+  on.exit(unlink(path))
   bytes <- readBin(path, "raw", file.info(path)$size)
   writeBin(bytes[seq_len(length(bytes) - 12L)], path)
   expect_error(.decode_dft(path), "Truncated|compressed|terminator")

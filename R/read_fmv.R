@@ -12,7 +12,6 @@
   header[["_format"]] <- format
   header
 }
-
 .legacy_text <- function(path, format) {
   data <- readBin(path, "raw", n = file.info(path)$size)
   starts <- which(data == as.raw(124L))
@@ -27,7 +26,6 @@
   body <- if (start <= length(data)) data[start:length(data)] else raw()
   list(header = header, body = body)
 }
-
 .legacy_rows <- function(body, format) {
   if (!length(body)) return(character())
   if (any(body == as.raw(0))) stop("Unexpected binary data in ", toupper(format), " text log")
@@ -38,33 +36,28 @@
   }
   rows
 }
-
 .legacy_fields <- function(rows, count, format) {
   if (!length(rows)) return(matrix(character(), 0L, count))
   fields <- strsplit(substring(rows, 2L, nchar(rows) - 1L), "|", fixed = TRUE)
   if (any(lengths(fields) != count)) stop("Unexpected number of ", toupper(format), " input fields")
   matrix(unlist(fields, use.names = FALSE), ncol = count, byrow = TRUE)
 }
-
 .legacy_commands <- function(values, format) {
   out <- suppressWarnings(as.integer(values))
   if (anyNA(out) || any(out < 0L)) stop("Invalid ", toupper(format), " command field")
   out
 }
-
 .legacy_bits <- function(words, bits) {
   out <- matrix(FALSE, length(words), length(bits))
   for (j in seq_along(bits)) out[, j] <- bitwAnd(words, bitwShiftL(1L, bits[j])) != 0L
   out
 }
-
 .legacy_chars <- function(values, width, format) {
   if (any(nchar(values, type = "bytes") != width)) stop("Wrong ", toupper(format), " controller record width")
   out <- matrix(FALSE, length(values), width)
   for (j in seq_len(width)) out[, j] <- !substr(values, j, j) %in% c(".", " ")
   out
 }
-
 # Famtasia format: https://tasvideos.org/EmulatorResources/Famtasia/FMV
 .decode_fmv <- function(path) {
   data <- readBin(path, "raw", n = file.info(path)$size)
@@ -85,10 +78,12 @@
   keys <- c("dpad_right", "dpad_left", "dpad_up", "dpad_down", "b", "a", "select", "start")
   inputs <- array(FALSE, c(nrow(packets), length(ports), length(keys)))
   for (p in seq_along(ports)) inputs[, p, ] <- .legacy_bits(packets[, p], 0:7)
-  header <- list(`_format` = "fmv", system = if (fds) "FDS" else "NES",
-                 startsFromSavestate = bitwAnd(as.integer(data[5L]), 128L) != 0L,
-                 controllerPorts = ports, rerecordCount = .read_u32_le(data, 10L),
-                 emulator = .read_cstring(data, 16L, 64L), title = .read_cstring(data, 80L, 64L))
+  header <- list(
+    `_format` = "fmv", system = if (fds) "FDS" else "NES",
+    startsFromSavestate = bitwAnd(as.integer(data[5L]), 128L) != 0L,
+    controllerPorts = ports, rerecordCount = .read_u32_le(data, 10L),
+    emulator = .read_cstring(data, 16L, 64L), title = .read_cstring(data, 80L, 64L)
+  )
   commands <- if (fds) packets[, width] else integer(nrow(packets))
   header$commandEncoding <- if (fds) "Famtasia FDS control byte" else "none"
   movie <- .new_named_movie(header, commands, inputs, keys, path)

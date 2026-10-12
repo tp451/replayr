@@ -4,7 +4,6 @@
   movie$header[["_format"]] <- "gbmv"
   movie
 }
-
 .decode_tasproj <- function(path) {
   movie <- .decode_bk2(path)
   # Retain BK2 decoding rules for the selected platform's analogue axes.

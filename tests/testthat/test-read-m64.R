@@ -7,7 +7,6 @@ test_that("M64 parses the bundled original N64 example", {
   expect_gt(sum(press_counts(mv, 1L)[21:28]), 0L)
   expect_identical(mv$header$enabledPorts, 1L)
 })
-
 .mk_m64 <- function(samples, ports = 1L, vi_count = 99L) {
   hdr <- raw(0x400L)
   hdr[1:4] <- charToRaw("M64\x1a")
@@ -21,10 +20,11 @@ test_that("M64 parses the bundled original N64 example", {
   writeBin(c(hdr, as.raw(as.vector(t(samples)))), tf)
   tf
 }
-
 test_that("M64 keeps input-sample and VI counts separate and exposes reset markers", {
-  samples <- matrix(c(0x01, 0x00, 0x00, 0x00,
-                      0x00, 0xc0, 0x00, 0x00), nrow = 2L, byrow = TRUE)
+  samples <- matrix(c(
+    0x01, 0x00, 0x00, 0x00,
+    0x00, 0xc0, 0x00, 0x00
+  ), nrow = 2L, byrow = TRUE)
   tf <- .mk_m64(samples)
   on.exit(unlink(tf))
   mv <- read_m64(tf)
@@ -35,11 +35,12 @@ test_that("M64 keeps input-sample and VI counts separate and exposes reset marke
   expect_true(player(mv)[1L, "R"])
   expect_equal(mv$commands, c(0L, 1L))
 })
-
 test_that("M64 handles every enabled-port combination without inventing assignment", {
-  samples <- matrix(c(0x80, 0x01, 64, 0,
-                      0x40, 0x02, 0, 64,
-                      0x01, 0x04, 192, 128), nrow = 3L, byrow = TRUE)
+  samples <- matrix(c(
+    0x80, 0x01, 64, 0,
+    0x40, 0x02, 0, 64,
+    0x01, 0x04, 192, 128
+  ), nrow = 3L, byrow = TRUE)
   paths <- character()
   on.exit(unlink(paths))
   for (mask in 1:15) {
@@ -49,8 +50,10 @@ test_that("M64 handles every enabled-port combination without inventing assignme
     mv <- read_m64(tf)
     expect_identical(mv$header$enabledPorts, as.integer(ports))
     expect_identical(n_frames(mv), 3L)
-    expect_equal(unname(analog_channels(mv)),
-                 matrix(c(64, 0, 0, 64, -64, -128), ncol = 2L, byrow = TRUE))
+    expect_equal(
+      unname(analog_channels(mv)),
+      matrix(c(64, 0, 0, 64, -64, -128), ncol = 2L, byrow = TRUE)
+    )
     expect_identical(as.vector(t(mv$poll_bytes)), as.raw(as.vector(t(samples))))
     if (length(ports) == 1L) {
       expect_s3_class(mv, "replayr_movie")
@@ -70,11 +73,12 @@ test_that("M64 handles every enabled-port combination without inventing assignme
     }
   }
 })
-
 test_that("M64 multiplayer polls retain analogue values in every stick mode", {
-  samples <- matrix(c(0x80, 0x01, 64, 0,
-                      0x40, 0x02, 64, 64,
-                      0x00, 0xc0, 0, 0), nrow = 3L, byrow = TRUE)
+  samples <- matrix(c(
+    0x80, 0x01, 64, 0,
+    0x40, 0x02, 64, 64,
+    0x00, 0xc0, 0, 0
+  ), nrow = 3L, byrow = TRUE)
   tf <- .mk_m64(samples, ports = c(1L, 3L))
   on.exit(unlink(tf))
   for (mode in c("raw", "cardinal4", "cardinal8", "angle", "angle+magnitude")) {
@@ -84,22 +88,25 @@ test_that("M64 multiplayer polls retain analogue values in every stick mode", {
     expect_identical(result$commands, c(0L, 0L, 1L))
     expect_equal(unname(analog_channels(mv)), samples[, 3:4])
     expect_identical(result$a, c(TRUE, FALSE, FALSE))
-    expect_identical(mv$button_ids,
-                     if (mode == "cardinal4") c(1:5, 7:8, 11:12, 18L, 20:24, 26L, 28L, 30L)
-                     else if (mode == "cardinal8") c(1:5, 7:8, 11:12, 18L, 20:31)
-                     else c(1:5, 7:8, 11:12, 18L, 20:23))
+    expect_identical(
+      mv$button_ids,
+      if (mode == "cardinal4") c(1:5, 7:8, 11:12, 18L, 20:24, 26L, 28L, 30L)
+      else if (mode == "cardinal8") c(1:5, 7:8, 11:12, 18L, 20:31)
+      else c(1:5, 7:8, 11:12, 18L, 20:23)
+    )
     if (mode == "cardinal4") expect_equal(result$left_direction, c(0, 90, NA))
     if (mode == "cardinal8") expect_equal(result$left_direction, c(0, 45, NA))
     if (mode %in% c("angle", "angle+magnitude")) expect_equal(result$left_angle, c(0, 45, NA))
     if (mode == "angle+magnitude") expect_equal(result$left_magnitude, c(0.5, sqrt(0.5), 0))
   }
 })
-
 test_that("M64 assigns only a caller-supplied repeating polling order", {
-  samples <- matrix(c(0x80, 0x00, 64, 0,
-                      0x40, 0xc0, 0, 64,
-                      0x01, 0x00, 192, 0,
-                      0x02, 0x00, 0, 192), nrow = 4L, byrow = TRUE)
+  samples <- matrix(c(
+    0x80, 0x00, 64, 0,
+    0x40, 0xc0, 0, 64,
+    0x01, 0x00, 192, 0,
+    0x02, 0x00, 0, 192
+  ), nrow = 4L, byrow = TRUE)
   tf <- .mk_m64(samples, ports = c(2L, 4L))
   on.exit(unlink(tf))
   mv <- read_m64(tf, controller_order = c(4L, 2L), analog = "angle+magnitude")
@@ -126,7 +133,6 @@ test_that("M64 assigns only a caller-supplied repeating polling order", {
     expect_error(read_m64(tf, controller_order = order), "distinct enabled ports")
   }
 })
-
 test_that("M64 assigns three and four controllers, including empty streams", {
   paths <- character()
   on.exit(unlink(paths))
@@ -147,7 +153,6 @@ test_that("M64 assigns three and four controllers, including empty streams", {
     }
   }
 })
-
 test_that("M64 rejects truncated samples, incomplete cycles, and conflicting port metadata", {
   tf <- .mk_m64(matrix(0L, nrow = 3L, ncol = 4L), ports = c(1L, 2L))
   on.exit(unlink(tf))
@@ -161,8 +166,6 @@ test_that("M64 rejects truncated samples, incomplete cycles, and conflicting por
   writeBin(bytes, tf)
   expect_error(read_m64(tf), "controller count disagrees")
 })
-
-
 test_that("M64 retains surplus bytes beyond its declared samples", {
   samples <- matrix(c(128, 0, 64, 192, 64, 0, 0, 127), nrow = 2L, byrow = TRUE)
   tf <- .mk_m64(samples)

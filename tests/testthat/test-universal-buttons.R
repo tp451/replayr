@@ -13,20 +13,19 @@ test_that("universal_buttons() returns the stable identities including named per
   # IDs 40..49 are the shared numbered controls 0..9.
   expect_equal(ub[40:49], as.character(0:9))
 })
-
 test_that("universal_button_names() is the same length as universal_buttons()", {
   expect_length(universal_button_names(), length(universal_buttons()))
-  expect_equal(universal_button_names()[1:8],
-               c("Right", "Left", "Down", "Up", "Start", "Select", "B", "A"))
+  expect_equal(
+    universal_button_names()[1:8],
+    c("Right", "Left", "Down", "Up", "Start", "Select", "B", "A")
+  )
 })
-
 test_that("supported_formats() lists distinct recording extensions", {
   fmt <- supported_formats()
   expect_gt(length(fmt), 12)
-  expect_false(anyDuplicated(fmt)>0L)
+  expect_false(anyDuplicated(fmt) > 0L)
   expect_true(all(startsWith(fmt, ".")))
 })
-
 test_that("movie constructor enforces array and metadata invariants", {
   expect_error(
     replayr:::.new_movie(list(), integer(0), matrix(FALSE, 0L, 2L)),
@@ -38,11 +37,11 @@ test_that("movie constructor enforces array and metadata invariants", {
   )
   expect_error(
     replayr:::.new_movie(list(), 0L, array(FALSE, c(1L, 1L, 8L)),
-                         button_mnemonics = letters[1:7]),
+      button_mnemonics = letters[1:7]
+    ),
     "mnemonic.*dimension"
   )
 })
-
 test_that("stick clicks never share keypad identities", {
   expect_equal(universal_buttons()[15:16], c("j", "k"))
   expect_identical(button_layout()$key[40:41], c("numbered_0", "numbered_1"))

@@ -19,42 +19,31 @@
 #     bit 0 P1 X     bit 1 P1 Y     bit 2 P1 Z     bit 3 P1 Mode
 #     bit 4 P2 X     bit 5 P2 Y     bit 6 P2 Z     bit 7 P2 Mode
 #           three-player mode: P3 standard buttons (same as bytes 0/1)
-
-# Bit-index 0..7 in std byte -> 1-based universal slot.
+# Bit-index 0..7 in std byte -> 1-based private decoder slot.
 # The universal schema uses the Genesis A/B/C buttons in slots 8/7/13.
 .GMV_STD_BIT_TO_UNI <- c(
-  4L,   # bit 0: Up                     -> 4
-  3L,   # bit 1: Down                   -> 3
-  2L,   # bit 2: Left                   -> 2
-  1L,   # bit 3: Right                  -> 1
-  8L,   # bit 4: A                      -> 8
-  7L,   # bit 5: B                      -> 7
-  13L,  # bit 6: C                      -> 13
-  5L    # bit 7: Start                  -> 5
+  4L, # bit 0: Up                     -> 4
+  3L, # bit 1: Down                   -> 3
+  2L, # bit 2: Left                   -> 2
+  1L, # bit 3: Right                  -> 1
+  8L, # bit 4: A                      -> 8
+  7L, # bit 5: B                      -> 7
+  13L, # bit 6: C                      -> 13
+  5L # bit 7: Start                  -> 5
 )
-
 # Bit-index 0..7 in 6-button extras byte -> (player_idx_1based, slot_1based).
 .GMV_6B_BIT_TO_PLAYER_SLOT <- list(
-  c(1L, 9L),   # bit 0: P1 X
-  c(1L, 10L),  # bit 1: P1 Y
-  c(1L, 14L),  # bit 2: P1 Z
-  c(1L, 15L),  # bit 3: P1 Mode
-  c(2L, 9L),   # bit 4: P2 X
-  c(2L, 10L),  # bit 5: P2 Y
-  c(2L, 14L),  # bit 6: P2 Z
-  c(2L, 15L)   # bit 7: P2 Mode
+  c(1L, 9L), # bit 0: P1 X
+  c(1L, 10L), # bit 1: P1 Y
+  c(1L, 14L), # bit 2: P1 Z
+  c(1L, 15L), # bit 3: P1 Mode
+  c(2L, 9L), # bit 4: P2 X
+  c(2L, 10L), # bit 5: P2 Y
+  c(2L, 14L), # bit 6: P2 Z
+  c(2L, 15L) # bit 7: P2 Mode
 )
-
-#' Read a Gens-rerecording .gmv movie file
-#'
-#' Genesis controllers map onto universal slots 1..4 (d-pad), 5 (Start),
-#' 7/8 (B/A; Genesis has no Select), 9/10 (X/Y), 13 (C), 14 (Z), 15
-#' (Mode). Output is 15 buttons wide so every Genesis-relevant column
-#' sits at its canonical universal slot.
-#'
-#' @param path Path to a .gmv file.
-#' @return A `replayr_movie` object.
-#' @noRd
+# Decode active-low controller words using the pad capabilities declared
+# by the header revision.
 .decode_gmv <- function(path) {
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x40L || !identical(data[1:15], charToRaw("Gens Movie TEST"))) {
@@ -70,14 +59,13 @@
   # only from TESTA. Earlier files still record all three input bytes;
   # retain their extra-button bits without claiming a known hardware type.
   if (version_num < 9L) p1_pad <- p2_pad <- 'unspecified'
-  flags <- if(version_num >= 17L) as.integer(data[0x17L]) else 0L
+  flags <- if (version_num >= 17L) as.integer(data[0x17L]) else 0L
   if (!(p1_pad %in% c("3", "6", 'unspecified')) || !(p2_pad %in% c("3", "6", 'unspecified'))) {
     stop(path, ": unsupported GMV controller type")
   }
   is_three_player <- bitwAnd(flags, 0x20L) != 0L
   is_pal <- bitwAnd(flags, 0x80L) != 0L
   desc <- .read_cstring(data, 0x18L, 40L)
-
   body <- if (length(data) > 0x40L) data[(0x40L + 1L):length(data)] else raw(0)
   bytes_per_frame <- 3L
   if (length(body) %% bytes_per_frame != 0L) {
@@ -86,10 +74,8 @@
   n_frames <- length(body) %/% bytes_per_frame
   n_players <- if (is_three_player) 3L else 2L
   n_buttons <- 15L
-
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
-
   if (n_frames > 0L) {
     for (fi in seq_len(n_frames)) {
       base <- (fi - 1L) * 3L
@@ -122,7 +108,6 @@
       }
     }
   }
-
   header <- list(
     "_format" = "gmv",
     version = version,

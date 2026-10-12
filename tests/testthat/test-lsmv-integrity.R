@@ -8,16 +8,15 @@ make_lsmv_integrity_fixture <- function() {
   zip::zip(path, c("input", "authors"), root = root, compression_level = 0L)
   path
 }
-
 alter_lsmv_integrity_bytes <- function(path, from, to) {
-  from <- charToRaw(from); to <- charToRaw(to)
+  from <- charToRaw(from)
+  to <- charToRaw(to)
   stopifnot(length(from) == length(to))
   data <- readBin(path, "raw", file.info(path)$size)
   for (at in grepRaw(from, data, fixed = TRUE, all = TRUE))
     data[seq.int(at, length.out = length(from))] <- to
   writeBin(data, path)
 }
-
 test_that("LSMV verifies all input bytes and keeps a bad metadata CRC visible", {
   path <- make_lsmv_integrity_fixture()
   on.exit(unlink(path))
@@ -33,7 +32,6 @@ test_that("LSMV verifies all input bytes and keeps a bad metadata CRC visible", 
   expect_error(read_lsmv(path), "corrupt|extract|CRC|checksum")
   expect_setequal(list.dirs(tempdir(), recursive = FALSE), before)
 })
-
 test_that("LSMV rejects oversized inputs before extraction instead of truncating", {
   path <- make_lsmv_integrity_fixture()
   on.exit(unlink(path))

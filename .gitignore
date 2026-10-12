@@ -29,3 +29,33 @@ __pycache__/
 # Generated testthat failure reproductions
 _problems/
 Rplots.pdf
+
+# Local editor settings, credentials, and caches
+/.Renviron
+/.Renviron.*
+/.Rprofile
+/.vscode/
+/.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local build output and external recordings
+/00LOCK*/
+/*.log
+/*.Rout
+/*.Rout.fail
+/build/
+/dist/
+/recordings/
+/raw-recordings/
+/corpus/
+
+# Optional pkgdown machine-readable exports
+/docs/**/*.md
+/docs/llms.txt

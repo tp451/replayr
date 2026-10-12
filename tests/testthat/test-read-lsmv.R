@@ -7,7 +7,6 @@ test_that("replayr:::.decode_lsmv() parses the bundled synthetic SNES movie", {
   # SNES gamepad is 12 buttons wide.
   expect_equal(n_buttons(mv), 12L)
 })
-
 test_that("lsmv parser rejects unsupported and mixed controller widths", {
   expect_error(
     replayr:::.parse_lsmv_input("F.|............|.....\n"),

@@ -1,4 +1,5 @@
 """Create original Dustmod scripts demonstrating movement and menu inputs."""
+
 from pathlib import Path
 import gzip
 import io

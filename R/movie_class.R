@@ -13,7 +13,6 @@ n_frames <- function(movie) {
   stopifnot(.is_recording(movie))
   as.integer(dim(movie$inputs)[1])
 }
-
 #' Number of assigned input streams
 #'
 #' Keyboard and mouse controls can share a stream. The format-specific header
@@ -28,7 +27,6 @@ n_players <- function(movie) {
   if (inherits(movie, "replayr_poll_stream")) return(NA_integer_)
   as.integer(dim(movie$inputs)[2])
 }
-
 #' Number of compact controller columns
 #'
 #' Use [button_layout()] to map these columns to stable controller IDs.
@@ -40,7 +38,6 @@ n_buttons <- function(movie) {
   stopifnot(.is_recording(movie))
   as.integer(dim(movie$inputs)[3])
 }
-
 #' Button states for one controller
 #'
 #' @inheritParams n_frames
@@ -49,20 +46,18 @@ n_buttons <- function(movie) {
 #'   columns. Column names are the mnemonics from [button_layout()].
 #' @export
 #' @examples
-#' \dontrun{
 #'   path <- system.file("extdata", "sample.fm2", package = "replayr")
 #'   mv <- read_movie(path)
 #'   p1 <- player(mv)
 #'   colSums(p1)        # number of frames each button was held
-#' }
 player <- function(movie, idx = 1L) {
   stopifnot(.is_recording(movie))
   if (inherits(movie, "replayr_poll_stream")) {
     stop("This recording contains unassigned or device-specific polls; use polls() to inspect the ordered stream.", call. = FALSE)
   }
-  if (!is.numeric(idx) || length(idx)!=1L || is.na(idx) || !is.finite(idx) ||
-      idx != floor(idx) || idx < 1L || idx > n_players(movie)) {
-    stop("idx must identify one player by its one-based integer index.",call.=FALSE)
+  if (!is.numeric(idx) || length(idx) != 1L || is.na(idx) || !is.finite(idx) ||
+    idx != floor(idx) || idx < 1L || idx > n_players(movie)) {
+    stop("idx must identify one player by its one-based integer index.", call. = FALSE)
   }
   m <- movie$inputs[, idx, , drop = TRUE]
   if (is.null(dim(m))) {
@@ -75,7 +70,6 @@ player <- function(movie, idx = 1L) {
   attr(m, "button_names") <- movie$button_names
   m
 }
-
 #' Held-observation counts per control
 #'
 #' @inheritParams n_frames
@@ -90,7 +84,6 @@ press_counts <- function(movie, idx = 1L) {
   names(out) <- movie$button_names
   out
 }
-
 #' @export
 format.replayr_movie <- function(x, ...) {
   fmt <- x$header[["_format"]]
@@ -101,7 +94,6 @@ format.replayr_movie <- function(x, ...) {
     if (is.na(x$source_path)) "<in-memory>" else basename(x$source_path)
   )
 }
-
 #' @export
 print.replayr_movie <- function(x, ...) {
   cat(format(x), "\n", sep = "")
@@ -110,9 +102,12 @@ print.replayr_movie <- function(x, ...) {
     keys <- keys[keys != "_format"]
     if (length(keys) > 0) {
       cat("Header keys: ", paste(keys[seq_len(min(8L, length(keys)))],
-                                  collapse = ", "),
-          if (length(keys) > 8L) ", ..." else "",
-          "\n", sep = "")
+        collapse = ", "
+      ),
+      if (length(keys) > 8L) ", ..." else "",
+      "\n",
+      sep = ""
+      )
     }
   }
   if (n_frames(x) > 0L) {
@@ -120,8 +115,10 @@ print.replayr_movie <- function(x, ...) {
     pc <- pc[pc > 0L]
     if (length(pc) > 0L) {
       cat("P1 active observations: ",
-          paste(sprintf("%s=%d", names(pc), pc), collapse = ", "),
-          "\n", sep = "")
+        paste(sprintf("%s=%d", names(pc), pc), collapse = ", "),
+        "\n",
+        sep = ""
+      )
     }
   }
   invisible(x)

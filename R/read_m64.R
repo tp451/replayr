@@ -31,47 +31,34 @@
 #
 # Public readers retain stick coordinates by default and apply the requested
 # representation through the shared controller-layout code.
-
-# Bit 0..7 in byte 0 (low) -> 1-based universal slot.
+# Bit 0..7 in byte 0 (low) -> 1-based private decoder slot.
 .M64_LOW_BIT_TO_UNI <- c(
-  1L,   # bit 0: D-pad Right
-  2L,   # bit 1: D-pad Left
-  3L,   # bit 2: D-pad Down
-  4L,   # bit 3: D-pad Up
-  5L,   # bit 4: Start
-  14L,  # bit 5: Z
-  7L,   # bit 6: B
-  8L    # bit 7: A
+  1L, # bit 0: D-pad Right
+  2L, # bit 1: D-pad Left
+  3L, # bit 2: D-pad Down
+  4L, # bit 3: D-pad Up
+  5L, # bit 4: Start
+  14L, # bit 5: Z
+  7L, # bit 6: B
+  8L # bit 7: A
 )
-
-# Bit 0..7 in byte 1 (high) -> 1-based universal slot, NA for reserved.
+# Bit 0..7 in byte 1 (high) -> 1-based private decoder slot, NA for reserved.
 .M64_HIGH_BIT_TO_UNI <- c(
-  17L,            # bit 0: C-Right
-  18L,            # bit 1: C-Left
-  19L,            # bit 2: C-Down
-  20L,            # bit 3: C-Up
-  12L,            # bit 4: R-shoulder
-  11L,            # bit 5: L-shoulder
-  NA_integer_,    # bit 6: reserved
-  NA_integer_     # bit 7: reserved
+  17L, # bit 0: C-Right
+  18L, # bit 1: C-Left
+  19L, # bit 2: C-Down
+  20L, # bit 3: C-Up
+  12L, # bit 4: R-shoulder
+  11L, # bit 5: L-shoulder
+  NA_integer_, # bit 6: reserved
+  NA_integer_ # bit 7: reserved
 )
-
-# Sector -> 1-based universal slot in (E, NE, N, NW, W, SW, S, SE) order.
+# Sector -> 1-based private decoder slot in (E, NE, N, NW, W, SW, S, SE) order.
 .STICK_SECTOR_TO_UNI <- c(21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L)
-
 # Magnitude threshold below which the stick is treated as neutral.
 .M64_STICK_DEADZONE <- 16L
-
-#' Read a Mupen64 .m64 movie file
-#'
-#' Samples are controller polls, with no per-sample port or VI identifier.
-#' Multiple enabled ports are retained as an ordered unassigned stream unless
-#' the caller supplies a verified repeating controller order.
-#'
-#' @inheritParams read_movie
-#' @param path Path to a .m64 file.
-#' @return A `replayr_movie` object.
-#' @noRd
+# Decode polls in file order. An explicit controller order groups polls
+# into cycles; otherwise multiple enabled ports remain unassigned.
 .decode_m64 <- function(path, analog = c("raw", "quantized"), controller_order = NULL) {
   analog <- match.arg(analog)
   data <- readBin(path, what = "raw", n = file.info(path)$size)
@@ -88,7 +75,6 @@
   n_samples_field <- .read_u32_le(data, 0x18L)
   controller_flags <- .read_u32_le(data, 0x20L)
   enabled_ports <- which(bitwAnd(as.integer(data[0x21L]), bitwShiftL(1L, 0:3)) != 0L)
-
   if (n_ctrl < 1L || n_ctrl > 4L) {
     stop(path, ": invalid M64 controller count ", n_ctrl)
   }
@@ -98,15 +84,14 @@
   supplied_order <- !is.null(controller_order)
   unassigned <- n_ctrl > 1L && !supplied_order
   if (supplied_order && (!is.numeric(controller_order) ||
-      !length(controller_order) || anyNA(controller_order) ||
-      any(!is.finite(controller_order)) ||
-      any(!controller_order %in% enabled_ports) || anyDuplicated(controller_order))) {
+    !length(controller_order) || anyNA(controller_order) ||
+    any(!is.finite(controller_order)) ||
+    any(!controller_order %in% enabled_ports) || anyDuplicated(controller_order))) {
     stop(path, ": controller_order must list distinct enabled ports in their repeating polling order")
   }
   if (!supplied_order) controller_order <- if (unassigned) integer() else enabled_ports
   controller_order <- as.integer(controller_order)
   controller_ports <- sort(controller_order)
-
   body <- if (length(data) > 0x400L) data[(0x400L + 1L):length(data)] else raw(0)
   sample_size <- 4L
   have_samples <- length(body) %/% sample_size
@@ -119,8 +104,10 @@
     stop(path, ": partial final M64 input sample within the declared stream")
   }
   if (n_samples_field > have_samples) {
-    stop(sprintf("%s: M64 input stream is truncated (header=%d samples, file=%d)",
-                 path, n_samples_field, have_samples))
+    stop(sprintf(
+      "%s: M64 input stream is truncated (header=%d samples, file=%d)",
+      path, n_samples_field, have_samples
+    ))
   }
   n_samples <- n_samples_field
   used_bytes <- n_samples * sample_size
@@ -129,14 +116,15 @@
     stop(path, ": incomplete caller-supplied controller cycle")
   }
   n_frames <- n_samples
-
   n_players <- 1L
   n_buttons <- 28L
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
   analog_values <- .empty_analog(n_frames, n_players, c("lstick_x", "lstick_y"))
-  poll_bytes <- matrix(body[seq_len(n_samples * sample_size)], ncol = sample_size,
-                       byrow = TRUE, dimnames = list(NULL, paste0("byte", 0:3)))
+  poll_bytes <- matrix(body[seq_len(n_samples * sample_size)],
+    ncol = sample_size,
+    byrow = TRUE, dimnames = list(NULL, paste0("byte", 0:3))
+  )
   if (n_samples > 0L) {
     low <- as.integer(poll_bytes[, 1L])
     high <- as.integer(poll_bytes[, 2L])
@@ -174,7 +162,6 @@
       commands <- bitwOr(commands, poll_commands[rows])
     }
   }
-
   rom_name <- .read_cstring(data, 0x0C4L, 32L)
   author <- .read_cstring(data, 0x222L, 222L)
   header <- list(

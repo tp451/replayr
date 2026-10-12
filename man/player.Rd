@@ -20,10 +20,8 @@ columns. Column names are the mnemonics from \code{\link[=button_layout]{button_
 Button states for one controller
 }
 \examples{
-\dontrun{
   path <- system.file("extdata", "sample.fm2", package = "replayr")
   mv <- read_movie(path)
   p1 <- player(mv)
   colSums(p1)        # number of frames each button was held
-}
 }

@@ -1,6 +1,7 @@
 test_that("every supported extension has an importable original example", {
   files <- list.files(system.file("extdata", package = "replayr", mustWork = TRUE),
-                      recursive = TRUE, full.names = TRUE)
+    recursive = TRUE, full.names = TRUE
+  )
   extensions <- tolower(tools::file_ext(files))
   for (format in sub("^\\.", "", supported_formats())) {
     choices <- files[extensions == format]
@@ -14,4 +15,3 @@ test_that("every supported extension has an importable original example", {
     expect_false(anyNA(movie$inputs), info = format)
   }
 })
-

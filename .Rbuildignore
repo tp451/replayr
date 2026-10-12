@@ -26,3 +26,16 @@
 ^tests/testthat/_problems$
 ^tests/testthat/Rplots\.pdf$
 ^COMPATIBILITY[.]md$
+^CONTROLLERS[.]md$
+^\.r-lib$
+^\.Renviron($|\.)
+^\.Rprofile$
+^\.vscode$
+^\.idea$
+^00LOCK
+^.*\.(log|Rout|Rout\.fail)$
+^(dist|recordings|raw-recordings|corpus)$
+(^|/)(__pycache__|\.pytest_cache|\.ruff_cache|\.mypy_cache)$
+^.*\.(pyc|swp|swo)$
+(^|/)(\.DS_Store|Thumbs\.db|Desktop\.ini)$
+^tools/compatibility-tests$

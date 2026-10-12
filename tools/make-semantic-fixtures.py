@@ -24,7 +24,6 @@ PXM: TASEmulators/pcsxrr 1b4c66d6a2938da55761280617d288f3c65870d7,
 from pathlib import Path
 import struct
 
-
 ROOT = Path(__file__).resolve().parents[1] / "inst" / "extdata" / "semantic"
 
 
@@ -71,7 +70,9 @@ def main():
     write("fcm", header, body)
 
     # SMV: neutral, the twelve SNES controls in bits 4..15, then right + Y + B.
-    words = [0] + [1 << bit for bit in range(4, 16)] + [(1 << 8) | (1 << 14) | (1 << 15)]
+    words = (
+        [0] + [1 << bit for bit in range(4, 16)] + [(1 << 8) | (1 << 14) | (1 << 15)]
+    )
     header = bytearray(32)
     header[:4] = b"SMV\x1a"
     u32(header, 4, 1)
@@ -109,10 +110,14 @@ def main():
     records = [(0, 128, 128, 128, 128)]
     records += [(1 << bit, 128, 128, 128, 128) for bit in range(16)]
     records += [
-        (0, 255, 128, 128, 128), (0, 128, 0, 128, 128),
-        (0, 0, 128, 128, 128), (0, 128, 255, 128, 128),
-        (0, 128, 128, 255, 128), (0, 128, 128, 128, 0),
-        (0, 128, 128, 0, 128), (0, 128, 128, 128, 255),
+        (0, 255, 128, 128, 128),
+        (0, 128, 0, 128, 128),
+        (0, 0, 128, 128, 128),
+        (0, 128, 255, 128, 128),
+        (0, 128, 128, 255, 128),
+        (0, 128, 128, 128, 0),
+        (0, 128, 128, 0, 128),
+        (0, 128, 128, 128, 255),
     ]
     for extension in ("pjm", "pxm"):
         header = bytearray(64)

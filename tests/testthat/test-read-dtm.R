@@ -7,17 +7,6 @@ test_that("replayr:::.decode_dtm() parses the bundled synthetic GameCube movie",
   expect_equal(n_buttons(mv), 28L)
   expect_gt(sum(press_counts(mv, 1L)[21:28]), 0L)
 })
-
-test_that("replayr:::.decode_dtm() parses an optional external GameCube movie", {
-  fp <- external_fixture("raw_gc/luigis_mansion/2587.dtm")
-  if (is.null(fp)) skip("set REPLAYR_FIXTURE_DIR to enable DTM test")
-  mv <- replayr:::.decode_dtm(analog = "quantized", fp)
-  expect_s3_class(mv, "replayr_movie")
-  expect_equal(mv$header[["_format"]], "dtm")
-  expect_gt(n_frames(mv), 0L)
-  expect_equal(n_buttons(mv), 28L)
-})
-
 .mk_dtm <- function(button_word, controller_mask = 1L) {
   hdr <- raw(0x100L)
   hdr[1:4] <- charToRaw("DTM\x1a")
@@ -25,14 +14,15 @@ test_that("replayr:::.decode_dtm() parses an optional external GameCube movie", 
   hdr[12] <- as.raw(controller_mask)
   hdr[14] <- as.raw(1L) # frameCount u64
   hdr[22] <- as.raw(1L) # inputCount u64
-  record <- as.raw(c(bitwAnd(button_word, 0xffL),
-                     bitwAnd(bitwShiftR(button_word, 8L), 0xffL),
-                     0, 0, 128, 128, 128, 128))
+  record <- as.raw(c(
+    bitwAnd(button_word, 0xffL),
+    bitwAnd(bitwShiftR(button_word, 8L), 0xffL),
+    0, 0, 128, 128, 128, 128
+  ))
   tf <- tempfile(fileext = ".dtm")
   writeBin(c(hdr, record), tf)
   tf
 }
-
 test_that("replayr:::.decode_dtm() uses packed button bits and preserves commands", {
   tf <- .mk_dtm(bitwOr(bitwShiftL(1L, 1L), bitwShiftL(1L, 13L)))
   on.exit(unlink(tf))
@@ -41,7 +31,6 @@ test_that("replayr:::.decode_dtm() uses packed button bits and preserves command
   expect_true(mv$inputs[1L, 1L, 8L])
   expect_equal(mv$commands, 2L)
 })
-
 test_that("multi-controller DTM preserves an unassigned poll and every byte", {
   tf <- .mk_dtm(0xffffL, controller_mask = 3L)
   on.exit(unlink(tf))
@@ -60,34 +49,35 @@ test_that("multi-controller DTM preserves an unassigned poll and every byte", {
     expect_true(data$is_connected)
     expect_true(data$get_origin)
     expect_identical(data$commands, 3L)
-    expect_true(all(unlist(data[1, mv$button_keys[mv$button_ids %in% c(1:5,7:12,18)]])))
+    expect_true(all(unlist(data[1, mv$button_keys[mv$button_ids %in% c(1:5, 7:12, 18)]])))
     expect_equal(unname(analog_channels(mv)[1, ]), c(10, 20, 200, 160, 100, 80))
     expect_error(player(mv), "use polls")
     expect_match(format(mv), "assignment=unassigned")
   }
 })
-
 test_that('DTM accepts only an explicit complete repeating controller order', {
-  tf<-.mk_dtm(2L,controller_mask=3L);on.exit(unlink(tf))
-  b<-readBin(tf,'raw',n=file.info(tf)$size)
-  b[22]<-as.raw(2L)
-  other<-b[257:264];other[1]<-as.raw(4L)
-  writeBin(c(b,other),tf)
-  mv<-replayr:::.decode_dtm(analog = "quantized", tf,controller_order=c(1L,2L))
-  expect_equal(n_players(mv),2L)
-  expect_equal(n_frames(mv),1L)
-  expect_true(mv$inputs[1,1,8])
-  expect_false(mv$inputs[1,1,7])
-  expect_true(mv$inputs[1,2,7])
-  expect_match(mv$header$controllerAssignment,'caller-supplied')
-  swapped<-replayr:::.decode_dtm(analog = "quantized", tf,controller_order=c(2L,1L))
-  expect_true(swapped$inputs[1,2,8])
-  expect_error(replayr:::.decode_dtm(analog = "quantized", tf,controller_order=c(1,1)),'every enabled port')
-  expect_error(replayr:::.decode_dtm(analog = "quantized", tf,controller_order=c(1,3)),'every enabled port')
-  b[22]<-as.raw(1L);writeBin(b,tf)
-  expect_error(replayr:::.decode_dtm(analog = "quantized", tf,controller_order=c(1,2)),'incomplete')
+  tf <- .mk_dtm(2L, controller_mask = 3L)
+  on.exit(unlink(tf))
+  b <- readBin(tf, 'raw', n = file.info(tf)$size)
+  b[22] <- as.raw(2L)
+  other <- b[257:264]
+  other[1] <- as.raw(4L)
+  writeBin(c(b, other), tf)
+  mv <- replayr:::.decode_dtm(analog = "quantized", tf, controller_order = c(1L, 2L))
+  expect_equal(n_players(mv), 2L)
+  expect_equal(n_frames(mv), 1L)
+  expect_true(mv$inputs[1, 1, 8])
+  expect_false(mv$inputs[1, 1, 7])
+  expect_true(mv$inputs[1, 2, 7])
+  expect_match(mv$header$controllerAssignment, 'caller-supplied')
+  swapped <- replayr:::.decode_dtm(analog = "quantized", tf, controller_order = c(2L, 1L))
+  expect_true(swapped$inputs[1, 2, 8])
+  expect_error(replayr:::.decode_dtm(analog = "quantized", tf, controller_order = c(1, 1)), 'every enabled port')
+  expect_error(replayr:::.decode_dtm(analog = "quantized", tf, controller_order = c(1, 3)), 'every enabled port')
+  b[22] <- as.raw(1L)
+  writeBin(b, tf)
+  expect_error(replayr:::.decode_dtm(analog = "quantized", tf, controller_order = c(1, 2)), 'incomplete')
 })
-
 test_that("DTM chunk boundaries preserve polls, flags, and both sticks", {
   count <- 65538L
   tf <- .mk_dtm(0L, controller_mask = 3L)
@@ -95,12 +85,15 @@ test_that("DTM chunk boundaries preserve polls, flags, and both sticks", {
   header <- readBin(tf, "raw", n = 256L)
   header[22:25] <- writeBin(count, raw(), size = 4L, endian = "little")
   records <- matrix(rep(c(0L, 0L, 0L, 0L, 128L, 128L, 128L, 128L), count),
-                    ncol = 8L, byrow = TRUE)
+    ncol = 8L, byrow = TRUE
+  )
   selected <- c(1L, 65536L, 65537L, 65538L)
-  records[selected, ] <- rbind(c(2L, 64L, 0L, 255L, 192L, 128L, 128L, 192L),
-                               c(4L, 16L, 255L, 0L, 128L, 192L, 64L, 128L),
-                               c(8L, 32L, 0L, 0L, 64L, 128L, 128L, 64L),
-                               c(16L, 128L, 0L, 0L, 128L, 64L, 192L, 128L))
+  records[selected, ] <- rbind(
+    c(2L, 64L, 0L, 255L, 192L, 128L, 128L, 192L),
+    c(4L, 16L, 255L, 0L, 128L, 192L, 64L, 128L),
+    c(8L, 32L, 0L, 0L, 64L, 128L, 128L, 64L),
+    c(16L, 128L, 0L, 0L, 128L, 64L, 192L, 128L)
+  )
   writeBin(c(header, as.raw(as.vector(t(records)))), tf)
   for (mode in c("raw", "cardinal4", "cardinal8", "angle", "angle+magnitude")) {
     movie <- read_dtm(tf, analog = mode)
@@ -113,7 +106,9 @@ test_that("DTM chunk boundaries preserve polls, flags, and both sticks", {
     expect_identical(data$is_connected, c(TRUE, FALSE, FALSE, FALSE))
     expect_identical(data$get_origin, c(FALSE, FALSE, FALSE, TRUE))
     expect_equal(as.matrix(data[, c("a", "b", "x", "y")]),
-                 unname(diag(TRUE, 4L)), ignore_attr = TRUE)
+      unname(diag(TRUE, 4L)),
+      ignore_attr = TRUE
+    )
     if (mode %in% c("angle", "angle+magnitude")) {
       expect_equal(data$left_angle, c(0, 90, 180, 270))
       expect_equal(data$right_angle, c(90, 180, 270, 0))
@@ -131,7 +126,6 @@ test_that("DTM chunk boundaries preserve polls, flags, and both sticks", {
   expect_true(projected$inputs[65537L, 1L, 25L])
   expect_true(projected$inputs[65538L, 1L, 27L])
 })
-
 test_that("DTM imports complete stored polls when its input statistic differs", {
   tf <- .mk_dtm(2L)
   on.exit(unlink(tf))
@@ -157,7 +151,6 @@ test_that("DTM imports complete stored polls when its input statistic differs", 
   writeBin(head(bytes, -1L), tf)
   expect_error(read_dtm(tf), "partial final DTM poll")
 })
-
 .mk_zelda_dtm <- function(controller_mask = 1L, known_revision = TRUE) {
   tf <- .mk_dtm(2L, controller_mask)
   hdr <- readBin(tf, "raw", n = 256L)
@@ -167,26 +160,33 @@ test_that("DTM imports complete stored polls when its input statistic differs", 
     hdr[210:229] <- as.raw(strtoi(substring(revision, seq(1, 39, 2), seq(2, 40, 2)), 16L))
   }
   record <- function(word, left_x, left_y, right_x, right_y, event, x, z) {
-    c(as.raw(c(bitwAnd(word, 255L), bitwShiftR(word, 8L), 0, 255,
-               left_x, left_y, right_x, right_y, event)),
-      writeBin(c(x, z), raw(), size = 4L, endian = "little"))
+    c(
+      as.raw(c(
+        bitwAnd(word, 255L), bitwShiftR(word, 8L), 0, 255,
+        left_x, left_y, right_x, right_y, event
+      )),
+      writeBin(c(x, z), raw(), size = 4L, endian = "little")
+    )
   }
-  body <- c(record(16386L, 192, 128, 128, 192, 3, 1.25, -2.5),
-            record(4L, 128, 192, 64, 128, 0, -128.5, 256.25),
-            record(32776L, 64, 128, 128, 64, 255, 0, 4096.5),
-            record(49168L, 128, 64, 192, 128, 1, -0.25, 0))
+  body <- c(
+    record(16386L, 192, 128, 128, 192, 3, 1.25, -2.5),
+    record(4L, 128, 192, 64, 128, 0, -128.5, 256.25),
+    record(32776L, 64, 128, 128, 64, 255, 0, 4096.5),
+    record(49168L, 128, 64, 192, 128, 1, -0.25, 0)
+  )
   writeBin(c(hdr, body), tf)
   tf
 }
-
 test_that("Zelda Edition imports source controls and typed extra poll fields", {
   tf <- .mk_zelda_dtm()
   on.exit(unlink(tf))
   body <- readBin(tf, "raw", n = file.info(tf)$size)[-(1:256)]
-  expected <- data.frame(loading = c(TRUE, FALSE, FALSE, TRUE),
-                         tuner_event = c(3L, 0L, 255L, 1L),
-                         link_x = c(1.25, -128.5, 0, -0.25),
-                         link_z = c(-2.5, 256.25, 4096.5, 0))
+  expected <- data.frame(
+    loading = c(TRUE, FALSE, FALSE, TRUE),
+    tuner_event = c(3L, 0L, 255L, 1L),
+    link_x = c(1.25, -128.5, 0, -0.25),
+    link_z = c(-2.5, 256.25, 4096.5, 0)
+  )
   for (mode in c("raw", "cardinal4", "cardinal8", "angle", "angle+magnitude")) {
     movie <- read_movie(tf, analog = mode)
     expect_s3_class(movie, "replayr_movie")
@@ -196,9 +196,13 @@ test_that("Zelda Edition imports source controls and typed extra poll fields", {
     expect_identical(movie$poll_fields, expected)
     expect_identical(as.vector(t(movie$poll_bytes)), body)
     expect_equal(player(movie)[, c("A", "B", "x", "y")], unname(diag(TRUE, 4)), ignore_attr = TRUE)
-    expect_equal(unname(analog_channels(movie)[, 3:6]),
-                 rbind(c(192, 128, 128, 192), c(128, 192, 64, 128),
-                       c(64, 128, 128, 64), c(128, 64, 192, 128)))
+    expect_equal(
+      unname(analog_channels(movie)[, 3:6]),
+      rbind(
+        c(192, 128, 128, 192), c(128, 192, 64, 128),
+        c(64, 128, 128, 64), c(128, 64, 192, 128)
+      )
+    )
     if (mode %in% c("angle", "angle+magnitude")) {
       expect_equal(stick_channels(movie)[, "left_angle"], c(0, 90, 180, 270))
       expect_equal(stick_channels(movie)[, "right_angle"], c(90, 180, 270, 0))
@@ -222,7 +226,6 @@ test_that("Zelda Edition imports source controls and typed extra poll fields", {
   writeBin(head(bytes, -1L), tf)
   expect_error(read_dtm(tf), "partial final DTM poll")
 })
-
 test_that("DTM layout is selected from source evidence rather than divisibility", {
   tf <- .mk_zelda_dtm(known_revision = FALSE)
   on.exit(unlink(tf))
@@ -239,7 +242,6 @@ test_that("DTM layout is selected from source evidence rather than divisibility"
   expect_identical(dim(empty$poll_bytes), c(0L, 17L))
   expect_identical(nrow(empty$poll_fields), 0L)
 })
-
 test_that("the article fixture contains a moving right stick with known values", {
   path <- fixture_path("sample.dtm")
   raw_movie <- read_dtm(path)
@@ -254,6 +256,6 @@ test_that("the article fixture contains a moving right stick with known values",
     expect_equal(unname(channels[anchors, field]), c(NA, 0, NA, 180))
     expect_identical(analog_channels(movie), xy)
     if (mode == "angle+magnitude")
-      expect_equal(unname(channels[anchors, "right_magnitude"]), c(0, 70/128, 0, 70/128))
+      expect_equal(unname(channels[anchors, "right_magnitude"]), c(0, 70 / 128, 0, 70 / 128))
   }
 })

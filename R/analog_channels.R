@@ -27,7 +27,7 @@
 analog_channels <- function(movie, idx = 1L) {
   stopifnot(.is_recording(movie))
   if (length(idx) != 1L || !is.numeric(idx) || is.na(idx) ||
-      idx != as.integer(idx) || idx < 1L || idx > dim(movie$inputs)[2L]) {
+    idx != as.integer(idx) || idx < 1L || idx > dim(movie$inputs)[2L]) {
     stop("idx must identify one player", call. = FALSE)
   }
   if (is.null(movie$analog)) return(.empty_analog(n_frames(movie), 1L)[[1L]])
