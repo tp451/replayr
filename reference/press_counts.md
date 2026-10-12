@@ -1,6 +1,6 @@
-# Press counts per universal-button slot
+# Held-observation counts per control
 
-Press counts per universal-button slot
+Held-observation counts per control
 
 ## Usage
 
@@ -12,9 +12,9 @@ press_counts(movie, idx = 1L)
 
 - movie:
 
-  A [replayr_movie](replayr_movie.md) (returned by
-  [`read_movie()`](read_movie.md) or any of the format-specific
-  readers).
+  A [replayr_movie](replayr_movie.md) or
+  [replayr_poll_stream](replayr_poll_stream.md) returned by
+  [`read_movie()`](read_movie.md) or a format-specific reader.
 
 - idx:
 
@@ -22,5 +22,6 @@ press_counts(movie, idx = 1L)
 
 ## Value
 
-Named integer vector of length `n_buttons(movie)`. Names are the
-universal-button friendly labels.
+Named integer vector of length `n_buttons(movie)`. Names are the control
+display names. Counts give the observations held, rather than the number
+of off-to-on transitions.

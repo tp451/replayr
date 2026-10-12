@@ -1,26 +1,57 @@
-# Read a PCSX-rerecording .pxm movie file
+# Read a PXM recording
 
-Reads standard digital and analog-controller PXM movies. Button input
-maps to the 32-slot PSX universal layout, including L3/R3 on analog
-devices. Standard digital pad reserved bits are counted in header
-metadata, not interpreted as stick-click buttons. Analog sticks are
-quantised in the same way as other replayr PSX readers. The final
-per-frame control byte is exposed through `movie$commands`. Mouse,
-NegCon, and light-gun controller types are rejected instead of being
-silently mis-decoded.
+PCSX standard digital and analogue-controller records. Unsupported
+devices are rejected; reserved standard-pad bits do not become stick
+clicks. Digital columns are compact;
+[`button_layout()`](button_layout.md) gives their stable IDs. Numeric
+source channels are always retained in
+[`analog_channels()`](analog_channels.md).
 
 ## Usage
 
 ``` r
-read_pxm(path)
+read_pxm(path, analog = "raw", deadzone = NULL, triggers = "raw", ...)
 ```
 
 ## Arguments
 
 - path:
 
-  Path to a .pxm file.
+  Recording file path.
+
+- analog:
+
+  Stick representation: `"raw"` (default), `"cardinal4"`, `"cardinal8"`,
+  `"angle"`, or `"angle+magnitude"`. A scalar applies to both sticks;
+  `c(left = "cardinal8", right = "angle")` selects them independently.
+  Cardinal modes add separate left/right logical direction columns.
+  Continuous modes return numeric fields through
+  [`stick_channels()`](stick_channels.md). Original X/Y values remain in
+  [`analog_channels()`](analog_channels.md) in every mode. Absent sticks
+  add no columns.
+
+- deadzone:
+
+  Radial threshold in centred axis half-range units, from zero to one.
+  One value applies to both sticks; named left/right values are allowed.
+  `NULL` uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+  Neutral observations have no direction and an `NA` angle. Magnitude is
+  kept.
+
+- triggers:
+
+  `"raw"` (default) or `"digital"`. For DTM, digital additionally
+  projects each analogue trigger at 128/255 into separate L2/R2 columns.
+  Hardware L/R click bits remain distinct from thresholded analogue
+  triggers.
+
+- ...:
+
+  Reader-specific arguments, such as `controller_order` for M64 or DTM,
+  or `member` for a recording inside a ZIP archive (see
+  [`movie_members()`](movie_members.md)).
 
 ## Value
 
-A `replayr_movie` object.
+A [replayr_movie](replayr_movie.md) with compact digital columns and
+selected stick fields.

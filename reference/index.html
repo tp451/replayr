@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">replayr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,9 +31,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="reading-movie-files">Reading movie files<a class="anchor" aria-label="anchor" href="#reading-movie-files"></a></h2>
+      <h2 id="import-recordings">Import recordings<a class="anchor" aria-label="anchor" href="#import-recordings"></a></h2>
 
-      <div class="section-desc"><p>Top-level entry points for parsing emulator movie files.</p></div>
+
 
       <dl></dl></div><div class="section level2">
 
@@ -45,7 +45,7 @@
           <code><a href="read_movie.html">read_movie()</a></code>
 
         </dt>
-        <dd>Read any supported movie file by extension</dd>
+        <dd>Import an emulator input recording</dd>
 
         <dt>
 
@@ -53,103 +53,262 @@
 
         </dt>
         <dd>Names of the supported movie file extensions</dd>
-      </dl></div><div class="section level2">
-      <h2 id="per-format-readers">Per-format readers<a class="anchor" aria-label="anchor" href="#per-format-readers"></a></h2>
 
-      <div class="section-desc"><p>Direct readers for each supported file format. Useful when you already know the format.</p></div>
-
-      <dl></dl></div><div class="section level2">
-
-
-
-
-      <dl><dt>
+        <dt>
 
           <code><a href="read_fm2.html">read_fm2()</a></code>
 
         </dt>
-        <dd>Read an FCEUX .fm2 movie file</dd>
+        <dd>Read a FM2 recording</dd>
 
         <dt>
 
           <code><a href="read_bk2.html">read_bk2()</a></code>
 
         </dt>
-        <dd>Read a BizHawk .bk2 movie file</dd>
+        <dd>Read a BK2 recording</dd>
 
         <dt>
 
           <code><a href="read_fcm.html">read_fcm()</a></code>
 
         </dt>
-        <dd>Read a FCEU .fcm movie file</dd>
+        <dd>Read a FCM recording</dd>
 
         <dt>
 
           <code><a href="read_lsmv.html">read_lsmv()</a></code>
 
         </dt>
-        <dd>Read an lsnes .lsmv movie file</dd>
+        <dd>Read an lsnes LSMV recording</dd>
 
         <dt>
 
           <code><a href="read_gmv.html">read_gmv()</a></code>
 
         </dt>
-        <dd>Read a Gens-rerecording .gmv movie file</dd>
+        <dd>Read a GMV recording</dd>
 
         <dt>
 
           <code><a href="read_vbm.html">read_vbm()</a></code>
 
         </dt>
-        <dd>Read a VBA-rerecording .vbm movie file</dd>
+        <dd>Read a VBM recording</dd>
 
         <dt>
 
           <code><a href="read_m64.html">read_m64()</a></code>
 
         </dt>
-        <dd>Read a Mupen64 .m64 movie file</dd>
+        <dd>Read a M64 recording</dd>
 
         <dt>
 
           <code><a href="read_smv.html">read_smv()</a></code>
 
         </dt>
-        <dd>Read a Snes9x-rerecording .smv movie file</dd>
+        <dd>Read a SMV recording</dd>
 
         <dt>
 
           <code><a href="read_pxm.html">read_pxm()</a></code>
 
         </dt>
-        <dd>Read a PCSX-rerecording .pxm movie file</dd>
+        <dd>Read a PXM recording</dd>
 
         <dt>
 
           <code><a href="read_pjm.html">read_pjm()</a></code>
 
         </dt>
-        <dd>Read a PSXjin .pjm movie file</dd>
+        <dd>Read a PJM recording</dd>
 
         <dt>
 
           <code><a href="read_dtm.html">read_dtm()</a></code>
 
         </dt>
-        <dd>Read a Dolphin .dtm GameCube movie file</dd>
+        <dd>Read a DTM recording</dd>
 
         <dt>
 
           <code><a href="read_lmp.html">read_lmp()</a></code>
 
         </dt>
-        <dd>Read a Doom .lmp demo file</dd>
-      </dl></div><div class="section level2">
-      <h2 id="inspecting-parsed-movies">Inspecting parsed movies<a class="anchor" aria-label="anchor" href="#inspecting-parsed-movies"></a></h2>
+        <dd>Read a Doom or Boom demo</dd>
 
-      <div class="section-desc"><p>Helpers for working with the <code>replayr_movie</code> S3 object returned by the readers.</p></div>
+        <dt>
+
+          <code><a href="read_fm3.html">read_fm3()</a></code>
+
+        </dt>
+        <dd>Read a FM3 recording</dd>
+
+        <dt>
+
+          <code><a href="read_fmv.html">read_fmv()</a></code>
+
+        </dt>
+        <dd>Read a Famtasia recording</dd>
+
+        <dt>
+
+          <code><a href="read_bkm.html">read_bkm()</a></code>
+
+        </dt>
+        <dd>Read a BKM recording</dd>
+
+        <dt>
+
+          <code><a href="read_tas.html">read_tas()</a></code>
+
+        </dt>
+        <dd>Read a TAS recording</dd>
+
+        <dt>
+
+          <code><a href="read_tasproj.html">read_tasproj()</a></code>
+
+        </dt>
+        <dd>Read a TASPROJ recording</dd>
+
+        <dt>
+
+          <code><a href="read_gbmv.html">read_gbmv()</a></code>
+
+        </dt>
+        <dd>Read a GBMV recording</dd>
+
+        <dt>
+
+          <code><a href="read_mmv.html">read_mmv()</a></code>
+
+        </dt>
+        <dd>Read a Dega recording</dd>
+
+        <dt>
+
+          <code><a href="read_dsm.html">read_dsm()</a></code>
+
+        </dt>
+        <dd>Read a DeSmuME recording</dd>
+
+        <dt>
+
+          <code><a href="read_mc2.html">read_mc2()</a></code>
+
+        </dt>
+        <dd>Read a PCEjin or VBjin recording</dd>
+
+        <dt>
+
+          <code><a href="read_mcm.html">read_mcm()</a></code>
+
+        </dt>
+        <dd>Read a Mednafen rerecording movie</dd>
+
+        <dt>
+
+          <code><a href="read_ymv.html">read_ymv()</a></code>
+
+        </dt>
+        <dd>Read a Yabause rerecording movie</dd>
+
+        <dt>
+
+          <code><a href="read_ctm.html">read_ctm()</a></code>
+
+        </dt>
+        <dd>Read a Citra device-poll recording</dd>
+
+        <dt>
+
+          <code><a href="read_gzm.html">read_gzm()</a></code>
+
+        </dt>
+        <dd>Read a gz input macro</dd>
+
+        <dt>
+
+          <code><a href="read_zmv.html">read_zmv()</a></code>
+
+        </dt>
+        <dd>Read an enhanced ZSNES recording</dd>
+
+        <dt>
+
+          <code><a href="read_mar.html">read_mar()</a></code>
+
+        </dt>
+        <dd>Read a MAME recording</dd>
+
+        <dt>
+
+          <code><a href="read_fbm.html">read_fbm()</a></code>
+
+        </dt>
+        <dd>Read a FinalBurn Alpha recording</dd>
+
+        <dt>
+
+          <code><a href="read_dft.html">read_dft()</a></code>
+
+        </dt>
+        <dd>Read a Dustmod input script archive</dd>
+
+        <dt>
+
+          <code><a href="read_ltm.html">read_ltm()</a></code>
+
+        </dt>
+        <dd>Read a libTAS recording</dd>
+
+        <dt>
+
+          <code><a href="read_wtf.html">read_wtf()</a></code>
+
+        </dt>
+        <dd>Read an Hourglass recording</dd>
+
+        <dt>
+
+          <code><a href="read_jrsr.html">read_jrsr()</a></code>
+
+        </dt>
+        <dd>Read a JPC-RR recording</dd>
+
+        <dt>
+
+          <code><a href="read_omr.html">read_omr()</a></code>
+
+        </dt>
+        <dd>Read an openMSX replay</dd>
+
+        <dt>
+
+          <code><a href="read_ctas.html">read_ctas()</a></code>
+
+        </dt>
+        <dd>Read a CoffeeTools recording</dd>
+
+        <dt>
+
+          <code><a href="movie_members.html">movie_members()</a></code>
+
+        </dt>
+        <dd>List input recordings in a ZIP archive</dd>
+
+        <dt>
+
+          <code><a href="read_bk2_chunks.html">read_bk2_chunks()</a></code>
+
+        </dt>
+        <dd>Process a BizHawk recording in bounded chunks</dd>
+      </dl></div><div class="section level2">
+      <h2 id="inspect-observations-and-controllers">Inspect observations and controllers<a class="anchor" aria-label="anchor" href="#inspect-observations-and-controllers"></a></h2>
+
+
 
       <dl></dl></div><div class="section level2">
 
@@ -165,42 +324,91 @@
 
         <dt>
 
+          <code><a href="replayr_poll_stream.html">replayr_poll_stream</a></code>
+
+        </dt>
+        <dd>Ordered controller and device polls</dd>
+
+        <dt>
+
+          <code><a href="polls.html">polls()</a></code>
+
+        </dt>
+        <dd>Extract an unassigned controller-poll stream</dd>
+
+        <dt>
+
           <code><a href="n_frames.html">n_frames()</a></code>
 
         </dt>
-        <dd>Number of frames in a parsed movie</dd>
+        <dd>Number of observations in an imported recording</dd>
 
         <dt>
 
           <code><a href="n_players.html">n_players()</a></code>
 
         </dt>
-        <dd>Number of players (controller ports) in a parsed movie</dd>
+        <dd>Number of assigned input streams</dd>
 
         <dt>
 
           <code><a href="n_buttons.html">n_buttons()</a></code>
 
         </dt>
-        <dd>Number of universal-button slots in a parsed movie</dd>
+        <dd>Number of compact controller columns</dd>
 
         <dt>
 
           <code><a href="player.html">player()</a></code>
 
         </dt>
-        <dd>Per-frame button presses for one player</dd>
+        <dd>Button states for one controller</dd>
 
         <dt>
 
           <code><a href="press_counts.html">press_counts()</a></code>
 
         </dt>
-        <dd>Press counts per universal-button slot</dd>
-      </dl></div><div class="section level2">
-      <h2 id="universal-button-layout">Universal button layout<a class="anchor" aria-label="anchor" href="#universal-button-layout"></a></h2>
+        <dd>Held-observation counts per control</dd>
 
-      <div class="section-desc"><p>The 40-slot universal-button alphabet that every parser writes into.</p></div>
+        <dt>
+
+          <code><a href="button_layout.html">button_layout()</a></code>
+
+        </dt>
+        <dd>Stable controller identities and compact movie columns</dd>
+
+        <dt>
+
+          <code><a href="align_buttons.html">align_buttons()</a></code>
+
+        </dt>
+        <dd>Align compact controller matrices by stable button identity</dd>
+
+        <dt>
+
+          <code><a href="analog_channels.html">analog_channels()</a></code>
+
+        </dt>
+        <dd>Numeric analogue channels for one player</dd>
+
+        <dt>
+
+          <code><a href="stick_channels.html">stick_channels()</a></code>
+
+        </dt>
+        <dd>Selected stick directions, angles and magnitudes</dd>
+
+        <dt>
+
+          <code><a href="system_channels.html">system_channels()</a></code>
+
+        </dt>
+        <dd>Global emulator and cabinet controls</dd>
+      </dl></div><div class="section level2">
+      <h2 id="stable-controller-registry">Stable controller registry<a class="anchor" aria-label="anchor" href="#stable-controller-registry"></a></h2>
+
+
 
       <dl></dl></div><div class="section level2">
 
@@ -212,14 +420,14 @@
           <code><a href="universal_buttons.html">universal_buttons()</a></code>
 
         </dt>
-        <dd>Universal button mnemonics</dd>
+        <dd>Universal controller mnemonics</dd>
 
         <dt>
 
           <code><a href="universal_button_names.html">universal_button_names()</a></code>
 
         </dt>
-        <dd>Universal button friendly names</dd>
+        <dd>Universal controller names</dd>
       </dl></div><div class="section level2">
       <h2 id="package">Package<a class="anchor" aria-label="anchor" href="#package"></a></h2>
 
