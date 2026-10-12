@@ -15,7 +15,7 @@
 #   0x300-0x3FF  description (256 bytes)
 #   0x400+       input data: 4 bytes per input sample
 #
-# Per-input layout (4 bytes; controller 1 first):
+# Per-input layout (4 bytes; game-defined controller polling order):
 #   byte 0  buttons low:
 #       bit 0: D-pad Right    bit 1: D-pad Left
 #       bit 2: D-pad Down     bit 3: D-pad Up
@@ -29,8 +29,8 @@
 #   byte 2  signed int8  analog stick X
 #   byte 3  signed int8  analog stick Y (+Y == up)
 #
-# Analog stick is quantised to 8 directions and routed to slots 21..28
-# (E, NE, N, NW, W, SW, S, SE in order).
+# Public readers retain stick coordinates by default and apply the requested
+# representation through the shared controller-layout code.
 
 # Bit 0..7 in byte 0 (low) -> 1-based universal slot.
 .M64_LOW_BIT_TO_UNI <- c(
@@ -64,19 +64,16 @@
 
 #' Read a Mupen64 .m64 movie file
 #'
-#' The N64 controller has 14 buttons + an analog stick. Buttons map onto
-#' universal slots 1..14 (with C-buttons at 17..20); the analog stick is
-#' quantised to 8 directions and routed to slots 21..28. Output is 28
-#' buttons wide. Stick deflections below ~12.5% magnitude are treated
-#' as neutral. Multi-controller M64 streams are rejected because the format
-#' does not store controller identifiers: samples occur in the order the game
-#' polls its connected controllers, which cannot be reconstructed reliably
-#' without running the game.
+#' Samples are controller polls, with no per-sample port or VI identifier.
+#' Multiple enabled ports are retained as an ordered unassigned stream unless
+#' the caller supplies a verified repeating controller order.
 #'
+#' @inheritParams read_movie
 #' @param path Path to a .m64 file.
 #' @return A `replayr_movie` object.
-#' @export
-read_m64 <- function(path) {
+#' @noRd
+.decode_m64 <- function(path, analog = c("raw", "quantized"), controller_order = NULL) {
+  analog <- match.arg(analog)
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x400L || !identical(data[1:4], charToRaw("M64\x1A"))) {
     stop(path, ": not an M64 file")
@@ -89,59 +86,92 @@ read_m64 <- function(path) {
   fps <- as.integer(data[0x15L])
   n_ctrl <- as.integer(data[0x16L])
   n_samples_field <- .read_u32_le(data, 0x18L)
+  controller_flags <- .read_u32_le(data, 0x20L)
+  enabled_ports <- which(bitwAnd(as.integer(data[0x21L]), bitwShiftL(1L, 0:3)) != 0L)
 
   if (n_ctrl < 1L || n_ctrl > 4L) {
     stop(path, ": invalid M64 controller count ", n_ctrl)
   }
-  if (n_ctrl != 1L) {
-    stop(path, ": multi-controller M64 movies are not supported because ",
-         "the input stream does not identify which controller each sample belongs to")
+  if (length(enabled_ports) != n_ctrl) {
+    stop(path, ": M64 controller count disagrees with the enabled-port flags")
   }
+  supplied_order <- !is.null(controller_order)
+  unassigned <- n_ctrl > 1L && !supplied_order
+  if (supplied_order && (!is.numeric(controller_order) ||
+      !length(controller_order) || anyNA(controller_order) ||
+      any(!is.finite(controller_order)) ||
+      any(!controller_order %in% enabled_ports) || anyDuplicated(controller_order))) {
+    stop(path, ": controller_order must list distinct enabled ports in their repeating polling order")
+  }
+  if (!supplied_order) controller_order <- if (unassigned) integer() else enabled_ports
+  controller_order <- as.integer(controller_order)
+  controller_ports <- sort(controller_order)
 
   body <- if (length(data) > 0x400L) data[(0x400L + 1L):length(data)] else raw(0)
   sample_size <- 4L
   have_samples <- length(body) %/% sample_size
+  # Mupen64 playback stops at length_samples, including when it is zero.
+  # Historical flush_movie writes one extra record and rewrites the file without
+  # truncating an older suffix. Those bytes do not extend the playback stream.
+  # TASEmulators/mupen64-rr f27a689083c6fdee55801062a46fed25e6496a84,
+  # main/vcr.c: flush_movie, truncateMovie, and VCR_getKeys.
+  if (n_samples_field > have_samples && length(body) %% sample_size) {
+    stop(path, ": partial final M64 input sample within the declared stream")
+  }
   if (n_samples_field > have_samples) {
     stop(sprintf("%s: M64 input stream is truncated (header=%d samples, file=%d)",
                  path, n_samples_field, have_samples))
   }
-  n_frames <- if (n_samples_field > 0L) n_samples_field else have_samples
+  n_samples <- n_samples_field
+  used_bytes <- n_samples * sample_size
+  source_tail <- if (length(body) > used_bytes) body[seq.int(used_bytes + 1L, length(body))] else raw()
+  if (length(controller_order) && n_samples %% length(controller_order)) {
+    stop(path, ": incomplete caller-supplied controller cycle")
+  }
+  n_frames <- n_samples
 
   n_players <- 1L
   n_buttons <- 28L
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
-  stride <- sample_size
-
-  if (n_frames > 0L) {
-    for (fi in seq_len(n_frames)) {
-      off <- (fi - 1L) * stride
-      b_low <- as.integer(body[off + 1L])
-      b_high <- as.integer(body[off + 2L])
-      sx <- as.integer(body[off + 3L])
-      sy <- as.integer(body[off + 4L])
-      if (sx >= 0x80L) sx <- sx - 0x100L
-      if (sy >= 0x80L) sy <- sy - 0x100L
-
-      # Both reserved button bits set are Mupen64's reset marker.
-      if (bitwAnd(b_high, 0xC0L) == 0xC0L) commands[fi] <- 1L
-
-      for (bit in 0:7) {
-        if (bitwAnd(b_low, bitwShiftL(1L, bit)) != 0L) {
-          inputs[fi, 1L, .M64_LOW_BIT_TO_UNI[bit + 1L]] <- TRUE
-        }
-        if (bitwAnd(b_high, bitwShiftL(1L, bit)) != 0L) {
-          slot <- .M64_HIGH_BIT_TO_UNI[bit + 1L]
-          if (!is.na(slot)) inputs[fi, 1L, slot] <- TRUE
-        }
-      }
-
-      mag2 <- sx * sx + sy * sy
-      if (mag2 >= .M64_STICK_DEADZONE * .M64_STICK_DEADZONE) {
-        angle <- atan2(sy, sx)  # +Y axis = up
-        sector <- as.integer((angle + pi / 8) %/% (pi / 4)) %% 8L
-        inputs[fi, 1L, .STICK_SECTOR_TO_UNI[sector + 1L]] <- TRUE
-      }
+  analog_values <- .empty_analog(n_frames, n_players, c("lstick_x", "lstick_y"))
+  poll_bytes <- matrix(body[seq_len(n_samples * sample_size)], ncol = sample_size,
+                       byrow = TRUE, dimnames = list(NULL, paste0("byte", 0:3)))
+  if (n_samples > 0L) {
+    low <- as.integer(poll_bytes[, 1L])
+    high <- as.integer(poll_bytes[, 2L])
+    sx <- as.integer(poll_bytes[, 3L])
+    sy <- as.integer(poll_bytes[, 4L])
+    sx[sx >= 128L] <- sx[sx >= 128L] - 256L
+    sy[sy >= 128L] <- sy[sy >= 128L] - 256L
+    analog_values[[1L]][, ] <- cbind(sx, sy)
+    # Both reserved button bits set are Mupen64's reset marker.
+    commands <- as.integer(bitwAnd(high, 0xc0L) == 0xc0L)
+    for (bit in 0:7) {
+      inputs[, 1L, .M64_LOW_BIT_TO_UNI[bit + 1L]] <- bitwAnd(low, bitwShiftL(1L, bit)) != 0L
+      slot <- .M64_HIGH_BIT_TO_UNI[bit + 1L]
+      if (!is.na(slot)) inputs[, 1L, slot] <- bitwAnd(high, bitwShiftL(1L, bit)) != 0L
+    }
+    if (analog == "quantized") {
+      active <- which(sx * sx + sy * sy >= .M64_STICK_DEADZONE^2)
+      sector <- as.integer((atan2(sy[active], sx[active]) + pi / 8) %/% (pi / 4)) %% 8L
+      inputs[cbind(active, 1L, .STICK_SECTOR_TO_UNI[sector + 1L])] <- TRUE
+    }
+  }
+  if (length(controller_order) > 1L) {
+    poll_inputs <- inputs
+    poll_commands <- commands
+    poll_analog <- analog_values[[1L]]
+    n_frames <- n_samples %/% length(controller_order)
+    inputs <- .empty_inputs(n_frames, length(controller_ports), n_buttons)
+    analog_values <- .empty_analog(n_frames, length(controller_ports), c("lstick_x", "lstick_y"))
+    commands <- integer(n_frames)
+    for (j in seq_along(controller_order)) {
+      rows <- if (n_frames) seq.int(j, n_samples, by = length(controller_order)) else integer()
+      player_index <- match(controller_order[j], controller_ports)
+      inputs[, player_index, ] <- poll_inputs[rows, 1L, , drop = FALSE]
+      analog_values[[player_index]] <- poll_analog[rows, , drop = FALSE]
+      commands <- bitwOr(commands, poll_commands[rows])
     }
   }
 
@@ -155,7 +185,18 @@ read_m64 <- function(path) {
     fps = as.character(fps),
     controllerCount = as.character(n_ctrl),
     viCount = as.character(vi_count),
-    inputSampleCount = as.character(n_frames),
+    inputSampleCount = as.character(n_samples),
+    declaredInputSampleCount = as.character(n_samples_field),
+    availableInputSampleCount = as.character(have_samples),
+    sourceTailBytes = as.character(length(source_tail)),
+    sourceTailRole = "bytes beyond the declared playback samples",
+    controllerFlags = as.character(controller_flags),
+    enabledPorts = as.integer(enabled_ports),
+    controllerPorts = as.integer(controller_ports),
+    controllerOrder = paste(controller_order, collapse = ","),
+    controllerAssignment = if (unassigned) "unassigned" else if (supplied_order)
+      "caller-supplied repeating order; not stored in M64" else "single enabled controller",
+    observationUnit = if (length(controller_order) > 1L) "controller polling cycle" else "controller poll",
     romName = rom_name,
     author = author
   )
@@ -163,9 +204,12 @@ read_m64 <- function(path) {
     header = header,
     commands = commands,
     inputs = inputs,
-    button_mnemonics = universal_buttons()[seq_len(n_buttons)],
-    button_names = universal_button_names()[seq_len(n_buttons)]
+    analog = analog_values, analog_mode = analog,
+    button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
+    button_names = .legacy_button_names()[seq_len(n_buttons)]
   )
   mv$source_path <- path
+  mv$poll_bytes <- poll_bytes
+  mv$source_tail <- source_tail
   mv
 }

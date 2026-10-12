@@ -2,26 +2,27 @@
 % Please edit documentation in R/movie_class.R
 \name{player}
 \alias{player}
-\title{Per-frame button presses for one player}
+\title{Button states for one controller}
 \usage{
 player(movie, idx = 1L)
 }
 \arguments{
-\item{movie}{A \link{replayr_movie} (returned by \code{\link[=read_movie]{read_movie()}} or any of the
-format-specific readers).}
+\item{movie}{A \link{replayr_movie} or \link{replayr_poll_stream} returned by
+\code{\link[=read_movie]{read_movie()}} or a format-specific reader.}
 
 \item{idx}{Player index, 1-based. Defaults to 1 (player 1).}
 }
 \value{
 Logical matrix, \code{n_frames(movie)} rows by \code{n_buttons(movie)}
-columns. Column names are the universal-button mnemonics.
+columns. Column names are the mnemonics from \code{\link[=button_layout]{button_layout()}}.
 }
 \description{
-Per-frame button presses for one player
+Button states for one controller
 }
 \examples{
 \dontrun{
-  mv <- read_movie("data/raw_nes/super_mario_bros/1349.fm2")
+  path <- system.file("extdata", "sample.fm2", package = "replayr")
+  mv <- read_movie(path)
   p1 <- player(mv)
   colSums(p1)        # number of frames each button was held
 }

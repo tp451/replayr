@@ -1,0 +1,77 @@
+lsmv_subframe_movie <- function(text,header=list(`_format`='lsmv')) {
+  .configure_movie(.parse_lsmv_input(text,header))
+}
+
+test_that('LSMV retains subframe inputs and source timing metadata', {
+  text<-paste0('F.|........\r\n..|A.......\r\n\r\n .|.B......\r\nQ.|..s.....\r\n')
+  m<-lsmv_subframe_movie(text)
+  expect_identical(n_frames(m),4L)
+  expect_identical(m$header$observationUnit,'input subframe')
+  expect_equal(m$header$frameCount,2)
+  expect_identical(m$subframes$source_line,c(1L,2L,4L,5L))
+  expect_identical(m$subframes$frame_start,c(TRUE,FALSE,FALSE,TRUE))
+  expect_identical(m$subframes$source_frame,c(1L,1L,1L,2L))
+  expect_identical(m$subframes$subframe,c(1L,2L,3L,1L))
+  expect_identical(player(m)[,'A'],c(FALSE,TRUE,FALSE,FALSE))
+  expect_identical(player(m)[,'B'],c(FALSE,FALSE,TRUE,FALSE))
+  expect_identical(m$inputs[,1,match('select',m$button_keys)],c(FALSE,FALSE,FALSE,TRUE))
+  expect_identical(m$source_input,text)
+})
+
+test_that('LSMV retains every 16-button and Super Game Boy source control', {
+  text<-'F.|............0123\n..|BYsSudlrAXLR....\n'
+  m<-lsmv_subframe_movie(text,list(`_format`='lsmv',gametype='gambatte_sgb_ntsc',port1='gamepad16'))
+  expect_equal(n_buttons(m),16)
+  expect_identical(tail(button_layout(m)$key,4),paste0('lsnes_ext',0:3))
+  expect_true(all(m$inputs[1,1,13:16]))
+  expect_true(all(m$inputs[2,1,1:12]))
+  expect_identical(m$header$controllerWidths,16L)
+  expect_identical(m$header$port1,'gamepad16')
+  expect_identical(m$source_input,text)
+  # An empty unused field does not change the known controller's source data.
+  m<-lsmv_subframe_movie('F.|B...........|\n..|.Y..........|\n')
+  expect_equal(n_players(m),1)
+  expect_true(player(m)[1,'B']);expect_true(m$inputs[2,1,match('y',m$button_keys)])
+})
+
+test_that('LSMV resets, hard resets, and delay fields survive every subframe', {
+  text<-'F.. 0 0|............\n.RH 2 350|............\nF.H -1 -2|............\n'
+  m<-lsmv_subframe_movie(text)
+  expect_identical(m$commands,c(0L,3L,2L))
+  expect_identical(m$subframes$reset,c(FALSE,TRUE,FALSE))
+  expect_identical(m$subframes$hard_reset,c(FALSE,TRUE,TRUE))
+  expect_identical(m$subframes$reset_delay_high,c(0L,2L,-1L))
+  expect_identical(m$subframes$reset_delay_low,c(0L,350L,-2L))
+  m<-lsmv_subframe_movie('F\t\t0\t0|............\n.\t|............\n')
+  expect_identical(m$commands,c(0L,0L))
+  expect_identical(m$subframes$source_frame,c(1L,1L))
+})
+
+test_that('LSMV rejects changing layouts and unsupported fields visibly', {
+  expect_error(lsmv_subframe_movie('..|............\n'),'first lsmv subframe')
+  expect_error(lsmv_subframe_movie('F.|............\n..|...........\n'),'source line 2')
+  expect_error(lsmv_subframe_movie('F.|............\ncomment\n'),'no port data')
+  expect_error(lsmv_subframe_movie('F. 1 2 3|............\n'),'system fields')
+  expect_error(lsmv_subframe_movie('F. 32768 0|............\n'),'16-bit')
+  expect_error(lsmv_subframe_movie('F.|............\n',list(controlsversion='1')),'controlsversion')
+  expect_error(lsmv_subframe_movie('F.|............\n',list(port1='mouse')),'controller type')
+  m<-lsmv_subframe_movie('')
+  expect_equal(n_frames(m),0)
+  expect_equal(nrow(m$subframes),0)
+})
+
+
+test_that('LSMV declared Super Scope preserves firing and aim separately', {
+  text<-'F. 0 0|............|.... 128 112\n.. 0 0|............|T... 75 90\nF. 0 0|............|.CU. -16 255\n'
+  m<-lsmv_subframe_movie(text,list(`_format`='lsmv',port2='superscope'))
+  keys<-c('a','b','mode','start')
+  expect_identical(m$header$controllerTypes,c('gamepad','superscope'))
+  expect_equal(unname(analog_channels(m,2)),matrix(c(128,75,-16,112,90,255),3,2))
+  expect_identical(m$inputs[,2,match('a',m$button_keys)],c(FALSE,TRUE,FALSE))
+  expect_true(all(m$inputs[3,2,match(keys[2:3],m$button_keys)]))
+  expect_false(any(m$inputs[,2,match(c('x','y'),m$button_keys)]))
+  expect_false(any(m$inputs[,1,]))
+  expect_identical(m$subframes$source_frame,c(1L,1L,2L))
+  expect_error(lsmv_subframe_movie('F.|............|T... nope 12\n',list(port2='superscope')),'Super Scope')
+  expect_error(lsmv_subframe_movie('F.|............|T... 32768 12\n',list(port2='superscope')),'16-bit')
+})

@@ -25,7 +25,7 @@
 
 # Bit 0..15 in the active-high PSX button word -> universal slot.
 .PSX_BIT_TO_UNI <- c(
-  6L, 31L, 32L, 5L,
+  6L, 41L, 42L, 5L,
   4L, 1L, 3L, 2L,
   29L, 30L, 11L, 12L,
   9L, 8L, 7L, 10L
@@ -86,17 +86,23 @@
 #' Read a PCSX-rerecording .pxm movie file
 #'
 #' Reads standard digital and analog-controller PXM movies. Button input maps
-#' to the 32-slot PSX universal layout, including L3/R3 on analog devices.
+#' to the 42-slot PSX universal layout, including L3/R3 on analog devices.
 #' Standard digital pad reserved bits are counted in header metadata, not
 #' interpreted as stick-click buttons. Analog sticks are quantised in the same
 #' way as other replayr PSX readers. The final per-frame control byte is exposed
 #' through `movie$commands`. Mouse, NegCon, and light-gun controller types are
 #' rejected instead of being silently mis-decoded.
 #'
+#' Analogue values are retained without projection by default. Use
+#' `analog = "quantized"` to enable the direction/threshold mappings
+#' described above; [analog_channels()] returns numeric values in either mode.
+#'
+#' @inheritParams read_movie
 #' @param path Path to a .pxm file.
 #' @return A `replayr_movie` object.
-#' @export
-read_pxm <- function(path) {
+#' @noRd
+.decode_pxm <- function(path, analog = c("raw", "quantized")) {
+  analog <- match.arg(analog)
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x34L || !identical(data[1:4], charToRaw("PXM "))) {
     stop(path, ": not a PXM file")
@@ -144,9 +150,10 @@ read_pxm <- function(path) {
   }
 
   n_players <- max(active_ports)
-  n_buttons <- 32L
+  n_buttons <- 42L
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
+  analog_values <- .empty_analog(n_frames, n_players)
   port_offsets <- c(0L, widths[1L])
   reserved_digital_bits <- integer(n_players)
 
@@ -166,8 +173,13 @@ read_pxm <- function(path) {
       }
       if(controller_types[port] %in% c(5L,7L)) {
         axes <- vapply(3:6,function(k)as.integer(data[off+k]),integer(n_frames))
-        stick <- .pxm_stick_matrix(axes)
-        for(slot in 17:28)inputs[,port,slot] <- stick[,slot]
+        axes <- matrix(axes, nrow = n_frames, ncol = 4L)
+        colnames(axes) <- c("lstick_x", "lstick_y", "rstick_x", "rstick_y")
+        analog_values[[port]] <- axes
+        if (analog == "quantized") {
+          stick <- .pxm_stick_matrix(axes)
+          for (slot in 17:28) inputs[, port, slot] <- stick[, slot]
+        }
       }
     }
     commands <- as.integer(data[frame_off + sum(widths) + 1L])
@@ -198,8 +210,9 @@ read_pxm <- function(path) {
     header = header,
     commands = commands,
     inputs = inputs,
+    analog = analog_values, analog_mode = analog,
     source_path = path,
-    button_mnemonics = universal_buttons()[seq_len(n_buttons)],
-    button_names = universal_button_names()[seq_len(n_buttons)]
+    button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
+    button_names = .legacy_button_names()[seq_len(n_buttons)]
   )
 }

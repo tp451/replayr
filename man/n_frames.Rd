@@ -2,17 +2,20 @@
 % Please edit documentation in R/movie_class.R
 \name{n_frames}
 \alias{n_frames}
-\title{Number of frames in a parsed movie}
+\title{Number of observations in an imported recording}
 \usage{
 n_frames(movie)
 }
 \arguments{
-\item{movie}{A \link{replayr_movie} (returned by \code{\link[=read_movie]{read_movie()}} or any of the
-format-specific readers).}
+\item{movie}{A \link{replayr_movie} or \link{replayr_poll_stream} returned by
+\code{\link[=read_movie]{read_movie()}} or a format-specific reader.}
 }
 \value{
 Integer scalar: the first dimension of \code{movie$inputs}.
 }
 \description{
-Number of frames in a parsed movie
+Rows represent the source format's observations: video frames, controller
+polls, timestamped input events, or game tics. With an explicit multi-controller polling order, each
+row is one cycle through that order. Header video-frame counts remain in
+the recording metadata.
 }

@@ -1,33 +1,4 @@
-# Universal-button layout shared by every parser in this package.
-#
-# Slots 0..7 (one-based 1..8 in R) are NES-shaped: R, L, D, U, Start, Select,
-# B, A. Higher slots cover SNES, Genesis, GBA, N64, PSX, GameCube. Each
-# parser fills the prefix it needs; the dispatcher exposes whatever width
-# was filled in via the `n_buttons` field.
-#
-# Single-character mnemonics keep the token-based downstream features
-# producing readable strings. Lowercase letters in some slots are used to
-# avoid colliding with the NES uppercase mnemonics.
-
-#' Universal button mnemonics
-#'
-#' One-character symbol per universal-button slot. Length 40. Indexed by
-#' slot number using one-based R semantics: slot 1 = "R" (Right),
-#' slot 8 = "A", and so on. Slots 31..40 are the Intellivision /
-#' ColecoVision numeric keypad (digits 0-9). PSX uses slots 31/32 for
-#' L3/R3 stick clicks; these do not coexist with keypad hardware. INTV's Enter/Clear and
-#' Coleco's Star/Pound do not have dedicated slots — they fold into
-#' Start (slot 5) and Select (slot 6) since they're functionally
-#' Start/Select on those platforms (pressed once at boot).
-#'
-#' \if{html}{\figure{universal_buttons_layout.svg}{options: width=720 alt="replayr universal-button layout: gamepad slots 1-30 plus INTV/Coleco numeric-keypad slots 31-40"}}
-#'
-#' @return Character vector of length 40.
-#' @export
-#' @seealso [universal_button_names()]
-#' @examples
-#' universal_buttons()
-universal_buttons <- function() {
+.legacy_buttons <- function() {
   c(
     "R", "L", "D", "U",      # 1-4   d-pad
     "T", "S",                # 5-6   Start, Select
@@ -42,18 +13,14 @@ universal_buttons <- function() {
     "[", "]",                # 29-30 PSX L2 / R2
     # Intellivision / ColecoVision numeric keypad (digits only).
     "0", "1", "2", "3", "4", # 31-35 keypad 0-4
-    "5", "6", "7", "8", "9"  # 36-40 keypad 5-9
+    "5", "6", "7", "8", "9", # 36-40 keypad 5-9
+    "j", "k",                # 41-42 L3 / R3 stick clicks
+    "E", "F", "G", "H", "I", "J", "K", "N", "O", "P", # 43-52 named peripheral controls
+    "Q", "V", "W", "X", "Y", "t", "u", "z", "$", "%", "&", "*", "(", ")", "?", "=", "~" # 53-69 additional named controls
   )
 }
 
-#' Universal button friendly names
-#'
-#' Long, human-readable label per slot. Same length as
-#' [universal_buttons()] and indexed identically.
-#'
-#' @return Character vector of length 40.
-#' @export
-universal_button_names <- function() {
+.legacy_button_names <- function() {
   c(
     "Right", "Left", "Down", "Up", "Start", "Select", "B", "A",
     "X", "Y", "L-shoulder", "R-shoulder", "C", "Z", "Mode", "extra",
@@ -61,8 +28,11 @@ universal_button_names <- function() {
     "Stick-E", "Stick-NE", "Stick-N", "Stick-NW",
     "Stick-W", "Stick-SW", "Stick-S", "Stick-SE",
     "L2", "R2",
-    "Keypad-0/L3", "Keypad-1/R3", "Keypad-2", "Keypad-3", "Keypad-4",
-    "Keypad-5", "Keypad-6", "Keypad-7", "Keypad-8", "Keypad-9"
+    "Keypad-0", "Keypad-1", "Keypad-2", "Keypad-3", "Keypad-4",
+    "Keypad-5", "Keypad-6", "Keypad-7", "Keypad-8", "Keypad-9",
+    "L3", "R3", "D", "Attack", "Jump", "Gun trigger", "Offscreen shot",
+    "Mouse left", "Mouse middle", "Mouse right", "Missile", "View change",
+    paste("Power Pad", 1:12), "Arcade button 7", "Jump/Start", "Kick", "Punch", "Microphone"
   )
 }
 
@@ -74,7 +44,10 @@ universal_button_names <- function() {
 #' supported_formats()
 supported_formats <- function() {
   c(".fm2", ".bk2", ".fcm", ".lsmv", ".gmv", ".vbm",
-    ".m64", ".smv", ".pxm", ".pjm", ".dtm", ".lmp")
+    ".m64", ".smv", ".pxm", ".pjm", ".dtm", ".lmp",
+    ".fm3", ".fmv", ".bkm", ".tas", ".tasproj", ".gbmv", ".mmv", ".dsm",
+    ".mc2", ".mcm", ".ymv", ".ctm", ".gzm", ".zmv", ".mar",
+    ".ltm", ".wtf", ".hgm", ".jrsr", ".omr", ".ctas", ".fbm", ".dft")
 }
 
 # ----- Internal helpers -----------------------------------------------------
@@ -96,7 +69,8 @@ supported_formats <- function() {
 #   third dimension. Length must equal `dim(inputs)[3]`.
 # @param button_names Friendly names paired with `button_mnemonics`.
 .new_movie <- function(header, commands, inputs, source_path = NA_character_,
-                       button_mnemonics = NULL, button_names = NULL) {
+                       button_mnemonics = NULL, button_names = NULL,
+                       analog = NULL, analog_mode = "raw", decoded_button_slots = NULL) {
   dims <- dim(inputs)
   if (!is.logical(inputs) || length(dims) != 3L) {
     stop("`inputs` must be a logical array with dimensions frames x players x buttons")
@@ -104,29 +78,48 @@ supported_formats <- function() {
   if (dims[2L] < 1L || dims[3L] < 1L) {
     stop("`inputs` must contain at least one player and one button slot")
   }
-  if (dims[3L] > length(universal_buttons())) {
+  if (dims[3L] > length(.legacy_buttons())) {
     stop("`inputs` has more button slots than the universal layout")
   }
   if (length(commands) != dims[1L]) {
     stop("`commands` length must equal the number of input frames")
   }
   if (is.null(button_mnemonics)) {
-    button_mnemonics <- universal_buttons()[seq_len(dims[3L])]
+    button_mnemonics <- .legacy_buttons()[seq_len(dims[3L])]
   }
   if (is.null(button_names)) {
-    button_names <- universal_button_names()[seq_len(dims[3L])]
+    button_names <- .legacy_button_names()[seq_len(dims[3L])]
   }
   if (length(button_mnemonics) != dims[3L] || length(button_names) != dims[3L]) {
     stop("button mnemonic and name vectors must match the input button dimension")
   }
+  if (is.null(analog)) analog <- .empty_analog(dims[1L], dims[2L])
+  if (!is.list(analog) || length(analog) != dims[2L] ||
+      any(!vapply(analog, function(x) is.matrix(x) && is.numeric(x) &&
+                   nrow(x) == dims[1L] &&
+                   (ncol(x) == 0L || !is.null(colnames(x))), logical(1)))) {
+    stop("analog must contain one named numeric matrix per player and input row")
+  }
+  analog_mode <- match.arg(analog_mode, c("raw", "quantized"))
   obj <- list(
     header = as.list(header),
     commands = as.integer(commands),
     inputs = inputs,
     source_path = source_path,
     button_mnemonics = as.character(button_mnemonics),
-    button_names = as.character(button_names)
+    button_names = as.character(button_names),
+    analog = analog,
+    analog_mode = analog_mode,
+    decoded_button_slots = decoded_button_slots
   )
   class(obj) <- "replayr_movie"
   obj
+}
+
+# Numeric channels retain their source units; absent channels have zero columns.
+.empty_analog <- function(n_frames, n_players, channels = character()) {
+  lapply(seq_len(n_players), function(i) {
+    matrix(NA_real_, n_frames, length(channels),
+           dimnames = list(NULL, channels))
+  })
 }

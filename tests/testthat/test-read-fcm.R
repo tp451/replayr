@@ -1,5 +1,5 @@
-test_that("read_fcm() parses the bundled synthetic FCEU movie", {
-  mv <- read_fcm(fixture_path("sample.fcm"))
+test_that("replayr:::.decode_fcm() parses the bundled synthetic FCEU movie", {
+  mv <- replayr:::.decode_fcm(fixture_path("sample.fcm"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "fcm")
   expect_equal(n_frames(mv), 3600L)
@@ -7,16 +7,16 @@ test_that("read_fcm() parses the bundled synthetic FCEU movie", {
   expect_equal(n_players(mv), 4L)  # FCM reserves 4 ports
 })
 
-test_that("read_fcm() accepts version 1 and decodes it like version 2", {
+test_that("replayr:::.decode_fcm() accepts version 1 and decodes it like version 2", {
   fp <- fixture_path("sample.fcm")
   raw <- readBin(fp, "raw", n = file.info(fp)$size)
-  ref <- read_fcm(fp)
+  ref <- replayr:::.decode_fcm(fp)
   # Both versions share the first 32 header bytes and body encoding, but
   # version 1 must not interpret subsequent metadata as ROM header fields.
   raw[5:8] <- as.raw(c(1L, 0L, 0L, 0L))
   tf <- tempfile(fileext = ".fcm")
   writeBin(raw, tf)
-  v1 <- read_fcm(tf)
+  v1 <- replayr:::.decode_fcm(tf)
   expect_equal(v1$header[["version"]], "1")
   expect_identical(v1$inputs, ref$inputs)
   expect_identical(v1$commands, ref$commands)
@@ -40,7 +40,7 @@ test_that('FCM waits before changes and keeps simultaneous controller chords', {
   fp <- make_fcm_timing_fixture(c(0x20,2, 0x01,0x08, 0x20,3,
                                  0x01,0x08, 0xa1,1, 0xa0,2),8)
   on.exit(unlink(fp))
-  mv <- read_fcm(fp)
+  mv <- replayr:::.decode_fcm(fp)
   expected <- array(FALSE,c(8,4,8)); expected[3:5,1,7:8] <- TRUE
   expected[3:5,2,8] <- TRUE
   expect_equal(unname(mv$inputs),expected)
@@ -50,20 +50,20 @@ test_that('FCM waits before changes and keeps simultaneous controller chords', {
 test_that('FCM supports legacy delta extension without inventing controller events', {
   fp <- make_fcm_timing_fixture(c(0x00, 0x21,0,1, 0xa0,44),300)
   on.exit(unlink(fp))
-  mv <- read_fcm(fp)
+  mv <- replayr:::.decode_fcm(fp)
   expect_true(all(mv$inputs[,1,8]))
   expect_equal(which(mv$inputs[,1,7]),257:300)
   expect_false(any(mv$inputs[,2:4,]))
   expect_equal(mv$header$legacyDeltaExtensions,'1')
   fp2 <- make_fcm_timing_fixture(c(0x20,0),300)
   on.exit(unlink(fp2),add=TRUE)
-  expect_error(read_fcm(fp2),'truncated FCM legacy delta extension')
+  expect_error(replayr:::.decode_fcm(fp2),'truncated FCM legacy delta extension')
 })
 
 test_that('FCM version 1 can start its body immediately after the 32-byte header', {
   fp <- make_fcm_timing_fixture(c(0x00,0xa0,3),3,version=1L)
   on.exit(unlink(fp))
-  mv <- read_fcm(fp)
+  mv <- replayr:::.decode_fcm(fp)
   expect_equal(n_frames(mv),3)
   expect_true(all(mv$inputs[,1,8]))
   expect_true(is.na(mv$header$emuVersion))
@@ -72,16 +72,16 @@ test_that('FCM version 1 can start its body immediately after the 32-byte header
 test_that('documented Crystalis wild warps retain their cross-controller chord', {
   fp <- external_fixture('raw_nes/crystalis/348.fcm')
   if(is.null(fp)) skip('set REPLAYR_FIXTURE_DIR for the real FCM chord test')
-  mv <- read_fcm(fp)
+  mv <- replayr:::.decode_fcm(fp)
   # Publication 348 uses the P1 A+B / P2 A shortcut. The old decoder shifted
   # the switches across their waits and falsely returned zero combinations.
   expect_equal(sum(mv$inputs[,1,7]&mv$inputs[,1,8]&mv$inputs[,2,8]),64L)
 })
 
-test_that("read_fcm() parses a real version-1 movie when fixture is available", {
+test_that("replayr:::.decode_fcm() parses a real version-1 movie when fixture is available", {
   fp <- external_fixture("raw_nes/power_blade/193.fcm")
   if (is.null(fp)) skip("set REPLAYR_FIXTURE_DIR to enable the FCM v1 test")
-  mv <- read_fcm(fp)
+  mv <- replayr:::.decode_fcm(fp)
   expect_equal(mv$header[["version"]], "1")
   expect_equal(n_frames(mv), 61842L)
   pc <- press_counts(mv, 1L)

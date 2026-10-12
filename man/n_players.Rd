@@ -2,17 +2,20 @@
 % Please edit documentation in R/movie_class.R
 \name{n_players}
 \alias{n_players}
-\title{Number of players (controller ports) in a parsed movie}
+\title{Number of assigned input streams}
 \usage{
 n_players(movie)
 }
 \arguments{
-\item{movie}{A \link{replayr_movie} (returned by \code{\link[=read_movie]{read_movie()}} or any of the
-format-specific readers).}
+\item{movie}{A \link{replayr_movie} or \link{replayr_poll_stream} returned by
+\code{\link[=read_movie]{read_movie()}} or a format-specific reader.}
 }
 \value{
 Integer scalar: the second dimension of \code{movie$inputs}.
+An unassigned poll stream returns \code{NA_integer_} because the number of
+participating players cannot be determined from its records.
 }
 \description{
-Number of players (controller ports) in a parsed movie
+Keyboard and mouse controls can share a stream. The format-specific header
+describes device grouping; a stream is not evidence of a distinct person.
 }

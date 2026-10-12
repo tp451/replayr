@@ -1,210 +1,547 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 720" font-family="Georgia, 'Times New Roman', serif" role="img" aria-labelledby="ubl-title">
-  <title id="ubl-title">replayr universal controller layout</title>
-  <desc>Two figures side by side. FIG. 1 is a fantasy gamepad covering universal slots 1-30 (d-pad, Start/Select/Mode, six face buttons, two shoulders, two triggers, four C-buttons, eight stick directions). FIG. 2 is the Intellivision/ColecoVision numeric keypad (slots 31-40), with Enter and Clear folding into Start (5) and Select (6).</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="2160" viewBox="0 0 1400 2160" role="img" aria-labelledby="title description">
+<title id="title">replayr universal button layout</title>
+<desc id="description">A composite controller and peripheral diagrams map every registered control to its stable numeric ID, including both eight-direction stick sets and L3 and R3 clicks. The Wii Remote shows shared IDs for every recorded button. Keyboard and touchscreen examples retain source identities and numeric channels. Stable IDs differ from compact recording column numbers.</desc>
+<defs><style>
+text{font-family:Georgia,'Times New Roman',serif;fill:#222}
+.title{font-size:34px;font-weight:700}.head{font-size:25px;font-weight:700}
+.body{font-size:21px}.small{font-size:18px}.tiny{font-size:16px}.code{font-family:Consolas,monospace;font-size:19px}
+.shell{fill:#fdfaf3;stroke:#222;stroke-width:2.3;stroke-linejoin:round}
+.wire{fill:none;stroke:#7b8d96;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.button{fill:#fff;stroke:#333;stroke-width:2}.id{font-size:25px;font-weight:700;fill:#222;text-anchor:middle}
+.label{font-size:18px;text-anchor:middle}.derived{fill:#f3eef9;stroke:#81649e;stroke-width:1.8}.dirid{font-size:23px;font-weight:700;fill:#67498c;text-anchor:middle}
+.numeric{fill:#fff4e8;stroke:#b87a40;stroke-width:1.5}.orange{fill:#996126}.purple{fill:#67498c}
+.rule{stroke:#d5dee1;stroke-width:1.5}.arrow{fill:none;stroke:#607782;stroke-width:1.8;marker-end:url(#arrow)}
+</style><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#607782" stroke-width="1.3"/></marker></defs>
+<rect width="1400" height="2160" fill="#f5efe1"/>
 
-  <defs>
-    <style>
-      .body     { fill: #fdfaf3; stroke: #111; stroke-width: 1.8; }
-      .button   { fill: #ffffff; stroke: #111; stroke-width: 1.4; }
-      .ink      { fill: none; stroke: #111; stroke-width: 1.5; stroke-linejoin: round; }
-      .num-on-btn  { font: 700 11px Georgia, serif; fill: #111; text-anchor: middle; }
-      .lbl-on-btn  { font: 600 10px Georgia, serif; fill: #444; text-anchor: middle; }
-      .center-lbl  { font: 400 10px Georgia, serif; fill: #111; text-anchor: middle; letter-spacing: .5px; }
-      .compass     { font: 600 10px Georgia, serif; fill: #444; text-anchor: middle; }
-      .dpad-num    { font: 700 14px Georgia, serif; fill: #111; text-anchor: middle; }
-      .legend      { font: 11px Georgia, serif; fill: #111; }
-      .legend-num  { font: 700 11px Georgia, serif; fill: #111; text-anchor: end; }
-      .legend-head { font: 700 12px Georgia, serif; fill: #111; letter-spacing: 1px; }
-      .figcap      { font: 700 16px Georgia, serif; fill: #111; letter-spacing: 1.5px; text-anchor: middle; }
-      .subcap      { font: 600 11px Georgia, serif; fill: #444; text-anchor: middle; }
-      .keypad-digit { font: 400 22px Georgia, serif; fill: #111; text-anchor: middle; }
-      .keypad-word  { font: 400 13px Georgia, serif; fill: #111; text-anchor: middle; letter-spacing: .5px; }
-    </style>
-  </defs>
-
-  <rect x="0" y="0" width="1320" height="720" fill="#f5efe1"/>
-  <line x1="900" y1="40" x2="900" y2="680" stroke="#aaa" stroke-width="0.6" stroke-dasharray="3 4"/>
-
-  <!-- FIG. 1 -->
-  <g>
-    <g transform="translate(20,75)">
-      <text class="legend-head" x="0" y="0">LEFT GROUP</text>
-      <g transform="translate(0,18)">
-        <text class="legend-num" x="22" y="0">11</text><text class="legend" x="30" y="0">L shoulder</text>
-        <text class="legend-num" x="22" y="18">29</text><text class="legend" x="30" y="18">L2 trigger</text>
-        <text class="legend-num" x="22" y="44">1</text><text class="legend" x="30" y="44">D-pad Right</text>
-        <text class="legend-num" x="22" y="62">2</text><text class="legend" x="30" y="62">D-pad Left</text>
-        <text class="legend-num" x="22" y="80">3</text><text class="legend" x="30" y="80">D-pad Down</text>
-        <text class="legend-num" x="22" y="98">4</text><text class="legend" x="30" y="98">D-pad Up</text>
-        <text class="legend-num" x="22" y="124">21</text><text class="legend" x="30" y="124">Stick-E</text>
-        <text class="legend-num" x="22" y="142">22</text><text class="legend" x="30" y="142">Stick-NE</text>
-        <text class="legend-num" x="22" y="160">23</text><text class="legend" x="30" y="160">Stick-N</text>
-        <text class="legend-num" x="22" y="178">24</text><text class="legend" x="30" y="178">Stick-NW</text>
-        <text class="legend-num" x="22" y="196">25</text><text class="legend" x="30" y="196">Stick-W</text>
-        <text class="legend-num" x="22" y="214">26</text><text class="legend" x="30" y="214">Stick-SW</text>
-        <text class="legend-num" x="22" y="232">27</text><text class="legend" x="30" y="232">Stick-S</text>
-        <text class="legend-num" x="22" y="250">28</text><text class="legend" x="30" y="250">Stick-SE</text>
-      </g>
-    </g>
-
-    <g transform="translate(770,75)">
-      <text class="legend-head" x="0" y="0">RIGHT GROUP</text>
-      <g transform="translate(0,18)">
-        <text class="legend-num" x="22" y="0">12</text><text class="legend" x="30" y="0">R shoulder</text>
-        <text class="legend-num" x="22" y="18">30</text><text class="legend" x="30" y="18">R2 trigger</text>
-        <text class="legend-num" x="22" y="44">7</text><text class="legend" x="30" y="44">B</text>
-        <text class="legend-num" x="22" y="62">8</text><text class="legend" x="30" y="62">A</text>
-        <text class="legend-num" x="22" y="80">9</text><text class="legend" x="30" y="80">X</text>
-        <text class="legend-num" x="22" y="98">10</text><text class="legend" x="30" y="98">Y</text>
-        <text class="legend-num" x="22" y="116">13</text><text class="legend" x="30" y="116">C</text>
-        <text class="legend-num" x="22" y="134">14</text><text class="legend" x="30" y="134">Z</text>
-        <text class="legend-num" x="22" y="160">5</text><text class="legend" x="30" y="160">Start</text>
-        <text class="legend-num" x="22" y="178">6</text><text class="legend" x="30" y="178">Select</text>
-        <text class="legend-num" x="22" y="196">15</text><text class="legend" x="30" y="196">Mode</text>
-        <text class="legend-num" x="22" y="222">17</text><text class="legend" x="30" y="222">C-Right</text>
-        <text class="legend-num" x="22" y="240">18</text><text class="legend" x="30" y="240">C-Left</text>
-        <text class="legend-num" x="22" y="258">19</text><text class="legend" x="30" y="258">C-Down</text>
-        <text class="legend-num" x="22" y="276">20</text><text class="legend" x="30" y="276">C-Up</text>
-      </g>
-    </g>
-
-    <g>
-      <path class="body" d="M 200 245 C 200 175, 320 145, 440 145 C 560 145, 680 175, 680 245 L 680 410 C 680 490, 600 530, 530 530 L 350 530 C 280 530, 200 490, 200 410 Z"/>
-
-      <rect class="button" x="225" y="138" width="56" height="20" rx="6"/>
-      <text class="lbl-on-btn" x="253" y="151">L2</text>
-      <text class="num-on-btn" x="253" y="135">29</text>
-      <rect class="button" x="599" y="138" width="56" height="20" rx="6"/>
-      <text class="lbl-on-btn" x="627" y="151">R2</text>
-      <text class="num-on-btn" x="627" y="135">30</text>
-
-      <rect class="button" x="225" y="165" width="76" height="16" rx="8"/>
-      <text class="lbl-on-btn" x="263" y="176">L</text>
-      <text class="num-on-btn" x="263" y="195">11</text>
-      <rect class="button" x="579" y="165" width="76" height="16" rx="8"/>
-      <text class="lbl-on-btn" x="617" y="176">R</text>
-      <text class="num-on-btn" x="617" y="195">12</text>
-
-      <g transform="translate(290,310)">
-        <path class="button" d="M -17 -50 L 17 -50 L 17 -17 L 50 -17 L 50 17 L 17 17 L 17 50 L -17 50 L -17 17 L -50 17 L -50 -17 L -17 -17 Z"/>
-        <text class="dpad-num" x="0"   y="-30">4</text>
-        <text class="dpad-num" x="0"   y="40">3</text>
-        <text class="dpad-num" x="-33" y="4">2</text>
-        <text class="dpad-num" x="33"  y="4">1</text>
-      </g>
-
-      <g transform="translate(440,225)">
-        <ellipse class="button" cx="-50" cy="0" rx="32" ry="13"/>
-        <ellipse class="button" cx="50"  cy="0" rx="32" ry="13"/>
-        <ellipse class="button" cx="0"  cy="22" rx="26" ry="11"/>
-        <text class="center-lbl" x="-50" y="3">SELECT</text>
-        <text class="center-lbl" x="50"  y="3">START</text>
-        <text class="center-lbl" x="0"   y="25">MODE</text>
-        <text class="num-on-btn" x="-50" y="-18">6</text>
-        <text class="num-on-btn" x="50"  y="-18">5</text>
-        <text class="num-on-btn" x="0"   y="44">15</text>
-      </g>
-
-      <g transform="translate(290,440)">
-        <circle class="ink" cx="0" cy="0" r="46"/>
-        <circle class="button" cx="0" cy="0" r="26"/>
-        <text class="compass" x="0"   y="-56">N</text>
-        <text class="compass" x="44"  y="-40">NE</text>
-        <text class="compass" x="62"  y="3">E</text>
-        <text class="compass" x="44"  y="48">SE</text>
-        <text class="compass" x="0"   y="66">S</text>
-        <text class="compass" x="-44" y="48">SW</text>
-        <text class="compass" x="-62" y="3">W</text>
-        <text class="compass" x="-44" y="-40">NW</text>
-        <text class="num-on-btn" x="0" y="3">21–28</text>
-      </g>
-
-      <g transform="translate(575,310)">
-        <circle class="button" cx="-34" cy="-22" r="18"/>
-        <text class="num-on-btn" x="-34" y="-30">9</text>
-        <text class="lbl-on-btn" x="-34" y="-15">X</text>
-        <circle class="button" cx="6" cy="-32" r="18"/>
-        <text class="num-on-btn" x="6" y="-40">10</text>
-        <text class="lbl-on-btn" x="6" y="-25">Y</text>
-        <circle class="button" cx="46" cy="-22" r="18"/>
-        <text class="num-on-btn" x="46" y="-30">13</text>
-        <text class="lbl-on-btn" x="46" y="-15">C</text>
-        <circle class="button" cx="-34" cy="22" r="18"/>
-        <text class="num-on-btn" x="-34" y="14">7</text>
-        <text class="lbl-on-btn" x="-34" y="29">B</text>
-        <circle class="button" cx="6" cy="32" r="18"/>
-        <text class="num-on-btn" x="6" y="24">8</text>
-        <text class="lbl-on-btn" x="6" y="39">A</text>
-        <circle class="button" cx="46" cy="22" r="18"/>
-        <text class="num-on-btn" x="46" y="14">14</text>
-        <text class="lbl-on-btn" x="46" y="29">Z</text>
-      </g>
-
-      <g transform="translate(581,430)">
-        <circle class="button" cx="0"   cy="-26" r="13"/>
-        <text class="num-on-btn" x="0"  y="-22">20</text>
-        <circle class="button" cx="0"   cy="26"  r="13"/>
-        <text class="num-on-btn" x="0"  y="30">19</text>
-        <circle class="button" cx="-28" cy="0"   r="13"/>
-        <text class="num-on-btn" x="-28" y="4">18</text>
-        <circle class="button" cx="28"  cy="0"   r="13"/>
-        <text class="num-on-btn" x="28" y="4">17</text>
-      </g>
-      <text class="lbl-on-btn" x="581" y="490">C-buttons</text>
-    </g>
-
-    <text class="figcap" x="440" y="640">FIG. 1</text>
-    <text class="subcap" x="440" y="660">gamepad — slots 1 – 30</text>
-  </g>
-
-  <!-- FIG. 2 -->
-  <g transform="translate(920,0)">
-    <rect class="body" x="40" y="145" width="320" height="385" rx="20"/>
-
-    <rect class="button" x="65"  y="180" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="105" y="195">32</text>
-    <text class="keypad-digit" x="105" y="225">1</text>
-    <rect class="button" x="160" y="180" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="200" y="195">33</text>
-    <text class="keypad-digit" x="200" y="225">2</text>
-    <rect class="button" x="255" y="180" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="295" y="195">34</text>
-    <text class="keypad-digit" x="295" y="225">3</text>
-
-    <rect class="button" x="65"  y="262" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="105" y="277">35</text>
-    <text class="keypad-digit" x="105" y="307">4</text>
-    <rect class="button" x="160" y="262" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="200" y="277">36</text>
-    <text class="keypad-digit" x="200" y="307">5</text>
-    <rect class="button" x="255" y="262" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="295" y="277">37</text>
-    <text class="keypad-digit" x="295" y="307">6</text>
-
-    <rect class="button" x="65"  y="344" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="105" y="359">38</text>
-    <text class="keypad-digit" x="105" y="389">7</text>
-    <rect class="button" x="160" y="344" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="200" y="359">39</text>
-    <text class="keypad-digit" x="200" y="389">8</text>
-    <rect class="button" x="255" y="344" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="295" y="359">40</text>
-    <text class="keypad-digit" x="295" y="389">9</text>
-
-    <rect class="button" x="65"  y="426" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="105" y="441">5</text>
-    <text class="keypad-word" x="105" y="463">ENTER</text>
-    <text class="lbl-on-btn" x="105" y="478">★ / *</text>
-    <rect class="button" x="160" y="426" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="200" y="441">31</text>
-    <text class="keypad-digit" x="200" y="471">0</text>
-    <rect class="button" x="255" y="426" width="80" height="62" rx="6"/>
-    <text class="num-on-btn" x="295" y="441">6</text>
-    <text class="keypad-word" x="295" y="463">CLEAR</text>
-    <text class="lbl-on-btn" x="295" y="478"># / ♯</text>
-
-    <text class="figcap" x="200" y="640">FIG. 2</text>
-    <text class="subcap" x="200" y="660">keypad (INTV / Coleco) — slots 31 – 40</text>
-  </g>
+<text class="title" x="40" y="48">Universal button layout</text>
+<text class="body" x="40" y="83">Numbers are stable IDs from button_layout(). Labels identify the controls.</text>
+<rect class="button" x="1030" y="27" width="39" height="31" rx="10"/>
+<text class="id" x="1049.5" y="51">8</text>
+<text class="small" x="1082" y="50">Registered button</text>
+<rect class="derived" x="1030" y="70" width="39" height="31" rx="10"/>
+<text class="dirid" x="1049.5" y="94">24</text>
+<text class="small" x="1082" y="93">Derived direction</text>
+<g transform="translate(-92,-6) scale(1.8,1.35)">
+<path class="shell" d="M200 245 C200 175 320 145 440 145 C560 145 680 175 680 245 L680 410 C680 490 600 530 530 530 L350 530 C280 530 200 490 200 410 Z"/>
+</g>
+<g data-key="l2" data-id="13">
+<rect class="button" x="305.0" y="144.0" width="100" height="52" rx="11"/>
+<text class="id" x="355" y="168">13</text>
+<text class="label" x="355" y="191">L2</text>
+</g>
+<g data-key="l1" data-id="11">
+<rect class="button" x="292.5" y="206.0" width="125" height="52" rx="11"/>
+<text class="id" x="355" y="230">11</text>
+<text class="label" x="355" y="253">L1</text>
+</g>
+<g data-key="r2" data-id="14">
+<rect class="button" x="995.0" y="144.0" width="100" height="52" rx="11"/>
+<text class="id" x="1045" y="168">14</text>
+<text class="label" x="1045" y="191">R2</text>
+</g>
+<g data-key="r1" data-id="12">
+<rect class="button" x="982.5" y="206.0" width="125" height="52" rx="11"/>
+<text class="id" x="1045" y="230">12</text>
+<text class="label" x="1045" y="253">R1</text>
+</g>
+<g data-key="select" data-id="6">
+<rect class="button" x="540.0" y="262.0" width="126" height="56" rx="11"/>
+<text class="id" x="603" y="288">6</text>
+<text class="label" x="603" y="311">Select / −</text>
+</g>
+<g data-key="start" data-id="5">
+<rect class="button" x="734.0" y="262.0" width="126" height="56" rx="11"/>
+<text class="id" x="797" y="288">5</text>
+<text class="label" x="797" y="311">Start / +</text>
+</g>
+<g data-key="mode" data-id="19">
+<rect class="button" x="652.0" y="324.0" width="96" height="56" rx="11"/>
+<text class="id" x="700" y="350">19</text>
+<text class="label" x="700" y="373">Mode</text>
+</g>
+<path class="button" d="M406 300 H454 V346 H500 V394 H454 V440 H406 V394 H360 V346 H406Z"/>
+<g data-key="dpad_up" data-id="4">
+<text class="id" x="430" y="328">4</text>
+</g>
+<g data-key="dpad_down" data-id="3">
+<text class="id" x="430" y="424">3</text>
+</g>
+<g data-key="dpad_left" data-id="2">
+<text class="id" x="382" y="378">2</text>
+</g>
+<g data-key="dpad_right" data-id="1">
+<text class="id" x="478" y="378">1</text>
+</g>
+<text class="small" x="430" y="470" text-anchor="middle">D-pad</text>
+<g data-key="x" data-id="9">
+<circle class="button" cx="916" cy="340" r="27"/>
+<text class="id" x="916" y="337">9</text>
+<text class="label" x="916" y="358">X</text>
+</g>
+<g data-key="y" data-id="10">
+<circle class="button" cx="977" cy="325" r="27"/>
+<text class="id" x="977" y="322">10</text>
+<text class="label" x="977" y="343">Y</text>
+</g>
+<g data-key="c" data-id="17">
+<circle class="button" cx="1038" cy="340" r="27"/>
+<text class="id" x="1038" y="337">17</text>
+<text class="label" x="1038" y="358">C</text>
+</g>
+<g data-key="b" data-id="7">
+<circle class="button" cx="916" cy="402" r="27"/>
+<text class="id" x="916" y="399">7</text>
+<text class="label" x="916" y="420">B</text>
+</g>
+<g data-key="a" data-id="8">
+<circle class="button" cx="977" cy="417" r="27"/>
+<text class="id" x="977" y="414">8</text>
+<text class="label" x="977" y="435">A</text>
+</g>
+<g data-key="z" data-id="18">
+<circle class="button" cx="1038" cy="402" r="27"/>
+<text class="id" x="1038" y="399">18</text>
+<text class="label" x="1038" y="420">Z</text>
+</g>
+<circle class="shell" cx="510" cy="581" r="62"/>
+<circle class="button" cx="510" cy="581" r="38"/>
+<g data-key="l3" data-id="15">
+<text class="id" x="510" y="579">15</text>
+<text class="label" x="510" y="601">L3</text>
+</g>
+<g data-key="left_e" data-id="24">
+<text class="dirid" x="604.0" y="581.0">24</text>
+<text class="label purple" x="604.0" y="599.0">E</text>
+</g>
+<g data-key="left_ne" data-id="25">
+<text class="dirid" x="576.5" y="514.5">25</text>
+<text class="label purple" x="576.5" y="532.5">NE</text>
+</g>
+<g data-key="left_n" data-id="26">
+<text class="dirid" x="510.0" y="487.0">26</text>
+<text class="label purple" x="510.0" y="505.0">N</text>
+</g>
+<g data-key="left_nw" data-id="27">
+<text class="dirid" x="443.5" y="514.5">27</text>
+<text class="label purple" x="443.5" y="532.5">NW</text>
+</g>
+<g data-key="left_w" data-id="28">
+<text class="dirid" x="416.0" y="581.0">28</text>
+<text class="label purple" x="416.0" y="599.0">W</text>
+</g>
+<g data-key="left_sw" data-id="29">
+<text class="dirid" x="443.5" y="647.5">29</text>
+<text class="label purple" x="443.5" y="665.5">SW</text>
+</g>
+<g data-key="left_s" data-id="30">
+<text class="dirid" x="510.0" y="675.0">30</text>
+<text class="label purple" x="510.0" y="693.0">S</text>
+</g>
+<g data-key="left_se" data-id="31">
+<text class="dirid" x="576.5" y="647.5">31</text>
+<text class="label purple" x="576.5" y="665.5">SE</text>
+</g>
+<text class="small" x="510" y="728" text-anchor="middle">Left stick</text>
+<circle class="shell" cx="890" cy="581" r="62"/>
+<circle class="button" cx="890" cy="581" r="38"/>
+<g data-key="r3" data-id="16">
+<text class="id" x="890" y="579">16</text>
+<text class="label" x="890" y="601">R3</text>
+</g>
+<g data-key="right_e" data-id="32">
+<text class="dirid" x="984.0" y="581.0">32</text>
+<text class="label purple" x="984.0" y="599.0">E</text>
+</g>
+<g data-key="right_ne" data-id="33">
+<text class="dirid" x="956.5" y="514.5">33</text>
+<text class="label purple" x="956.5" y="532.5">NE</text>
+</g>
+<g data-key="right_n" data-id="34">
+<text class="dirid" x="890.0" y="487.0">34</text>
+<text class="label purple" x="890.0" y="505.0">N</text>
+</g>
+<g data-key="right_nw" data-id="35">
+<text class="dirid" x="823.5" y="514.5">35</text>
+<text class="label purple" x="823.5" y="532.5">NW</text>
+</g>
+<g data-key="right_w" data-id="36">
+<text class="dirid" x="796.0" y="581.0">36</text>
+<text class="label purple" x="796.0" y="599.0">W</text>
+</g>
+<g data-key="right_sw" data-id="37">
+<text class="dirid" x="823.5" y="647.5">37</text>
+<text class="label purple" x="823.5" y="665.5">SW</text>
+</g>
+<g data-key="right_s" data-id="38">
+<text class="dirid" x="890.0" y="675.0">38</text>
+<text class="label purple" x="890.0" y="693.0">S</text>
+</g>
+<g data-key="right_se" data-id="39">
+<text class="dirid" x="956.5" y="647.5">39</text>
+<text class="label purple" x="956.5" y="665.5">SE</text>
+</g>
+<text class="small" x="890" y="728" text-anchor="middle">Right stick</text>
+<g data-key="c_up" data-id="23">
+<circle class="button" cx="700" cy="423" r="22"/>
+<text class="id" x="700" y="431">23</text>
+</g>
+<g data-key="c_down" data-id="22">
+<circle class="button" cx="700" cy="495" r="22"/>
+<text class="id" x="700" y="503">22</text>
+</g>
+<g data-key="c_left" data-id="21">
+<circle class="button" cx="660" cy="459" r="22"/>
+<text class="id" x="660" y="467">21</text>
+</g>
+<g data-key="c_right" data-id="20">
+<circle class="button" cx="740" cy="459" r="22"/>
+<text class="id" x="740" y="467">20</text>
+</g>
+<text class="small" x="700" y="535" text-anchor="middle">N64 C-buttons</text>
+<text class="head" x="40" y="185">D-pad</text>
+<g data-key="dpad_right" data-id="1">
+<rect class="button" x="40" y="201" width="43" height="31" rx="8"/>
+<text class="id" x="61.5" y="225">1</text>
+<text class="small" x="95" y="224">Right</text>
+</g>
+<g data-key="dpad_left" data-id="2">
+<rect class="button" x="40" y="238" width="43" height="31" rx="8"/>
+<text class="id" x="61.5" y="262">2</text>
+<text class="small" x="95" y="261">Left</text>
+</g>
+<g data-key="dpad_down" data-id="3">
+<rect class="button" x="40" y="275" width="43" height="31" rx="8"/>
+<text class="id" x="61.5" y="299">3</text>
+<text class="small" x="95" y="298">Down</text>
+</g>
+<g data-key="dpad_up" data-id="4">
+<rect class="button" x="40" y="312" width="43" height="31" rx="8"/>
+<text class="id" x="61.5" y="336">4</text>
+<text class="small" x="95" y="335">Up</text>
+</g>
+<text class="head" x="40" y="443">Stick clicks</text>
+<g data-key="l3" data-id="15">
+<rect class="button" x="40" y="461" width="43" height="31" rx="8"/>
+<text class="id" x="61.5" y="485">15</text>
+<text class="small" x="95" y="484">Left (L3)</text>
+</g>
+<g data-key="r3" data-id="16">
+<rect class="button" x="40" y="504" width="43" height="31" rx="8"/>
+<text class="id" x="61.5" y="528">16</text>
+<text class="small" x="95" y="527">Right (R3)</text>
+</g>
+<text class="head" x="1171" y="185">Face buttons</text>
+<g data-key="b" data-id="7">
+<rect class="button" x="1171" y="201" width="43" height="31" rx="8"/>
+<text class="id" x="1192.5" y="225">7</text>
+<text class="small" x="1226" y="224">B</text>
+</g>
+<g data-key="a" data-id="8">
+<rect class="button" x="1171" y="238" width="43" height="31" rx="8"/>
+<text class="id" x="1192.5" y="262">8</text>
+<text class="small" x="1226" y="261">A</text>
+</g>
+<g data-key="x" data-id="9">
+<rect class="button" x="1171" y="275" width="43" height="31" rx="8"/>
+<text class="id" x="1192.5" y="299">9</text>
+<text class="small" x="1226" y="298">X</text>
+</g>
+<g data-key="y" data-id="10">
+<rect class="button" x="1171" y="312" width="43" height="31" rx="8"/>
+<text class="id" x="1192.5" y="336">10</text>
+<text class="small" x="1226" y="335">Y</text>
+</g>
+<g data-key="c" data-id="17">
+<rect class="button" x="1171" y="349" width="43" height="31" rx="8"/>
+<text class="id" x="1192.5" y="373">17</text>
+<text class="small" x="1226" y="372">C</text>
+</g>
+<g data-key="z" data-id="18">
+<rect class="button" x="1171" y="386" width="43" height="31" rx="8"/>
+<text class="id" x="1192.5" y="410">18</text>
+<text class="small" x="1226" y="409">Z</text>
+</g>
+<text class="head" x="1171" y="503">C-buttons</text>
+<g data-key="c_right" data-id="20">
+<rect class="button" x="1171" y="520" width="43" height="31" rx="8"/>
+<text class="id" x="1192.5" y="544">20</text>
+<text class="small" x="1226" y="543">Right</text>
+</g>
+<g data-key="c_left" data-id="21">
+<rect class="button" x="1171" y="557" width="43" height="31" rx="8"/>
+<text class="id" x="1192.5" y="581">21</text>
+<text class="small" x="1226" y="580">Left</text>
+</g>
+<g data-key="c_down" data-id="22">
+<rect class="button" x="1171" y="594" width="43" height="31" rx="8"/>
+<text class="id" x="1192.5" y="618">22</text>
+<text class="small" x="1226" y="617">Down</text>
+</g>
+<g data-key="c_up" data-id="23">
+<rect class="button" x="1171" y="631" width="43" height="31" rx="8"/>
+<text class="id" x="1192.5" y="655">23</text>
+<text class="small" x="1226" y="654">Up</text>
+</g>
+<text class="small" x="40" y="747">Direction IDs are added by cardinal4 or cardinal8. Angles and magnitudes appear in stick_channels().</text>
+<line class="rule" x1="40" y1="773" x2="1360" y2="773"/>
+<text class="head" x="40" y="815">Keypad digits</text>
+<text class="head" x="490" y="815">Mouse and light gun</text>
+<text class="head" x="965" y="815">Power Pad sensors</text>
+<rect class="shell" x="58" y="845" width="360" height="302" rx="27"/>
+<g data-key="numbered_1" data-id="41">
+<rect class="button" x="87.0" y="859.0" width="88" height="62" rx="11"/>
+<text class="id" x="131" y="888">41</text>
+<text class="label" x="131" y="911">1</text>
+</g>
+<g data-key="numbered_2" data-id="42">
+<rect class="button" x="194.0" y="859.0" width="88" height="62" rx="11"/>
+<text class="id" x="238" y="888">42</text>
+<text class="label" x="238" y="911">2</text>
+</g>
+<g data-key="numbered_3" data-id="43">
+<rect class="button" x="301.0" y="859.0" width="88" height="62" rx="11"/>
+<text class="id" x="345" y="888">43</text>
+<text class="label" x="345" y="911">3</text>
+</g>
+<g data-key="numbered_4" data-id="44">
+<rect class="button" x="87.0" y="936.0" width="88" height="62" rx="11"/>
+<text class="id" x="131" y="965">44</text>
+<text class="label" x="131" y="988">4</text>
+</g>
+<g data-key="numbered_5" data-id="45">
+<rect class="button" x="194.0" y="936.0" width="88" height="62" rx="11"/>
+<text class="id" x="238" y="965">45</text>
+<text class="label" x="238" y="988">5</text>
+</g>
+<g data-key="numbered_6" data-id="46">
+<rect class="button" x="301.0" y="936.0" width="88" height="62" rx="11"/>
+<text class="id" x="345" y="965">46</text>
+<text class="label" x="345" y="988">6</text>
+</g>
+<g data-key="numbered_7" data-id="47">
+<rect class="button" x="87.0" y="1013.0" width="88" height="62" rx="11"/>
+<text class="id" x="131" y="1042">47</text>
+<text class="label" x="131" y="1065">7</text>
+</g>
+<g data-key="numbered_8" data-id="48">
+<rect class="button" x="194.0" y="1013.0" width="88" height="62" rx="11"/>
+<text class="id" x="238" y="1042">48</text>
+<text class="label" x="238" y="1065">8</text>
+</g>
+<g data-key="numbered_9" data-id="49">
+<rect class="button" x="301.0" y="1013.0" width="88" height="62" rx="11"/>
+<text class="id" x="345" y="1042">49</text>
+<text class="label" x="345" y="1065">9</text>
+</g>
+<g data-key="numbered_0" data-id="40">
+<rect class="button" x="194.0" y="1091.5" width="88" height="59" rx="11"/>
+<text class="id" x="238" y="1119">40</text>
+<text class="label" x="238" y="1142">0</text>
+</g>
+<text class="small" x="238" y="1184" text-anchor="middle">Equal digits share IDs with Power Pad</text>
+<path class="shell" d="M602 849 C552 849 521 881 521 931 V965 C521 1004 553 1028 602 1028 C651 1028 683 1004 683 965 V931 C683 881 652 849 602 849 Z"/>
+<path class="wire" d="M602 850 V948 M522 948 Q602 963 682 948"/>
+<rect class="button" x="591" y="868" width="22" height="42" rx="10"/>
+<path class="wire" d="M596 879 H608"/>
+<path class="wire" d="M596 887 H608"/>
+<path class="wire" d="M596 895 H608"/>
+<g data-key="a" data-id="8">
+<text class="id" x="555" y="915">8</text>
+<text class="label" x="555" y="937">Left</text>
+</g>
+<g data-key="b" data-id="7">
+<text class="id" x="649" y="915">7</text>
+<text class="label" x="649" y="937">Right</text>
+</g>
+<path class="wire" d="M614 888 H704"/>
+<g data-key="x" data-id="9">
+<rect class="button" x="713" y="873" width="43" height="31" rx="8"/>
+<text class="id" x="734.5" y="897">9</text>
+<text class="small" x="768" y="896">Wheel click</text>
+</g>
+<text class="small orange" x="713" y="956">X / Y movement</text>
+<text class="small orange" x="713" y="986">Wheel movement</text>
+<text class="small" x="713" y="1020">Side 4/5 → 11/12</text>
+<path class="shell" d="M508 1050 H695 L718 1068 H755 V1100 H678 L658 1120 H605 L593 1173 H550 L565 1113 H519Z"/>
+<path class="wire" d="M610 1120 Q636 1142 656 1119"/>
+<circle class="button" cx="619" cy="1116" r="7"/>
+<g data-key="y" data-id="10">
+<rect class="button" x="737" y="1049" width="43" height="31" rx="8"/>
+<text class="id" x="758.5" y="1073">10</text>
+<text class="small" x="792" y="1072">Offscreen shot</text>
+</g>
+<g data-key="a" data-id="8">
+<rect class="button" x="689" y="1121" width="43" height="31" rx="8"/>
+<text class="id" x="710.5" y="1145">8</text>
+<text class="small" x="744" y="1144">Trigger / A</text>
+</g>
+<path class="arrow" d="M686 1134 H652 L619 1116"/>
+<text class="small orange" x="523" y="1191">Aim X / Y → analog_channels()</text>
+<path class="shell" d="M956 849 H1350 L1365 1157 H940Z"/>
+<circle class="button" cx="1003" cy="904" r="39"/>
+<g data-key="numbered_1" data-id="41">
+<text class="id" x="1003" y="903">41</text>
+<text class="label" x="1003" y="925">1</text>
+</g>
+<circle class="button" cx="1103" cy="904" r="39"/>
+<g data-key="numbered_2" data-id="42">
+<text class="id" x="1103" y="903">42</text>
+<text class="label" x="1103" y="925">2</text>
+</g>
+<circle class="button" cx="1203" cy="904" r="39"/>
+<g data-key="numbered_3" data-id="43">
+<text class="id" x="1203" y="903">43</text>
+<text class="label" x="1203" y="925">3</text>
+</g>
+<circle class="button" cx="1303" cy="904" r="39"/>
+<g data-key="numbered_4" data-id="44">
+<text class="id" x="1303" y="903">44</text>
+<text class="label" x="1303" y="925">4</text>
+</g>
+<circle class="button" cx="1003" cy="1004" r="39"/>
+<g data-key="numbered_5" data-id="45">
+<text class="id" x="1003" y="1003">45</text>
+<text class="label" x="1003" y="1025">5</text>
+</g>
+<circle class="button" cx="1103" cy="1004" r="39"/>
+<g data-key="numbered_6" data-id="46">
+<text class="id" x="1103" y="1003">46</text>
+<text class="label" x="1103" y="1025">6</text>
+</g>
+<circle class="button" cx="1203" cy="1004" r="39"/>
+<g data-key="numbered_7" data-id="47">
+<text class="id" x="1203" y="1003">47</text>
+<text class="label" x="1203" y="1025">7</text>
+</g>
+<circle class="button" cx="1303" cy="1004" r="39"/>
+<g data-key="numbered_8" data-id="48">
+<text class="id" x="1303" y="1003">48</text>
+<text class="label" x="1303" y="1025">8</text>
+</g>
+<circle class="button" cx="1003" cy="1104" r="39"/>
+<g data-key="numbered_9" data-id="49">
+<text class="id" x="1003" y="1103">49</text>
+<text class="label" x="1003" y="1125">9</text>
+</g>
+<circle class="button" cx="1103" cy="1104" r="39"/>
+<g data-key="numbered_10" data-id="50">
+<text class="id" x="1103" y="1103">50</text>
+<text class="label" x="1103" y="1125">10</text>
+</g>
+<circle class="button" cx="1203" cy="1104" r="39"/>
+<g data-key="numbered_11" data-id="51">
+<text class="id" x="1203" y="1103">51</text>
+<text class="label" x="1203" y="1125">11</text>
+</g>
+<circle class="button" cx="1303" cy="1104" r="39"/>
+<g data-key="numbered_12" data-id="52">
+<text class="id" x="1303" y="1103">52</text>
+<text class="label" x="1303" y="1125">12</text>
+</g>
+<text class="small" x="1153" y="1191" text-anchor="middle">ID above · sensor number below</text>
+<text class="head" x="40" y="1251">Shared action buttons</text>
+<path class="shell" d="M62 1275 H1338 L1360 1460 H40Z"/>
+<g data-key="a" data-id="8">
+<circle class="button" cx="220" cy="1320" r="32"/>
+<text class="id" x="220" y="1318">8</text>
+<text class="label" x="220" y="1340">A</text>
+<text class="small" x="220" y="1384" text-anchor="middle">Attack · Punch · Fire</text>
+<text class="small" x="220" y="1413" text-anchor="middle">Arcade 1 · Doom Attack</text>
+</g>
+<g data-key="b" data-id="7">
+<circle class="button" cx="540" cy="1320" r="32"/>
+<text class="id" x="540" y="1318">7</text>
+<text class="label" x="540" y="1340">B</text>
+<text class="small" x="540" y="1384" text-anchor="middle">Jump · Use · Missile</text>
+<text class="small" x="540" y="1413" text-anchor="middle">Arcade 2 · Jump/Start</text>
+</g>
+<g data-key="x" data-id="9">
+<circle class="button" cx="860" cy="1320" r="32"/>
+<text class="id" x="860" y="1318">9</text>
+<text class="label" x="860" y="1340">X</text>
+<text class="small" x="860" y="1384" text-anchor="middle">Kick · Arcade 3</text>
+<text class="small" x="860" y="1413" text-anchor="middle">Mouse middle</text>
+</g>
+<g data-key="y" data-id="10">
+<circle class="button" cx="1180" cy="1320" r="32"/>
+<text class="id" x="1180" y="1318">10</text>
+<text class="label" x="1180" y="1340">Y</text>
+<text class="small" x="1180" y="1384" text-anchor="middle">Arcade D · Arcade 4</text>
+<text class="small" x="1180" y="1413" text-anchor="middle">Offscreen shot</text>
+</g>
+<text class="small" x="700" y="1446" text-anchor="middle">Arcade buttons 5–8 → L1, R1, L2, R2. View change → Select.</text>
+<line class="rule" x1="40" y1="1480" x2="1360" y2="1480"/>
+<text class="head" x="40" y="1521">Shared controls and keyboard identities</text>
+<text class="small" x="40" y="1552">Equivalent buttons share an ID. Keyboard keys retain their source key codes.</text>
+<text class="head" x="46" y="1600">Wii Remote</text>
+<rect class="shell" x="51" y="1623" width="121" height="361" rx="20"/>
+<circle class="wire" cx="73" cy="1645" r="9"/>
+<text class="small" x="190" y="1649">Power (not in DTM input)</text>
+<path class="button" d="M99 1664 H125 V1689 H150 V1715 H125 V1740 H99 V1715 H74 V1689 H99Z"/>
+<text class="label" x="112" y="1684">4</text>
+<text class="label" x="112" y="1734">3</text>
+<text class="label" x="87" y="1709">2</text>
+<text class="label" x="137" y="1709">1</text>
+<circle class="button" cx="112" cy="1777" r="25"/>
+<text class="id" x="112" y="1774">8</text>
+<text class="label" x="112" y="1794">A</text>
+<circle class="button" cx="77" cy="1827" r="13"/>
+<text class="label" x="77" y="1833">−</text>
+<circle class="button" cx="112" cy="1827" r="13"/>
+<text class="label" x="112" y="1833">⌂</text>
+<circle class="button" cx="147" cy="1827" r="13"/>
+<text class="label" x="147" y="1833">+</text>
+<circle class="button" cx="112" cy="1876" r="17"/>
+<text class="label" x="112" y="1882">1</text>
+<circle class="button" cx="112" cy="1921" r="17"/>
+<text class="label" x="112" y="1927">2</text>
+<rect class="wire" x="82" y="1958" width="7" height="7" rx="1"/>
+<rect class="wire" x="102" y="1958" width="7" height="7" rx="1"/>
+<rect class="wire" x="122" y="1958" width="7" height="7" rx="1"/>
+<rect class="wire" x="142" y="1958" width="7" height="7" rx="1"/>
+<rect class="shell" x="204" y="1714" width="48" height="126" rx="17"/>
+<rect class="button" x="209" y="1740" width="39" height="58" rx="10"/>
+<text class="id" x="228.5" y="1765">7</text>
+<text class="label" x="228.5" y="1787">B</text>
+<text class="small" x="228" y="1867" text-anchor="middle">Back</text>
+<text class="code" x="281" y="1694">D-pad → 1–4</text>
+<text class="code" x="281" y="1731">A → 8 (A)</text>
+<text class="code" x="281" y="1768">B → 7 (B)</text>
+<text class="code" x="281" y="1805">+ → 5 (Start)</text>
+<text class="code" x="281" y="1842">− → 6 (Select)</text>
+<text class="code" x="281" y="1879">Home → 19 (Mode)</text>
+<text class="code" x="281" y="1916">1 → 9 (X)</text>
+<text class="code" x="281" y="1953">2 → 10 (Y)</text>
+<text class="small orange" x="46" y="2030">IR, acceleration, rotation → analog_channels()</text>
+<text class="head" x="727" y="1600">Keyboard (libTAS)</text>
+<rect class="shell" x="727" y="1623" width="623" height="236" rx="18"/>
+<rect class="button" x="888" y="1644" width="65" height="53" rx="6"/>
+<text class="id" x="920.5" y="1678">W</text>
+<rect class="button" x="804" y="1710" width="65" height="53" rx="6"/>
+<text class="id" x="836.5" y="1744">A</text>
+<rect class="button" x="888" y="1710" width="65" height="53" rx="6"/>
+<text class="id" x="920.5" y="1744">S</text>
+<rect class="button" x="972" y="1710" width="65" height="53" rx="6"/>
+<text class="id" x="1004.5" y="1744">D</text>
+<rect class="button" x="804" y="1778" width="391" height="53" rx="6"/>
+<text class="label" x="999.5" y="1812">Space</text>
+<text class="code" x="727" y="1895">W → control:keysym_77</text>
+<text class="code" x="1050" y="1895">A → control:keysym_61</text>
+<text class="code" x="727" y="1927">S → control:keysym_73</text>
+<text class="code" x="1050" y="1927">D → control:keysym_64</text>
+<text class="code" x="727" y="1959">Space → control:keysym_20</text>
+<text class="small" x="727" y="1991">Key codes shown for unshifted letters.</text>
+<rect class="shell" x="727" y="2020" width="137" height="81" rx="10"/>
+<rect class="numeric" x="739" y="2032" width="113" height="54" rx="3"/>
+<path class="wire" d="M766 2068 L823 2046"/>
+<circle class="button" cx="823" cy="2046" r="4"/>
+<text class="code" x="887" y="2038">DS touch → control:touch</text>
+<text class="small orange" x="887" y="2070">Touch X / Y → analog_channels()</text>
+<g data-key="microphone" data-id="53">
+<rect class="button" x="46" y="2058" width="43" height="31" rx="8"/>
+<text class="id" x="67.5" y="2082">53</text>
+<text class="small" x="101" y="2081">Microphone</text>
+</g>
+<text class="small" x="40" y="2135">Compact columns: in sample.dtm, column 6 is ID 7 (B); column 12 is ID 18 (Z). Inspect button_layout(movie).</text>
 </svg>

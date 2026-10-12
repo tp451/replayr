@@ -13,3 +13,16 @@
 ^pkgdown$
 ^\.devnotes$
 ^\.claude$
+^\.agents$
+^\.codex$
+^AGENTS\.md$
+^CLAUDE\.md$
+^CODEX\.md$
+^publication-audit$
+^publication-drafts$
+^tmp$
+^.*\.Rcheck$
+^.*\.tar\.gz$
+^tests/testthat/_problems$
+^tests/testthat/Rplots\.pdf$
+^COMPATIBILITY[.]md$

@@ -1,0 +1,19 @@
+JRSR
+!BEGIN header
++AUTHORS (Example author)
+!BEGIN initialization
++BOOT HDD
+!BEGIN events
++0 OPTION RELATIVE
++100 org.jpc.emulator.peripheral.Keyboard KEYEDGE 205
++50 org.jpc.emulator.peripheral.Keyboard KEYEDGE 57
++25 org.jpc.emulator.peripheral.Keyboard XMOUSEMOTION -3
++25 org.jpc.emulator.peripheral.Keyboard MOUSEBUTTON 0
++50 org.jpc.emulator.peripheral.Keyboard KEYEDGE 57
++50 org.jpc.emulator.peripheral.Keyboard KEYEDGE 205
++0 org.jpc.emulator.peripheral.Keyboard PAUSE
++20 OPTION ABSOLUTE
++400 org.jpc.modules.Joystick BUTTONC 1
++425 org.jpc.modules.Joystick AXISC 12000
++450 org.jpc.emulator.PC$ResetButton
+!END

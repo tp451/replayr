@@ -49,8 +49,8 @@
 #'
 #' @param path Path to a .fcm file.
 #' @return A `replayr_movie` object.
-#' @export
-read_fcm <- function(path) {
+#' @noRd
+.decode_fcm <- function(path) {
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 32L || !identical(data[1:4], charToRaw("FCM\x1a"))) {
     stop(path, ": not an FCM file")

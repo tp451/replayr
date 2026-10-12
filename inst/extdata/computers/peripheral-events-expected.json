@@ -1,0 +1,526 @@
+[
+  {
+    "row": 1,
+    "time": 1234567,
+    "type": "TrackballState",
+    "action": "move northwest, hold A",
+    "deltaX": -7,
+    "deltaY": 3,
+    "press": 16,
+    "release": 0
+  },
+  {
+    "row": 2,
+    "time": 2469134,
+    "type": "PaddleState",
+    "action": "turn paddle clockwise while trackball A remains held",
+    "delta": 13
+  },
+  {
+    "row": 3,
+    "time": 3703701,
+    "type": "TrackballState",
+    "action": "reverse motion, exchange A for B",
+    "deltaX": 2,
+    "deltaY": -5,
+    "press": 32,
+    "release": 16
+  },
+  {
+    "row": 4,
+    "time": 4938268,
+    "type": "TrackballState",
+    "action": "release B",
+    "deltaX": 0,
+    "deltaY": 0,
+    "press": 0,
+    "release": 32
+  },
+  {
+    "row": 5,
+    "time": 6172835,
+    "type": "PaddleState",
+    "action": "turn paddle back",
+    "delta": -9
+  },
+  {
+    "row": 6,
+    "time": 7407402,
+    "type": "TouchpadState",
+    "action": "touch first coordinate",
+    "x": 23,
+    "y": 201,
+    "touch": true,
+    "button": false
+  },
+  {
+    "row": 7,
+    "time": 8641969,
+    "type": "TouchpadState",
+    "action": "button without contact",
+    "x": 211,
+    "y": 47,
+    "touch": false,
+    "button": true
+  },
+  {
+    "row": 8,
+    "time": 9876536,
+    "type": "TouchpadState",
+    "action": "touch and button together",
+    "x": 87,
+    "y": 139,
+    "touch": true,
+    "button": true
+  },
+  {
+    "row": 9,
+    "time": 11111103,
+    "type": "TouchpadState",
+    "action": "release both",
+    "x": 91,
+    "y": 137,
+    "touch": false,
+    "button": false
+  },
+  {
+    "row": 10,
+    "time": 12345670,
+    "type": "JoyMegaState",
+    "action": "hold up",
+    "id": 2,
+    "press": 1,
+    "release": 0
+  },
+  {
+    "row": 11,
+    "time": 13580237,
+    "type": "JoyMegaState",
+    "action": "release up",
+    "id": 2,
+    "press": 0,
+    "release": 1
+  },
+  {
+    "row": 12,
+    "time": 14814804,
+    "type": "JoyMegaState",
+    "action": "hold down",
+    "id": 2,
+    "press": 2,
+    "release": 0
+  },
+  {
+    "row": 13,
+    "time": 16049371,
+    "type": "JoyMegaState",
+    "action": "release down",
+    "id": 2,
+    "press": 0,
+    "release": 2
+  },
+  {
+    "row": 14,
+    "time": 17283938,
+    "type": "JoyMegaState",
+    "action": "hold left",
+    "id": 2,
+    "press": 4,
+    "release": 0
+  },
+  {
+    "row": 15,
+    "time": 18518505,
+    "type": "JoyMegaState",
+    "action": "release left",
+    "id": 2,
+    "press": 0,
+    "release": 4
+  },
+  {
+    "row": 16,
+    "time": 19753072,
+    "type": "JoyMegaState",
+    "action": "hold right",
+    "id": 2,
+    "press": 8,
+    "release": 0
+  },
+  {
+    "row": 17,
+    "time": 20987639,
+    "type": "JoyMegaState",
+    "action": "release right",
+    "id": 2,
+    "press": 0,
+    "release": 8
+  },
+  {
+    "row": 18,
+    "time": 22222206,
+    "type": "JoyMegaState",
+    "action": "hold a",
+    "id": 2,
+    "press": 16,
+    "release": 0
+  },
+  {
+    "row": 19,
+    "time": 23456773,
+    "type": "JoyMegaState",
+    "action": "release a",
+    "id": 2,
+    "press": 0,
+    "release": 16
+  },
+  {
+    "row": 20,
+    "time": 24691340,
+    "type": "JoyMegaState",
+    "action": "hold b",
+    "id": 2,
+    "press": 32,
+    "release": 0
+  },
+  {
+    "row": 21,
+    "time": 25925907,
+    "type": "JoyMegaState",
+    "action": "release b",
+    "id": 2,
+    "press": 0,
+    "release": 32
+  },
+  {
+    "row": 22,
+    "time": 27160474,
+    "type": "JoyMegaState",
+    "action": "hold c",
+    "id": 2,
+    "press": 64,
+    "release": 0
+  },
+  {
+    "row": 23,
+    "time": 28395041,
+    "type": "JoyMegaState",
+    "action": "release c",
+    "id": 2,
+    "press": 0,
+    "release": 64
+  },
+  {
+    "row": 24,
+    "time": 29629608,
+    "type": "JoyMegaState",
+    "action": "hold start",
+    "id": 2,
+    "press": 128,
+    "release": 0
+  },
+  {
+    "row": 25,
+    "time": 30864175,
+    "type": "JoyMegaState",
+    "action": "release start",
+    "id": 2,
+    "press": 0,
+    "release": 128
+  },
+  {
+    "row": 26,
+    "time": 32098742,
+    "type": "JoyMegaState",
+    "action": "hold x",
+    "id": 2,
+    "press": 256,
+    "release": 0
+  },
+  {
+    "row": 27,
+    "time": 33333309,
+    "type": "JoyMegaState",
+    "action": "release x",
+    "id": 2,
+    "press": 0,
+    "release": 256
+  },
+  {
+    "row": 28,
+    "time": 34567876,
+    "type": "JoyMegaState",
+    "action": "hold y",
+    "id": 2,
+    "press": 512,
+    "release": 0
+  },
+  {
+    "row": 29,
+    "time": 35802443,
+    "type": "JoyMegaState",
+    "action": "release y",
+    "id": 2,
+    "press": 0,
+    "release": 512
+  },
+  {
+    "row": 30,
+    "time": 37037010,
+    "type": "JoyMegaState",
+    "action": "hold z",
+    "id": 2,
+    "press": 1024,
+    "release": 0
+  },
+  {
+    "row": 31,
+    "time": 38271577,
+    "type": "JoyMegaState",
+    "action": "release z",
+    "id": 2,
+    "press": 0,
+    "release": 1024
+  },
+  {
+    "row": 32,
+    "time": 39506144,
+    "type": "JoyMegaState",
+    "action": "hold mode",
+    "id": 2,
+    "press": 2048,
+    "release": 0
+  },
+  {
+    "row": 33,
+    "time": 40740711,
+    "type": "JoyMegaState",
+    "action": "release mode",
+    "id": 2,
+    "press": 0,
+    "release": 2048
+  },
+  {
+    "row": 34,
+    "time": 41975278,
+    "type": "JoyHandleState",
+    "action": "hold up and set wheel",
+    "id": 3,
+    "press": 1,
+    "release": 0,
+    "analog": -0.75
+  },
+  {
+    "row": 35,
+    "time": 43209845,
+    "type": "JoyHandleState",
+    "action": "release up and centre wheel",
+    "id": 3,
+    "press": 0,
+    "release": 1,
+    "analog": 0
+  },
+  {
+    "row": 36,
+    "time": 44444412,
+    "type": "JoyHandleState",
+    "action": "hold down and set wheel",
+    "id": 3,
+    "press": 2,
+    "release": 0,
+    "analog": 0.25
+  },
+  {
+    "row": 37,
+    "time": 45678979,
+    "type": "JoyHandleState",
+    "action": "release down and centre wheel",
+    "id": 3,
+    "press": 0,
+    "release": 2,
+    "analog": 0
+  },
+  {
+    "row": 38,
+    "time": 46913546,
+    "type": "JoyHandleState",
+    "action": "hold left and set wheel",
+    "id": 3,
+    "press": 4,
+    "release": 0,
+    "analog": 1
+  },
+  {
+    "row": 39,
+    "time": 48148113,
+    "type": "JoyHandleState",
+    "action": "release left and centre wheel",
+    "id": 3,
+    "press": 0,
+    "release": 4,
+    "analog": 0
+  },
+  {
+    "row": 40,
+    "time": 49382680,
+    "type": "JoyHandleState",
+    "action": "hold right and set wheel",
+    "id": 3,
+    "press": 8,
+    "release": 0,
+    "analog": -1
+  },
+  {
+    "row": 41,
+    "time": 50617247,
+    "type": "JoyHandleState",
+    "action": "release right and centre wheel",
+    "id": 3,
+    "press": 0,
+    "release": 8,
+    "analog": 0
+  },
+  {
+    "row": 42,
+    "time": 51851814,
+    "type": "JoyHandleState",
+    "action": "hold a and set wheel",
+    "id": 3,
+    "press": 16,
+    "release": 0,
+    "analog": 0.125
+  },
+  {
+    "row": 43,
+    "time": 53086381,
+    "type": "JoyHandleState",
+    "action": "release a and centre wheel",
+    "id": 3,
+    "press": 0,
+    "release": 16,
+    "analog": 0
+  },
+  {
+    "row": 44,
+    "time": 54320948,
+    "type": "JoyHandleState",
+    "action": "hold b and set wheel",
+    "id": 3,
+    "press": 32,
+    "release": 0,
+    "analog": -0.5
+  },
+  {
+    "row": 45,
+    "time": 55555515,
+    "type": "JoyHandleState",
+    "action": "release b and centre wheel",
+    "id": 3,
+    "press": 0,
+    "release": 32,
+    "analog": 0
+  },
+  {
+    "row": 46,
+    "time": 56790082,
+    "type": "ArkanoidState",
+    "action": "turn dial and hold button",
+    "delta": -17,
+    "press": true,
+    "release": false
+  },
+  {
+    "row": 47,
+    "time": 58024649,
+    "type": "ArkanoidState",
+    "action": "turn dial back and release button",
+    "delta": 5,
+    "press": false,
+    "release": true
+  },
+  {
+    "row": 48,
+    "time": 59259216,
+    "type": "LightGunState",
+    "action": "idle",
+    "id": 0,
+    "status": 63
+  },
+  {
+    "row": 49,
+    "time": 60493783,
+    "type": "LightGunState",
+    "action": "trigger",
+    "id": 0,
+    "status": 47
+  },
+  {
+    "row": 50,
+    "time": 61728350,
+    "type": "LightGunState",
+    "action": "light",
+    "id": 0,
+    "status": 61
+  },
+  {
+    "row": 51,
+    "time": 62962917,
+    "type": "LightGunState",
+    "action": "trigger and light",
+    "id": 0,
+    "status": 45
+  },
+  {
+    "row": 52,
+    "time": 64197484,
+    "type": "LightGunState",
+    "action": "idle",
+    "id": 0,
+    "status": 63
+  },
+  {
+    "row": 53,
+    "time": 65432051,
+    "type": "LightGunState",
+    "action": "idle",
+    "id": 1,
+    "status": 47
+  },
+  {
+    "row": 54,
+    "time": 66666618,
+    "type": "LightGunState",
+    "action": "trigger",
+    "id": 1,
+    "status": 15
+  },
+  {
+    "row": 55,
+    "time": 67901185,
+    "type": "LightGunState",
+    "action": "light",
+    "id": 1,
+    "status": 63
+  },
+  {
+    "row": 56,
+    "time": 69135752,
+    "type": "LightGunState",
+    "action": "trigger and light",
+    "id": 1,
+    "status": 31
+  },
+  {
+    "row": 57,
+    "time": 70370319,
+    "type": "LightGunState",
+    "action": "idle",
+    "id": 1,
+    "status": 47
+  },
+  {
+    "row": 58,
+    "time": 71604886,
+    "type": "EndLog",
+    "action": "end"
+  }
+]

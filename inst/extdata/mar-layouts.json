@@ -1,0 +1,2888 @@
+{
+  "tron": {
+    "bytes_per_frame": 86,
+    "source_driver": "mcr",
+    "source_input": "tron",
+    "ports": [
+      {
+        "name": "SSIO.IP0",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 2,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 4,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 8,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 32,
+            "key": "tilt",
+            "player": 0,
+            "type": "button",
+            "name": "tilt"
+          },
+          {
+            "mask": 64,
+            "key": "service1",
+            "player": 0,
+            "type": "button",
+            "name": "service1"
+          },
+          {
+            "mask": 128,
+            "key": "service",
+            "player": 0,
+            "type": "button",
+            "name": "service"
+          }
+        ]
+      },
+      {
+        "name": "SSIO.IP1",
+        "fields": [
+          {
+            "mask": 255,
+            "key": "dial",
+            "player": 1,
+            "type": "analog",
+            "name": "dial"
+          }
+        ]
+      },
+      {
+        "name": "SSIO.IP2",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 32,
+            "key": "dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 64,
+            "key": "dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 128,
+            "key": "dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "dpad down"
+          }
+        ]
+      },
+      {
+        "name": "SSIO.IP3",
+        "fields": [
+          {
+            "mask": 128,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          }
+        ]
+      },
+      {
+        "name": "SSIO.IP4",
+        "fields": [
+          {
+            "mask": 255,
+            "key": "dial",
+            "player": 2,
+            "type": "analog",
+            "name": "dial"
+          }
+        ]
+      },
+      {
+        "name": "SSIO.DIP",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/mcr.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/bally/mcr.cpp"
+  },
+  "scontra": {
+    "bytes_per_frame": 60,
+    "source_driver": "thunderx",
+    "source_input": "scontra",
+    "ports": [
+      {
+        "name": "SYSTEM",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 2,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 4,
+            "key": "service1",
+            "player": 0,
+            "type": "button",
+            "name": "service1"
+          },
+          {
+            "mask": 8,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 16,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          }
+        ]
+      },
+      {
+        "name": "P1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 2"
+          }
+        ]
+      },
+      {
+        "name": "P2",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 2"
+          }
+        ]
+      },
+      {
+        "name": "DSW1",
+        "fields": []
+      },
+      {
+        "name": "DSW2",
+        "fields": []
+      },
+      {
+        "name": "DSW3",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/thunderx.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/konami/thunderx.cpp"
+  },
+  "punchout": {
+    "bytes_per_frame": 44,
+    "source_driver": "punchout",
+    "source_input": "punchout",
+    "ports": [
+      {
+        "name": "IN0",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 4,
+            "key": "arcade_button_2",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 8,
+            "key": "arcade_button_3",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 3"
+          }
+        ]
+      },
+      {
+        "name": "IN1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 64,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 128,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          }
+        ]
+      },
+      {
+        "name": "DSW2",
+        "fields": []
+      },
+      {
+        "name": "DSW1",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/punchout.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/nintendo/punchout.cpp"
+  },
+  "spnchout": {
+    "bytes_per_frame": 44,
+    "source_driver": "punchout",
+    "source_input": "spnchout",
+    "ports": [
+      {
+        "name": "IN0",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 4,
+            "key": "arcade_button_2",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 8,
+            "key": "arcade_button_3",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 64,
+            "key": "arcade_button_4",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 4"
+          }
+        ]
+      },
+      {
+        "name": "IN1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 64,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 128,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          }
+        ]
+      },
+      {
+        "name": "DSW2",
+        "fields": []
+      },
+      {
+        "name": "DSW1",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/punchout.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/nintendo/punchout.cpp"
+  },
+  "armwrest": {
+    "bytes_per_frame": 44,
+    "source_driver": "punchout",
+    "source_input": "armwrest",
+    "ports": [
+      {
+        "name": "IN0",
+        "fields": [
+          {
+            "mask": 32,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 64,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          }
+        ]
+      },
+      {
+        "name": "IN1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 128,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 32,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 64,
+            "key": "service1",
+            "player": 0,
+            "type": "button",
+            "name": "service1"
+          }
+        ]
+      },
+      {
+        "name": "DSW2",
+        "fields": []
+      },
+      {
+        "name": "DSW1",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/punchout.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/nintendo/punchout.cpp"
+  },
+  "tapper": {
+    "bytes_per_frame": 60,
+    "source_driver": "mcr",
+    "source_input": "tapper",
+    "ports": [
+      {
+        "name": "SSIO.IP0",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 2,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 4,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 8,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 32,
+            "key": "tilt",
+            "player": 0,
+            "type": "button",
+            "name": "tilt"
+          },
+          {
+            "mask": 64,
+            "key": "service1",
+            "player": 0,
+            "type": "button",
+            "name": "service1"
+          },
+          {
+            "mask": 128,
+            "key": "service",
+            "player": 0,
+            "type": "button",
+            "name": "service"
+          }
+        ]
+      },
+      {
+        "name": "SSIO.IP1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          }
+        ]
+      },
+      {
+        "name": "SSIO.IP2",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          }
+        ]
+      },
+      {
+        "name": "SSIO.IP3",
+        "fields": []
+      },
+      {
+        "name": "SSIO.IP4",
+        "fields": []
+      },
+      {
+        "name": "SSIO.DIP",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/mcr.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/bally/mcr.cpp"
+  },
+  "kchamp": {
+    "bytes_per_frame": 44,
+    "source_driver": "kchamp",
+    "source_input": "kchamp",
+    "ports": [
+      {
+        "name": "P1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "left_dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "left_dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "left_dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "left_dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "right_dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad right"
+          },
+          {
+            "mask": 32,
+            "key": "right_dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad left"
+          },
+          {
+            "mask": 64,
+            "key": "right_dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad up"
+          },
+          {
+            "mask": 128,
+            "key": "right_dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad down"
+          }
+        ]
+      },
+      {
+        "name": "P2",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "left_dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "left_dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "left_dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "left_dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "right_dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad right"
+          },
+          {
+            "mask": 32,
+            "key": "right_dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad left"
+          },
+          {
+            "mask": 64,
+            "key": "right_dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad up"
+          },
+          {
+            "mask": 128,
+            "key": "right_dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad down"
+          }
+        ]
+      },
+      {
+        "name": "SYSTEM",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 2,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 4,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 8,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          }
+        ]
+      },
+      {
+        "name": "DSW",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/kchamp.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/dataeast/kchamp.cpp"
+  },
+  "karatevs": {
+    "bytes_per_frame": 44,
+    "source_driver": "kchamp",
+    "source_input": "kchampvs",
+    "ports": [
+      {
+        "name": "P1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "left_dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "left_dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "left_dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "left_dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "right_dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad right"
+          },
+          {
+            "mask": 32,
+            "key": "right_dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad left"
+          },
+          {
+            "mask": 64,
+            "key": "right_dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad up"
+          },
+          {
+            "mask": 128,
+            "key": "right_dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad down"
+          }
+        ]
+      },
+      {
+        "name": "P2",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "left_dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "left_dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "left_dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "left_dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "right_dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad right"
+          },
+          {
+            "mask": 32,
+            "key": "right_dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad left"
+          },
+          {
+            "mask": 64,
+            "key": "right_dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad up"
+          },
+          {
+            "mask": 128,
+            "key": "right_dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad down"
+          }
+        ]
+      },
+      {
+        "name": "SYSTEM",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 2,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 4,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 8,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          }
+        ]
+      },
+      {
+        "name": "DSW",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/kchamp.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/dataeast/kchamp.cpp"
+  },
+  "dragrace": {
+    "bytes_per_frame": 110,
+    "source_driver": "dragrace",
+    "source_input": "dragrace",
+    "ports": [
+      {
+        "name": "IN0",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "Player 1 Gas"
+          },
+          {
+            "mask": 32,
+            "key": "service",
+            "player": 0,
+            "type": "button",
+            "name": "service"
+          }
+        ]
+      },
+      {
+        "name": "IN1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "Player 2 Gas"
+          }
+        ]
+      },
+      {
+        "name": "IN2",
+        "fields": [
+          {
+            "mask": 4,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 8,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 16,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 32,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          }
+        ]
+      },
+      {
+        "name": "DIAL1",
+        "fields": [
+          {
+            "mask": 255,
+            "key": "dial_v",
+            "player": 1,
+            "type": "analog",
+            "name": "dial v"
+          }
+        ]
+      },
+      {
+        "name": "DIAL2",
+        "fields": [
+          {
+            "mask": 255,
+            "key": "dial_v",
+            "player": 2,
+            "type": "analog",
+            "name": "dial v"
+          }
+        ]
+      },
+      {
+        "name": "P1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "arcade_button_2",
+            "player": 1,
+            "type": "button",
+            "name": "Player 1 Gear 1"
+          },
+          {
+            "mask": 2,
+            "key": "arcade_button_3",
+            "player": 1,
+            "type": "button",
+            "name": "Player 1 Gear 2"
+          },
+          {
+            "mask": 4,
+            "key": "arcade_button_4",
+            "player": 1,
+            "type": "button",
+            "name": "Player 1 Gear 3"
+          },
+          {
+            "mask": 8,
+            "key": "arcade_button_5",
+            "player": 1,
+            "type": "button",
+            "name": "Player 1 Gear 4"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_6",
+            "player": 1,
+            "type": "button",
+            "name": "Player 1 Neutral"
+          }
+        ]
+      },
+      {
+        "name": "P2",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "arcade_button_2",
+            "player": 2,
+            "type": "button",
+            "name": "Player 2 Gear 1"
+          },
+          {
+            "mask": 2,
+            "key": "arcade_button_3",
+            "player": 2,
+            "type": "button",
+            "name": "Player 2 Gear 2"
+          },
+          {
+            "mask": 4,
+            "key": "arcade_button_4",
+            "player": 2,
+            "type": "button",
+            "name": "Player 2 Gear 3"
+          },
+          {
+            "mask": 8,
+            "key": "arcade_button_5",
+            "player": 2,
+            "type": "button",
+            "name": "Player 2 Gear 4"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_6",
+            "player": 2,
+            "type": "button",
+            "name": "Player 2 Neutral"
+          }
+        ]
+      },
+      {
+        "name": "MOTOR1",
+        "fields": []
+      },
+      {
+        "name": "MOTOR2",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/dragrace.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/atari/dragrace.cpp"
+  },
+  "jungleh": {
+    "bytes_per_frame": 76,
+    "source_driver": "taitosj",
+    "source_input": "junglek",
+    "ports": [
+      {
+        "name": "IN0",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          }
+        ]
+      },
+      {
+        "name": "IN1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          }
+        ]
+      },
+      {
+        "name": "IN2",
+        "fields": [
+          {
+            "mask": 16,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 32,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 64,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 128,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          }
+        ]
+      },
+      {
+        "name": "IN3",
+        "fields": [
+          {
+            "mask": 16,
+            "key": "coin_3",
+            "player": 0,
+            "type": "button",
+            "name": "coin 3"
+          },
+          {
+            "mask": 32,
+            "key": "tilt",
+            "player": 0,
+            "type": "button",
+            "name": "tilt"
+          }
+        ]
+      },
+      {
+        "name": "IN4",
+        "fields": []
+      },
+      {
+        "name": "DSW1",
+        "fields": [
+          {
+            "mask": 32,
+            "key": "service",
+            "player": 0,
+            "type": "button",
+            "name": "service"
+          }
+        ]
+      },
+      {
+        "name": "DSW2",
+        "fields": []
+      },
+      {
+        "name": "DSW3",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/taitosj.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/taito/taitosj.cpp"
+  },
+  "kungfum": {
+    "bytes_per_frame": 52,
+    "source_driver": "m62",
+    "source_input": "kungfum",
+    "ports": [
+      {
+        "name": "SYSTEM",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 2,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 4,
+            "key": "service1",
+            "player": 0,
+            "type": "button",
+            "name": "service1"
+          },
+          {
+            "mask": 8,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          }
+        ]
+      },
+      {
+        "name": "P1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 128,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          }
+        ]
+      },
+      {
+        "name": "P2",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 16,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 128,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          }
+        ]
+      },
+      {
+        "name": "DSW2",
+        "fields": []
+      },
+      {
+        "name": "DSW1",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/m62.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/irem/m62.cpp"
+  },
+  "trackfldc": {
+    "bytes_per_frame": 52,
+    "source_driver": "trackfld",
+    "source_input": "trackfld",
+    "ports": [
+      {
+        "name": "SYSTEM",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 2,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 4,
+            "key": "service1",
+            "player": 0,
+            "type": "button",
+            "name": "service1"
+          },
+          {
+            "mask": 8,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 16,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          }
+        ]
+      },
+      {
+        "name": "IN0",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "arcade_button_3",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 2,
+            "key": "arcade_button_2",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 4,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 8,
+            "key": "start",
+            "player": 3,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_3",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 64,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          }
+        ]
+      },
+      {
+        "name": "IN1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "arcade_button_3",
+            "player": 3,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 2,
+            "key": "arcade_button_2",
+            "player": 3,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 4,
+            "key": "arcade_button_1",
+            "player": 3,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 8,
+            "key": "start",
+            "player": 4,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_3",
+            "player": 4,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 4,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 64,
+            "key": "arcade_button_1",
+            "player": 4,
+            "type": "button",
+            "name": "arcade button 1"
+          }
+        ]
+      },
+      {
+        "name": "DSW1",
+        "fields": []
+      },
+      {
+        "name": "DSW2",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/trackfld.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/konami/trackfld.cpp"
+  },
+  "frontlin": {
+    "bytes_per_frame": 76,
+    "source_driver": "taitosj",
+    "source_input": "frontlin",
+    "ports": [
+      {
+        "name": "IN0",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "right_dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "right_dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "right_dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad down"
+          },
+          {
+            "mask": 8,
+            "key": "right_dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "right dpad up"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 2"
+          }
+        ]
+      },
+      {
+        "name": "IN1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "right_dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "right_dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "right_dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad down"
+          },
+          {
+            "mask": 8,
+            "key": "right_dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "right dpad up"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 2"
+          }
+        ]
+      },
+      {
+        "name": "IN2",
+        "fields": [
+          {
+            "mask": 16,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 32,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 64,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 128,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          }
+        ]
+      },
+      {
+        "name": "IN3",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "left_dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "left_dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "left_dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad down"
+          },
+          {
+            "mask": 8,
+            "key": "left_dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "left dpad up"
+          },
+          {
+            "mask": 16,
+            "key": "coin_3",
+            "player": 0,
+            "type": "button",
+            "name": "coin 3"
+          },
+          {
+            "mask": 32,
+            "key": "tilt",
+            "player": 0,
+            "type": "button",
+            "name": "tilt"
+          }
+        ]
+      },
+      {
+        "name": "IN4",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "left_dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "left_dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "left_dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad down"
+          },
+          {
+            "mask": 8,
+            "key": "left_dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "left dpad up"
+          }
+        ]
+      },
+      {
+        "name": "DSW1",
+        "fields": [
+          {
+            "mask": 32,
+            "key": "service",
+            "player": 0,
+            "type": "button",
+            "name": "service"
+          }
+        ]
+      },
+      {
+        "name": "DSW2",
+        "fields": []
+      },
+      {
+        "name": "DSW3",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/taitosj.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/taito/taitosj.cpp"
+  },
+  "jailbrek": {
+    "bytes_per_frame": 60,
+    "source_driver": "jailbrek",
+    "source_input": "jailbrek",
+    "ports": [
+      {
+        "name": "SYSTEM",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 2,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 4,
+            "key": "service1",
+            "player": 0,
+            "type": "button",
+            "name": "service1"
+          },
+          {
+            "mask": 8,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 16,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          }
+        ]
+      },
+      {
+        "name": "P1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 2"
+          }
+        ]
+      },
+      {
+        "name": "P2",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 2"
+          }
+        ]
+      },
+      {
+        "name": "DSW1",
+        "fields": []
+      },
+      {
+        "name": "DSW2",
+        "fields": []
+      },
+      {
+        "name": "DSW3",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/jailbrek.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/konami/jailbrek.cpp"
+  },
+  "ddragonw": {
+    "bytes_per_frame": 52,
+    "source_driver": "ddragon",
+    "source_input": "ddragon",
+    "ports": [
+      {
+        "name": "P1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 64,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 128,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          }
+        ]
+      },
+      {
+        "name": "P2",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 64,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 128,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          }
+        ]
+      },
+      {
+        "name": "DSW0",
+        "fields": []
+      },
+      {
+        "name": "DSW1",
+        "fields": []
+      },
+      {
+        "name": "EXTRA",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "service1",
+            "player": 0,
+            "type": "button",
+            "name": "service1"
+          },
+          {
+            "mask": 2,
+            "key": "arcade_button_3",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 4,
+            "key": "arcade_button_3",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 3"
+          }
+        ]
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/ddragon.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/technos/ddragon.cpp"
+  },
+  "dkongjo1": {
+    "bytes_per_frame": 60,
+    "source_driver": "dkong",
+    "source_input": "dkong",
+    "ports": [
+      {
+        "name": "IN0",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          }
+        ]
+      },
+      {
+        "name": "IN1",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          }
+        ]
+      },
+      {
+        "name": "IN2",
+        "fields": [
+          {
+            "mask": 4,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 8,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 16,
+            "key": "service",
+            "player": 0,
+            "type": "button",
+            "name": "service"
+          },
+          {
+            "mask": 128,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          }
+        ]
+      },
+      {
+        "name": "DSW0",
+        "fields": []
+      },
+      {
+        "name": "VR2",
+        "fields": []
+      },
+      {
+        "name": "VIDHW",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/dkong.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/nintendo/dkong.cpp"
+  },
+  "viostormj": {
+    "bytes_per_frame": 52,
+    "source_driver": "mystwarr",
+    "source_input": "viostorm",
+    "ports": [
+      {
+        "name": "IN0",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 2,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 16,
+            "key": "service1",
+            "player": 0,
+            "type": "button",
+            "name": "service1"
+          },
+          {
+            "mask": 32,
+            "key": "service2",
+            "player": 0,
+            "type": "button",
+            "name": "service2"
+          }
+        ]
+      },
+      {
+        "name": "IN1",
+        "fields": [
+          {
+            "mask": 8,
+            "key": "service",
+            "player": 0,
+            "type": "button",
+            "name": "service"
+          }
+        ]
+      },
+      {
+        "name": "P1_P3",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 64,
+            "key": "arcade_button_3",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 128,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 256,
+            "key": "dpad_left",
+            "player": 3,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 512,
+            "key": "dpad_right",
+            "player": 3,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 1024,
+            "key": "dpad_up",
+            "player": 3,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 2048,
+            "key": "dpad_down",
+            "player": 3,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 4096,
+            "key": "arcade_button_1",
+            "player": 3,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 8192,
+            "key": "arcade_button_2",
+            "player": 3,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 16384,
+            "key": "arcade_button_3",
+            "player": 3,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 32768,
+            "key": "start",
+            "player": 3,
+            "type": "button",
+            "name": "start"
+          }
+        ]
+      },
+      {
+        "name": "P2_P4",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 2,
+            "key": "dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 4,
+            "key": "dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 8,
+            "key": "dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 16,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 32,
+            "key": "arcade_button_2",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 64,
+            "key": "arcade_button_3",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 128,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 256,
+            "key": "dpad_left",
+            "player": 4,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 512,
+            "key": "dpad_right",
+            "player": 4,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 1024,
+            "key": "dpad_up",
+            "player": 4,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 2048,
+            "key": "dpad_down",
+            "player": 4,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 4096,
+            "key": "arcade_button_1",
+            "player": 4,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 8192,
+            "key": "arcade_button_2",
+            "player": 4,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 16384,
+            "key": "arcade_button_3",
+            "player": 4,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 32768,
+            "key": "start",
+            "player": 4,
+            "type": "button",
+            "name": "start"
+          }
+        ]
+      },
+      {
+        "name": "EEPROMOUT",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/mystwarr.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/konami/mystwarr.cpp"
+  },
+  "tgm2p": {
+    "bytes_per_frame": 28,
+    "source_driver": "psikyosh",
+    "source_input": "tgm2",
+    "ports": [
+      {
+        "name": "INPUTS",
+        "fields": [
+          {
+            "mask": 1,
+            "key": "coin_1",
+            "player": 0,
+            "type": "button",
+            "name": "coin 1"
+          },
+          {
+            "mask": 2,
+            "key": "coin_2",
+            "player": 0,
+            "type": "button",
+            "name": "coin 2"
+          },
+          {
+            "mask": 16,
+            "key": "service1",
+            "player": 0,
+            "type": "button",
+            "name": "service1"
+          },
+          {
+            "mask": 32,
+            "key": "service",
+            "player": 0,
+            "type": "button",
+            "name": "service"
+          },
+          {
+            "mask": 65536,
+            "key": "start",
+            "player": 2,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 131072,
+            "key": "arcade_button_3",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 262144,
+            "key": "arcade_button_2",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 524288,
+            "key": "arcade_button_1",
+            "player": 2,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 16777216,
+            "key": "start",
+            "player": 1,
+            "type": "button",
+            "name": "start"
+          },
+          {
+            "mask": 33554432,
+            "key": "arcade_button_3",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 3"
+          },
+          {
+            "mask": 67108864,
+            "key": "arcade_button_2",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 2"
+          },
+          {
+            "mask": 134217728,
+            "key": "arcade_button_1",
+            "player": 1,
+            "type": "button",
+            "name": "arcade button 1"
+          },
+          {
+            "mask": 1048576,
+            "key": "dpad_left",
+            "player": 2,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 2097152,
+            "key": "dpad_right",
+            "player": 2,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 4194304,
+            "key": "dpad_down",
+            "player": 2,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 8388608,
+            "key": "dpad_up",
+            "player": 2,
+            "type": "button",
+            "name": "dpad up"
+          },
+          {
+            "mask": 268435456,
+            "key": "dpad_left",
+            "player": 1,
+            "type": "button",
+            "name": "dpad left"
+          },
+          {
+            "mask": 536870912,
+            "key": "dpad_right",
+            "player": 1,
+            "type": "button",
+            "name": "dpad right"
+          },
+          {
+            "mask": 1073741824,
+            "key": "dpad_down",
+            "player": 1,
+            "type": "button",
+            "name": "dpad down"
+          },
+          {
+            "mask": 2147483648,
+            "key": "dpad_up",
+            "player": 1,
+            "type": "button",
+            "name": "dpad up"
+          }
+        ]
+      },
+      {
+        "name": "JP4",
+        "fields": []
+      }
+    ],
+    "source": "https://github.com/TASEmulators/mame-rr/blob/9b6b2f76a50994ca86f78610f6f5123a3ec9ebd8/mame-rr/src/mame/drivers/psikyosh.c",
+    "current_driver": "https://github.com/mamedev/mame/blob/master/src/mame/psikyo/psikyosh.cpp"
+  }
+}

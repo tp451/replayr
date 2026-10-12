@@ -48,8 +48,8 @@
 #'
 #' @param path Path to a .smv file.
 #' @return A `replayr_movie` object.
-#' @export
-read_smv <- function(path) {
+#' @noRd
+.decode_smv <- function(path) {
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x20L || !identical(data[1:4], charToRaw("SMV\x1A"))) {
     stop(path, ": not an SMV file")
@@ -184,8 +184,8 @@ read_smv <- function(path) {
     header = header,
     commands = commands,
     inputs = inputs,
-    button_mnemonics = universal_buttons()[seq_len(n_buttons)],
-    button_names = universal_button_names()[seq_len(n_buttons)]
+    button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
+    button_names = .legacy_button_names()[seq_len(n_buttons)]
   )
   mv$source_path <- path
   mv

@@ -2,14 +2,10 @@ template:
   bootstrap: 5
 
 reference:
-  - title: Reading movie files
-    desc: Top-level entry points for parsing emulator movie files.
+  - title: Import recordings
     contents:
       - read_movie
       - supported_formats
-  - title: Per-format readers
-    desc: Direct readers for each supported file format. Useful when you already know the format.
-    contents:
       - read_fm2
       - read_bk2
       - read_fcm
@@ -22,17 +18,46 @@ reference:
       - read_pjm
       - read_dtm
       - read_lmp
-  - title: Inspecting parsed movies
-    desc: Helpers for working with the `replayr_movie` S3 object returned by the readers.
+      - read_fm3
+      - read_fmv
+      - read_bkm
+      - read_tas
+      - read_tasproj
+      - read_gbmv
+      - read_mmv
+      - read_dsm
+      - read_mc2
+      - read_mcm
+      - read_ymv
+      - read_ctm
+      - read_gzm
+      - read_zmv
+      - read_mar
+      - read_fbm
+      - read_dft
+      - read_ltm
+      - read_wtf
+      - read_jrsr
+      - read_omr
+      - read_ctas
+      - movie_members
+      - read_bk2_chunks
+  - title: Inspect observations and controllers
     contents:
       - replayr_movie
+      - replayr_poll_stream
+      - polls
       - n_frames
       - n_players
       - n_buttons
       - player
       - press_counts
-  - title: Universal button layout
-    desc: The 40-slot universal-button alphabet that every parser writes into.
+      - button_layout
+      - align_buttons
+      - analog_channels
+      - stick_channels
+      - system_channels
+  - title: Stable controller registry
     contents:
       - universal_buttons
       - universal_button_names

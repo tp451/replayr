@@ -1,10 +1,10 @@
-test_that("read_pxm() parses the bundled synthetic PlayStation movie", {
-  mv <- read_pxm(fixture_path("sample.pxm"))
+test_that("replayr:::.decode_pxm() parses the bundled synthetic PlayStation movie", {
+  mv <- replayr:::.decode_pxm(analog = "quantized", fixture_path("sample.pxm"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "pxm")
   expect_equal(n_frames(mv), 3600L)
   expect_equal(n_players(mv), 2L)
-  expect_equal(n_buttons(mv), 32L)
+  expect_equal(n_buttons(mv), 42L)
   expect_gt(sum(press_counts(mv, 1L)), 0L)
 })
 
@@ -22,55 +22,55 @@ test_that("read_pxm() parses the bundled synthetic PlayStation movie", {
   tf
 }
 
-test_that("read_pxm() decodes both digital ports and the command byte", {
+test_that("replayr:::.decode_pxm() decodes both digital ports and the command byte", {
   # P1 Right, P2 Cross, command 7.
   tf <- .mk_pxm(c(4L, 4L), c(0x20, 0x00, 0x00, 0x40, 0x07))
   on.exit(unlink(tf))
-  mv <- read_pxm(tf)
-  expect_equal(dim(mv$inputs), c(1L, 2L, 32L))
+  mv <- replayr:::.decode_pxm(analog = "quantized", tf)
+  expect_equal(dim(mv$inputs), c(1L, 2L, 42L))
   expect_true(mv$inputs[1L, 1L, 1L])
   expect_true(mv$inputs[1L, 2L, 7L])
   expect_equal(mv$commands, 7L)
 })
 
-test_that("read_pxm() centres unsigned analog axes at 128", {
+test_that("replayr:::.decode_pxm() centres unsigned analog axes at 128", {
   # No buttons; left stick west and right stick up; command zero.
   tf <- .mk_pxm(c(7L, 0L), c(0, 0, 0, 128, 128, 0, 0))
   on.exit(unlink(tf))
-  mv <- read_pxm(tf)
+  mv <- replayr:::.decode_pxm(analog = "quantized", tf)
   expect_true(mv$inputs[1L, 1L, 25L])
   expect_true(mv$inputs[1L, 1L, 20L])
 })
 
-test_that("read_pxm() rejects unsupported controller record widths", {
+test_that("replayr:::.decode_pxm() rejects unsupported controller record widths", {
   tf <- .mk_pxm(c(1L, 0L), rep(0, 5L))
   on.exit(unlink(tf))
-  expect_error(read_pxm(tf), "mouse input")
+  expect_error(replayr:::.decode_pxm(analog = "quantized", tf), "mouse input")
 })
 
 test_that('PXM preserves L3 and R3 bits separately', {
   tf <- .mk_pxm(c(7L,0L),c(6,0,128,128,128,128,0))
   on.exit(unlink(tf))
-  mv <- read_pxm(tf)
-  expect_setequal(which(mv$inputs[1,1,]),c(31L,32L))
+  mv <- replayr:::.decode_pxm(analog = "quantized", tf)
+  expect_setequal(which(mv$inputs[1,1,]),c(41L,42L))
 })
 
 test_that('PXM standard pads do not invent stick-click buttons from reserved bits', {
   tf <- .mk_pxm(c(4L,0L),c(6,0,0))
   on.exit(unlink(tf))
-  mv <- read_pxm(tf)
+  mv <- replayr:::.decode_pxm(analog = "quantized", tf)
   expect_false(any(mv$inputs))
   expect_equal(mv$header$reservedDigitalPadBitCounts,2L)
 })
 
-test_that("read_pxm() parses a PSX binary movie when fixture is available", {
+test_that("replayr:::.decode_pxm() parses a PSX binary movie when fixture is available", {
   fp <- external_fixture("raw_psx/mega_man_x4/1439.pxm")
   if (is.null(fp)) skip("set REPLAYR_FIXTURE_DIR to enable PXM test")
-  mv <- read_pxm(fp)
+  mv <- replayr:::.decode_pxm(analog = "quantized", fp)
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "pxm")
   expect_gt(n_frames(mv), 0L)
-  expect_equal(n_buttons(mv), 32L)
+  expect_equal(n_buttons(mv), 42L)
 })
 test_that("vectorized PXM sticks equal the original per-frame implementation", {
   set.seed(902)

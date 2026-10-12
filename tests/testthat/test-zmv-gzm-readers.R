@@ -1,0 +1,43 @@
+test_that('enhanced ZMV retains repeated holds, chapters, multiplayer, and reset',{
+  path<-system.file('extdata','legacy','holds.zmv',package='replayr',mustWork=TRUE)
+  m<-.configure_movie(.decode_zmv(path));key<-m$button_keys
+  expect_equal(n_frames(m),5L);expect_equal(n_players(m),2L)
+  expect_equal(m$commands,c(0L,0L,0L,0L,1L))
+  expect_equal(which(m$inputs[,1,match('b',key)]),1:4)
+  expect_equal(which(m$inputs[,1,match('dpad_right',key)]),5L)
+  expect_equal(which(m$inputs[,2,match('a',key)]),1:5)
+  expect_equal(m$header$internalChapters,1L)
+  expect_equal(m$chapter_offsets,53L)
+})
+
+test_that('GZM retains controller samples, edge flags, seeds, and synchronization',{
+  path<-system.file('extdata','legacy','buttons.gzm',package='replayr',mustWork=TRUE)
+  m<-.configure_movie(.decode_gzm(path))
+  keys<-c('a','b','z','start','dpad_up','dpad_down','dpad_left','dpad_right','l1','r1','c_up','c_down','c_left','c_right')
+  expect_equal(unname(m$inputs[,1,match(keys,m$button_keys)]),diag(14)==1)
+  expect_equal(m$commands,c(1L,rep(0L,13)))
+  expect_equal(analog_channels(m)[,'stick_x'],rep(c(-128,-64,0,64,127),length.out=14))
+  expect_equal(m$frame_fields$pad_delta,c(128L,rep(0L,13)))
+  expect_equal(unname(m$system_events$seeds[1,]),c(2,0x12345678,0xfedcba98))
+  expect_equal(m$system_events$ocarina_input$adjusted_x,-60)
+  expect_equal(unname(m$system_events$ocarina_sync[1,'audio_frames']),2)
+  expect_equal(unname(m$system_events$room_load[1,'frame']),5)
+  expect_equal(m$header$rerecordCount,7)
+  expect_equal(m$header$observationUnit,'game_update')
+  for(mode in c('cardinal4','cardinal8','angle','angle+magnitude')){
+    a<-.configure_movie(.decode_gzm(path),analog=mode)
+    expect_identical(analog_channels(a),analog_channels(m))
+    expect_equal(unname(stick_channels(a)[1:5,1]),c(180,180,NA,0,0))
+  }
+})
+
+test_that('GZM and ZMV validate binary boundaries and peripheral variants',{
+  path<-tempfile();on.exit(unlink(path))
+  original<-system.file('extdata','legacy','buttons.gzm',package='replayr',mustWork=TRUE)
+  raw<-readBin(original,'raw',n=file.info(original)$size)
+  writeBin(raw[1:30],path);expect_error(.decode_gzm(path),'truncated')
+  writeBin(raw[-length(raw)],path);expect_error(.decode_gzm(path),'footer length')
+  original<-system.file('extdata','legacy','holds.zmv',package='replayr',mustWork=TRUE)
+  raw<-readBin(original,'raw',n=file.info(original)$size)
+  raw[39]<-as.raw(0xc4);writeBin(raw,path);expect_error(.decode_zmv(path),'peripheral decoder')
+})

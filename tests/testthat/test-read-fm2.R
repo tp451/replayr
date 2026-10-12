@@ -1,5 +1,5 @@
-test_that("read_fm2() parses the bundled synthetic NES movie", {
-  mv <- read_fm2(fixture_path("sample.fm2"))
+test_that("replayr:::.decode_fm2() parses the bundled synthetic NES movie", {
+  mv <- replayr:::.decode_fm2(fixture_path("sample.fm2"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(n_frames(mv), 3600L)
   expect_equal(n_players(mv), 2L)
@@ -12,7 +12,7 @@ test_that("read_fm2() parses the bundled synthetic NES movie", {
 test_that("read_movie() dispatches by extension", {
   mv <- read_movie(fixture_path("sample.fm2"))
   expect_s3_class(mv, "replayr_movie")
-  expect_equal(mv$header[["_format"]], NULL)  # FM2 doesn't set _format
+  expect_equal(mv$header[["_format"]], "fm2")  # FM2 doesn't set _format
 })
 
 test_that("malformed FM2 lines are tolerated", {
@@ -42,7 +42,7 @@ test_that("malformed FM2 lines are tolerated", {
   expect_true(mv$inputs[3L, 2L, 2L])  # L set on P2
 })
 
-test_that("read_fm2() tolerates non-UTF-8 header bytes", {
+test_that("replayr:::.decode_fm2() tolerates non-UTF-8 header bytes", {
   # Japanese ROMs embed a Shift-JIS `romFilename`; some movies also carry an
   # 8-bit `subtitle`. Those bytes are invalid UTF-8, and used to abort the read
   # with "unable to translate '<bytes>' to a wide string" the instant a regex
@@ -61,7 +61,7 @@ test_that("read_fm2() tolerates non-UTF-8 header bytes", {
   writeBin(charToRaw("|0|........|RLDUTSBA||\n"), con)
   close(con)
 
-  expect_no_warning(mv <- read_fm2(tmp))
+  expect_no_warning(mv <- replayr:::.decode_fm2(tmp))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(n_frames(mv), 2L)
   expect_equal(n_buttons(mv), 8L)

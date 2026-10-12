@@ -2,29 +2,45 @@
 % Please edit documentation in R/read_movie.R
 \name{read_movie}
 \alias{read_movie}
-\title{Read any supported movie file by extension}
+\title{Import an emulator input recording}
 \usage{
-read_movie(path)
+read_movie(path, analog = "raw", deadzone = NULL, triggers = "raw", ...)
 }
 \arguments{
-\item{path}{Path to a movie file.}
+\item{path}{Recording file path.}
+
+\item{analog}{Stick representation: \code{"raw"} (default), \code{"cardinal4"},
+\code{"cardinal8"}, \code{"angle"}, or \code{"angle+magnitude"}. A scalar applies to both
+sticks; \code{c(left = "cardinal8", right = "angle")} selects them independently.
+Cardinal modes add separate left/right logical direction columns. Continuous
+modes return numeric fields through \code{\link[=stick_channels]{stick_channels()}}. Original X/Y values
+remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absent sticks add no columns.}
+
+\item{deadzone}{Radial threshold in centred axis half-range units, from zero
+to one. One value applies to both sticks; named left/right values are allowed.
+\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
+
+\item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
+projects each analogue trigger at 128/255 into separate L2/R2 columns.
+Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{...}{Reader-specific arguments, such as \code{controller_order} for M64 or DTM,
+or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_members]{movie_members()}}).}
 }
 \value{
-A \code{replayr_movie} object.
+A \link{replayr_movie}, or a \link{replayr_poll_stream} for unassigned controller ports or
+heterogeneous device polls, as in CTM. Use \code{\link[=button_layout]{button_layout()}} for column identities,
+\code{\link[=player]{player()}} for logical states, and \code{\link[=stick_channels]{stick_channels()}} for selected stick fields.
 }
 \description{
-Dispatches to the appropriate reader based on the file extension:
-.fm2 -> \code{\link[=read_fm2]{read_fm2()}}, .bk2 -> \code{\link[=read_bk2]{read_bk2()}}, .fcm -> \code{\link[=read_fcm]{read_fcm()}},
-.lsmv -> \code{\link[=read_lsmv]{read_lsmv()}}, .gmv -> \code{\link[=read_gmv]{read_gmv()}}, .vbm -> \code{\link[=read_vbm]{read_vbm()}},
-.m64 -> \code{\link[=read_m64]{read_m64()}}, .smv -> \code{\link[=read_smv]{read_smv()}}, .pxm -> \code{\link[=read_pxm]{read_pxm()}},
-.pjm -> \code{\link[=read_pjm]{read_pjm()}}, .dtm -> \code{\link[=read_dtm]{read_dtm()}}, .lmp -> \code{\link[=read_lmp]{read_lmp()}}.
+Dispatches by extension to the format-specific reader. Every reader returns
+compact digital columns, a stable cross-controller ID map, and original numeric
+channels. A row may be a frame, poll, input event, or tic depending on the format.
 }
-\details{
-Returns a \code{replayr_movie} regardless of source format. The
-\code{header[["_format"]]} field records which parser ran. The
-\code{inputs} array is \verb{(n_frames, n_players, n_buttons)}; \code{n_buttons}
-varies per platform (8 NES, 12 SNES, 15 Genesis, 28 N64/GC, 30 PSX).
-}
-\seealso{
-\code{\link[=supported_formats]{supported_formats()}}
+\examples{
+path <- system.file("extdata", "sample.m64", package = "replayr")
+movie <- read_movie(path, analog = "angle+magnitude")
+button_layout(movie)
+head(stick_channels(movie))
 }

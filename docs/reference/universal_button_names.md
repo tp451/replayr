@@ -1,7 +1,6 @@
-# Universal button friendly names
+# Universal controller names
 
-Long, human-readable label per slot. Same length as
-[`universal_buttons()`](universal_buttons.md) and indexed identically.
+Universal controller names
 
 ## Usage
 
@@ -11,4 +10,8 @@ universal_button_names()
 
 ## Value
 
-Character vector of length 40.
+Character vector in stable registry order.
+
+## See also
+
+[`button_layout()`](button_layout.md)

@@ -1,21 +1,18 @@
 Package: replayr
-Title: Read Emulator Movie Files into a Uniform Frame-by-Frame Array
-Version: 0.3.3.9006
+Title: Import Emulator Input Recordings
+Version: 0.4.0
 Authors@R:
     person("Thorben", "Pelzer", , "thorben@pelzer.blog",
            role = c("aut", "cre"))
-Description: Decoders for twelve emulator movie ("input log") file
-    formats used by the speedrun and tool-assisted-speedrun
-    communities: 'FCEUX' (.fm2), 'BizHawk' (.bk2), 'FCEU' (.fcm),
-    'lsnes' (.lsmv), 'Gens-rerecording' (.gmv), 'VBA-rerecording'
-    (.vbm), 'Mupen64' (.m64), 'Snes9x-rerecording' (.smv),
-    'PCSX-rerecording' (.pxm), 'PSXjin' (.pjm), 'Dolphin' (.dtm),
-    and 'Doom' (.lmp). Every
-    parser produces the same in-memory shape: a per-frame logical
-    matrix indexed against a single 40-slot universal-button layout,
-    plus the file's header metadata and a per-frame commands vector.
-    Allows cross-platform analysis of input recordings without an
-    emulator.
+Description: Import emulator input recordings from 'FCEUX', 'BizHawk',
+    'Dolphin', 'Citra', 'libTAS', 'openMSX', 'JPC-RR', and other recording
+    tools. Imports retain compact digital control arrays, stable control
+    identities, original numeric channels, metadata, and emulator commands.
+    Supports gamepads, keyboards, mice, touchscreens, and recorded motion
+    or light-gun channels. Source timing distinguishes frames, controller
+    polls, and timestamped events. Left and right stick directions, angles,
+    and magnitudes can be selected independently. Allows analysis of input
+    recordings without running an emulator.
 License: GPL (>= 2)
 Encoding: UTF-8
 Language: en-US
@@ -23,11 +20,14 @@ Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 4.0)
 Imports:
+    jsonlite,
+    xml2,
+    zip (>= 3.0.2),
     utils
 Suggests:
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.1.7)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

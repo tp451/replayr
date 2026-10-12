@@ -1,0 +1,135 @@
+expanded_bizhawk <- function(name) system.file("extdata","expanded",name,package="replayr",mustWork=TRUE)
+
+test_that("keyboard actions survive past the command bit width", {
+  m <- read_bk2(expanded_bizhawk("keyboard-command.bk2"))
+  layout <- button_layout(m)
+  expect_true(all(c("keyboard_r","keyboard_u","keyboard_n","keyboard_return","keyboard_shift") %in% layout$key))
+  expect_equal(which(player(m)[,"{keyboard_return}"]),4L)
+  expect_equal(which(player(m)[,"{keyboard_shift}"]),5L)
+  expect_equal(which(player(m)[,"R"]),5L)
+  expect_identical(m$commands,rep(0L,5L))
+  expect_true(all(grepl("^control:keyboard_",layout$id[layout$kind=="keyboard"])))
+})
+
+test_that("touch strokes and microphone amplitude retain their source units", {
+  m <- read_bk2(expanded_bizhawk("touch-stroke.bk2"))
+  expect_equal(unname(analog_channels(m)),cbind(c(20,80,140,140),rep(80,4),c(0,0,0,60),rep(7,4)))
+  expect_equal(which(player(m)[,"{touch_contact}"]),1:3)
+  expect_length(m$stick_available[[1]],0L)
+  expect_equal(sum(m$commands),0L)
+})
+
+test_that("both 3DS sticks use source-specified ranges and positive-up Y", {
+  path <- expanded_bizhawk("two-stick-3ds.bk2")
+  raw <- read_bk2(path)
+  angle <- read_bk2(path,analog="angle+magnitude",deadzone=0)
+  expect_identical(analog_channels(raw),analog_channels(angle))
+  expect_equal(stick_channels(angle)[,"left_angle"],c(NA,0,45,270))
+  expect_equal(stick_channels(angle)[,"right_angle"],c(NA,90,180,270))
+  expect_equal(stick_channels(angle)[,"left_magnitude"],c(0,127/128,sqrt(0.5),1))
+  for(mode in c("cardinal4","cardinal8","angle","angle+magnitude")) {
+    m <- read_bk2(path,analog=mode,deadzone=0)
+    expect_equal(n_frames(m),4L)
+    expect_identical(analog_channels(m),analog_channels(raw))
+  }
+  mixed <- read_bk2(path,analog=c(left="cardinal4",right="angle"),deadzone=0)
+  expect_true("left_n" %in% button_layout(mixed)$key)
+  expect_false("right_n" %in% button_layout(mixed)$key)
+  expect_equal(stick_channels(mixed)[,"right_angle"],c(NA,90,180,270))
+})
+
+test_that("sixteen-way disc contacts keep sixteen distinct digital identities", {
+  m <- read_bk2(expanded_bizhawk("sixteen-direction-disc.bk2"))
+  layout <- button_layout(m); disc <- startsWith(layout$key,"intv_disc_")
+  expect_equal(sum(disc),16L)
+  expect_equal(unname(colSums(player(m)[,disc,drop=FALSE])),rep(1,16))
+  expect_equal(unname(rowSums(player(m)[,disc,drop=FALSE])),rep(1,16))
+  expect_true(all(c("start","select","numbered_0") %in% layout$key))
+  expect_false(any(layout$kind %in% c("left_direction","right_direction")))
+})
+
+test_that("Virtual Boy's two pads remain separate digital controls", {
+  m <- read_bk2(expanded_bizhawk("dual-digital-pad.bk2"))
+  expect_true(all(c("left_dpad_up","right_dpad_right","right_dpad_down") %in% button_layout(m)$key))
+  expect_true(player(m)[1,"{left_dpad_up}"])
+  expect_true(player(m)[1,"{right_dpad_right}"])
+  expect_false(player(m)[2,"{left_dpad_up}"])
+  expect_length(m$stick_available[[1]],0L)
+})
+
+test_that("3DO's fourth mouse button is preserved alongside movement", {
+  m <- read_bk2(expanded_bizhawk("four-button-mouse.bk2"))
+  expect_equal(unname(analog_channels(m)),rbind(c(3,-2),c(4,0),c(0,0)))
+  expect_true(player(m)[2,"p"])
+  expect_true("mouse_fourth" %in% m$source_layout$key)
+  expect_equal(sum(player(m)[3,]),2L)
+})
+
+test_that("punctuation keys and unknown declared buttons have stable distinct keys", {
+  m <- read_bk2(expanded_bizhawk("punctuation-keys.bk2"))
+  expect_false(anyDuplicated(button_layout(m)$id)>0L)
+  expect_true(all(c("keyboard_u0027","keyboard_u002c","keyboard_u002e","keyboard_u002f") %in% button_layout(m)$key))
+  expect_equal(sum(m$inputs),5L)
+  unknown <- read_bk2(expanded_bizhawk("unknown-control.bk2"))
+  expect_equal(sum(unknown$inputs),4L)
+  expect_equal(which(player(unknown)[,"{example_gear_2}"]),2L)
+  expect_identical(button_layout(unknown)$id,button_layout(read_bk2(expanded_bizhawk("unknown-control.bk2")))$id)
+})
+
+test_that("legacy BKM N64 fields keep Boolean and numeric order", {
+  m <- replayr:::.configure_movie(replayr:::.decode_bkm(expanded_bizhawk("legacy-n64.bkm")),analog="angle+magnitude",deadzone=0)
+  expect_equal(n_players(m),2L)
+  expect_true(player(m,1)[1,"A"])
+  expect_true(player(m,2)[1,"B"])
+  expect_equal(unname(analog_channels(m,1)),rbind(c(127,0),c(-128,0)))
+  expect_equal(stick_channels(m,1)[,"left_angle"],c(0,180))
+  expect_equal(stick_channels(m,2)[,"left_angle"],c(90,270))
+  expect_identical(system_channels(m)$Reset,c(FALSE,TRUE))
+})
+
+test_that("legacy TAS and GBAHawk/TAStudio aliases preserve their inputs", {
+  sms <- replayr:::.configure_movie(replayr:::.decode_tas(expanded_bizhawk("legacy-sms.tas")))
+  expect_equal(n_players(sms),2L)
+  expect_identical(system_channels(sms)$Pause,c(FALSE,TRUE))
+  expect_identical(system_channels(sms)$Reset,c(FALSE,TRUE))
+  gba <- replayr:::.configure_movie(replayr:::.decode_gbmv(expanded_bizhawk("gba-input.gbmv")))
+  expect_true(player(gba)[1,"A"])
+  expect_identical(system_channels(gba)[["P1 Power"]],c(FALSE,TRUE))
+  tas <- replayr:::.configure_movie(replayr:::.decode_tasproj(expanded_bizhawk("editor-input.tasproj")))
+  expect_identical(player(tas)[,"R"],c(TRUE,TRUE))
+  expect_identical(player(tas)[,"A"],c(TRUE,FALSE))
+})
+test_that("BK2 chunks reproduce complete imports for both sticks", {
+ p<-system.file('extdata','expanded','two-stick-3ds.bk2',package='replayr',mustWork=TRUE)
+ for(mode in c('raw','cardinal4','cardinal8','angle','angle+magnitude')) {
+  full<-read_bk2(p,analog=mode);chunks<-read_bk2_chunks(p,identity,chunk_size=2L,analog=mode)
+  expect_equal(as.vector(do.call(rbind,lapply(chunks,function(x)player(x)))),as.vector(player(full)))
+  expect_equal(button_layout(chunks[[1L]]),button_layout(full))
+  expect_equal(do.call(rbind,lapply(chunks,function(x)analog_channels(x))),analog_channels(full))
+  expect_equal(vapply(chunks,function(x)x$header$firstObservation,numeric(1)),c(1,3))
+  expect_equal(attr(chunks,'observations'),4)
+ }
+ expect_error(read_bk2_chunks(p,identity,chunk_size=0),'positive integer')
+ expect_error(read_bk2_chunks(p,1),'must be a function')
+})
+
+test_that("legacy Game Boy editor suffixes and delimiters follow source behavior", {
+ p<-tempfile(fileext='.bkm');on.exit(unlink(p))
+ writeLines(c('emuVersion Version 1.4.1','Platform GB','|.|........| *','|.|.......|'),p)
+ m<-.configure_movie(.decode_bkm(p))
+ expect_equal(m$source_trailing,c(' *',''))
+ expect_equal(m$header$legacyDelimiterButtonSamples,2L)
+ expect_equal(m$inputs[,1,match('a',button_layout(m)$key)],c(FALSE,TRUE))
+ writeLines(c('emuVersion Version 2.9','Platform GB','|.|.......|'),p)
+ expect_error(.decode_bkm(p),'button count disagrees')
+})
+test_that("BK2 full imports enforce a configurable pre-extraction size limit", {
+ p<-system.file('extdata','expanded','two-stick-3ds.bk2',package='replayr',mustWork=TRUE)
+ expect_error(read_bk2(p,max_input_bytes=1),class='replayr_resource_limit')
+ expect_error(read_bk2(p,max_input_bytes=1),'read_bk2_chunks')
+ expect_equal(n_frames(read_bk2(p,max_input_bytes=1024^2)),4)
+ expect_equal(n_frames(read_movie(p,max_input_bytes=1024^2)),4)
+ expect_error(read_bk2(p,max_input_bytes=Inf),'single-string limit')
+ expect_error(read_bk2(p,max_input_bytes=2^31),'single-string limit')
+ expect_error(read_bk2(p,max_input_bytes=0),'must be positive')
+})

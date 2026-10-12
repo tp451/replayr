@@ -6,24 +6,19 @@
 # G_RecordDemo) and the canonical DoomWiki spec at
 # https://doomwiki.org/wiki/Demo.
 #
-# Format chosen for v0.3: vanilla Doom 1.9 (12-byte header, 4-byte-
-# per-player-per-tic ticcmd_t, 0x80 end marker). Boom / PrBoom+
-# extensions (leading 0xFF + signature + complevel + variant
-# header + optional 5-byte longtics) are detected and rejected
-# with a clear error.
+# Supported layouts: vanilla Doom 1.9 (version 109) and Boom 2.00-2.02
+# (versions 200-202). Boom uses a signature, game-option block, and a
+# 32-byte player-flag area before the same four-byte tic commands.
+# Boom source: coelckers/prboom-plus, prboom2/src/g_game.c:
+# G_ReadDemoHeaderEx, G_ReadOptions, G_ReadOneTick (GPL-2.0-or-later).
+# https://github.com/coelckers/prboom-plus/blob/master/prboom2/src/g_game.c
 #
 # See inst/COPYRIGHTS for the full provenance manifest.
 #
-# Vanilla header (12 bytes):
-#   0   skill (1-5)
-#   1   episode (1-4 for Doom 1 / Ultimate Doom; 1 for Doom 2)
-#   2   map (1-9 for Doom 1; 1-32 for Doom 2)
-#   3   deathmatch (0=coop, 1=DM, 2=alt-DM)
-#   4   respawnparm (0/1)
-#   5   fastparm (0/1)
-#   6   nomonsters (0/1)
-#   7   consoleplayer (0..3 -- which player slot is "us")
-#   8-11 playeringame[0..3] (0=absent, 1=present)
+# Vanilla Doom 1.9 header (13 bytes, zero-based offsets):
+#   0 version = 109; 1 skill = 0..4; 2 episode; 3 map; 4 deathmatch;
+#   5 respawn; 6 fast; 7 no monsters; 8 console player;
+#   9..12 playeringame flags for physical ports 0..3.
 #
 # Body: per tic, per active player:
 #   1 byte  forwardmove (signed)
@@ -41,7 +36,7 @@
 
 #' Read a Doom .lmp demo file
 #'
-#' Parses a vanilla Doom 1.9 `.lmp` demo into the standard
+#' Parses a Doom 1.9 or Boom 2.00-2.02 `.lmp` demo into the standard
 #' `replayr_movie` shape. Returns one row per game tic (per the
 #' active-player count from `playeringame[]`).
 #'
@@ -67,55 +62,71 @@
 #' because its magnitude contains useful turning information that a binary
 #' projection would discard.
 #'
-#' Boom / PrBoom+ extended demos (leading 0xFF byte) are not
-#' yet supported; this reader will error out with a clear
-#' message if the file uses that variant.
+#' Boom game options and reserved player flags are retained in the header.
+#' Later PrBoom+ extensions and longtics variants require separate layouts.
 #'
+#' Analogue values are retained without projection by default. Use
+#' `analog = "quantized"` to enable the direction/threshold mappings
+#' described above; [analog_channels()] returns numeric values in either mode.
+#'
+#' @inheritParams read_movie
 #' @param path Path to a `.lmp` file.
 #' @return A `replayr_movie` object whose `header[["_format"]]`
 #'   is `"lmp"`, with extra header columns documented above.
-#' @export
+#' @noRd
 #' @seealso [read_movie()], [supported_formats()]
-read_lmp <- function(path) {
+.decode_lmp <- function(path, analog = c("raw", "quantized")) {
+  analog <- match.arg(analog)
   if (!file.exists(path)) {
     stop("file not found: ", path, call. = FALSE)
   }
   data <- readBin(path, what = "raw", n = file.info(path)$size)
-  if (length(data) < 13L) {
+  if (length(data) < 14L) {
     stop(path, ": too small to be a Doom demo (", length(data), " bytes)")
   }
-  # Format detection. Vanilla Doom 1.9 demos open with the skill
-  # byte (1-5). Several extended formats use higher first-byte
-  # values and/or distinctive signatures:
-  #   0xFF + ...          -- early Boom (complevel 7-9 era)
-  #   0xCA / 0xCB + Boom  -- PrBoom+ / dsda-doom (complevel 11+)
-  #   anything > 5        -- something unrecognised
-  fb <- as.integer(data[1])
-  if (fb == 0xFFL || fb == 0xCAL || fb == 0xCBL) {
-    sig <- if (length(data) >= 6L) rawToChar(data[3:6]) else ""
-    stop(path,
-         ": extended-format Doom demo detected (first byte 0x",
-         sprintf("%02X", fb),
-         if (nzchar(sig)) paste0(" signature '", sig, "'") else "",
-         "). replayr supports vanilla Doom 1.9 demos only.", call. = FALSE)
+  version <- as.integer(data[1L])
+  game_options <- raw()
+  reserved_players <- raw()
+  compatibility <- NA_integer_
+  if (version == 109L) {
+    skill         <- as.integer(data[2L])
+    episode       <- as.integer(data[3L])
+    map           <- as.integer(data[4L])
+    deathmatch    <- as.integer(data[5L])
+    respawnparm   <- as.integer(data[6L])
+    fastparm      <- as.integer(data[7L])
+    nomonsters    <- as.integer(data[8L])
+    consoleplayer <- as.integer(data[9L])
+    playeringame  <- as.integer(data[10:13])
+    body_start <- 14L
+  } else if (version %in% 200:202) {
+    option_size <- if (version == 200L) 256L else 64L
+    body_start <- 14L + option_size + 32L
+    if (length(data) < body_start) stop(path, ": truncated Boom demo header", call. = FALSE)
+    signature <- as.raw(c(0x1d, 0x42, 0x6f, 0x6f, 0x6d, 0xe6))
+    if (!identical(data[2:7], signature)) stop(path, ": invalid Boom demo signature", call. = FALSE)
+    compatibility <- as.integer(data[8L])
+    if (!compatibility %in% 0:1) stop(path, ": invalid Boom compatibility flag", call. = FALSE)
+    skill         <- as.integer(data[9L])
+    episode       <- as.integer(data[10L])
+    map           <- as.integer(data[11L])
+    deathmatch    <- as.integer(data[12L])
+    consoleplayer <- as.integer(data[13L])
+    game_options <- data[seq.int(14L, 13L + option_size)]
+    respawnparm <- as.integer(game_options[7L])
+    fastparm    <- as.integer(game_options[8L])
+    nomonsters  <- as.integer(game_options[9L])
+    player_start <- 14L + option_size
+    playeringame <- as.integer(data[seq.int(player_start, player_start + 3L)])
+    reserved_players <- data[seq.int(player_start + 4L, player_start + 31L)]
+  } else {
+    stop(path, ": unsupported Doom demo version ", version,
+         "; expected a vanilla Doom 1.9 demo (109) or Boom demo (200-202)", call. = FALSE)
   }
-  if (fb < 1L || fb > 5L) {
-    stop(path,
-         ": first byte 0x", sprintf("%02X", fb),
-         " is not a valid Doom skill (expected 1..5). ",
-         "This file does not appear to be a Doom 1.9 demo.",
-         call. = FALSE)
+  if (!skill %in% 0:4 || !consoleplayer %in% 0:3 ||
+      any(!playeringame %in% 0:1)) {
+    stop(path, ": invalid Doom demo header fields", call. = FALSE)
   }
-
-  skill         <- as.integer(data[1])
-  episode       <- as.integer(data[2])
-  map           <- as.integer(data[3])
-  deathmatch    <- as.integer(data[4])
-  respawnparm   <- as.integer(data[5])
-  fastparm      <- as.integer(data[6])
-  nomonsters    <- as.integer(data[7])
-  consoleplayer <- as.integer(data[8])
-  playeringame  <- as.integer(data[9:12])
 
   active <- which(playeringame == 1L)
   n_active <- length(active)
@@ -124,7 +135,6 @@ read_lmp <- function(path) {
          paste(playeringame, collapse = ","), ")")
   }
 
-  body_start <- 13L  # byte 12 (0-based 12 = 1-based 13)
   pos <- body_start
   end <- length(data)
   max_tics <- (end - body_start) %/% (4L * n_active) + 1L
@@ -135,8 +145,9 @@ read_lmp <- function(path) {
   bts   <- matrix(0L, nrow = max_tics, ncol = 4L)
 
   tic <- 0L
+  ended <- FALSE
   while (pos <= end) {
-    if (data[pos] == as.raw(0x80)) break  # demo end marker
+    if (data[pos] == as.raw(0x80)) { ended <- TRUE; break }
     tic <- tic + 1L
     if (tic > max_tics) {
       # overflow -- grow the buffers
@@ -163,6 +174,7 @@ read_lmp <- function(path) {
     }
   }
 
+  if (!ended) stop(path, ": missing Doom demo end marker", call. = FALSE)
   n_frames <- tic
   if (n_frames > 0L) {
     fwd  <- fwd[seq_len(n_frames),  , drop = FALSE]
@@ -184,20 +196,22 @@ read_lmp <- function(path) {
   if (n_frames > 0L) {
     for (p in seq_len(n_players)) {
       bp <- bts[, p]
-      inputs[, p, 8L] <- bitwAnd(bp, 1L) != 0L     # ATTACK -> A
-      inputs[, p, 7L] <- bitwAnd(bp, 2L) != 0L     # USE -> B
+      has_special[, p] <- bitwAnd(bp, 128L) != 0L
+      actions <- ifelse(has_special[, p], 0L, bp)
+      inputs[, p, 8L] <- bitwAnd(actions, 1L) != 0L     # ATTACK -> A
+      inputs[, p, 7L] <- bitwAnd(actions, 2L) != 0L     # USE -> B
       # Project the sign of the resulting movement command onto the D-pad.
       # This is a direction projection, not physical-device reconstruction;
       # the original values remain available in the header matrices.
       fp <- fwd[, p]
       sp <- side[, p]
-      inputs[, p, 4L] <- fp > 0L                   # forwardmove > 0 -> U
-      inputs[, p, 3L] <- fp < 0L                   # forwardmove < 0 -> D
-      inputs[, p, 1L] <- sp > 0L                   # sidemove > 0 -> R
-      inputs[, p, 2L] <- sp < 0L                   # sidemove < 0 -> L
-      ch <- bitwAnd(bp, 4L) != 0L
+      inputs[, p, 4L] <- analog == "quantized" & fp > 0L                   # forwardmove > 0 -> U
+      inputs[, p, 3L] <- analog == "quantized" & fp < 0L                   # forwardmove < 0 -> D
+      inputs[, p, 1L] <- analog == "quantized" & sp > 0L                   # sidemove > 0 -> R
+      inputs[, p, 2L] <- analog == "quantized" & sp < 0L                   # sidemove < 0 -> L
+      ch <- bitwAnd(actions, 4L) != 0L
       weapon_select[ch, p] <-
-        bitwAnd(bitwShiftR(bp[ch], 3L), 7L)
+        bitwAnd(bitwShiftR(actions[ch], 3L), 7L)
       has_special[, p] <- bitwAnd(bp, 128L) != 0L
       special_value <- ifelse(has_special[, p], bp, 0L)
       commands <- bitwOr(commands, as.integer(special_value))
@@ -206,6 +220,16 @@ read_lmp <- function(path) {
 
   header <- list(
     "_format"        = "lmp",
+    version          = as.character(version),
+    emulator         = if (version == 109L) "Doom 1.9" else "Boom",
+    observationUnit  = "game tic",
+    fps              = "35",
+    enabledPorts     = active,
+    controllerPorts  = 1:4,
+    compatibilityFlag = compatibility,
+    gameOptions      = game_options,
+    reservedPlayerFlags = reserved_players,
+    angleturnUnit    = "signed 1/256 revolution per tic",
     skill            = as.character(skill),
     episode          = as.character(episode),
     map              = as.character(map),
@@ -224,13 +248,22 @@ read_lmp <- function(path) {
     has_special      = has_special
   )
 
-  .new_movie(
+  movie <- .new_movie(
     header           = header,
     commands         = commands,
     inputs           = inputs,
+    analog           = lapply(seq_len(n_players), function(p) {
+      cbind(forwardmove = fwd[, p], sidemove = side[, p], angleturn = ang[, p])
+    }),
+    analog_mode      = analog,
     source_path      = path,
     button_mnemonics = c("R", "L", "D", "U", "T", "S", "B", "A"),
     button_names     = c("Right", "Left", "Down", "Up",
                           "Start", "Select", "USE", "ATTACK")
   )
+  movie$source_header <- data[seq_len(body_start - 1L)]
+  movie$source_packets <- matrix(data[seq.int(body_start, length.out = n_frames * n_active * 4L)],
+                                 ncol = n_active * 4L, byrow = TRUE)
+  movie$source_tail <- if (pos < length(data)) data[seq.int(pos + 1L, length(data))] else raw()
+  movie
 }

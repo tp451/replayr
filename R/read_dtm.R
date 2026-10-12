@@ -7,9 +7,14 @@
 #   Source:    https://github.com/dolphin-emu/dolphin
 #   License:   GPL v2 or later
 #
+# Zelda Edition's extended records are specified in Movie.h at:
+# https://github.com/dragonbane0/dolphin/blob/
+# a6e66c227c592d09ff09ef9b238d15ff52dd9632/Source/Core/Core/Movie.h
+# The extension adds tunerEvent (u8), LinkX and LinkZ (little-endian float32),
+# and uses bit 14 for loading instead of the later connection flag.
 # See inst/COPYRIGHTS for the full provenance manifest.
 #
-# Dolphin .dtm GameCube movie format. Wii .dtm files are not supported.
+# Dolphin .dtm GameCube movie format; Wii device reports dispatch to read_wii_dtm.R.
 # Reference: Dolphin source (Source/Core/Core/Movie.cpp) and the tasvideos
 # wiki at /EmulatorResources/Tools/Dolphin.
 #
@@ -19,7 +24,7 @@
 #   0x0A       1   bWii flag
 #   0x0B       1   numControllers (lower 4 bits = GC ports polled)
 #   0x0D       u64 frameCount  (game-side VI counter)
-#   0x15       u64 inputCount  (controller-poll count, == body frames)
+#   0x15       u64 inputCount  (emulator input statistic; may differ from body count)
 #   0x2D       u32 numRerecords
 #   0x100+     controller data, 8 bytes per controller poll:
 #       byte 0  buttons low  (Start, A, B, X, Y, Z, D-Up, D-Down) -- the packed
@@ -35,8 +40,7 @@
 
 # Bit-index 0..15 in the GC button word -> 1-based universal slot. Order is the
 # Dolphin .dtm PACKED ControllerState bitfield (Start,A,B,X,Y,Z,DPadUp,DPadDown,
-# DPadLeft,DPadRight,L,R,...), NOT the GCPadStatus.button flag order (which the
-# GCPadStatus order. These layouts differ, so GCPadStatus constants would
+# DPadLeft,DPadRight,L,R,...). This differs from GCPadStatus.button, whose constants would
 # shift ordinary face-button presses onto unrelated slots.
 .DTM_BIT_TO_UNI <- c(
   5L,             # bit 0:  Start       -> 5
@@ -56,11 +60,9 @@
 
 .DTM_STICK_DEADZONE <- 16L
 
-# C-stick directions reuse the N64 C-button slots 17..20 (1-based).
-# Mapping for sectors (E, NE, N, NW, W, SW, S, SE): the GC c-stick is
-# the spiritual successor to the N64 C-buttons (camera / item / look
-# directions), so we coalesce diagonals onto whichever cardinal C-button
-# best matches the sector's primary axis.
+# Internal legacy slots for C-stick sectors (E, NE, N, NW, W, SW, S, SE).
+# Public layout configuration replaces these with right-stick controls;
+# original X/Y channels remain available for either stick.
 .DTM_CSTICK_SECTOR_TO_CSLOT <- c(
   17L,  # E   -> C-Right
   17L,  # NE  -> C-Right
@@ -74,22 +76,22 @@
 
 #' Read a Dolphin .dtm GameCube movie file
 #'
-#' 13 GC buttons map onto universal slots 1..14 alongside their
-#' NES/SNES counterparts. The analog stick is quantised to 8
-#' cardinal/intercardinal directions (slots 21..28); the C-stick is
-#' quantised more coarsely onto the four C-button slots (17..20). L/R
-#' analog triggers fire the corresponding shoulder slot when pulled
-#' past 50%. Output is 28 buttons wide. Wii-mode .dtm files raise an
-#' error.
+#' Decodes source button bits, triggers, and both sticks. The private legacy
+#' projection is retained for compatibility with internal reader tests.
 #'
+#' @inheritParams read_movie
 #' @param path Path to a .dtm file.
 #' @param controller_order Optional repeating sequence of physical controller
 #'   ports (1--4). Required for multi-controller movies because DTM does not
 #'   record port IDs. Supplying this is an explicit caller assumption, not a
 #'   determination made by the reader. Incomplete cycles are rejected.
 #' @return A `replayr_movie` object.
-#' @export
-read_dtm <- function(path, controller_order = NULL) {
+#' @noRd
+.decode_dtm <- function(path, controller_order = NULL, analog = c("raw", "quantized"),
+                        dtm_variant = c("auto", "standard", "zelda"),
+                        wii_variant = "auto", wii_extension = "raw", wii_key = NULL) {
+  analog <- match.arg(analog)
+  dtm_variant <- match.arg(dtm_variant)
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x100L || !identical(data[1:4], charToRaw("DTM\x1A"))) {
     stop(path, ": not a DTM file")
@@ -98,7 +100,8 @@ read_dtm <- function(path, controller_order = NULL) {
   Encoding(rom_id) <- "latin1"
   rom_id <- enc2utf8(rom_id)
   is_wii <- as.integer(data[0x0BL]) != 0L
-  if (is_wii) stop(path, ": Wii DTM movies are not supported")
+  if (bitwAnd(as.integer(data[12L]), 240L))
+    return(.decode_wii_dtm(path, data, controller_order, wii_variant, wii_extension, wii_key))
 
   frame_count <- .read_u64_le(data, 0x0DL)
   input_count <- .read_u64_le(data, 0x15L)
@@ -110,85 +113,106 @@ read_dtm <- function(path, controller_order = NULL) {
   # number. Games need not poll every connected port once per frame, so fixed
   # grouping would silently assign records to the wrong players.
   enabled_ports <- which(bitwAnd(ctrl_mask,bitwShiftL(1L,0:3))!=0L)
-  if (n_gc_ports != 1L && is.null(controller_order)) {
-    stop(path, ": multi-controller DTM poll streams are not supported")
-  }
+  unassigned <- n_gc_ports > 1L && is.null(controller_order)
   supplied_order <- !is.null(controller_order)
-  if (is.null(controller_order)) controller_order <- enabled_ports
-  if (!is.numeric(controller_order) || anyNA(controller_order) ||
+  if (is.null(controller_order)) controller_order <- if (unassigned) integer() else enabled_ports
+  if (!unassigned && (!is.numeric(controller_order) || anyNA(controller_order) ||
       any(controller_order != as.integer(controller_order)) ||
       anyDuplicated(controller_order) ||
-      !identical(sort(as.integer(controller_order)),as.integer(enabled_ports)))
+      !identical(sort(as.integer(controller_order)),as.integer(enabled_ports))))
     stop(path, ': controller_order must list every enabled port exactly once')
   controller_order <- as.integer(controller_order)
 
   body <- if (length(data) > 0x100L) data[(0x100L + 1L):length(data)] else raw(0)
-  bytes_per_frame <- 8L
+  revision <- paste(sprintf("%02x", as.integer(data[210:229])), collapse = "")
+  # DTM has no record-size field. Recognise the source-verified Zelda Edition
+  # revision, or let the caller identify another build using the same layout.
+  # Inferring a layout from divisibility alone would misread valid standard data.
+  if (dtm_variant == "auto") {
+    dtm_variant <- if (revision == "a6e66c227c592d09ff09ef9b238d15ff52dd9632") "zelda" else "standard"
+  }
+  bytes_per_frame <- if (dtm_variant == "zelda") 17L else 8L
   have_frames <- length(body) %/% bytes_per_frame
-  if(length(body) %% bytes_per_frame) stop(path, ': partial final DTM poll')
-  shortfall <- max(0, input_count - have_frames)
-  if (shortfall > 2L) {
-    stop(path, ": truncated DTM input stream (declares ", input_count,
-         " polls, has ", have_frames, ")")
+  if (length(body) %% bytes_per_frame) {
+    stop(path, ': partial final DTM poll for ', dtm_variant, ' layout (',
+         bytes_per_frame, ' bytes per poll)')
   }
-  if(shortfall) warning(path, ': DTM header exceeds the complete stream by ',shortfall,
-                       ' polls; no input invented',call.=FALSE)
-  n_frames <- if (input_count > 0) min(as.integer(input_count), have_frames) else have_frames
-  if (n_frames %% length(controller_order))
+  # Dolphin saves the input statistic and byte buffer independently. Playback
+  # uses byte/frame/tick boundaries, rather than this statistic as a record count.
+  # Retain every complete stored poll and expose the count difference as metadata.
+  difference <- input_count - have_frames
+  n_frames <- have_frames
+  if (length(controller_order) && n_frames %% length(controller_order))
     stop(path, ': incomplete caller-supplied controller cycle')
-  DTM_FRAME_LIMIT <- 2000000L
-  if (n_frames > DTM_FRAME_LIMIT) {
-    stop(path, ": DTM input stream exceeds the supported two-million-poll limit")
-  }
-
-  n_buttons <- 28L
+  # Raw imports need only the physical button slots. Direction slots are used
+  # exclusively by the private legacy projection path.
+  n_buttons <- if (analog == "raw") 14L else 28L
   inputs <- .empty_inputs(n_frames, 1L, n_buttons)
   commands <- integer(n_frames)
+  channels <- c("ltrigger", "rtrigger", "lstick_x", "lstick_y", "rstick_x", "rstick_y")
+  # Every channel is an unsigned source byte; integers retain those values
+  # exactly while using half the memory of a double matrix.
+  numeric_channels <- matrix(0L, nrow = n_frames, ncol = length(channels),
+                             dimnames = list(NULL, channels))
+
+  poll_fields <- if (dtm_variant == "zelda") {
+    data.frame(loading = logical(n_frames), tuner_event = integer(n_frames),
+               link_x = numeric(n_frames), link_z = numeric(n_frames))
+  } else NULL
 
   if (n_frames > 0L) {
-    for (fi in seq_len(n_frames)) {
-      off <- (fi - 1L) * bytes_per_frame
-      word <- as.integer(body[off + 1L]) +
-              bitwShiftL(as.integer(body[off + 2L]), 8L)
+    # Bound temporary byte/bit matrices independently of recording length.
+    chunk_size <- 65536L
+    for (first in seq.int(1L, n_frames, by = chunk_size)) {
+      last <- min(first + chunk_size - 1L, n_frames)
+      rows <- seq.int(first, last)
+      bytes <- body[seq.int((first - 1L) * bytes_per_frame + 1L, last * bytes_per_frame)]
+      records <- matrix(as.integer(bytes), ncol = bytes_per_frame, byrow = TRUE)
+      word <- records[, 1L] + bitwShiftL(records[, 2L], 8L)
       for (bit in 0:11) {
-        if (bitwAnd(word, bitwShiftL(1L, bit)) == 0L) next
         slot <- .DTM_BIT_TO_UNI[bit + 1L]
         if (is.na(slot)) next
-        inputs[fi, 1L, slot] <- TRUE
+        inputs[rows, 1L, slot] <- bitwAnd(word, bitwShiftL(1L, bit)) != 0L
       }
-      if (bitwAnd(word, bitwShiftL(1L, 12L)) != 0L) commands[fi] <- 1L
-      if (bitwAnd(word, bitwShiftL(1L, 13L)) != 0L) {
-        commands[fi] <- bitwOr(commands[fi], 2L)
+      commands[rows] <- bitwAnd(bitwShiftR(word, 12L), 3L)
+      numeric_channels[rows, ] <- records[, 3:8, drop = FALSE]
+      if (dtm_variant == "zelda") {
+        poll_fields$loading[rows] <- bitwAnd(word, 16384L) != 0L
+        poll_fields$tuner_event[rows] <- records[, 9L]
+        poll_fields$link_x[rows] <- readBin(as.raw(t(records[, 10:13, drop = FALSE])),
+                                           "double", n = length(rows), size = 4L,
+                                           endian = "little")
+        poll_fields$link_z[rows] <- readBin(as.raw(t(records[, 14:17, drop = FALSE])),
+                                           "double", n = length(rows), size = 4L,
+                                           endian = "little")
       }
-      # Analog L / R triggers -- threshold at >=50% pull.
-      if (as.integer(body[off + 3L]) >= 128L) inputs[fi, 1L, 11L] <- TRUE
-      if (as.integer(body[off + 4L]) >= 128L) inputs[fi, 1L, 12L] <- TRUE
-      # Analog stick: sign-center (128) and quantise.
-      sx <- as.integer(body[off + 5L]) - 128L
-      sy <- as.integer(body[off + 6L]) - 128L
-      mag2 <- sx * sx + sy * sy
-      if (mag2 >= .DTM_STICK_DEADZONE * .DTM_STICK_DEADZONE) {
-        angle <- atan2(sy, sx)
-        sector <- as.integer((angle + pi / 8) %/% (pi / 4)) %% 8L
-        inputs[fi, 1L, .STICK_SECTOR_TO_UNI[sector + 1L]] <- TRUE
-      }
-      # C-stick: same deadzone, route to N64-C slots 17..20.
-      cx <- as.integer(body[off + 7L]) - 128L
-      cy <- as.integer(body[off + 8L]) - 128L
-      cmag2 <- cx * cx + cy * cy
-      if (cmag2 >= .DTM_STICK_DEADZONE * .DTM_STICK_DEADZONE) {
-        cangle <- atan2(cy, cx)
-        csector <- as.integer((cangle + pi / 8) %/% (pi / 4)) %% 8L
-        inputs[fi, 1L, .DTM_CSTICK_SECTOR_TO_CSLOT[csector + 1L]] <- TRUE
+      if (analog == "quantized") {
+        inputs[rows, 1L, 11L] <- inputs[rows, 1L, 11L] | records[, 3L] >= 128L
+        inputs[rows, 1L, 12L] <- inputs[rows, 1L, 12L] | records[, 4L] >= 128L
+        for (stick in c(5L, 7L)) {
+          x <- records[, stick] - 128L
+          y <- records[, stick + 1L] - 128L
+          active <- which(x * x + y * y >= .DTM_STICK_DEADZONE^2)
+          if (!length(active)) next
+          sector <- as.integer((atan2(y[active], x[active]) + pi / 8) %/% (pi / 4)) %% 8L
+          slots <- if (stick == 5L) .STICK_SECTOR_TO_UNI else .DTM_CSTICK_SECTOR_TO_CSLOT
+          inputs[cbind(rows[active], 1L, slots[sector + 1L])] <- TRUE
+        }
       }
     }
   }
+  analog_values <- list(numeric_channels)
 
   if(length(controller_order)>1L) {
-    polls<-inputs;poll_commands<-commands
+    polls<-inputs;poll_commands<-commands;poll_analog<-analog_values[[1L]]
     cycles<-n_frames %/% length(controller_order)
     inputs<-.empty_inputs(cycles,max(controller_order),n_buttons)
     commands<-integer(cycles)
+    analog_values <- .empty_analog(cycles, max(controller_order))
+    for (j in seq_along(controller_order)) {
+      ix <- if (cycles) seq.int(j, n_frames, by = length(controller_order)) else integer()
+      analog_values[[controller_order[j]]] <- poll_analog[ix, , drop = FALSE]
+    }
     if(cycles>0L)for(j in seq_along(controller_order)) {
       ix<-seq.int(j,n_frames,by=length(controller_order))
       inputs[,controller_order[j],]<-polls[ix,1,,drop=FALSE]
@@ -197,23 +221,34 @@ read_dtm <- function(path, controller_order = NULL) {
   }
   header <- list(
     "_format" = "dtm",
+    Platform = if (is_wii) "Wii" else "GameCube",
     romId = rom_id,
     rerecordCount = as.character(rerec),
     frameCount = as.character(frame_count),
     inputCount = as.character(input_count),
+    inputCountRole = "emulator input statistic",
     availablePollCount = as.character(have_frames),
-    trailingPollShortfall = as.character(shortfall),
+    pollCountDifference = as.character(difference),
+    dtmVariant = dtm_variant,
+    bytesPerPoll = as.character(bytes_per_frame),
+    revision = revision,
     controllerMask = sprintf("0x%02x", ctrl_mask),
+    enabledPorts = as.integer(enabled_ports),
     controllerOrder = paste(controller_order,collapse=','),
-    controllerAssignment = if(supplied_order) 'caller-supplied repeating order; not stored in DTM' else 'single enabled controller'
+    controllerAssignment = if (unassigned) 'unassigned' else if(supplied_order) 'caller-supplied repeating order; not stored in DTM' else 'single enabled controller'
   )
   mv <- .new_movie(
     header = header,
     commands = commands,
     inputs = inputs,
-    button_mnemonics = universal_buttons()[seq_len(n_buttons)],
-    button_names = universal_button_names()[seq_len(n_buttons)]
+    analog = analog_values, analog_mode = analog,
+    button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
+    button_names = .legacy_button_names()[seq_len(n_buttons)]
   )
   mv$source_path <- path
+  # Retain source order even when the caller groups polls into player cycles.
+  mv$poll_bytes <- matrix(body, ncol = bytes_per_frame, byrow = TRUE)
+  colnames(mv$poll_bytes) <- paste0("byte", seq_len(bytes_per_frame) - 1L)
+  if (!is.null(poll_fields)) mv$poll_fields <- poll_fields
   mv
 }

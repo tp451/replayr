@@ -1,5 +1,5 @@
-test_that("read_vbm() parses the bundled synthetic Game Boy movie", {
-  mv <- read_vbm(fixture_path("sample.vbm"))
+test_that("replayr:::.decode_vbm() parses the bundled synthetic Game Boy movie", {
+  mv <- replayr:::.decode_vbm(fixture_path("sample.vbm"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "vbm")
   expect_equal(n_frames(mv), 3600L)
@@ -21,20 +21,20 @@ test_that("read_vbm() parses the bundled synthetic Game Boy movie", {
   tf
 }
 
-test_that("read_vbm() decodes grouped SGB controllers", {
+test_that("replayr:::.decode_vbm() decodes grouped SGB controllers", {
   tf <- .mk_vbm(c(1L, 2L), controller_flags = 3L, system_flags = 4L)
   on.exit(unlink(tf))
-  mv <- read_vbm(tf)
+  mv <- replayr:::.decode_vbm(tf)
   expect_equal(dim(mv$inputs), c(1L, 2L, 8L))
   expect_true(mv$inputs[1L, 1L, 8L])
   expect_true(mv$inputs[1L, 2L, 7L])
   expect_equal(mv$header$isSGB, "1")
 })
 
-test_that("read_vbm() reads GBA shoulder buttons from system flags", {
+test_that("replayr:::.decode_vbm() reads GBA shoulder buttons from system flags", {
   tf <- .mk_vbm(bitwShiftL(1L, 9L), system_flags = 1L)
   on.exit(unlink(tf))
-  mv <- read_vbm(tf)
+  mv <- replayr:::.decode_vbm(tf)
   expect_equal(n_buttons(mv), 12L)
   expect_true(mv$inputs[1L, 1L, 11L])
   expect_equal(mv$header$isGBA, "1")

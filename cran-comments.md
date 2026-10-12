@@ -1,38 +1,43 @@
-# cran-comments.md
+# CRAN submission candidate
 
-## Submission
-
-This is the initial CRAN submission of `replayr`.
+Initial submission: replayr 0.4.0.
 
 ## Test environments
 
-* Local: Windows 11 x64, R 4.6.0 (2026-04-24 ucrt)
-* GitHub Actions: ubuntu-latest, macos-latest, windows-latest, each
-  on R-release and R-devel. See `.github/workflows/R-CMD-check.yaml`.
-* `R CMD check --as-cran`: completed locally on the environment above.
+* Windows 11 x64, R 4.6.0: R CMD check --as-cran, Status: OK.
+* Ubuntu 24.04.4 under WSL, R-devel 4.7.0 (2026-10-08 r90650): Status: OK.
 
-## R CMD check results
+Both environments checked the same built source archive on 12 October 2026. Tests, examples,
+vignettes, and PDF/HTML manual checks passed. Remote CRAN incoming checks
+were disabled; public URL and incoming checks remain before submission.
 
-0 errors | 0 warnings | 1 note
+## Examples and data
 
-Expected notes:
+Package examples use original artificial recordings, with generators included
+in the source. No third-party recordings, game images, save states, or
+audiovisual data are bundled. External compatibility tests are optional.
 
-* "New submission" — this is the first CRAN release of the package.
+Compatibility checks covered every distinct recording in the TASVideos
+publication catalogue acquired on 11 October 2026, including obsolete
+publications: 7,385 distinct recordings, represented by 7,469 local paths.
+All 7,385 passed. Mixed GameCube/Wii framing is selected automatically
+from source-verified Dolphin revision profiles. Source defects are retained
+with warnings and observation flags. The external manifest records hashes,
+source URLs, reader arguments, and outcomes. Separate format audits compare
+decoded fields with independent parsers and original emulator decoders.
 
-## Downstream dependencies
+Additional checks compare controller assignments with game manuals and
+TASVideos submission descriptions. Original one-button and distinct-axis
+fixtures detect swapped buttons, ports, and axes. All 93 lsnes recordings
+were independently checked, including every input subframe and the
+declared Super Scope device.
 
-There are currently no downstream dependencies (no reverse imports,
-suggests, or depends).
+Native ZIP inputs verify CRCs; tar readers validate member types and avoid
+filesystem extraction. Original fixtures cover every supported extension.
+Large BK2 inputs can be processed in bounded memory with read_bk2_chunks().
 
-## Reviewer notes
+## Dependencies
 
-* The package ships one deterministic synthetic example for each of its
-  twelve supported formats in `inst/extdata/sample.<ext>`. The files contain
-  only generated controller input: no ROMs, savestates, audiovisual content,
-  or third-party movie data. `tools/generate_sample_movies.R` reproduces all
-  twelve fixtures; `inst/extdata/README.md` documents their contents.
-* Optional compatibility checks against a separately obtained local corpus
-  run only when `REPLAYR_FIXTURE_DIR` is set. No corpus files are included in
-  the package.
-* No platform-specific code paths; the package is pure R and uses
-  only base + `utils`.
+Imports: jsonlite, xml2, zip (>= 3.0.2), and utils. These support controller
+configuration, XML recordings, checked ZIP extraction, and standard utilities.
+pisa requires replayr and is intended for submission after replayr is on CRAN.

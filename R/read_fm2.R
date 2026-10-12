@@ -40,8 +40,17 @@
 #'
 #' @param path Path to a .fm2 file.
 #' @return A `replayr_movie` object.
-#' @export
-read_fm2 <- function(path) {
+#' @noRd
+.decode_fm2 <- function(path) {
+  probe <- readBin(path, "raw", min(file.info(path)$size, 65536L))
+  delimiters <- which(probe == as.raw(124L))
+  if(length(delimiters)) probe <- head(probe, delimiters[1L]-1L)
+  if(!any(probe == as.raw(0L))) {
+    text_header <- rawToChar(probe)
+    if(grepl("(^|\\n)binary +1|(^|\\n)port[01] +2", text_header, useBytes = TRUE))
+      return(.decode_fceux_extended(path, "fm2"))
+  }
+
   text <- readLines(path, warn = FALSE, encoding = "UTF-8")
   # Some headers contain non-UTF-8 bytes in metadata such as ROM filenames.
   # Re-decode only invalid lines as Latin-1; valid UTF-8 metadata is unchanged.
@@ -58,7 +67,7 @@ read_fm2 <- function(path) {
 # tests can hit the parser without touching the filesystem.
 .parse_fm2_text <- function(lines) {
   header <- list()
-  cmd_list <- integer(0)
+  cmd_list <- integer(length(lines))
   # Pre-allocate; we'll trim at the end. Most .fm2 files are <500k frames.
   rows <- vector("list", length(lines))
   rows_n <- 0L
@@ -79,7 +88,7 @@ read_fm2 <- function(path) {
       if (length(parts) == 0L) next
       cmd <- suppressWarnings(as.integer(parts[1L]))
       if (is.na(cmd)) cmd <- 0L
-      cmd_list <- c(cmd_list, cmd)
+      cmd_list[rows_n + 1L] <- cmd
       player_cols <- if (length(parts) >= 2L) parts[-1L] else character(0)
       if (is.na(n_players_seen)) {
         n_players_seen <- length(player_cols)
@@ -124,14 +133,10 @@ read_fm2 <- function(path) {
       }
     }
   }
-  commands <- as.integer(cmd_list)
-  if (length(commands) != n_frames) {
-    # Defensive: clamp to frame count.
-    length(commands) <- n_frames
-    commands[is.na(commands)] <- 0L
-  }
+  commands <- cmd_list[seq_len(n_frames)]
   .new_movie(header = header, commands = commands, inputs = inputs,
              button_mnemonics = .NES_BUTTONS,
              button_names = c("Right", "Left", "Down", "Up",
                               "Start", "Select", "B", "A"))
 }
+

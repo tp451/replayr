@@ -6,34 +6,35 @@
 \alias{replayr-package}
 \title{replayr: parsers for emulator movie ("input log") files}
 \description{
-Decoders for 12 emulator movie file formats used by the speedrun and
-tool-assisted-speedrun communities. Every parser produces a uniform
-in-memory shape (a \code{replayr_movie} S3 object) with a per-frame logical
-input matrix indexed against a single 40-slot universal-button layout.
-}
-\details{
-Supported formats: .fm2 (FCEUX), .bk2 (BizHawk), .fcm (FCEU),
-.lsmv (lsnes), .gmv (Gens-rerecording), .vbm (VBA-rerecording),
-.m64 (Mupen64), .smv (Snes9x-rerecording), .pxm (PCSX-rerecording),
-.pjm (PSXjin text), .dtm (Dolphin GameCube), .lmp (Doom).
+Readers for emulator input recordings used in tool-assisted speedrunning.
+S3 outputs contain compact logical controller states, stable control identities,
+source numeric channels, metadata, and commands. Rows follow each format's
+frames, controller polls, timestamped events, or game tics.
+Unassigned controller ports and heterogeneous device observations use a
+\link{replayr_poll_stream}. \code{\link[=read_movie]{read_movie()}} dispatches to the appropriate reader.
+\code{\link[=movie_members]{movie_members()}} lists movies in a downloaded ZIP archive.
 }
 \section{Quick start}{
 
 \preformatted{
   library(replayr)
-  mv <- read_movie("data/raw_nes/super_mario_bros/1349.fm2")
-  n_frames(mv)                       # frame count
-  press_counts(mv)                   # per-button press counts
-  p1 <- player(mv, 1L)               # logical matrix, frames x buttons
+  path <- system.file("extdata", "sample.fm2", package = "replayr")
+  mv <- read_movie(path)
+  n_frames(mv)                       # observation count
+  press_counts(mv)                   # per-button active-observation counts
+  p1 <- player(mv, 1L)               # logical matrix, observations x controls
 }
 }
 
-\section{Universal button layout}{
+\section{Controller layout}{
 
-Each \code{replayr_movie} indexes its third dimension against a prefix of
-the 40-slot universal layout. Slots 1..8 are NES-shaped (R, L, D, U,
-Start, Select, B, A); higher slots cover SNES, Genesis, GBA, N64,
-PSX, GameCube. See \code{\link[=universal_buttons]{universal_buttons()}} and \code{\link[=universal_button_names]{universal_button_names()}}.
+Each movie uses compact columns. \code{\link[=button_layout]{button_layout()}} maps local columns to
+stable control identities. Use \code{\link[=align_buttons]{align_buttons()}} for an explicit common
+matrix layout across controllers. Original numeric values are returned by
+\code{\link[=analog_channels]{analog_channels()}}; selected stick representations by \code{\link[=stick_channels]{stick_channels()}}.
+BK2 N64 Boolean stick overrides are retained in \code{movie$stick_overrides}
+(right, up, left, down per player) and applied using the recording's
+BizHawk version when computing stick angles and directions.
 }
 
 \author{

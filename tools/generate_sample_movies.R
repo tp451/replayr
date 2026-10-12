@@ -210,6 +210,7 @@ m64_header <- put_u32(m64_header, 12L, n60)
 m64_header[21L] <- as.raw(60L)
 m64_header[22L] <- as.raw(1L)
 m64_header <- put_u32(m64_header, 0x18L, n60)
+m64_header <- put_u32(m64_header, 0x20L, 1L) # Controller 1 is present.
 m64_header <- put_text(m64_header, 0x0c4L, "REPLAYR SYNTHETIC", 32L)
 m64_header <- put_text(m64_header, 0x222L, "replayr fixture generator", 222L)
 m64_header <- put_text(m64_header, 0x300L, "Deterministic synthetic input", 256L)
@@ -311,12 +312,12 @@ for (i in seq_len(n60)) {
   angle <- 2 * pi * (i - 1L) / 240
   dtm_body[i, ] <- c(bitwAnd(word, 0xffL), bitwShiftR(word, 8L), 0L, 0L,
                      128L + round(70 * cos(angle)), 128L + round(70 * sin(angle)),
-                     128L, 128L)
+                     128L + round(70 * sin(2 * pi * (i - 1L) / n60)), 128L)
 }
 write_raw(file.path(out_dir, "sample.dtm"), c(dtm_header, as.raw(as.vector(t(dtm_body)))))
 
 # LMP -------------------------------------------------------------------------
-lmp_header <- as.raw(c(1L, 1L, 1L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 0L, 0L))
+lmp_header <- as.raw(c(109L, 0L, 1L, 1L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 0L, 0L))
 lmp_body <- matrix(0L, nrow = n35, ncol = 4L)
 for (i in seq_len(n35)) {
   phase <- ((i - 1L) %/% 35L) %% 4L

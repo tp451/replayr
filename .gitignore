@@ -6,3 +6,26 @@
 inst/doc
 doc/
 Meta/
+
+# Local agent context and unpublished working material
+.agents/
+.codex/
+.claude/
+.devnotes/
+AGENTS.md
+CLAUDE.md
+CODEX.md
+/publication-audit/
+/publication-drafts/
+/tmp/
+
+# Generated R libraries, checks and source archives
+.r-lib/
+*.Rcheck/
+/*.tar.gz
+__pycache__/
+*.pyc
+
+# Generated testthat failure reproductions
+_problems/
+Rplots.pdf

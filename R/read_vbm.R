@@ -58,8 +58,8 @@
 #'
 #' @param path Path to a .vbm file.
 #' @return A `replayr_movie` object.
-#' @export
-read_vbm <- function(path) {
+#' @noRd
+.decode_vbm <- function(path) {
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x100L || !identical(data[1:4], charToRaw("VBM\x1A"))) {
     stop(path, ": not a VBM file")
@@ -146,8 +146,8 @@ read_vbm <- function(path) {
     header = header,
     commands = commands,
     inputs = inputs,
-    button_mnemonics = universal_buttons()[seq_len(n_buttons)],
-    button_names = universal_button_names()[seq_len(n_buttons)]
+    button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
+    button_names = .legacy_button_names()[seq_len(n_buttons)]
   )
   mv$source_path <- path
   mv

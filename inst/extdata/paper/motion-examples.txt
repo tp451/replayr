@@ -1,0 +1,20 @@
+Original mouse and Wii motion examples
+
+These inputs were authored for replayr and are licensed under GPL (>= 2).
+No third-party recording was used to generate them.
+
+mouse-drag.bk2 has 240 observations in the Saturnus mouse layout: movement
+with the button released, a 60-observation left-button drag, a return with
+the button released, and a pause. The numeric fields are relative increments.
+
+wii-motion.dtm has 180 serialized Wii Remote observations: two infrared
+points move horizontally while A is held, then an acceleration pulse and
+separate pitch/roll changes illustrate motion channels. Gyroscope fields
+are counts in the slow range. The values specify an input sequence, with
+no claim to reproduce a physical gesture or a game's response.
+wii-motion-expected.csv gives the expected decoded values. Y/Z acceleration
+is expanded from nine to ten bits using Dolphin's bit-replication rule.
+Infrared points 3 and 4 are absent, encoded as 1023, 1023, and size 15.
+
+Regenerate from the package root:
+  python tools/generate-motion-examples.py

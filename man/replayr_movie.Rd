@@ -4,25 +4,37 @@
 \alias{replayr_movie}
 \title{The \code{replayr_movie} S3 class}
 \description{
-The canonical return type of every reader in \code{replayr}. A
-\code{replayr_movie} is a list with the following elements:
+An imported recording with assigned input streams. Recordings whose
+polls have unassigned ports use \link{replayr_poll_stream}. A \code{replayr_movie}
+is a list with the following elements:
 }
 \details{
 \describe{
 \item{\code{header}}{Named list of header key-value pairs lifted from
 the source file. The synthetic \verb{_format} entry records which
-parser produced the movie (one of \code{"fm2"}, \code{"bk2"}, \code{"fcm"},
-\code{"lsmv"}, \code{"gmv"}, \code{"vbm"}, \code{"m64"}, \code{"smv"}, \code{"pxm"}, \code{"pjm"},
-\code{"dtm"}, \code{"lmp"}).}
-\item{\code{commands}}{Integer vector of length \code{n_frames}. Per-frame
-commands byte (Reset, Power, format-specific bits). Most TAS
-frames are 0.}
+parser produced the movie, such as \code{"fm2"}, \code{"bk2"}, or \code{"ltm"}.}
+\item{\code{commands}}{Integer vector of length \code{n_frames}. Per-observation
+emulator command bits, where the format uses them.}
 \item{\code{inputs}}{Logical 3D array, dimensions
 \verb{(n_frames, n_players, n_buttons)}. \code{TRUE} means the button was
-held that frame.}
-\item{\code{source_path}}{Path the movie was loaded from, or \code{NA}.}
-\item{\code{button_mnemonics}}{Character vector. One single-character
-mnemonic per third-dimension slot of \code{inputs}.}
+held at that observation.}
+\item{\code{analog}}{List of numeric channel matrices, one per player.
+Rows align with \code{inputs}; channel names and units depend on the format.}
+\item{\code{analog_mode}}{Selected representation label. Numeric source
+values are retained in every mode.}
+\item{\code{stick_modes}}{Named left/right choices: \code{"raw"}, \code{"cardinal4"},
+\code{"cardinal8"}, \code{"angle"}, or \code{"angle+magnitude"}.}
+\item{\code{button_ids}, \code{button_keys}, \code{layout_version}}{Stable control
+identities and registry version for the compact input columns.}
+\item{\code{stick_values}}{Selected numeric stick channels, one matrix per player;
+accessed with \code{\link[=stick_channels]{stick_channels()}}.}
+\item{\code{source_path}}{Path the movie was loaded from, or \code{NA}. ZIP imports
+also retain the selected \code{source_member}.}
+\item{\code{events}, \code{timing}, \code{input_events}}{Where present, source-specific
+event records and timing. See the format-specific reader.}
+\item{\code{button_mnemonics}}{Character vector. One mnemonic
+per third-dimension slot of \code{inputs}; source-defined controls may use
+multi-character labels.}
 \item{\code{button_names}}{Character vector. Friendly labels paired
 with \code{button_mnemonics}.}
 }

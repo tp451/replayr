@@ -1,5 +1,5 @@
-test_that("read_lsmv() parses the bundled synthetic SNES movie", {
-  mv <- read_lsmv(fixture_path("sample.lsmv"))
+test_that("replayr:::.decode_lsmv() parses the bundled synthetic SNES movie", {
+  mv <- replayr:::.decode_lsmv(fixture_path("sample.lsmv"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "lsmv")
   expect_equal(n_frames(mv), 3600L)

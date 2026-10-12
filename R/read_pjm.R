@@ -4,8 +4,7 @@
 # tree alongside the TASVideos wiki at
 # /EmulatorResources/Tools/Psxjin.
 #
-#   Source:    PSXjin source tree (multiple mirrors after the
-#              original Google Code archive shutdown)
+#   Source:    https://github.com/Nitrofski/psxjin/blob/master/psxjin/movie.cpp
 #   License:   GPL v2 or later
 #
 # See inst/COPYRIGHTS for the full provenance manifest.
@@ -69,17 +68,26 @@
 # DualShock 16-bit binary button word (active-high) bit -> universal slot.
 # Identical to the .pxm mapping, including DualShock stick clicks.
 .PJM_BIT_TO_UNI <- c(
-  6L, 31L, 32L, 5L,                  # Select, L3, R3, Start
+  6L, 41L, 42L, 5L,                  # Select, L3, R3, Start
   4L, 1L, 3L, 2L,                     # Up, Right, Down, Left
   29L, 30L, 11L, 12L,                 # L2, R2, L1, R1
   9L, 8L, 7L, 10L                     # Triangle, Circle, Cross, Square
 )
 
-# A small number of published PSXjin text movies end on a complete record
-# boundary but contain one or two fewer records than the header declares. Keep
-# the physical controller stream authoritative in that narrow case; anything
-# larger, or any partial final record, remains a hard truncation error.
-.PJM_MAX_TRAILING_FRAME_SHORTFALL <- 2L
+# MOV_ReadMovieFile replaces the header frame count with the complete-record
+# count calculated from file length, input offset, and configured record width.
+# Keep that behaviour for both text and binary records, retaining the original
+# declared count so callers can inspect any discrepancy.
+.pjm_record_counts <- function(header, declared, available, path) {
+  difference <- declared - available
+  header$declaredFrameCount <- as.character(declared)
+  header$availableFrameCount <- as.character(available)
+  header$frameCountDifference <- as.character(difference)
+  header$trailingFrameShortfall <- as.character(max(0, difference))
+  # PSXjin replaces this metadata count with the physical record count in
+  # MOV_ReadMovieFile. A discrepancy does not make a complete stream invalid.
+  header
+}
 
 #' Read a PSXjin .pjm movie file
 #'
@@ -87,23 +95,27 @@
 #' Supports the text body in its one-controller (20-byte line),
 #' two-controller (34-byte line) and analog (wider line) variants, plus the
 #' binary bodies with configured standard or analog controller widths.
-#' A text movie whose body ends on a complete
-#' record boundary may be up to two frames shorter than its declared count; the
-#' reader warns, returns only the complete physical records, and preserves both
-#' counts in the movie header. A missing terminal newline is accepted only if
-#' every controller field and delimiter is complete. Larger or partial-record
-#' truncations are errors. Analog text ports retain quantised stick movement.
+#' Every complete stored record is imported, following PSXjin's playback
+#' length calculation. Declared, available, and signed-difference counts remain
+#' available in the header. A missing terminal newline is accepted only if every controller
+#' field and delimiter is complete; a partial record remains an error.
 #' The PSX gamepad maps onto universal slots
 #' 1..12 (NES + SNES face / shoulder layout) plus 29 / 30 for L2 / R2; the
-#' output is 32 buttons wide, including L3/R3 on analog controllers. Standard
+#' output is 42 buttons wide, including L3/R3 on analog controllers. Standard
 #' digital pads do not turn reserved bits into stick-click actions.
 #' Two-controller movies yield a two-player movie
 #' (analysis code that wants player 1 simply reads the first player).
 #'
+#' Analogue values are retained without projection by default. Use
+#' `analog = "quantized"` to enable the direction/threshold mappings
+#' described above; [analog_channels()] returns numeric values in either mode.
+#'
+#' @inheritParams read_movie
 #' @param path Path to a .pjm file.
 #' @return A `replayr_movie` object.
-#' @export
-read_pjm <- function(path) {
+#' @noRd
+.decode_pjm <- function(path, analog = c("raw", "quantized")) {
+  analog <- match.arg(analog)
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 24L || !identical(data[1:4], charToRaw("PJM "))) {
     stop(path, ": not a PJM file")
@@ -117,7 +129,7 @@ read_pjm <- function(path) {
   if(body_off!=0L && (body_off<0x34L || body_off>length(data)))stop(path,": invalid PJM input offset")
   desc <- .read_cstring(data, 0x39L, 0xC8L)
   sz <- length(data)
-  n_buttons <- 32L
+  n_buttons <- 42L
   header <- list(
     "_format" = "pjm",
     version = as.character(version),
@@ -127,18 +139,35 @@ read_pjm <- function(path) {
     controllerType2 = as.character(controller_types[2L])
   )
 
-  # --- decide text vs binary by locating a `|`CRLF frame terminator ---
-  term <- as.raw(c(0x7c, 0x0d, 0x0a))
-  search_start <- if(body_off>0L)body_off else 0L
-  t1 <- .find_raw(data[seq.int(search_start+1L,sz)],term)
-  if(!is.na(t1))t1 <- t1+search_start
-  layout <- .pjm_text_layout(data, t1, sz, if(body_off>0L)body_off else NULL)
+  # MOVIE_FLAG_IS_TEXT and SetBytesPerFrame define the ordinary layout.
+  # Separator bytes are skipped by PSXjin, so they must not determine whether
+  # a declared text movie can be read. Old incomplete headers retain the
+  # historical terminator-based fallback below.
+  flags <- .read_u16_le(data, 12L)
+  if (body_off > 0L && bitwAnd(flags, 64L) != 0L) {
+    types <- rep(controller_types, 1L + 3L * as.integer(bitwAnd(flags, c(128L, 256L)) != 0L))
+    widths <- c('0'=1L, '8'=1L, '4'=15L, '5'=33L, '7'=33L)[as.character(types)]
+    if (anyNA(widths)) stop(path, ": unsupported PJM text controller type")
+    if (!any(widths > 1L)) stop(path, ": PJM has no connected controller")
+    n_players <- max(which(widths > 1L))
+    layout <- list(first = body_off, stride = as.integer(sum(widths) + 4L),
+      port_off = as.integer(c(0L, utils::head(cumsum(widths), -1L))[seq_len(n_players)]),
+      port_width = as.integer(widths[seq_len(n_players)] - 1L),
+      pipe = as.integer(c(cumsum(widths), sum(widths) + 2L)),
+      n_players = n_players, cmd_off = as.integer(sum(widths)), cmd_width = 1L)
+  } else {
+    term <- as.raw(c(0x7c, 0x0d, 0x0a))
+    search_start <- if(body_off>0L)body_off else 0L
+    t1 <- .find_raw(data[seq.int(search_start+1L,sz)],term)
+    if(!is.na(t1))t1 <- t1+search_start
+    layout <- .pjm_text_layout(data, t1, sz, if(body_off>0L)body_off else NULL)
+  }
 
   if (!is.null(layout)) {
-    mv <- .read_pjm_text(data, layout, n_frames_field, n_buttons, header, path)
+    mv <- .read_pjm_text(data, layout, n_frames_field, n_buttons, header, path, analog)
   } else {
     mv <- .read_pjm_binary(data, n_frames_field, sz, n_buttons, header,
-                           controller_types, body_off)
+                           controller_types, body_off, analog, path)
   }
   mv$source_path <- path
   mv
@@ -202,7 +231,7 @@ read_pjm <- function(path) {
        cmd_off = starts[m] - 1L, cmd_width = cmd_width)
 }
 
-.read_pjm_text <- function(data, lay, n_frames_field, n_buttons, header, path) {
+.read_pjm_text <- function(data, lay, n_frames_field, n_buttons, header, path, analog) {
   sz <- length(data)
   have <- (sz - lay$first) %/% lay$stride
   remainder <- (sz - lay$first) %% lay$stride
@@ -211,7 +240,7 @@ read_pjm <- function(path) {
     tail_start <- lay$first + have * lay$stride
     last <- data[tail_start + seq_len(remainder)]
     complete <- identical(which(last == as.raw(0x7c)), lay$pipe) &&
-      (remainder == lay$stride - 2L || tail(last, 1L) == as.raw(0x0d))
+      (remainder == lay$stride - 2L || utils::tail(last, 1L) == as.raw(0x0d))
     if (complete) {
       missing_newline <- lay$stride - remainder
       have <- have + 1L
@@ -222,26 +251,13 @@ read_pjm <- function(path) {
     stop(path, ": PJM text body has a partial final frame (",
          remainder, " of ", lay$stride, " bytes)")
   }
-  shortfall <- max(0L, n_frames_field - have)
-  if (n_frames_field > have) {
-    if (shortfall > .PJM_MAX_TRAILING_FRAME_SHORTFALL) {
-      stop(path, ": PJM text body is truncated (declares ", n_frames_field,
-           " frames, has ", have, ")")
-    }
-    warning(path, ": PJM text body declares ", n_frames_field,
-            " frames but contains ", have, " complete records; using the ",
-            "complete records without inventing trailing input", call. = FALSE)
-  }
-  # PSXjin itself derives playback length from the physical stream. A stale
-  # smaller header must not discard complete recorded controller samples.
   n_frames <- have
-  header$declaredFrameCount <- as.character(n_frames_field)
-  header$availableFrameCount <- as.character(have)
-  header$trailingFrameShortfall <- as.character(shortfall)
+  header <- .pjm_record_counts(header, n_frames_field, have, path)
   header$terminalNewlineBytesMissing <- as.character(missing_newline)
   n_players <- lay$n_players
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
+  analog_values <- .empty_analog(n_frames, n_players)
   if (n_frames > 0L) {
     frame0 <- lay$first + lay$stride * (seq_len(n_frames) - 1L)   # 0-based frame starts
     # PSXjin MOV_ReadJoy regards any non-dot byte as pressed, including
@@ -252,13 +268,18 @@ read_pjm <- function(path) {
     for(fi in suspect) if(frame0[fi]+lay$stride<=sz)
       zero[fi] <- all(data[frame0[fi]+seq_len(lay$stride)]==as.raw(0))
     header$allNulRecordCount <- as.character(sum(zero))
-    if(any(zero)) warning(path, ': ',sum(zero),' all-NUL PJM records interpreted as pressed buttons, as in PSXjin',call.=FALSE)
-    for(column in lay$pipe)if(any(!zero & data[frame0+column]!=as.raw(0x7c)))
-      stop(path,": inconsistent PJM text field delimiters")
-    complete_lines <- frame0[!zero & seq_len(n_frames) <= n_frames-as.integer(missing_newline>0)]
-    if(length(complete_lines) && (any(data[complete_lines+lay$stride-1L]!=as.raw(13L)) ||
-                                  any(data[complete_lines+lay$stride]!=as.raw(10L))))
-      stop(path,": inconsistent PJM text line endings")
+    # MOV_ReadJoy tests each fixed-width button byte against '.', including
+    # NUL bytes. Retain their defined pressed state and diagnostic count.
+    noncanonical <- rep(FALSE, n_frames)
+    for (column in lay$pipe)
+      noncanonical <- noncanonical | (!zero & data[frame0 + column] != as.raw(0x7c))
+    complete <- which(!zero & seq_len(n_frames) <= n_frames - as.integer(missing_newline > 0))
+    noncanonical[complete] <- noncanonical[complete] |
+      data[frame0[complete] + lay$stride - 1L] != as.raw(13L) |
+      data[frame0[complete] + lay$stride] != as.raw(10L)
+    header$noncanonicalSeparatorRecords <- as.character(sum(noncanonical))
+    # PSXjin advances over separator positions without inspecting their
+    # contents. The count is metadata; such bytes do not alter input fields.
     dot <- as.raw(0x2e); spc <- as.raw(0x20); nul <- as.raw(0x00)
     for (pl in seq_len(n_players)) {
       poff <- lay$port_off[pl]
@@ -277,14 +298,19 @@ read_pjm <- function(path) {
       }
       if (width == 32L) {
         axes <- vapply(0:3, function(axis) {
-          chars <- vapply(1:4, function(k) rawToChar(data[frame0 + poff + 16L + 4L*axis + k],
-                                                   multiple=TRUE), character(n_frames))
-          value <- suppressWarnings(as.integer(do.call(paste0,as.data.frame(chars))))
+          chars <- lapply(1:4, function(k) rawToChar(data[frame0 + poff + 16L + 4L*axis + k],
+                                                   multiple=TRUE))
+          value <- suppressWarnings(as.integer(do.call(paste0, chars)))
           if (anyNA(value) || any(value < 0L | value > 255L)) stop(path, ": invalid PJM analog axis")
           value
         }, integer(n_frames))
-        stick <- .pxm_stick_matrix(axes)
-        for (slot in 17:28) inputs[,pl,slot] <- stick[,slot]
+        axes <- matrix(axes, nrow = n_frames, ncol = 4L)
+        colnames(axes) <- c("lstick_x", "lstick_y", "rstick_x", "rstick_y")
+        analog_values[[pl]] <- axes
+        if (analog == "quantized") {
+          stick <- .pxm_stick_matrix(axes)
+          for (slot in 17:28) inputs[, pl, slot] <- stick[, slot]
+        }
       }
     }
     if (lay$cmd_width > 0L) {
@@ -302,24 +328,24 @@ read_pjm <- function(path) {
     }
   }
   .new_movie(header = header, commands = commands, inputs = inputs,
-             button_mnemonics = universal_buttons()[seq_len(n_buttons)],
-             button_names = universal_button_names()[seq_len(n_buttons)])
+             analog = analog_values, analog_mode = analog,
+             button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
+             button_names = .legacy_button_names()[seq_len(n_buttons)])
 }
 
 .read_pjm_binary <- function(data, n_frames_field, sz, n_buttons, header,
-                             controller_types = c(0L, 0L), body_offset = 0L) {
-  if (n_frames_field > .Machine$integer.max) {
-    stop("PJM frame count is too large for R")
-  }
+                             controller_types = c(0L, 0L), body_offset = 0L,
+                             analog = "raw", path = "PJM recording") {
   if(body_offset>0L) {
     widths <- c('0'=0L,'8'=0L,'4'=2L,'5'=6L,'7'=6L)[as.character(controller_types)]
     if(anyNA(widths))stop('PJM binary peripheral type is not supported')
     stride <- sum(widths)+1L
     if(sum(widths)==0L || (sz-body_offset)%%stride!=0L)stop('PJM binary body has a partial final frame or no controllers')
     n_frames <- (sz-body_offset)%/%stride
-    if(n_frames<n_frames_field)stop('PJM binary body is truncated')
+    header <- .pjm_record_counts(header, n_frames_field, n_frames, path)
     n_players <- max(which(widths>0L))
     inputs <- .empty_inputs(n_frames,n_players,n_buttons)
+    analog_values <- .empty_analog(n_frames, n_players)
     frames <- body_offset+(seq_len(n_frames)-1L)*stride
     offsets <- c(0L,widths[1L])
     reserved_digital_bits <- integer(n_players)
@@ -335,19 +361,26 @@ read_pjm <- function(path) {
       }
       if(widths[pl]==6L) {
         axes <- vapply(3:6,function(k)as.integer(data[pos+k]),integer(n_frames))
-        stick <- .pxm_stick_matrix(axes)
-        for(slot in 17:28)inputs[,pl,slot] <- stick[,slot]
+        axes <- matrix(axes, nrow = n_frames, ncol = 4L)
+        colnames(axes) <- c("lstick_x", "lstick_y", "rstick_x", "rstick_y")
+        analog_values[[pl]] <- axes
+        if (analog == "quantized") {
+          stick <- .pxm_stick_matrix(axes)
+          for (slot in 17:28) inputs[, pl, slot] <- stick[, slot]
+        }
       }
     }
     header$reservedDigitalPadBitCounts <- reserved_digital_bits
-    header$declaredFrameCount <- as.character(n_frames_field)
-    header$availableFrameCount <- as.character(n_frames)
     return(.new_movie(header=header,commands=as.integer(data[frames+stride]),inputs=inputs,
-      button_mnemonics=universal_buttons()[seq_len(n_buttons)],
-      button_names=universal_button_names()[seq_len(n_buttons)]))
+      analog=analog_values, analog_mode=analog,
+      button_mnemonics=.legacy_buttons()[seq_len(n_buttons)],
+      button_names=.legacy_button_names()[seq_len(n_buttons)]))
   }
   # Compatibility for old headerless synthetic fixtures only. Real movies
   # provide the controller-data offset and use their actual configured widths.
+  if (n_frames_field > .Machine$integer.max) {
+    stop("PJM frame count is too large for R")
+  }
   n_frames <- as.integer(n_frames_field)
   bpf <- 5L
   body_off <- sz - n_frames * bpf
@@ -374,6 +407,7 @@ read_pjm <- function(path) {
   n_players <- if (has_p2) 2L else 1L
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
+  analog_values <- .empty_analog(n_frames, n_players)
   reserved_digital_bits <- integer(n_players)
   if (n_frames > 0L) {
     for (fi in seq_len(n_frames)) {
@@ -396,6 +430,7 @@ read_pjm <- function(path) {
   }
   header$reservedDigitalPadBitCounts <- reserved_digital_bits
   .new_movie(header = header, commands = commands, inputs = inputs,
-             button_mnemonics = universal_buttons()[seq_len(n_buttons)],
-             button_names = universal_button_names()[seq_len(n_buttons)])
+             analog = analog_values, analog_mode = analog,
+             button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
+             button_names = .legacy_button_names()[seq_len(n_buttons)])
 }

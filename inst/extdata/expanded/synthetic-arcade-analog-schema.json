@@ -1,0 +1,36 @@
+{
+  "source": "Original demonstration schema; no game or ROM required.",
+  "fields": [
+    {
+      "key": "dpad_right",
+      "name": "Right",
+      "player": 1,
+      "type": "button",
+      "button_encoding": "bit0"
+    },
+    {
+      "key": "stick_x",
+      "name": "Horizontal",
+      "player": 1,
+      "type": "analog"
+    },
+    {
+      "key": "stick_y",
+      "name": "Vertical",
+      "player": 1,
+      "type": "analog"
+    },
+    {
+      "key": "dial",
+      "name": "Dial",
+      "player": 2,
+      "type": "analog"
+    },
+    {
+      "key": "dip_a",
+      "name": "DIP A",
+      "player": 0,
+      "type": "byte"
+    }
+  ]
+}

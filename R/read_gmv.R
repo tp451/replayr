@@ -54,8 +54,8 @@
 #'
 #' @param path Path to a .gmv file.
 #' @return A `replayr_movie` object.
-#' @export
-read_gmv <- function(path) {
+#' @noRd
+.decode_gmv <- function(path) {
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x40L || !identical(data[1:15], charToRaw("Gens Movie TEST"))) {
     stop(path, ": not a GMV file")
@@ -138,8 +138,8 @@ read_gmv <- function(path) {
     header = header,
     commands = commands,
     inputs = inputs,
-    button_mnemonics = universal_buttons()[seq_len(n_buttons)],
-    button_names = universal_button_names()[seq_len(n_buttons)]
+    button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
+    button_names = .legacy_button_names()[seq_len(n_buttons)]
   )
   mv$source_path <- path
   mv

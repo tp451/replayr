@@ -2,19 +2,17 @@
 % Please edit documentation in R/movie_class.R
 \name{n_buttons}
 \alias{n_buttons}
-\title{Number of universal-button slots in a parsed movie}
+\title{Number of compact controller columns}
 \usage{
 n_buttons(movie)
 }
 \arguments{
-\item{movie}{A \link{replayr_movie} (returned by \code{\link[=read_movie]{read_movie()}} or any of the
-format-specific readers).}
+\item{movie}{A \link{replayr_movie} or \link{replayr_poll_stream} returned by
+\code{\link[=read_movie]{read_movie()}} or a format-specific reader.}
 }
 \value{
 Integer scalar.
 }
 \description{
-Varies per platform: 8 for NES / GB, 12 for SNES / GBA, 15 for Genesis,
-28 for N64 / GameCube, 30 for PSX. Slots are always a prefix of the
-\code{\link[=universal_buttons]{universal_buttons()}} alphabet.
+Use \code{\link[=button_layout]{button_layout()}} to map these columns to stable controller IDs.
 }

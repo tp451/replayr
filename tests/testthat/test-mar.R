@@ -1,0 +1,46 @@
+mar_example <- function(name) system.file("extdata","expanded",name,package="replayr",mustWork=TRUE)
+
+test_that("MAR preserves separate left and right digital joysticks", {
+  m <- .configure_movie(.decode_mar(mar_example("arcade-dual-joysticks.mar")))
+  key <- button_layout(m)$key
+  expect_equal(dim(m$inputs),c(4L,2L,9L))
+  expect_true(m$inputs[2L,1L,match("left_dpad_right",key)])
+  expect_true(m$inputs[2L,1L,match("right_dpad_up",key)])
+  expect_true(m$inputs[2L,2L,match("left_dpad_down",key)])
+  expect_true(m$inputs[2L,2L,match("right_dpad_left",key)])
+  expect_equal(sum(m$inputs[4L,,]),0)
+  expect_equal(system_channels(m)$port_p1_default,rep(2^32-1,4))
+})
+
+test_that("MAR retains dial accumulator and emulator scaling fields", {
+  m <- .configure_movie(.decode_mar(mar_example("arcade-dial-shift.mar")))
+  expect_equal(analog_channels(m,1L)[,"dial_v_dial1_accumulator"],c(-1000,0,2000,0))
+  expect_equal(analog_channels(m,1L)[,"dial_v_dial1_previous"],c(0,-1000,0,2000))
+  expect_equal(analog_channels(m,2L)[,"dial_v_dial2_accumulator"],c(0,800,-800,0))
+  expect_equal(analog_channels(m,2L)[,"dial_v_dial2_reverse"],c(0,1,1,1))
+  expect_equal(analog_channels(m,1L)[,"dial_v_dial1_sensitivity"],rep(25,4))
+  expect_identical(.configure_movie(.decode_mar(mar_example("arcade-dial-shift.mar")),"angle")$analog,m$analog)
+  key <- button_layout(m)$key
+  expect_true(m$inputs[2L,1L,match("b",key)])
+  expect_true(m$inputs[3L,1L,match("x",key)])
+})
+
+test_that("MAR treats port digital values as unsigned pressed masks", {
+  m <- .configure_movie(.decode_mar(mar_example("arcade-unsigned-port.mar")))
+  key <- button_layout(m)$key
+  expect_true(m$inputs[2L,1L,match("dpad_up",key)])
+  expect_false(m$inputs[2L,2L,match("dpad_up",key)])
+  expect_true(m$inputs[3L,2L,match("dpad_down",key)])
+  expect_equal(sum(m$inputs[4L,,]),0)
+  expect_equal(system_channels(m)$port_inputs_digital,c(0x01000001,2^31,0x00400000,0))
+  expect_equal(system_channels(m)$input_coin_1,c(TRUE,FALSE,FALSE,FALSE))
+})
+
+test_that("MAR rejects missing schemas and truncated records", {
+  raw <- readBin(mar_example("arcade-dual-joysticks.mar"),"raw",n=10000)
+  tmp <- tempfile(fileext=".mar");on.exit(unlink(tmp))
+  writeBin(head(raw,-1L),tmp)
+  expect_error(.decode_mar(tmp),"length disagrees")
+  raw[13:24] <- c(charToRaw("unknown"),raw(5L));writeBin(raw,tmp)
+  expect_error(.decode_mar(tmp),"requires a source-verified input_schema")
+})

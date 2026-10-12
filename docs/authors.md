@@ -6,12 +6,12 @@
 
 ## Citation
 
-Pelzer T (2026). *replayr: Read Emulator Movie Files into a Uniform
-Frame-by-Frame Array*. R package version 0.3.3.
+Pelzer T (2026). *replayr: Import Emulator Input Recordings*. R package
+version 0.4.0.
 
     @Manual{,
-      title = {replayr: Read Emulator Movie Files into a Uniform Frame-by-Frame Array},
+      title = {replayr: Import Emulator Input Recordings},
       author = {Thorben Pelzer},
       year = {2026},
-      note = {R package version 0.3.3},
+      note = {R package version 0.4.0},
     }

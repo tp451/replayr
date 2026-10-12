@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Read Emulator Movie Files into a Uniform Frame-by-Frame Array • replayr</title>
+<title>Import Emulator Input Recordings • replayr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -15,9 +15,9 @@
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Read Emulator Movie Files into a Uniform Frame-by-Frame Array">
-<meta name="description" content="Decoders for twelve emulator movie (&quot;input log&quot;) file formats used by the speedrun and tool-assisted-speedrun communities: FCEUX (.fm2), BizHawk (.bk2), FCEU (.fcm), lsnes (.lsmv), Gens-rerecording (.gmv), VBA-rerecording (.vbm), Mupen64 (.m64), Snes9x-rerecording (.smv), PCSX-rerecording (.pxm), PSXjin (.pjm), Dolphin (.dtm), and Doom (.lmp). Every parser produces the same in-memory shape: a per-frame logical matrix indexed against a single 40-slot universal-button layout, plus the file's header metadata and a per-frame commands vector. Allows cross-platform analysis of input recordings without an emulator.">
-<meta property="og:description" content="Decoders for twelve emulator movie (&quot;input log&quot;) file formats used by the speedrun and tool-assisted-speedrun communities: FCEUX (.fm2), BizHawk (.bk2), FCEU (.fcm), lsnes (.lsmv), Gens-rerecording (.gmv), VBA-rerecording (.vbm), Mupen64 (.m64), Snes9x-rerecording (.smv), PCSX-rerecording (.pxm), PSXjin (.pjm), Dolphin (.dtm), and Doom (.lmp). Every parser produces the same in-memory shape: a per-frame logical matrix indexed against a single 40-slot universal-button layout, plus the file's header metadata and a per-frame commands vector. Allows cross-platform analysis of input recordings without an emulator.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Import Emulator Input Recordings">
+<meta name="description" content="Import emulator input recordings from FCEUX, BizHawk, Dolphin, Citra, libTAS, openMSX, JPC-RR, and other recording tools. Imports retain compact digital control arrays, stable control identities, original numeric channels, metadata, and emulator commands. Supports gamepads, keyboards, mice, touchscreens, and recorded motion or light-gun channels. Source timing distinguishes frames, controller polls, and timestamped events. Left and right stick directions, angles, and magnitudes can be selected independently. Allows analysis of input recordings without running an emulator.">
+<meta property="og:description" content="Import emulator input recordings from FCEUX, BizHawk, Dolphin, Citra, libTAS, openMSX, JPC-RR, and other recording tools. Imports retain compact digital control arrays, stable control identities, original numeric channels, metadata, and emulator commands. Supports gamepads, keyboards, mice, touchscreens, and recorded motion or light-gun channels. Source timing distinguishes frames, controller polls, and timestamped events. Left and right stick directions, angles, and magnitudes can be selected independently. Allows analysis of input recordings without running an emulator.">
 <meta property="og:image" content="/logo.svg">
 </head>
 <body>
@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">replayr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,161 +57,345 @@
 <img src="logo.svg" class="logo" alt=""><h1 id="replayr-">replayr <a class="anchor" aria-label="anchor" href="#replayr-"></a>
 </h1>
 </div>
-<!-- badges: start -->
-
-<p>Pure-R parsers for 12 emulator movie (“input log”) file formats used by the speedrun and tool-assisted-speedrun communities.</p>
+<p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></p>
+<p><code>replayr</code> imports emulator recordings into R. It reads the buttons, keys, analogue sticks, pointer movement, touch, and motion-sensor values recorded during play, together with their timing and emulator metadata.</p>
+<div class="section level2">
+<h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
+</h2>
+<p>Install from a source checkout:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_local.html" class="external-link">install_local</a></span><span class="op">(</span><span class="st">"path/to/replayr"</span><span class="op">)</span></span></code></pre></div>
+<p>Read a recording and extract one controller:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">replayr</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample.fm2"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
+<span><span class="va">movie</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
+<span><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/player.html">player</a></span><span class="op">(</span><span class="va">movie</span>, <span class="fl">1L</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/n_frames.html">n_frames</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/press_counts.html">press_counts</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/button_layout.html">button_layout</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span></span></code></pre></div>
+<p><code>input</code> is a logical matrix: rows are observations, columns are controls, and <code>TRUE</code> means active. <code><a href="reference/button_layout.html">button_layout()</a></code> identifies each column. For another recording, pass its path to <code><a href="reference/read_movie.html">read_movie()</a></code>; the file extension selects the reader. <code><a href="reference/movie_members.html">movie_members()</a></code> lists recordings inside a ZIP download, and <code>read_movie(path, member = ...)</code> selects one of them.</p>
+</div>
+<div class="section level2">
+<h2 id="controllers-and-control-identities">Controllers and control identities<a class="anchor" aria-label="anchor" href="#controllers-and-control-identities"></a>
+</h2>
+<p>Each S3 object contains digital inputs, numeric channels, commands, and metadata. A <code>replayr_movie</code> stores its digital input in an array indexed by observation, controller, and control. Event-based formats retain the key and device fields present in the events; fixed gamepad layouts include unused buttons as well as pressed ones.</p>
+<p>Columns are compact within each recording. Stable IDs and keys identify controls across layouts: a stick click, a direction derived from that stick, and an N64 C-button each have their own identity. <code>button_layout(movie)</code> gives the column-to-control mapping; <code><a href="reference/button_layout.html">button_layout()</a></code> lists the shared registry. Keyboard identities retain the source convention, such as X KeySyms or Windows virtual keys.</p>
+<p>The registry contains 53 consecutive IDs. Buttons with comparable roles share an ID across devices. The main mappings are:</p>
 <table class="table">
 <colgroup>
-<col width="10%">
-<col width="30%">
-<col width="59%">
+<col width="50%">
+<col width="50%">
 </colgroup>
 <thead><tr>
-<th>Format</th>
-<th>Emulator</th>
+<th>Source controls</th>
+<th>Shared control and ID</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Arcade Attack, Punch, or button 1; Doom Attack</td>
+<td>A (8)</td>
+</tr>
+<tr>
+<td>Arcade buttons 5–8</td>
+<td>L1, R1, L2, R2 (11–14)</td>
+</tr>
+<tr>
+<td>Arcade D or button 4</td>
+<td>Y (10)</td>
+</tr>
+<tr>
+<td>Arcade Jump, Jump/Start, or button 2; Doom Use; missile</td>
+<td>B (7)</td>
+</tr>
+<tr>
+<td>Arcade Kick or button 3</td>
+<td>X (9)</td>
+</tr>
+<tr>
+<td>GunCon trigger, side A, side B, and offscreen shot</td>
+<td>A, B, X, Y (8, 7, 9, 10)</td>
+</tr>
+<tr>
+<td>Intellivision Top</td>
+<td>X (9)</td>
+</tr>
+<tr>
+<td>Joystick buttons 1–8</td>
+<td>A, B, X, Y, L1, R1, L2, R2 (8, 7, 9–14)</td>
+</tr>
+<tr>
+<td>Keypad Clear and Enter</td>
+<td>Select (6) and Start (5)</td>
+</tr>
+<tr>
+<td>Keypad digits 0–9 and Power Pad sensors 1–12</td>
+<td>Equal numbers share <code>numbered_0</code>–<code>numbered_12</code> (40–52)</td>
+</tr>
+<tr>
+<td>Mouse buttons 4 and 5</td>
+<td>L1 and R1 (11 and 12)</td>
+</tr>
+<tr>
+<td>Mouse left, right, and middle buttons</td>
+<td>A, B, X (8, 7, 9)</td>
+</tr>
+<tr>
+<td>Neo Geo A, B, C, and D</td>
+<td>A, B, X, Y (8, 7, 9, 10)</td>
+</tr>
+<tr>
+<td>Super Scope trigger, cursor, turbo, and pause</td>
+<td>A, B, Mode, Start (8, 7, 19, 5)</td>
+</tr>
+<tr>
+<td>View change</td>
+<td>Select (6)</td>
+</tr>
+<tr>
+<td>Wii Remote 1/2, +/−, and Home</td>
+<td>X/Y (9/10), Start/Select (5/6), and Mode (19)</td>
+</tr>
+</tbody>
+</table>
+<p>Wii Remote D-pad and A/B buttons use the gamepad IDs. Nunchuk C/Z use 17/18, Classic Controller buttons use the corresponding gamepad IDs, and libTAS Guide uses Mode. The microphone uses ID 53. Genesis and Saturn C retain ID 17 because those controllers have separate C and X buttons.</p>
+<p>These mappings align controller roles; the action performed by a button still depends on the game. Keyboard keys, keypad Star/Pound, and controls without a defined counterpart retain qualified source IDs. For example, an arcade D button uses Y (10), while a libTAS keyboard D keeps <code>control:keysym_64</code>. openMSX device-qualified controls also remain separate, because its recordings can combine several devices in one input stream.</p>
+<p>When multiple source buttons share an ID, the column is active if either is pressed. <code>source_inputs</code> and <code>source_layout</code> preserve the separate states and their mapping whenever aliases are combined. Wii device states also appear in <code>poll_fields</code> as <code>wii_remote_*</code> and <code>wii_classic_*</code> columns, which <code><a href="reference/polls.html">polls()</a></code> includes for unassigned streams.</p>
+<div class="float">
+<img src="reference/figures/universal_buttons_layout.svg" alt="Universal button IDs for gamepads, both sticks, keypads, and peripherals, with named controls and numeric channels"><div class="figcaption">Universal button IDs for gamepads, both sticks, keypads, and peripherals, with named controls and numeric channels</div>
+</div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">aligned</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/align_buttons.html">align_buttons</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">movie1</span>, <span class="va">movie2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>The aligned matrices have matching columns, with absent controls filled by <code>FALSE</code>. Comparing game actions also requires a mapping from controls to their in-game meanings, such as Jump or Attack.</p>
+</div>
+<div class="section level2">
+<h2 id="analogue-and-positional-input">Analogue and positional input<a class="anchor" aria-label="anchor" href="#analogue-and-positional-input"></a>
+</h2>
+<p><code><a href="reference/analog_channels.html">analog_channels()</a></code> returns recorded numeric values. By default, <code>analog = "raw"</code> leaves stick coordinates in this form. Four options add directions or angles: <code>cardinal4</code>, <code>cardinal8</code>, <code>angle</code>, and <code>angle+magnitude</code>. Settings can be chosen independently for each stick:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample.dtm"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
+<span><span class="va">movie</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">path</span>,</span>
+<span>  analog <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>left <span class="op">=</span> <span class="st">"angle+magnitude"</span>, right <span class="op">=</span> <span class="st">"cardinal8"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="reference/analog_channels.html">analog_channels</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="reference/stick_channels.html">stick_channels</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Cardinal modes add logical direction columns. Angles increase counterclockwise from right: 0 degrees right, 90 up, 180 left, and 270 down. <code>deadzone</code> sets the radial threshold for an active direction. Magnitude measures displacement after applying the controller’s centre and scale; diagonal values can exceed one. The original coordinates remain available in every mode.</p>
+<p>Mouse movement, light-gun aim, touch coordinates, dials, and motion sensors also appear in <code><a href="reference/analog_channels.html">analog_channels()</a></code>, with names and units determined by the recording format. Wii input can include accelerometer values, infrared points, and MotionPlus readings. Sensor calibration is needed to convert these counts to physical units. The package vignette demonstrates mouse dragging and Wii motion with original examples; open it with <code><a href="articles/replayr.html">vignette("replayr", package = "replayr")</a></code>.</p>
+<p>For BK2 recordings, <code><a href="reference/system_channels.html">system_channels()</a></code> returns cabinet and emulator controls, such as coins, reset, disk selection, and input timing.</p>
+</div>
+<div class="section level2">
+<h2 id="timing-and-multiple-controllers">Timing and multiple controllers<a class="anchor" aria-label="anchor" href="#timing-and-multiple-controllers"></a>
+</h2>
+<p>Rows may represent video frames, controller polls, or timestamped events. <code><a href="reference/n_frames.html">n_frames()</a></code> counts imported observations. The reader documentation describes the observation unit and any timing information stored in the file. LSMV also records input changes within video frames; <code>movie$subframes</code> identifies each observation’s frame and position.</p>
+<p>M64 and DTM can contain multiple controllers without identifying the source port of each poll. These recordings return a <code>replayr_poll_stream</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"paper"</span>, <span class="st">"unassigned.dtm"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
+<span><span class="va">stream</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_dtm.html">read_dtm</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/polls.html">polls</a></span><span class="op">(</span><span class="va">stream</span><span class="op">)</span></span></code></pre></div>
+<p>The polls retain their source order. A <code>controller_order</code> established from the emulator can assign them to players. Wii and 3DS formats also distinguish reports from different devices; their observation flags identify which input fields each report supplies. See <code><a href="reference/read_dtm.html">?read_dtm</a></code> and <code><a href="reference/read_ctm.html">?read_ctm</a></code> for these fields.</p>
+</div>
+<div class="section level2">
+<h2 id="formats-and-platforms">Formats and platforms<a class="anchor" aria-label="anchor" href="#formats-and-platforms"></a>
+</h2>
+<p>The package reads 34 format families, with HGM as an alias for Hourglass WTF. The <a href="COMPATIBILITY.html">compatibility catalogue</a> describes their versions, controller variants, and platform coverage.</p>
+<table class="table">
+<colgroup>
+<col width="29%">
+<col width="36%">
+<col width="34%">
+</colgroup>
+<thead><tr>
+<th>Recording family</th>
+<th>Emulator or recorder</th>
+<th>Systems represented</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>BK2, BKM, TAS, TASPROJ</td>
+<td>BizHawk</td>
+<td>Consoles, handhelds, arcade machines, and home computers</td>
+</tr>
+<tr>
+<td>CTAS</td>
+<td>CoffeeTools</td>
+<td><em>UFO 50</em></td>
+</tr>
+<tr>
+<td>CTM</td>
+<td>Citra</td>
+<td>Nintendo 3DS</td>
+</tr>
+<tr>
+<td>DFT</td>
+<td>Dustmod</td>
+<td>
+<em>Dustforce</em> input scripts and their dependencies</td>
+</tr>
+<tr>
+<td>DSM</td>
+<td>DeSmuME</td>
+<td>Nintendo DS</td>
+</tr>
+<tr>
+<td>DTM</td>
+<td>Dolphin</td>
+<td>GameCube, Wii</td>
+</tr>
+<tr>
+<td>FBM</td>
+<td>FinalBurn Alpha</td>
+<td>Arcade games with an explicit driver input layout</td>
+</tr>
+<tr>
+<td>FM2, FM3, FCM, FMV</td>
+<td>FCEUX, FCEU, Famtasia</td>
+<td>NES, Famicom Disk System</td>
+</tr>
+<tr>
+<td>GBMV</td>
+<td>GBAHawk</td>
+<td>Game Boy Advance</td>
+</tr>
+<tr>
+<td>GMV</td>
+<td>Gens</td>
+<td>Mega Drive, Sega CD, 32X</td>
+</tr>
+<tr>
+<td>JRSR</td>
+<td>JPC-rr</td>
+<td>DOS PC</td>
+</tr>
+<tr>
+<td>LMP</td>
+<td>Doom, Boom</td>
+<td>Doom 1.9 and Boom demo versions 200–202</td>
+</tr>
+<tr>
+<td>LSMV, SMV, ZMV</td>
+<td>lsnes, Snes9x, enhanced ZSNES</td>
+<td>SNES, Game Boy, Super Game Boy</td>
+</tr>
+<tr>
+<td>LTM</td>
+<td>libTAS</td>
+<td>Linux applications, including emulated systems</td>
+</tr>
+<tr>
+<td>M64, GZM</td>
+<td>Mupen64, GZ</td>
+<td>Nintendo 64</td>
+</tr>
+<tr>
+<td>MAR</td>
+<td>MAME-rr</td>
+<td>Arcade games with known or supplied port schemas</td>
+</tr>
+<tr>
+<td>MC2</td>
+<td>PCEjin, VBjin</td>
+<td>PC Engine, Virtual Boy</td>
+</tr>
+<tr>
+<td>MCM</td>
+<td>Mednafen-rr</td>
+<td>PC Engine, PC-FX, Lynx, WonderSwan, Neo Geo Pocket, NES, Master System</td>
+</tr>
+<tr>
+<td>MMV</td>
+<td>Dega</td>
+<td>Master System, Game Gear</td>
+</tr>
+<tr>
+<td>OMR</td>
+<td>openMSX</td>
+<td>MSX, Spectravideo SVI-318/328</td>
+</tr>
+<tr>
+<td>PXM, PJM</td>
+<td>PCSX-rr, PSXjin</td>
+<td>PlayStation</td>
+</tr>
+<tr>
+<td>VBM</td>
+<td>VBA</td>
+<td>Game Boy, Game Boy Color, Game Boy Advance</td>
+</tr>
+<tr>
+<td>WTF, HGM</td>
+<td>Hourglass</td>
+<td>Windows applications</td>
+</tr>
+<tr>
+<td>YMV</td>
+<td>Yabause-rr</td>
+<td>Saturn</td>
+</tr>
+</tbody>
+</table>
+<p>The supported recording formats cover the following platforms. Some desktop and browser entries use input recorded by a host application through libTAS or Hourglass; the catalogue identifies those combinations.</p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr>
+<th>Family</th>
 <th>Platforms</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>.fm2</td>
-<td>FCEUX</td>
-<td>NES</td>
+<td>Arcade and application platforms</td>
+<td>Adobe Flash; Android; Arcade; IBM PC compatible; IBM PC DOS; Java 2 Platform, Micro Edition (J2ME); Mac OS / macOS; PICO-8; TIC-80; Web.</td>
 </tr>
 <tr>
-<td>.bk2</td>
-<td>BizHawk (multi-system)</td>
-<td>NES, SNES, Genesis, Master System, GB/GBC/GBA, N64, PSX, Saturn, Atari 2600, PC Engine, Intellivision, ColecoVision, Arcade</td>
+<td>Atari</td>
+<td>Atari 2600; Atari 7800; Atari Jaguar; Atari Jaguar CD; Atari Lynx.</td>
 </tr>
 <tr>
-<td>.fcm</td>
-<td>FCEU</td>
-<td>NES</td>
+<td>Home computers and calculators</td>
+<td>Amiga; Apple II; Commodore 64; MSX Home Computer System; Spectravideo SVI-318/328; Texas Instruments TI-83 Series; ZX Spectrum.</td>
 </tr>
 <tr>
-<td>.lsmv</td>
-<td>lsnes</td>
-<td>SNES, Game Boy, Super Game Boy</td>
+<td>NEC</td>
+<td>NEC PC-98; PC Engine / TurboGrafx-16; PC Engine CD / TurboGrafx-CD; PC-FX; SuperGrafx.</td>
 </tr>
 <tr>
-<td>.gmv</td>
-<td>Gens-rerecording</td>
-<td>Sega Genesis / Mega Drive</td>
+<td>Nintendo</td>
+<td>Famicom Disk System; Game Boy; Game Boy Advance; Game Boy Color; Nintendo 3DS; Nintendo 64; Nintendo 64DD; Nintendo DS; Nintendo DSi; Nintendo Entertainment System / Famicom; Nintendo GameCube; Satellaview; Super Game Boy; Super Nintendo / Super Famicom; Virtual Boy; Wii.</td>
 </tr>
 <tr>
-<td>.vbm</td>
-<td>VBA-rerecording</td>
-<td>Game Boy / GBC / GBA</td>
+<td>Other consoles</td>
+<td>3DO; CD-i; ColecoVision; Fairchild Channel F; Intellivision; Neo Geo Pocket; Odyssey 2 / Videopac; Sony PlayStation; Uzebox; Vectrex; WonderSwan.</td>
 </tr>
 <tr>
-<td>.m64</td>
-<td>Mupen64</td>
-<td>N64</td>
-</tr>
-<tr>
-<td>.smv</td>
-<td>Snes9x-rerecording</td>
-<td>SNES</td>
-</tr>
-<tr>
-<td>.pxm</td>
-<td>PCSX-rerecording</td>
-<td>PSX</td>
-</tr>
-<tr>
-<td>.pjm</td>
-<td>PSXjin (text body)</td>
-<td>PSX</td>
-</tr>
-<tr>
-<td>.dtm</td>
-<td>Dolphin</td>
-<td>GameCube</td>
-</tr>
-<tr>
-<td>.lmp</td>
-<td>Doom (vanilla 1.9)</td>
-<td>DOS / PC</td>
+<td>Sega</td>
+<td>Game Gear; Sega 32X; Sega CD / Mega-CD; Sega Genesis / Mega Drive; Sega Master System; Sega Saturn; Sega SG-1000.</td>
 </tr>
 </tbody>
 </table>
-<p>Every parser produces the same in-memory shape: a <code>replayr_movie</code> S3 object with a <code>(n_frames, n_players, n_buttons)</code> logical input array indexed against a single 40-slot universal-button layout, plus the file’s header metadata and a per-frame commands vector.</p>
-<div class="float">
-<img src="reference/figures/universal_buttons_layout.svg" alt="replayr universal-button layout"><div class="figcaption">replayr universal-button layout</div>
-</div>
-<p>Slots 1–30 cover the gamepad family (d-pad, Start/Select/Mode, six face buttons, two shoulders, two triggers, four C-buttons, and the eight stick directions). Slots 31–40 cover the Intellivision / ColecoVision numeric keypad. INTV’s Enter / Clear and Coleco’s Star / Pound fold into Start (slot 5) and Select (slot 6) — they’re pressed once at boot, not as gameplay verbs, so they share semantics with console Start/Select rather than getting their own slots.</p>
-<div class="section level2">
-<h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
-</h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">replayr</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Use one of the bundled samples.</span></span>
-<span><span class="va">fp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample.fm2"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
-<span><span class="va">mv</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">fp</span><span class="op">)</span></span>
-<span><span class="va">mv</span></span>
-<span><span class="co">#&gt; &lt;replayr_movie [fm2] frames=3600 players=2 buttons=8 source=sample.fm2&gt;</span></span>
-<span></span>
-<span><span class="fu"><a href="reference/n_frames.html">n_frames</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span>            <span class="co"># frame count</span></span>
-<span><span class="fu"><a href="reference/press_counts.html">press_counts</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span>        <span class="co"># named vector of per-button hold counts</span></span>
-<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/player.html">player</a></span><span class="op">(</span><span class="va">mv</span>, <span class="fl">1L</span><span class="op">)</span>    <span class="co"># logical matrix (frames x buttons)</span></span></code></pre></div>
-<p><code>system.file("extdata", package = "replayr")</code> lists every bundled sample. To parse your own movie file, just pass the path:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mv</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="st">"/path/to/your/movie.bk2"</span><span class="op">)</span></span></code></pre></div>
+<p>Arcade FBM recordings require a <code>game</code> identifier or <code>input_schema</code>, since their fields follow the game driver’s order. Decoding legacy Wii extension controls requires the extension type and, when encrypted, its key. Reader help pages describe the arguments needed for each variant.</p>
 </div>
 <div class="section level2">
-<h2 id="universal-button-layout">Universal button layout<a class="anchor" aria-label="anchor" href="#universal-button-layout"></a>
+<h2 id="large-recordings">Large recordings<a class="anchor" aria-label="anchor" href="#large-recordings"></a>
 </h2>
-<p>The 40-slot universal-button alphabet is documented in <code><a href="reference/universal_buttons.html">?universal_buttons</a></code>. Slots 1..8 are NES-shaped (R, L, D, U, Start, Select, B, A); higher slots cover SNES face/shoulder buttons, the N64 C-buttons, an 8-direction quantisation of any analog stick, and PSX- specific L2/R2. <code>n_buttons(mv)</code> tells you how many slots a particular movie actually uses (8 NES, 12 SNES, 15 Genesis, 28 N64/GameCube, 30 PSX).</p>
+<p>For BK2 logs that are too large to hold in memory, use a callback on successive chunks:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_bk2_chunks.html">read_bk2_chunks</a></span><span class="op">(</span><span class="st">"long-recording.bk2"</span>, <span class="va">press_counts</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="va">`+`</span>, <span class="va">counts</span><span class="op">)</span></span></code></pre></div>
+<p>The input log is checked and extracted once. Temporary disk space must hold the expanded log; the callback determines how much output is retained. <code><a href="reference/read_bk2.html">read_bk2()</a></code> and <code><a href="reference/read_lsmv.html">read_lsmv()</a></code> limit full imports to 256 MiB of expanded input by default. <code>max_input_bytes</code> can raise this limit when memory permits.</p>
 </div>
 <div class="section level2">
-<h2 id="install">Install<a class="anchor" aria-label="anchor" href="#install"></a>
+<h2 id="tests-and-examples">Tests and examples<a class="anchor" aria-label="anchor" href="#tests-and-examples"></a>
 </h2>
-<p>From a local source tree:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"path/to/replayr"</span><span class="op">)</span></span></code></pre></div>
+<p>The package includes original artificial recordings and their generators. They exercise individual controls, movement patterns, device combinations, and malformed input. Run the tests with <code>devtools::test("path/to/replayr")</code>. Optional external tests use separately obtained TASVideos recordings through <code>REPLAYR_FIXTURE_DIR</code>.</p>
 </div>
 <div class="section level2">
-<h2 id="test">Test<a class="anchor" aria-label="anchor" href="#test"></a>
+<h2 id="author-and-license">Author and license<a class="anchor" aria-label="anchor" href="#author-and-license"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">test</a></span><span class="op">(</span><span class="st">"path/to/replayr"</span><span class="op">)</span></span></code></pre></div>
-<p>The test suite is self-contained: twelve generated one-minute samples exercise every supported reader. They contain only synthetic controller input and no third-party movie data. Set <code>REPLAYR_FIXTURE_DIR</code> to a separately obtained local corpus if you want to run optional compatibility tests as well; corpus files are never bundled with replayr.</p>
-</div>
-<div class="section level2">
-<h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a>
-</h2>
-<p>Thorben Pelzer (<a href="mailto:thorben@pelzer.blog" class="email">thorben@pelzer.blog</a>).</p>
-</div>
-<div class="section level2">
-<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
-</h2>
-<p><code>replayr</code> is licensed under the GNU General Public License version 2 or later. Six of the twelve format readers were developed with reference to the upstream emulator’s source tree (named in those files’ headers); those upstreams are themselves GPL-2+, so the package as a whole is GPL.</p>
-</div>
-<div class="section level2">
-<h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
-</h2>
-<p>The format-specific readers build on documentation and reference implementations from the speedrunning / TAS community. We are grateful to the authors of these projects for keeping their formats open enough to be re-implemented:</p>
-<ul>
-<li>
-<strong><a href="https://github.com/dolphin-emu/dolphin" class="external-link">Dolphin Emulator Project</a></strong> – the <code>.dtm</code> GameCube movie format reader (<code>R/read_dtm.R</code>) was developed with reference to <code>Source/Core/Core/Movie.cpp</code>.</li>
-<li>
-<strong><a href="https://github.com/id-Software/DOOM" class="external-link">id Software’s Doom source</a></strong> – the <code>.lmp</code> demo format reader (<code>R/read_lmp.R</code>) was developed with reference to <code>linuxdoom-1.10/g_game.c</code> and the DoomWiki demo specification.</li>
-<li>
-<strong>PSXjin</strong> – the <code>.pjm</code> reader was developed with reference to the PSXjin source tree.</li>
-<li>
-<strong>PCSX-rerecording</strong> – the <code>.pxm</code> reader follows the PCSX-rr format and its documented controller-record layout.</li>
-<li>
-<strong><a href="https://repo.or.cz/lsnes.git" class="external-link">lsnes</a></strong> – the <code>.lsmv</code> movie format reader was developed with reference to the lsnes source tree.</li>
-<li>
-<strong><a href="https://github.com/TASEmulators/vba-rerecording" class="external-link">VBA-rerecording</a></strong> – the <code>.vbm</code> movie format reader was developed with reference to <code>movie.h</code>.</li>
-<li>
-<strong>TASVideos</strong> – the <a href="https://tasvideos.org/EmulatorResources" class="external-link">EmulatorResources</a> wiki provides community-authored format documentation. Every reader cites at least one TASVideos page.</li>
-<li>
-<strong>FCEUX</strong> – the <a href="https://fceux.com/web/FM2.html" class="external-link"><code>.fm2</code> format spec</a> is the canonical reference for the FCEUX movie format.</li>
-</ul>
-<p>Per-file attribution comments name the specific upstream references for each derivative reader. The full provenance manifest is in <a href="inst/COPYRIGHTS"><code>inst/COPYRIGHTS</code></a>.</p>
-<p>The <code>.fm2</code>, <code>.bk2</code>, <code>.fcm</code>, <code>.gmv</code>, <code>.m64</code>, and <code>.smv</code> readers were written from public format specifications and to our knowledge do not draw on any GPL emulator source, but they are still covered by the package’s GPL (&gt;= 2) license.</p>
+<p>Thorben Pelzer (<a href="mailto:thorben@pelzer.blog" class="email">thorben@pelzer.blog</a>). GPL version 2 or later. Format documentation and emulator source references are listed in <a href="inst/COPYRIGHTS"><code>inst/COPYRIGHTS</code></a>.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
@@ -236,12 +420,7 @@
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
-</ul>
-</div>
+
 
   </aside>
 </div>

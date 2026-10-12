@@ -1,5 +1,5 @@
-test_that("read_bk2() parses the bundled synthetic NES movie", {
-  mv <- read_bk2(fixture_path("sample.bk2"))
+test_that("replayr:::.decode_bk2() parses the bundled synthetic NES movie", {
+  mv <- replayr:::.decode_bk2(analog = "quantized", fixture_path("sample.bk2"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "bk2")
   expect_equal(n_frames(mv), 3600L)
@@ -9,13 +9,13 @@ test_that("read_bk2() parses the bundled synthetic NES movie", {
   expect_true(sum(pc) > 0L)
 })
 
-test_that("read_bk2() tolerates a NUL-padded Header.txt field", {
+test_that("replayr:::.decode_bk2() tolerates a NUL-padded Header.txt field", {
   # Some Gambatte-core Game Boy movies write `BoardName NULL\0\0...` as a
   # fixed-width NUL-padded field; rawToChar() used to abort on the embedded
   # NUL. Kwirk is the canonical example.
   fp <- external_fixture("raw_gb/kwirk/3755.bk2")
   if (is.null(fp)) skip("set REPLAYR_FIXTURE_DIR to enable the NUL-header test")
-  mv <- read_bk2(fp)
+  mv <- replayr:::.decode_bk2(analog = "quantized", fp)
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "bk2")
   expect_gt(n_frames(mv), 0L)
@@ -58,7 +58,7 @@ test_that("LogKey parser disambiguates the Nymashock PSX face buttons", {
   expect_true(8L %in% slots)    # Circle
 })
 
-test_that("read_bk2() decodes a Nymashock PSX movie via its UTF-8 LogKey", {
+test_that("replayr:::.decode_bk2() decodes a Nymashock PSX movie via its UTF-8 LogKey", {
   # Regression for the mojibake fix: the member must be read as UTF-8 so the
   # Triangle/Square/Circle glyphs survive and the PSX "X"=Cross disambiguation
   # fires. Read as latin1 (double-encoded) the glyphs garble, detection fails,
@@ -81,7 +81,7 @@ test_that("read_bk2() decodes a Nymashock PSX movie via its UTF-8 LogKey", {
   setwd(old)
   skip_if_not(zipped && file.exists(bk2) && file.info(bk2)$size > 0,
               "zip tool unavailable to build synthetic .bk2")
-  mv <- read_bk2(bk2)
+  mv <- replayr:::.decode_bk2(analog = "quantized", bk2)
   expect_true(mv$inputs[1, 1, 7])    # Cross on slot 7 (B)
   expect_false(mv$inputs[1, 1, 9])   # NOT the SNES X-face slot 9
 })
@@ -92,7 +92,7 @@ test_that("BK2 PSX analog axes use unsigned 128-centred values", {
     "LogKey:#Reset|Power|#P1 LStick X|P1 LStick Y|P1 Up|\n",
     "|..|0,128,.|\n"
   )
-  mv <- replayr:::.parse_bk2_input_log(
+  mv <- replayr:::.parse_bk2_input_log(analog = "quantized",
     log,
     header = list("_format" = "bk2", Platform = "PSX", Core = "Nymashock")
   )
@@ -105,21 +105,21 @@ test_that("BK2 does not reinterpret a sparse LogKey as NES columns", {
     "LogKey:#Reset|Power|#P1 Unknown One|P1 Unknown Two|P1 Up|\n",
     "|..|..U|\n"
   )
-  expect_error(replayr:::.parse_bk2_input_log(log), "too sparse")
+  expect_error(replayr:::.parse_bk2_input_log(analog = "quantized", log), "too sparse")
 })
 
 test_that("NES paddle positions preserve Fire and represent signed motion", {
   log <- paste(c('[Input]', 'LogKey:#Power|Reset|#P1 Paddle|P1 Fire|',
     '|..|80,F|', '|..|160,.|', '|..|160,F|', '|..|0,.|',
     '|..|1,.|', '|..|1,.|', '[/Input]'), collapse='\n')
-  mv <- replayr:::.parse_bk2_input_log(log, header=list(Platform='NES'))
+  mv <- replayr:::.parse_bk2_input_log(analog = "quantized", log, header=list(Platform='NES'))
   expect_equal(which(mv$inputs[,1,8]), c(1L,3L))
   expect_equal(which(mv$inputs[,1,21]), c(2L,5L))
   expect_equal(which(mv$inputs[,1,25]), 4L)
   expect_false(any(mv$inputs[c(3L,6L),1,21:28]))
-  expect_error(replayr:::.parse_bk2_input_log(sub('160', '161', log),
+  expect_error(replayr:::.parse_bk2_input_log(analog = "quantized", sub('160', '161', log),
     header=list(Platform='NES')), 'outside 0..160')
-  expect_error(replayr:::.parse_bk2_input_log(log, header=list(Platform='A26')),
+  expect_error(replayr:::.parse_bk2_input_log(analog = "quantized", log, header=list(Platform='A26')),
     'unsupported bk2 paddle')
 })
 
@@ -132,7 +132,7 @@ test_that("real Arkanoid paddle movie matches its literal position and Fire fiel
   position <- as.integer(sub('^\\|[^|]*\\|\\s*([0-9]+),.*$', '\\1', lines))
   fire <- grepl(',F\\|$', lines)
   motion <- diff(c(80L, position))
-  mv <- read_bk2(fp)
+  mv <- replayr:::.decode_bk2(analog = "quantized", fp)
   expect_equal(n_frames(mv), 37298L)
   expect_identical(unname(mv$inputs[,1,8]), fire)
   expect_identical(unname(mv$inputs[,1,21]), motion > 0)
@@ -143,10 +143,10 @@ test_that("real Arkanoid paddle movie matches its literal position and Fire fiel
 test_that("BK2 cannot silently drop active unknown or undeclared numeric inputs", {
   log <- paste(c('[Input]', 'LogKey:#Power|Reset|#P1 Up|P1 Down|P1 Other|',
     '|..|..X|'), collapse='\n')
-  expect_error(replayr:::.parse_bk2_input_log(log), 'unmapped active bk2 control')
+  expect_error(replayr:::.parse_bk2_input_log(analog = "quantized", log), 'unmapped active bk2 control')
   log <- paste(c('[Input]', 'LogKey:#Power|Reset|#P1 Up|P1 Fire|',
     '|..|80,F.|'), collapse='\n')
-  expect_error(replayr:::.parse_bk2_input_log(log), 'columns disagree')
+  expect_error(replayr:::.parse_bk2_input_log(analog = "quantized", log), 'columns disagree')
 })
 
 test_that('long-form PSX axes, stick buttons and Analog have distinct types', {
@@ -156,12 +156,12 @@ test_that('long-form PSX axes, stick buttons and Analog have distinct types', {
   for (version in c('Version 2.8','Version 2.9','Version 2.10')) {
     center <- if(version=='Version 2.8')32768L else 128L
     row <- paste0('|..|',center,',0,0,',center,',..<>A|')
-    mv <- replayr:::.parse_bk2_input_log(paste(key,row,sep='\n'),
+    mv <- replayr:::.parse_bk2_input_log(analog = "quantized", paste(key,row,sep='\n'),
       header=list(Platform='PSX',Core='Nymashock',emuVersion=version))
-    expect_setequal(which(mv$inputs[1,1,]),c(15,20,25,31,32))
+    expect_setequal(which(mv$inputs[1,1,]),c(15,20,25,41,42))
   }
   bad <- paste(key,'|..|32768,32768,32768,32768,.....|',sep='\n')
-  expect_error(replayr:::.parse_bk2_input_log(bad,
+  expect_error(replayr:::.parse_bk2_input_log(analog = "quantized", bad,
     header=list(Platform='PSX',Core='Nymashock',emuVersion='Version 2.10')),
     'outside declared encoding')
 })
@@ -171,7 +171,7 @@ test_that('BK2 obeys ordered controls across irregular boundaries like BizHawk',
     '#P1 Up|P1 Down|P1 Left|P1 Right|#P2 Up|P2 Down|P2 Left|P2 Right|')
   # The fifth P1 display character is actually consumed as P2 Up.
   log <- paste(key,'||    1,...|...RZ|...|',sep='\n')
-  expect_warning(mv <- replayr:::.parse_bk2_input_log(log,header=list(Platform='PSX')),
+  expect_warning(mv <- replayr:::.parse_bk2_input_log(analog = "quantized", log,header=list(Platform='PSX')),
                  'noncanonical boundaries')
   expect_true(mv$inputs[1,1,1])
   expect_true(mv$inputs[1,2,4])
@@ -184,7 +184,7 @@ test_that('BK2 trailing unbound controls are recorded as unconsumed, not invente
   key <- paste0('LogKey:#Power|Reset|#P1 Up|P1 Down|P1 Left|P1 Right|',
                 'P1 A|P1 B|P1 C|P1 Start|')
   log <- paste(key,'|..|...R..C...Z.|............|','|..|...R..C.|',sep='\n')
-  expect_warning(mv <- replayr:::.parse_bk2_input_log(log,header=list(Platform='GEN')),
+  expect_warning(mv <- replayr:::.parse_bk2_input_log(analog = "quantized", log,header=list(Platform='GEN')),
                  '1 samples have active trailing')
   expect_equal(n_players(mv),1L)
   expect_equal(mv$inputs[1,1,],mv$inputs[2,1,])
@@ -194,14 +194,14 @@ test_that('BK2 trailing unbound controls are recorded as unconsumed, not invente
 
 test_that('no-prefix multiword controls keep their full name', {
   p <- replayr:::.parse_bk2_logkey('LogKey:#D-Pad Up|D-Pad Down|Left Stick, Button|')
-  expect_setequal(vapply(p$btn_map[[1]],function(x)x$slot,integer(1)),c(4L,3L,31L))
+  expect_setequal(vapply(p$btn_map[[1]],function(x)x$slot,integer(1)),c(4L,3L,41L))
 })
 
 test_that('numeric reset timing does not consume player button positions', {
   for(control in c('Reset Instruction','Reset Cycle')) {
     log <- paste0('LogKey:#',control,'|Power|Reset|#P1 Up|P1 Down|\n',
                   '|    0,..|U.|')
-    mv <- replayr:::.parse_bk2_input_log(log,header=list(Platform='NES'))
+    mv <- replayr:::.parse_bk2_input_log(analog = "quantized", log,header=list(Platform='NES'))
     expect_setequal(which(mv$inputs[1,1,]),4L)
     expect_equal(mv$commands,0L)
   }
@@ -210,7 +210,7 @@ test_that('numeric reset timing does not consume player button positions', {
 test_that('a concatenated PSX suffix is flagged without inventing a second frame', {
   key <- 'LogKey:#Disc Select|Open|Close|Reset|#P1 Up|P1 Down|'
   log <- paste(key,'|    1,...|U.|..............||    1,...|.D|',sep='\n')
-  expect_warning(mv <- replayr:::.parse_bk2_input_log(log,header=list(Platform='PSX')),
+  expect_warning(mv <- replayr:::.parse_bk2_input_log(analog = "quantized", log,header=list(Platform='PSX')),
                  'active trailing')
   expect_equal(n_frames(mv),1L)
   expect_setequal(which(mv$inputs[1,1,]),4L)
@@ -219,13 +219,13 @@ test_that('a concatenated PSX suffix is flagged without inventing a second frame
 test_that('Octoshock follows its byte cast rather than clamping logged axes', {
   key <- 'LogKey:#Disc Select|Open|Close|Reset|#P1 LStick X|P1 LStick Y|P1 Cross|'
   log <- paste(key,'|    1,...|128,256,.|','|    1,...|-1,128,X|',sep='\n')
-  expect_warning(mv <- replayr:::.parse_bk2_input_log(log,
+  expect_warning(mv <- replayr:::.parse_bk2_input_log(analog = "quantized", log,
     header=list(Platform='PSX',Core='Octoshock',emuVersion='Version 1.11.7')),
     'byte conversion applied to 2')
   expect_setequal(which(mv$inputs[1,1,]),23L)
   expect_setequal(which(mv$inputs[2,1,]),c(7L,21L))
   expect_equal(mv$header$octoshockByteWrappedAxisValues,2L)
-  expect_error(replayr:::.parse_bk2_input_log(log,
+  expect_error(replayr:::.parse_bk2_input_log(analog = "quantized", log,
     header=list(Platform='PSX',Core='Nymashock',emuVersion='Version 2.10')),
     'outside declared encoding')
 })
@@ -233,7 +233,12 @@ test_that('Octoshock follows its byte cast rather than clamping logged axes', {
 test_that('published Crash Bandicoot 2 value 256 becomes north through Octoshock', {
   fp <- external_fixture('raw_psx/crash_bandicoot_2/3594.bk2')
   if(is.null(fp))skip('set REPLAYR_FIXTURE_DIR for the real Octoshock regression')
-  expect_warning(mv <- read_bk2(fp),'byte conversion applied to 8')
+  messages <- character()
+  mv <- withCallingHandlers(replayr:::.decode_bk2(analog = "quantized", fp), warning=function(w) {
+    messages <<- c(messages, conditionMessage(w)); invokeRestart("muffleWarning")
+  })
+  expect_true(any(grepl("byte conversion applied to 8", messages)))
+  expect_true(any(grepl("noncanonical boundaries", messages)))
   samples <- c(62593:62598,62623:62624)
   expect_true(all(mv$inputs[samples,1,23]))
   expect_false(any(mv$inputs[samples,1,27]))

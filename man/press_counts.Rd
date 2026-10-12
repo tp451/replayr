@@ -2,20 +2,21 @@
 % Please edit documentation in R/movie_class.R
 \name{press_counts}
 \alias{press_counts}
-\title{Press counts per universal-button slot}
+\title{Held-observation counts per control}
 \usage{
 press_counts(movie, idx = 1L)
 }
 \arguments{
-\item{movie}{A \link{replayr_movie} (returned by \code{\link[=read_movie]{read_movie()}} or any of the
-format-specific readers).}
+\item{movie}{A \link{replayr_movie} or \link{replayr_poll_stream} returned by
+\code{\link[=read_movie]{read_movie()}} or a format-specific reader.}
 
 \item{idx}{Player index, 1-based.}
 }
 \value{
 Named integer vector of length \code{n_buttons(movie)}. Names are
-the universal-button friendly labels.
+the control display names. Counts give the observations held, rather than
+the number of off-to-on transitions.
 }
 \description{
-Press counts per universal-button slot
+Held-observation counts per control
 }

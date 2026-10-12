@@ -1,8 +1,7 @@
-# Number of universal-button slots in a parsed movie
+# Number of compact controller columns
 
-Varies per platform: 8 for NES / GB, 12 for SNES / GBA, 15 for Genesis,
-28 for N64 / GameCube, 30 for PSX. Slots are always a prefix of the
-[`universal_buttons()`](universal_buttons.md) alphabet.
+Use [`button_layout()`](button_layout.md) to map these columns to stable
+controller IDs.
 
 ## Usage
 
@@ -14,9 +13,9 @@ n_buttons(movie)
 
 - movie:
 
-  A [replayr_movie](replayr_movie.md) (returned by
-  [`read_movie()`](read_movie.md) or any of the format-specific
-  readers).
+  A [replayr_movie](replayr_movie.md) or
+  [replayr_poll_stream](replayr_poll_stream.md) returned by
+  [`read_movie()`](read_movie.md) or a format-specific reader.
 
 ## Value
 
