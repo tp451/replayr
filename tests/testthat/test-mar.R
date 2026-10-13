@@ -3,10 +3,13 @@ test_that("MAR preserves separate left and right digital joysticks", {
   m <- .configure_movie(.decode_mar(mar_example("arcade-dual-joysticks.mar")))
   key <- button_layout(m)$key
   expect_equal(dim(m$inputs), c(4L, 2L, 9L))
-  expect_true(m$inputs[2L, 1L, match("left_dpad_right", key)])
-  expect_true(m$inputs[2L, 1L, match("right_dpad_up", key)])
-  expect_true(m$inputs[2L, 2L, match("left_dpad_down", key)])
-  expect_true(m$inputs[2L, 2L, match("right_dpad_left", key)])
+  # MAME's two joysticks have the direction IDs of the two analogue sticks.
+  expect_true(m$inputs[2L, 1L, match("left_e", key)])
+  expect_true(m$inputs[2L, 1L, match("right_n", key)])
+  expect_true(m$inputs[2L, 2L, match("left_s", key)])
+  expect_true(m$inputs[2L, 2L, match("right_w", key)])
+  expect_identical(as.integer(button_layout(m)$id[match(c("left_e", "right_n"), key)]), c(24L, 34L))
+  expect_true(all(c("Left joystick Right", "Right joystick Up") %in% button_layout(m)$name))
   expect_equal(sum(m$inputs[4L, , ]), 0)
   expect_equal(system_channels(m)$port_p1_default, rep(2^32 - 1, 4))
 })
@@ -30,7 +33,7 @@ test_that("MAR treats port digital values as unsigned pressed masks", {
   expect_true(m$inputs[3L, 2L, match("dpad_down", key)])
   expect_equal(sum(m$inputs[4L, , ]), 0)
   expect_equal(system_channels(m)$port_inputs_digital, c(0x01000001, 2^31, 0x00400000, 0))
-  expect_equal(system_channels(m)$input_coin_1, c(TRUE, FALSE, FALSE, FALSE))
+  expect_equal(system_channels(m)$coin_1, c(TRUE, FALSE, FALSE, FALSE))
 })
 test_that("MAR rejects missing schemas and truncated records", {
   raw <- readBin(mar_example("arcade-dual-joysticks.mar"), "raw", n = 10000)

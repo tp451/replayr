@@ -10,8 +10,15 @@ universal_buttons()
 Character vector.
 }
 \description{
-Returns the mnemonic column of \code{\link[=button_layout]{button_layout()}}. A movie's compact columns
-use these registered mnemonics where applicable. Named source controls use
-additional mnemonics such as \code{{key_space}}. Use \code{\link[=button_layout]{button_layout()}} on a movie
+Returns the mnemonic column of \code{\link[=button_layout]{button_layout()}}: one character for each
+registered control, for writing a controller state as compact text. Controls
+outside the registry have mnemonics such as \code{{key_space}}. The accessors
+name their columns by key, not by mnemonic; use \code{\link[=button_layout]{button_layout()}} on a movie
 to obtain its complete layout.
+}
+\examples{
+head(universal_buttons(), 12)
+# A controller state as text: Right, B and A held.
+layout <- button_layout()
+paste(layout$mnemonic[match(c("dpad_right", "b", "a"), layout$key)], collapse = "")
 }

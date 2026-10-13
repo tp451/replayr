@@ -8,6 +8,14 @@ catalogue <- sub(
   catalogue,
   fixed = TRUE
 )
+# The validation folder is not part of the installed package.
+catalogue <- sub(
+  "](validation/README.md)",
+  "](https://github.com/tp451/replayr/tree/main/validation)",
+  catalogue,
+  fixed = TRUE
+)
+stopifnot(!any(grepl("](validation/", catalogue, fixed = TRUE)))
 header <- c(
   "---",
   'title: "Recording compatibility"',

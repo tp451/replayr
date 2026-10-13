@@ -4,6 +4,7 @@
 # bounds the input log. Binary logs start after a single pipe delimiter.
 .decode_fm3 <- function(path) .decode_fceux_extended(path, "fm3")
 .decode_fceux_extended <- function(path, format = "fm2") {
+  .require_fceux_signature(path, format)
   data <- readBin(path, "raw", file.info(path)$size)
   pipes <- which(data == as.raw(124L))
   starts <- pipes[pipes == 1L | data[pmax(1L, pipes - 1L)] %in% as.raw(c(10, 13))]
@@ -38,7 +39,11 @@
     available <- length(data) - first
     n <- if (is.null(declared)) available %/% width else min(declared, available %/% width)
     if (!is.null(declared) && n < declared) warning(path, ": input log ends before its declared length", call. = FALSE)
-    bytes <- if (n) matrix(as.integer(data[first + seq_len(n * width)]), n, width, byrow = TRUE) else matrix(integer(), 0, width)
+    bytes <- if (n) {
+      matrix(as.integer(data[first + seq_len(n * width)]), n, width, byrow = TRUE)
+    } else {
+      matrix(integer(), 0, width)
+    }
     commands <- bytes[, 1L]
     consumed <- first + n * width
     remainder <- if (consumed < length(data)) data[seq.int(consumed + 1L, length(data))] else raw()
@@ -71,7 +76,12 @@
     player <- match(port, active)
     if (type == 1L) {
       if (binary) {
-        for (bit in 0:7) inputs[, player, match(c("a", "b", "select", "start", "dpad_up", "dpad_down", "dpad_left", "dpad_right")[bit + 1L], keys)] <- bitwAnd(bytes[, cursor], bitwShiftL(1L, bit)) != 0L
+        for (bit in 0:7) {
+          inputs[
+            , player,
+            match(c("a", "b", "select", "start", "dpad_up", "dpad_down", "dpad_left", "dpad_right")[bit + 1L], keys)
+          ] <- bitwAnd(bytes[, cursor], bitwShiftL(1L, bit)) != 0L
+        }
         cursor <- cursor + 1L
       } else {
         fields <- vapply(parts, function(x) if (length(x) >= port + 2L) x[port + 2L] else "", character(1))

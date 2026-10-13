@@ -2,7 +2,7 @@
 % Please edit documentation in R/system_channels.R
 \name{system_channels}
 \alias{system_channels}
-\title{Global emulator and cabinet controls}
+\title{Controls of the console or cabinet}
 \usage{
 system_channels(movie)
 }
@@ -11,13 +11,20 @@ system_channels(movie)
 }
 \value{
 Data frame with one row per observation; zero columns for formats
-without separately decoded global controls.
+without separately decoded controls of the system.
 }
 \description{
-Returns named global BK2 controls separately from player input. Numeric
-channels include disk selection and cabinet dials; Boolean channels include
-reset, coins and service controls. Original LogKey names and source units are
-retained. These controls never create gaps in a player's button layout.
+Returns the controls that belong to the machine and not to a player's
+controller: reset and power, coin slots and service buttons, disc and tape
+controls, the lid of a handheld, and numeric settings such as a selected
+disc. They never take a column in a player's button layout.
+}
+\details{
+Columns are named by key, as in \code{\link[=player]{player()}} and \code{\link[=analog_channels]{analog_channels()}}: the
+name of the source in lower case with underscores, so that \code{reset},
+\code{power}, \code{pause} and \code{coin_1} are the same column in every format that
+records them. \code{\link[=system_layout]{system_layout()}} gives the label each column has in the
+recording.
 }
 \examples{
 path <- system.file("extdata", "sample.bk2", package = "replayr")

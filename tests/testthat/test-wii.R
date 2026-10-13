@@ -17,11 +17,11 @@ test_that('Wii HID reports decode buttons, acceleration, and IR source coordinat
   on.exit(unlink(path))
   m <- read_dtm(path)
   expect_identical(m$header$dtmVariant, 'wii-hid-prefix8')
-  expect_identical(n_frames(m), 2L)
-  expect_true(player(m)[2, 'A'])
-  expect_true(player(m)[2, 'U'])
+  expect_identical(n_observations(m), 2L)
+  expect_true(player(m)[2, 'a'])
+  expect_true(player(m)[2, 'dpad_up'])
   a <- analog_channels(m)
-  expect_equal(unname(a[2, c('accel_x', 'accel_y', 'accel_z')]), c(513, 515, 617))
+  expect_equal(unname(a[2, c('accel_x', 'accel_y', 'accel_z')]), c(513, 515, 616))
   expect_equal(unname(a[2, c('ir1_x', 'ir1_y', 'ir1_size')]), c(342, 632, 3))
   expect_true(is.na(a[1, 'accel_x']))
   expect_identical(m$poll_prefix_bytes, matrix(as.raw(0), 2, 8))
@@ -51,7 +51,7 @@ test_that('legacy Wii extension interpretation is explicit and bytes are retaine
   raw <- read_dtm(path)
   expect_false(any(grepl('nunchuk', button_layout(raw)$key)))
   m <- read_dtm(path, wii_extension = 'nunchuk', analog = 'angle+magnitude')
-  expect_true(player(m)[1, 'C'])
+  expect_true(player(m)[1, 'c'])
   expect_equal(unname(stick_channels(m)[1, 'left_angle']), 0)
   expect_equal(unname(stick_channels(m)[1, 'left_magnitude']), 127 / 128)
   expect_equal(unname(analog_channels(m)[1, 'extension_byte6']), 253)
@@ -63,7 +63,7 @@ test_that('empty Wii logs accept a supplied controller order', {
   path <- make_wii_file(list(), ports = 48L)
   on.exit(unlink(path))
   m <- read_dtm(path, controller_order = c(1L, 2L))
-  expect_identical(n_frames(m), 0L)
+  expect_identical(n_observations(m), 0L)
   expect_identical(n_players(m), 2L)
 })
 test_that('unobserved and partial Wii records retain source evidence', {
@@ -105,8 +105,8 @@ test_that('markerless Wii packets preserve source bytes and decoded fields', {
   on.exit(unlink(path))
   m <- read_dtm(path)
   expect_identical(m$header$dtmVariant, 'wii-hid-nomarker')
-  expect_true(player(m)[2, 'A'])
-  expect_equal(unname(analog_channels(m)[2, c('accel_x', 'accel_y', 'accel_z')]), c(513, 515, 617))
+  expect_true(player(m)[2, 'a'])
+  expect_equal(unname(analog_channels(m)[2, c('accel_x', 'accel_y', 'accel_z')]), c(513, 515, 616))
   expect_equal(unname(analog_channels(m)[2, c('ir1_x', 'ir1_y', 'ir1_size')]), c(342, 632, 3))
   expect_identical(m$poll_lengths, c(3L, 18L))
   expect_identical(as.integer(m$poll_bytes[2, ]), as.integer(packet))
@@ -155,7 +155,7 @@ test_that('Wii menu buttons use shared IDs in every report encoding', {
     movie <- read_dtm(path)
     layout <- button_layout(movie)
     expect_identical(as.character(layout$id[match(c('start', 'select'), layout$key)]), c('5', '6'))
-    expect_equal(unname(player(movie)[, c('T', 'S')]), unname(expected))
+    expect_equal(unname(player(movie)[, c('start', 'select')]), unname(expected))
     expect_false(any(c('wii_plus', 'wii_minus') %in% layout$key))
     expect_identical(movie$poll_fields$wii_remote_start, expected[, 'T'])
     expect_identical(movie$poll_fields$wii_remote_select, expected[, 'S'])
@@ -163,7 +163,7 @@ test_that('Wii menu buttons use shared IDs in every report encoding', {
   }
   path <- make_wii_file(packets[[1]], prefix = TRUE)
   on.exit(unlink(path))
-  expect_equal(unname(player(read_dtm(path))[, c('T', 'S')]), unname(expected))
+  expect_equal(unname(player(read_dtm(path))[, c('start', 'select')]), unname(expected))
 })
 test_that('Classic Controller controls align without losing Remote states', {
   # One active-low Classic button per report, from the Dolphin wire mask.
@@ -211,7 +211,7 @@ test_that('Nunchuk buttons share the C and Z identities', {
   movie <- read_dtm(path)
   layout <- button_layout(movie)
   expect_identical(as.character(layout$id[match(c('c', 'z'), layout$key)]), c('17', '18'))
-  expect_equal(unname(player(movie)[, c('C', 'Z')]), diag(TRUE, 2))
+  expect_equal(unname(player(movie)[, c('c', 'z')]), diag(TRUE, 2))
 })
 test_that('mixed GameCube and Wii polls share Start and Select identities', {
   path <- make_wii_file(list(), ports = 17L)
@@ -279,4 +279,13 @@ test_that('simultaneous Remote and Classic X stay available individually', {
   keys <- m$source_layout$key
   expect_identical(original[, 1, match('wii_one', keys)], c(TRUE, FALSE, TRUE))
   expect_identical(original[, 1, match('x', keys)], c(FALSE, TRUE, TRUE))
+})
+test_that('Wii accelerometer values are widened as Dolphin widens them', {
+  # Nine-bit Y and Z take their lowest bit again as the tenth bit: Y is
+  # 2 * 129 + 0 = 258 -> 516 and Z is 2 * 100 + 1 = 201 -> 403.
+  packet <- c(161, 49, 0, 64, 128, 129, 100)
+  path <- make_wii_file(list(packet))
+  on.exit(unlink(path))
+  a <- analog_channels(read_dtm(path))
+  expect_equal(unname(a[1, c('accel_x', 'accel_y', 'accel_z')]), c(512, 516, 403))
 })

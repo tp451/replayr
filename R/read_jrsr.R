@@ -4,7 +4,8 @@
 # Parentheses group whitespace-containing components; backslashes escape
 # individual characters. Track nesting so escaped delimiters remain literal.
 .jrsr_components <- function(line) {
-  if (!grepl("[()\\\\]", line)) return(strsplit(trimws(line), "[ \\t\u1680\u180e\u2000-\u200a\u2028\u205f\u3000]+", perl = TRUE)[[1]])
+  if (!grepl("[()\\\\]", line))
+    return(strsplit(trimws(line), "[ \\t\u1680\u180e\u2000-\u200a\u2028\u205f\u3000]+", perl = TRUE)[[1]])
   chars <- strsplit(line, "", fixed = TRUE)[[1]]
   depth <- 0L
   escaped <- FALSE
@@ -37,13 +38,18 @@
       if (depth == 0L) flush() else token <- c(token, ch)
       next
     }
-    if (depth == 0L && grepl("^[ \\t\u1680\u180e\u2000-\u200a\u2028\u205f\u3000]$", ch, perl = TRUE)) flush() else token <- c(token, ch)
+    if (depth == 0L && grepl("^[ \\t\u1680\u180e\u2000-\u200a\u2028\u205f\u3000]$", ch, perl = TRUE)) {
+      flush()
+    } else {
+      token <- c(token, ch)
+    }
   }
   if (depth != 0L || escaped) stop("Incomplete JRSR component", call. = FALSE)
   flush()
   out
 }
 .decode_jrsr <- function(path) {
+  if (!.starts_with_bytes(path, "JRSR")) stop("Invalid JRSR magic", call. = FALSE)
   lines <- readLines(path, warn = FALSE, encoding = "UTF-8")
   # JRSR additionally recognises Unicode record separators as line endings.
   lines <- unlist(strsplit(lines, "[\u001c-\u001e\u0085\u2029]", perl = TRUE), use.names = FALSE)
@@ -77,7 +83,8 @@
   previous <- 0
   for (i in seq_len(n)) {
     if (relative) times[i] <- times[i] + previous
-    if (times[i] < previous || times[i] > 2^53) stop("JRSR timestamps are unordered or exceed exact numeric range", call. = FALSE)
+    if (times[i] < previous || times[i] > 2^53)
+      stop("JRSR timestamps are unordered or exceed exact numeric range", call. = FALSE)
     previous <- times[i]
     if (classes[i] == "OPTION") {
       if (!kind[i] %in% c("RELATIVE", "ABSOLUTE")) stop("Unknown JRSR timing option", call. = FALSE)
@@ -98,7 +105,8 @@
   np <- if (any(joystick & kind %in% c("BUTTONC", "BUTTOND", "AXISC", "AXISD"))) 2L else 1L
   inputs <- array(FALSE, c(n, np, length(keys)))
   held <- matrix(FALSE, np, length(keys))
-  ch <- c(if (mouse) c("mouse_dx", "mouse_dy", "mouse_wheel"), if (has_joystick) c("joystick_x_hold_ns", "joystick_y_hold_ns"))
+  ch <- c(if (mouse) c("mouse_dx", "mouse_dy", "mouse_wheel"),
+    if (has_joystick) c("joystick_x_hold_ns", "joystick_y_hold_ns"))
   analog <- lapply(seq_len(np), function(p) matrix(0, n, length(ch), dimnames = list(NULL, ch)))
   state_axes <- matrix(NA_real_, np, 2L)
   commands <- integer(n)
@@ -113,10 +121,13 @@
         held[1L, at] <- !held[1L, at]
       } else if (k == "MOUSEBUTTON") {
         number <- .computer_number(value[i], "JPC-RR mouse button", 0, 4)
-        at <- match(c("mouse_left", "mouse_right", "mouse_middle", "mouse_button_4", "mouse_button_5")[number + 1L], keys)
+        at <- match(c("mouse_left", "mouse_right", "mouse_middle", "mouse_button_4", "mouse_button_5")[number + 1L],
+          keys)
         held[1L, at] <- !held[1L, at]
       } else if (k %in% c("XMOUSEMOTION", "YMOUSEMOTION", "ZMOUSEMOTION")) {
-        analog[[1]][i, match(c(XMOUSEMOTION = "mouse_dx", YMOUSEMOTION = "mouse_dy", ZMOUSEMOTION = "mouse_wheel")[[k]], ch)] <- .computer_number(value[i], "JPC-RR mouse motion")
+        analog[[1]][
+          i, match(c(XMOUSEMOTION = "mouse_dx", YMOUSEMOTION = "mouse_dy", ZMOUSEMOTION = "mouse_wheel")[[k]], ch)
+        ] <- .computer_number(value[i], "JPC-RR mouse motion")
       } else if (k == "PAUSE") held[1L, match("jpcrr_pause", keys)] <- TRUE
       else stop("Unsupported JPC-RR keyboard event: ", k, call. = FALSE)
     } else if (joystick[i]) {
@@ -124,14 +135,21 @@
       index <- match(substr(k, nchar(k), nchar(k)), LETTERS[1:4])
       p <- (index - 1L) %/% 2L + 1L
       if (is.na(index)) stop("Invalid JPC-RR joystick event", call. = FALSE)
-      if (startsWith(k, "BUTTON")) held[p, match(c("a", "b")[(index - 1L) %% 2L + 1L], keys)] <- .computer_number(value[i], "JPC-RR joystick button", 0, 1) != 0
-      else if (startsWith(k, "AXIS")) state_axes[p, (index - 1L) %% 2L + 1L] <- .computer_number(value[i], "JPC-RR joystick hold time", 1)
-      else stop("Unsupported JPC-RR joystick event", call. = FALSE)
+      if (startsWith(k, "BUTTON")) {
+        held[p, match(c("a", "b")[(index - 1L) %% 2L + 1L], keys)] <-
+          .computer_number(value[i], "JPC-RR joystick button", 0, 1) != 0
+      } else if (startsWith(k, "AXIS")) {
+        state_axes[p, (index - 1L) %% 2L + 1L] <- .computer_number(value[i], "JPC-RR joystick hold time", 1)
+      } else {
+        stop("Unsupported JPC-RR joystick event", call. = FALSE)
+      }
     } else if (classes[i] == "org.jpc.emulator.PC$ResetButton") commands[i] <- 1L
     inputs[i, , ] <- held
-    if (has_joystick) for (p in seq_len(np)) analog[[p]][i, match(c("joystick_x_hold_ns", "joystick_y_hold_ns"), ch)] <- state_axes[p, ]
+    if (has_joystick)
+      for (p in seq_len(np)) analog[[p]][i, match(c("joystick_x_hold_ns", "joystick_y_hold_ns"), ch)] <- state_axes[p, ]
   }
-  if (mouse && np > 1L) for (p in 2:np) analog[[p]] <- analog[[p]][, !startsWith(colnames(analog[[p]]), "mouse_"), drop = FALSE]
+  if (mouse && np > 1L)
+    for (p in 2:np) analog[[p]] <- analog[[p]][, !startsWith(colnames(analog[[p]]), "mouse_"), drop = FALSE]
   header <- list(
     format = "jrsr", emulator = "JPC-RR", observation_unit = "event", time_unit = "nanosecond",
     keyboard_mouse_player = 1L, initialization = sections[grepl("^initialization", names(sections))],

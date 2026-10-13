@@ -6,7 +6,7 @@ test_that("Dustmod expands scripts while retaining directional double taps and c
   keys <- button_layout(x)$key
   expect_identical(x$header[["_format"]], "dft")
   expect_identical(x$header$observation_unit, "scripted frame")
-  expect_equal(n_frames(x), 14L)
+  expect_equal(n_observations(x), 14L)
   expect_equal(x$header$include_count, 3L)
   expect_false(x$header$runtime_duration_known)
   expect_equal(which(x$inputs[, 1L, match("dpad_right", keys)]), c(1L, 3L, 11L, 13L))
@@ -14,7 +14,12 @@ test_that("Dustmod expands scripts while retaining directional double taps and c
   expect_equal(which(x$double_tapped[, "down"]), c(4L, 14L))
   expect_equal(unname(x$source_values[3L, "right"]), 2L)
   expect_true(is.na(x$source_values[1L, "taunt"]))
-  expect_equal(which(x$inputs[, 1L, match("dustforce_restart", keys)]), 10L)
+  expect_equal(which(x$inputs[, 1L, match("action_restart", keys)]), 10L)
+  # Dustforce's verbs are game actions; jump is the action Doom also records.
+  layout <- button_layout(x)
+  verbs <- layout[layout$kind == "action", ]
+  expect_setequal(verbs$id, paste0("action:", c("jump", "dash", "light", "heavy", "taunt", "restart")))
+  expect_false(any(c("a", "b", "x", "y") %in% setdiff(layout$key, x$source_layout$universal_key)))
   expect_equal(x$source_locations$line[c(1, 3, 5, 10, 11)], c(2L, 4L, 6L, 5L, 2L))
   expect_identical(
     x$source_scripts[["demo/move.txt"]],

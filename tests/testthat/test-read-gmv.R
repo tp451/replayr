@@ -2,7 +2,7 @@ test_that("replayr:::.decode_gmv() parses the bundled synthetic Genesis movie", 
   mv <- replayr:::.decode_gmv(fixture_path("sample.gmv"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "gmv")
-  expect_equal(n_frames(mv), 3600L)
+  expect_equal(n_observations(mv), 3600L)
   # The private Genesis decoder reserves 15 button slots
   # (slots 1..4 d-pad, 5 Start, 7/8 B/A, 9/10 X/Y, 13 C, 14 Z, 15 Mode).
   expect_equal(n_buttons(mv), 15L)
@@ -61,4 +61,20 @@ test_that("replayr:::.decode_gmv() maps the three face bits to canonical slots",
   expect_identical(which(mv$inputs[1, 1, ]), 8L)
   expect_identical(which(mv$inputs[2, 1, ]), 7L)
   expect_identical(which(mv$inputs[3, 1, ]), 13L)
+})
+test_that("read_gmv() keeps extra-button bits of a three-button pad in commands", {
+  header <- raw(64L)
+  header[1:16] <- charToRaw("Gens Movie TESTA")
+  header[21:22] <- charToRaw("63")
+  # Frame 1: nothing. Frame 2: P1 X and P2 Z. Frame 3: P2 Mode.
+  frames <- as.raw(c(255, 255, 255, 255, 255, 255 - 1 - 64, 255, 255, 255 - 128))
+  path <- tempfile(fileext = ".gmv")
+  on.exit(unlink(path))
+  writeBin(c(header, frames), path)
+  movie <- read_gmv(path)
+  keys <- button_layout(movie)$key
+  expect_identical(unname(player(movie, 1L)[, keys == "x"]), c(FALSE, TRUE, FALSE))
+  # Controller 2 is declared three-button, so its Z and Mode stay out of the layout.
+  expect_false(any(player(movie, 2L)[, keys %in% c("x", "y", "z", "mode")]))
+  expect_identical(movie$commands, c(0L, 64L, 128L))
 })

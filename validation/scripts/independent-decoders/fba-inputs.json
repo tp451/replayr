@@ -1,0 +1,7124 @@
+{
+ "bayroute": {
+  "source": "d_sys16b.cpp",
+  "list": "System16bfire3",
+  "inputs": [
+   {
+    "name": "Coin 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "Start 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "Coin 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "Start 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 3",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 3",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Diagnostics",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "bionicc": {
+  "source": "d_bionicc.cpp",
+  "list": "Drv",
+  "inputs": [
+   {
+    "name": "Coin 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "Coin 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "dotrikun": {
+  "source": "d_dotrikun.cpp",
+  "list": "Drv",
+  "inputs": [
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   }
+  ]
+ },
+ "drgnunit": {
+  "source": "d_seta.cpp",
+  "list": "Drgnunit",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 3",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 3",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Tilt",
+    "type": "BIT_DIGITAL",
+    "info": "tilt",
+    "bound": true
+   },
+   {
+    "name": "Dip A",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip B",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip C",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "ffightj": {
+  "source": "d_cps1.cpp",
+  "list": "Ffight",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Attack",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Jump",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Special",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Attack",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Jump",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Special",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip A",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip B",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip C",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "ganryu": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "garou": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "ghouls": {
+  "source": "d_cps1.cpp",
+  "list": "Ghouls",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Jump",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Jump",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip A",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip B",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip C",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "gng": {
+  "source": "d_gng.cpp",
+  "list": "Drv",
+  "inputs": [
+   {
+    "name": "Coin 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "Start 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "Coin 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "Start 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "Up (Cocktail)",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "Down (Cocktail)",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "Left (Cocktail)",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "Right (Cocktail)",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "Fire 1 (Cocktail)",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "Fire 2 (Cocktail)",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "goldnaxe": {
+  "source": "d_sys16b.cpp",
+  "list": "System16bfire3",
+  "inputs": [
+   {
+    "name": "Coin 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "Start 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "Coin 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "Start 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 3",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 3",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Diagnostics",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "jjsquawk": {
+  "source": "d_seta.cpp",
+  "list": "Jjsquawk",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip A",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip B",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip C",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "kof2001": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "kof96": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "kof97": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "maglordh": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "megaman2": {
+  "source": "d_cps2.cpp",
+  "list": "Megaman2",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Attack",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Jump",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Attack",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Jump",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   }
+  ]
+ },
+ "mercs": {
+  "source": "d_cps1.cpp",
+  "list": "Mercs",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Shot",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Special",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Shot",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Special",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P3 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p3 coin",
+    "bound": true
+   },
+   {
+    "name": "P3 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p3 start",
+    "bound": true
+   },
+   {
+    "name": "P3 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p3 up",
+    "bound": true
+   },
+   {
+    "name": "P3 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p3 down",
+    "bound": true
+   },
+   {
+    "name": "P3 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p3 left",
+    "bound": true
+   },
+   {
+    "name": "P3 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p3 right",
+    "bound": true
+   },
+   {
+    "name": "P3 Shot",
+    "type": "BIT_DIGITAL",
+    "info": "p3 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P3 Special",
+    "type": "BIT_DIGITAL",
+    "info": "p3 fire 2",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip A",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip B",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip C",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "mshvsfj": {
+  "source": "d_cps2.cpp",
+  "list": "Cps2Fighting",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 6",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 6",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   }
+  ]
+ },
+ "mslug": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "mslug3": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "mslug4": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "mslug5": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "mslugx": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "mvscr1": {
+  "source": "d_cps2.cpp",
+  "list": "Cps2Fighting",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 6",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 6",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   }
+  ]
+ },
+ "mwalkbl": {
+  "source": "d_sys18.cpp",
+  "list": "Mwalk",
+  "inputs": [
+   {
+    "name": "Coin 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "Start 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "Coin 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "Start 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "Coin 3",
+    "type": "BIT_DIGITAL",
+    "info": "p3 coin",
+    "bound": true
+   },
+   {
+    "name": "Start 3",
+    "type": "BIT_DIGITAL",
+    "info": "p3 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Service",
+    "type": "BIT_DIGITAL",
+    "info": "service2",
+    "bound": true
+   },
+   {
+    "name": "P3 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p3 up",
+    "bound": true
+   },
+   {
+    "name": "P3 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p3 down",
+    "bound": true
+   },
+   {
+    "name": "P3 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p3 left",
+    "bound": true
+   },
+   {
+    "name": "P3 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p3 right",
+    "bound": true
+   },
+   {
+    "name": "P3 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p3 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P3 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p3 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P3 Service",
+    "type": "BIT_DIGITAL",
+    "info": "service3",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Diagnostics",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "osman": {
+  "source": "d_simpl156.cpp",
+  "list": "Simpl156",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 3",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 3",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip A",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "samsho2": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "samsho4": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "sf2rb": {
+  "source": "d_cps1.cpp",
+  "list": "Sf2",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 6",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 6",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip A",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip B",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip C",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "sf2ua": {
+  "source": "d_cps1.cpp",
+  "list": "Sf2",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 6",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 6",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip A",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip B",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip C",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "sfa3u": {
+  "source": "d_cps2.cpp",
+  "list": "Cps2Fighting",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 6",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 6",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   }
+  ]
+ },
+ "sfz2alj": {
+  "source": "d_cps2.cpp",
+  "list": "Cps2Fighting",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 6",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 6",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   }
+  ]
+ },
+ "shinobi": {
+  "source": "d_sys16a.cpp",
+  "list": "System16afire3",
+  "inputs": [
+   {
+    "name": "Coin 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "Start 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "Coin 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "Start 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 3",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 3",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Diagnostics",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "simpsons": {
+  "source": "d_simpsons.cpp",
+  "list": "Simpsons",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P3 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p3 coin",
+    "bound": true
+   },
+   {
+    "name": "P3 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p3 start",
+    "bound": true
+   },
+   {
+    "name": "P3 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p3 up",
+    "bound": true
+   },
+   {
+    "name": "P3 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p3 down",
+    "bound": true
+   },
+   {
+    "name": "P3 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p3 left",
+    "bound": true
+   },
+   {
+    "name": "P3 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p3 right",
+    "bound": true
+   },
+   {
+    "name": "P3 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p3 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P3 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p3 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P4 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p4 coin",
+    "bound": true
+   },
+   {
+    "name": "P4 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p4 start",
+    "bound": true
+   },
+   {
+    "name": "P4 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p4 up",
+    "bound": true
+   },
+   {
+    "name": "P4 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p4 down",
+    "bound": true
+   },
+   {
+    "name": "P4 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p4 left",
+    "bound": true
+   },
+   {
+    "name": "P4 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p4 right",
+    "bound": true
+   },
+   {
+    "name": "P4 Button 1",
+    "type": "BIT_DIGITAL",
+    "info": "p4 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P4 Button 2",
+    "type": "BIT_DIGITAL",
+    "info": "p4 fire 2",
+    "bound": true
+   },
+   {
+    "name": "Diagnostics",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   }
+  ]
+ },
+ "spf2t": {
+  "source": "d_cps2.cpp",
+  "list": "Spf2t",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Rotate Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Rotate Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Rotate Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Rotate Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   }
+  ]
+ },
+ "spinmast": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "ssf2xj": {
+  "source": "d_cps2.cpp",
+  "list": "Cps2Fighting",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 6",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 6",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   }
+  ]
+ },
+ "tmnt": {
+  "source": "d_tmnt.cpp",
+  "list": "Tmnt",
+  "inputs": [
+   {
+    "name": "Coin 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "Coin 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "Coin 3",
+    "type": "BIT_DIGITAL",
+    "info": "p3 coin",
+    "bound": true
+   },
+   {
+    "name": "Coin 4",
+    "type": "BIT_DIGITAL",
+    "info": "p4 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P3 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p3 up",
+    "bound": true
+   },
+   {
+    "name": "P3 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p3 down",
+    "bound": true
+   },
+   {
+    "name": "P3 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p3 left",
+    "bound": true
+   },
+   {
+    "name": "P3 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p3 right",
+    "bound": true
+   },
+   {
+    "name": "P3 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p3 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P3 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p3 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P4 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p4 up",
+    "bound": true
+   },
+   {
+    "name": "P4 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p4 down",
+    "bound": true
+   },
+   {
+    "name": "P4 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p4 left",
+    "bound": true
+   },
+   {
+    "name": "P4 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p4 right",
+    "bound": true
+   },
+   {
+    "name": "P4 Fire 1",
+    "type": "BIT_DIGITAL",
+    "info": "p4 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P4 Fire 2",
+    "type": "BIT_DIGITAL",
+    "info": "p4 fire 2",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Service 1",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Service 2",
+    "type": "BIT_DIGITAL",
+    "info": "service2",
+    "bound": true
+   },
+   {
+    "name": "Service 3",
+    "type": "BIT_DIGITAL",
+    "info": "service3",
+    "bound": true
+   },
+   {
+    "name": "Service 4",
+    "type": "BIT_DIGITAL",
+    "info": "service4",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 3",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "tophuntr": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "turfmast": {
+  "source": "d_neogeo.cpp",
+  "list": "neogeo",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p1 select",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Select",
+    "type": "BIT_DIGITAL",
+    "info": "p2 select",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Button A",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Button B",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Button C",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Button D",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Test",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "System",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Slots",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 1",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   },
+   {
+    "name": "Debug Dip 2",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "wof": {
+  "source": "d_cps1.cpp",
+  "list": "Wof",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Attack",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Jump",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Attack",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Jump",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P3 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p3 coin",
+    "bound": true
+   },
+   {
+    "name": "P3 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p3 start",
+    "bound": true
+   },
+   {
+    "name": "P3 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p3 up",
+    "bound": true
+   },
+   {
+    "name": "P3 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p3 down",
+    "bound": true
+   },
+   {
+    "name": "P3 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p3 left",
+    "bound": true
+   },
+   {
+    "name": "P3 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p3 right",
+    "bound": true
+   },
+   {
+    "name": "P3 Attack",
+    "type": "BIT_DIGITAL",
+    "info": "p3 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P3 Jump",
+    "type": "BIT_DIGITAL",
+    "info": "p3 fire 2",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   },
+   {
+    "name": "Dip C",
+    "type": "BIT_DIPSWITCH",
+    "info": "dip",
+    "bound": true
+   }
+  ]
+ },
+ "xmvsf": {
+  "source": "d_cps2.cpp",
+  "list": "Cps2Fighting",
+  "inputs": [
+   {
+    "name": "P1 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p1 coin",
+    "bound": true
+   },
+   {
+    "name": "P1 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p1 start",
+    "bound": true
+   },
+   {
+    "name": "P1 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p1 up",
+    "bound": true
+   },
+   {
+    "name": "P1 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p1 down",
+    "bound": true
+   },
+   {
+    "name": "P1 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p1 left",
+    "bound": true
+   },
+   {
+    "name": "P1 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p1 right",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P1 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P1 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P1 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p1 fire 6",
+    "bound": true
+   },
+   {
+    "name": "P2 Coin",
+    "type": "BIT_DIGITAL",
+    "info": "p2 coin",
+    "bound": true
+   },
+   {
+    "name": "P2 Start",
+    "type": "BIT_DIGITAL",
+    "info": "p2 start",
+    "bound": true
+   },
+   {
+    "name": "P2 Up",
+    "type": "BIT_DIGITAL",
+    "info": "p2 up",
+    "bound": true
+   },
+   {
+    "name": "P2 Down",
+    "type": "BIT_DIGITAL",
+    "info": "p2 down",
+    "bound": true
+   },
+   {
+    "name": "P2 Left",
+    "type": "BIT_DIGITAL",
+    "info": "p2 left",
+    "bound": true
+   },
+   {
+    "name": "P2 Right",
+    "type": "BIT_DIGITAL",
+    "info": "p2 right",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 1",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 2",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Punch",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 3",
+    "bound": true
+   },
+   {
+    "name": "P2 Weak Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 4",
+    "bound": true
+   },
+   {
+    "name": "P2 Medium Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 5",
+    "bound": true
+   },
+   {
+    "name": "P2 Strong Kick",
+    "type": "BIT_DIGITAL",
+    "info": "p2 fire 6",
+    "bound": true
+   },
+   {
+    "name": "Reset",
+    "type": "BIT_DIGITAL",
+    "info": "reset",
+    "bound": true
+   },
+   {
+    "name": "Diagnostic",
+    "type": "BIT_DIGITAL",
+    "info": "diag",
+    "bound": true
+   },
+   {
+    "name": "Service",
+    "type": "BIT_DIGITAL",
+    "info": "service",
+    "bound": true
+   }
+  ]
+ }
+}

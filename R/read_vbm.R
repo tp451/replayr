@@ -27,8 +27,10 @@
 # Per-frame controller word, *active-high* (bit set == pressed):
 #   bit 0: A       bit 1: B       bit 2: Select   bit 3: Start
 #   bit 4: Right   bit 5: Left    bit 6: Up       bit 7: Down
-#   bit 8: R       bit 9: L       (GBA only)
-#   bits 10-12: speedup / capture / GBA-reset (system, ignored)
+#   bit 8: R       bit 9: L       (GBA pad; SNES pad of a Super Game Boy)
+#   bit 10: reset (old timing)    bit 11: reset (timing since version 1.1)
+#   bits 12-15: motion sensor (deprecated)
+# Bits outside the controller's layout are retained in `commands`.
 # Bit-index 0..15 -> 1-based private decoder slot, or NA for system / reserved bits.
 .VBM_BIT_TO_UNI <- c(
   8L, # bit 0: A           -> slot 8
@@ -39,12 +41,11 @@
   2L, # bit 5: Left        -> slot 2
   4L, # bit 6: Up          -> slot 4
   3L, # bit 7: Down        -> slot 3
-  12L, # bit 8: R-shoulder  -> slot 12 (GBA)
-  11L, # bit 9: L-shoulder  -> slot 11 (GBA)
-  NA_integer_, # bit 10: speedup
-  NA_integer_, # bit 11: capture
-  NA_integer_, # bit 12: GBA reset
-  NA_integer_, NA_integer_, NA_integer_ # bits 13-15: reserved
+  12L, # bit 8: R-shoulder  -> slot 12 (GBA, SGB)
+  11L, # bit 9: L-shoulder  -> slot 11 (GBA, SGB)
+  NA_integer_, # bit 10: reset, old timing
+  NA_integer_, # bit 11: reset, new timing
+  NA_integer_, NA_integer_, NA_integer_, NA_integer_ # bits 12-15: motion sensor
 )
 # Read complete controller records from the declared input offset.
 # Preserve the header frame count alongside the stored record count.
@@ -66,7 +67,9 @@
   if (sum(c(is_gba, is_gbc, is_sgb)) > 1L) {
     stop(path, ": invalid VBM system flags ", sprintf("0x%02x", system_flags))
   }
-  n_buttons <- if (is_gba) 12L else 8L
+  # A Super Game Boy is played with an SNES pad, and the format records its
+  # L and R like those of a Game Boy Advance.
+  n_buttons <- if (is_gba || is_sgb) 12L else 8L
   active_controllers <- which(bitwAnd(controller_flags, bitwShiftL(1L, 0:3)) != 0L)
   if (length(active_controllers) == 0L) active_controllers <- 1L
   n_players <- length(active_controllers)
@@ -92,20 +95,19 @@
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
   if (n_frames > 0L) {
-    for (fi in seq_len(n_frames)) {
-      frame_off <- (fi - 1L) * bytes_per_frame
-      for (pi in seq_len(n_players)) {
-        off <- frame_off + (pi - 1L) * 2L
-        word <- as.integer(body[off + 1L]) +
-          bitwShiftL(as.integer(body[off + 2L]), 8L)
-        for (bit in 0:15) {
-          if (bitwAnd(word, bitwShiftL(1L, bit)) == 0L) next
-          slot <- .VBM_BIT_TO_UNI[bit + 1L]
-          if (is.na(slot)) {
-            commands[fi] <- bitwOr(commands[fi], bitwShiftL(1L, bit))
-            next
-          }
-          if (slot <= n_buttons) inputs[fi, pi, slot] <- TRUE
+    # One row per frame; every bit of a controller word is tested for all
+    # frames at once.
+    bytes <- matrix(as.integer(body), ncol = bytes_per_frame, byrow = TRUE)
+    for (pi in seq_len(n_players)) {
+      words <- bytes[, 2L * pi - 1L] + bitwShiftL(bytes[, 2L * pi], 8L)
+      for (bit in 0:15) {
+        set <- bitwAnd(words, bitwShiftL(1L, bit)) != 0L
+        if (!any(set)) next
+        slot <- .VBM_BIT_TO_UNI[bit + 1L]
+        if (is.na(slot) || slot > n_buttons) {
+          commands[set] <- bitwOr(commands[set], bitwShiftL(1L, bit))
+        } else {
+          inputs[set, pi, slot] <- TRUE
         }
       }
     }

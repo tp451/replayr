@@ -21,13 +21,14 @@ test_that("MMV uses complete packets at EOF while preserving a stale header coun
     path <- .warning_mmv(declared, packets)
     paths <- c(paths, path)
     expect_no_warning(movie <- read_mmv(path))
-    expect_equal(n_frames(movie), 3L)
+    expect_equal(n_observations(movie), 3L)
     expect_equal(as.integer(movie$header$declaredFrameCount), declared)
     expect_equal(as.integer(movie$header$availableFrameCount), 3L)
     expect_equal(as.integer(movie$header$frameCountDifference), declared - 3L)
     keys <- button_layout(movie)$key
-    expect_identical(as.logical(player(movie, 1L)[, match("b", keys)]), c(FALSE, TRUE, FALSE))
-    expect_identical(as.logical(player(movie, 2L)[, match("a", keys)]), c(FALSE, TRUE, FALSE))
+    # Byte 16 is button 1 and byte 32 button 2: A and B.
+    expect_identical(as.logical(player(movie, 1L)[, match("a", keys)]), c(FALSE, TRUE, FALSE))
+    expect_identical(as.logical(player(movie, 2L)[, match("b", keys)]), c(FALSE, TRUE, FALSE))
     expect_true(player(movie, 1L)[3L, match("dpad_right", keys)])
     expect_true(player(movie, 2L)[3L, match("dpad_up", keys)])
   }
@@ -36,7 +37,7 @@ test_that("MMV still warns about incomplete input and preserves the actual byte"
   path <- .warning_mmv(1L, rbind(c(0, 0), c(16, 32)), as.raw(10))
   on.exit(unlink(path))
   expect_warning(movie <- read_mmv(path), "incomplete frame")
-  expect_equal(n_frames(movie), 2L)
+  expect_equal(n_observations(movie), 2L)
   expect_identical(movie$source_tail, as.raw(10))
   expect_equal(sum(movie$inputs), 2L)
 })
@@ -58,7 +59,7 @@ test_that("PJM ignored separators and NUL button bytes have explicit public iden
   on.exit(unlink(path))
   writeBin(c(header, first, second), path)
   expect_no_warning(movie <- read_pjm(path))
-  expect_equal(n_frames(movie), 2L)
+  expect_equal(n_observations(movie), 2L)
   expect_identical(movie$header$frameCountDifference, "48")
   keys <- button_layout(movie)$key
   expect_identical(as.logical(player(movie)[, match("y", keys)]), c(TRUE, FALSE))
@@ -79,7 +80,7 @@ test_that("declared PJM text can consist entirely of a NUL record", {
   on.exit(unlink(path))
   writeBin(c(header, raw(20L)), path)
   expect_no_warning(movie <- read_pjm(path))
-  expect_equal(n_frames(movie), 1L)
+  expect_equal(n_observations(movie), 1L)
   expect_true(all(player(movie)))
   expect_equal(n_buttons(movie), 14L)
   expect_identical(movie$commands, 0L)
@@ -103,7 +104,7 @@ test_that("declared PJM text distinguishes both multitap groups", {
   writeBin(c(header, charToRaw(paste0(paste0(fields, collapse = ""), "0|\r\n"))), path)
   expect_no_warning(movie <- read_pjm(path))
   expect_equal(n_players(movie), 8L)
-  expect_equal(n_frames(movie), 1L)
+  expect_equal(n_observations(movie), 1L)
   keys <- button_layout(movie)$key
   for (pair in list(
     c(1L, match("y", keys)), c(4L, match("b", keys)),

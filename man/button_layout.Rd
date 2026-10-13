@@ -27,23 +27,87 @@ are decoded independently of those sensor numbers.
 Additional named controls, such as keyboard keys, have character IDs of the
 form \verb{control:<key>}. These are stable within their source key namespace.
 They appear in the movie's layout without expanding unrelated controllers.
-Equivalent device buttons share registered IDs: Wii Home and libTAS Guide
-use Mode (19), Wii 1/2 use X/Y (9/10), and light-gun triggers use A (8).
-Arcade Attack/Punch use A, Jump and Doom Use use B, Kick uses X, and D uses Y.
-Mouse left/right/middle use A/B/X, and buttons 4/5 use L1/R1.
-GunCon trigger, side A, side B, and
-offscreen shot use A/B/X/Y. Keypad Enter/Clear use Start/Select; Star/Pound
-retain qualified source IDs. Device-qualified openMSX controls also remain
-distinct because multiple devices can occupy the same input stream.
-A shared ID groups comparable controller roles; game actions can differ.
-When aliases are present, \code{source_inputs} retains the decoded input array and
-\code{source_layout} identifies its columns and their \code{universal_key} mapping.
-If several source buttons map to one ID, that column is active whenever
-any of them is pressed.
+
 Registered controls use fixed numeric IDs; a mixed layout represents all
 IDs as character strings. Use keys or IDs for matching, rather than coercing
 the complete ID column to integers. Source keyboard code sets remain distinct.
 }
+\section{Which controls share an ID}{
+
+The same rules apply in every reader, so a console has the same IDs
+whichever emulator recorded it. \code{name} shows the label on the device;
+\code{key} and \code{id} are the shared identity. A column that holds several
+controls of a recording shows their labels joined by a slash, and no two
+columns of a layout share a name.
+\itemize{
+\item \strong{By label.} A button that carries one of the registry's
+letters or words (A, B, C, X, Y, Z, L, R, Start, Select, Mode) has
+that ID. The ID follows the letter, not the place on the pad: A is the
+right-hand button of a Nintendo pad, the left one of a Genesis pad,
+and the lower one of an Xbox-style pad, which is what a libTAS
+recording of an SDL game controller holds.
+\item \strong{By place, for PlayStation pads.} Their buttons carry shapes.
+They have the IDs of the SNES buttons in the same places: Cross is B,
+Circle is A, Triangle is X and Square is Y.
+\item \strong{In order, for numbered buttons.} The first is A, then B, X,
+Y, L1, R1, L2 and R2. This covers arcade and joystick buttons, Master
+System 1 and 2, and PC Engine I to VI. The Neo Geo's row of A, B, C
+and D is read the same way, so its C and D are X and Y. A device's
+only fire button or trigger is A.
+\item \strong{By role, for the rest.} The button that starts or pauses
+play is Start (PC Engine Run, the Lynx's Pause, the Neo Geo Pocket's
+Option, keypad Enter, Wii Plus); keypad Clear, Wii Minus, the Lynx's
+Option 1 and an arcade View Change are Select; Wii Home, libTAS
+Guide, the Lynx's Option 2 and the PC Engine's switch between two and
+six buttons are Mode (19); Wii 1 and 2 are X and Y.
+Mouse left, right and middle are A, B and X, and buttons 4 and 5 are
+L1 and R1. A light-gun trigger is A; GunCon side A, side B and
+offscreen shot are B, X and Y.
+}
+
+Arcade buttons that BizHawk shows under the name a cabinet gives them
+follow one table for the whole platform: Attack and Punch are A, Jump and
+Missile are B, Kick is X.
+
+Of two direction pads, the left one is the direction pad (IDs 1-4) and
+the right one has the IDs of the N64's C-buttons (20-23): the Virtual
+Boy's pads and the WonderSwan's X and Y crosses. An arcade cabinet's two
+joysticks have the direction IDs of the left and the right analogue
+stick (N, E, S and W of 24-31 and of 32-39). Controls without a
+counterpart keep IDs of their own; these are keyboard keys, in the code
+set of their source. The Intellivision disc has the direction IDs of
+the left stick: one for each of its eight main directions, and the two
+neighbours together for a direction between them, such as N and NE for
+NNE. Keypad Star and Pound are Select and Start, like Clear and Enter in
+the same places. On the Channel F stick, forward and back are Up and
+Down, the twist is L1 and R1, pushing down is A and pulling up is B. A
+mouse wheel turned up or down is C-Up or C-Down. A touch on a screen or
+pad is L3, the press of a pointing input.
+Each device of an openMSX recording is a controller of its own, with the
+IDs of its kind. Buttons on the console itself,
+such as Reset, the Master System's Pause or the lid of a DS, are not part
+of a pad; they are returned by \code{\link[=system_channels]{system_channels()}}.
+
+A shared ID says that two buttons are the same control, not that they do
+the same thing: what a button does depends on the game. Some recordings
+store what the game was asked to do, not which button was pressed: a Doom
+demo holds attack, use and jump, whatever keys or buttons the player had
+bound to them. These game actions are kept apart from device buttons.
+They have kind \code{action} and IDs of the form \verb{action:<name>}, shared by
+every game that records the same action.
+}
+
+\section{Several source controls under one ID}{
+
+When the rules place several source controls of one recording under one
+ID, \code{source_inputs} retains the decoded input array and \code{source_layout}
+identifies its columns and their \code{universal_key} mapping. That column is
+active whenever any of them is pressed. Reading with \code{aliases = FALSE}
+keeps every control of the recording in a column of its own instead: a
+control that would be placed under another control's ID keeps the key of
+its source and an ID of the form \verb{control:<key>}.
+}
+
 \examples{
 path <- system.file("extdata", "sample.m64", package = "replayr")
 button_layout(read_movie(path))

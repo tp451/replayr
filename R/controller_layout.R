@@ -46,15 +46,25 @@
 }
 .canonical_control_keys <- function(keys) {
   aliases <- c(
-    attack = "a", d = "y", doom_attack = "a", doom_use = "b", gun_trigger = "a", guide = "mode",
-    intv_top = "x", jump = "b", jump_start = "b", keypad_clear = "select", keypad_enter = "start", kick = "x",
+    attack = "a", d = "y", gun_trigger = "a", guide = "mode",
+    intv_top = "x", jump = "b", jump_start = "b", keypad_clear = "select", keypad_enter = "start",
+    keypad_pound = "start", keypad_star = "select", kick = "x",
     lsnes_scope_cursor = "b", lsnes_scope_pause = "start", lsnes_scope_turbo = "mode",
     missile = "b", mouse_left = "a", mouse_middle = "x", mouse_right = "b",
     mouse_button_4 = "l1", mouse_fourth = "l1", mouse_button_5 = "r1",
-    offscreen_shot = "y", punch = "a", view_change = "select",
+    mouse_scroll_down = "c_down", mouse_scroll_up = "c_up",
+    offscreen_shot = "y", pce_mode_set_2_button = "mode", pce_mode_set_6_button = "mode",
+    pcfx_mode_1 = "mode", pcfx_mode_2 = "mode",
+    punch = "a", view_change = "select",
     wii_home = "mode", wii_one = "x", wii_two = "y",
-    ufo50_fire1 = "a", ufo50_fire2 = "b", dustforce_light = "a", dustforce_jump = "b",
-    dustforce_heavy = "x", dustforce_dash = "y", dustforce_escape = "start",
+    ufo50_fire1 = "a", ufo50_fire2 = "b", dustforce_escape = "start",
+    # The Intellivision disc has sixteen directions and the left stick eight.
+    # Each takes the nearest of the eight going clockwise from north; a
+    # direction between two of them also sets the second (see below).
+    intv_disc_n = "left_n", intv_disc_nne = "left_n", intv_disc_ne = "left_ne", intv_disc_ene = "left_ne",
+    intv_disc_e = "left_e", intv_disc_ese = "left_e", intv_disc_se = "left_se", intv_disc_sse = "left_se",
+    intv_disc_s = "left_s", intv_disc_ssw = "left_s", intv_disc_sw = "left_sw", intv_disc_wsw = "left_sw",
+    intv_disc_w = "left_w", intv_disc_wnw = "left_w", intv_disc_nw = "left_nw", intv_disc_nnw = "left_nw",
     stats::setNames(c("a", "b", "x", "y", "l1", "r1", "l2", "r2"), paste0("arcade_button_", 1:8)),
     stats::setNames(c("a", "b", "x", "y", "l1", "r1", "l2", "r2"), paste0("joystick_button_", 1:8)),
     stats::setNames(paste0("numbered_", 0:9), paste0("keypad_", 0:9)),
@@ -64,6 +74,15 @@
   found <- which(!is.na(matched))
   keys[found] <- unname(aliases[matched[found]])
   keys
+}
+# A disc direction between two of the left stick's eight sets both, so that
+# all sixteen stay distinguishable: NNE is N and NE together.
+.second_control_keys <- function(keys) {
+  between <- c(
+    intv_disc_nne = "left_ne", intv_disc_ene = "left_e", intv_disc_ese = "left_se", intv_disc_sse = "left_s",
+    intv_disc_ssw = "left_sw", intv_disc_wsw = "left_w", intv_disc_wnw = "left_nw", intv_disc_nnw = "left_n"
+  )
+  unname(between[keys])
 }
 #' Stable controller identities and compact movie columns
 #'
@@ -80,19 +99,80 @@
 #' Additional named controls, such as keyboard keys, have character IDs of the
 #' form `control:<key>`. These are stable within their source key namespace.
 #' They appear in the movie's layout without expanding unrelated controllers.
-#' Equivalent device buttons share registered IDs: Wii Home and libTAS Guide
-#' use Mode (19), Wii 1/2 use X/Y (9/10), and light-gun triggers use A (8).
-#' Arcade Attack/Punch use A, Jump and Doom Use use B, Kick uses X, and D uses Y.
-#' Mouse left/right/middle use A/B/X, and buttons 4/5 use L1/R1.
-#' GunCon trigger, side A, side B, and
-#' offscreen shot use A/B/X/Y. Keypad Enter/Clear use Start/Select; Star/Pound
-#' retain qualified source IDs. Device-qualified openMSX controls also remain
-#' distinct because multiple devices can occupy the same input stream.
-#' A shared ID groups comparable controller roles; game actions can differ.
-#' When aliases are present, `source_inputs` retains the decoded input array and
-#' `source_layout` identifies its columns and their `universal_key` mapping.
-#' If several source buttons map to one ID, that column is active whenever
-#' any of them is pressed.
+#'
+#' @section Which controls share an ID:
+#' The same rules apply in every reader, so a console has the same IDs
+#' whichever emulator recorded it. `name` shows the label on the device;
+#' `key` and `id` are the shared identity. A column that holds several
+#' controls of a recording shows their labels joined by a slash, and no two
+#' columns of a layout share a name.
+#' \itemize{
+#'   \item \strong{By label.} A button that carries one of the registry's
+#'     letters or words (A, B, C, X, Y, Z, L, R, Start, Select, Mode) has
+#'     that ID. The ID follows the letter, not the place on the pad: A is the
+#'     right-hand button of a Nintendo pad, the left one of a Genesis pad,
+#'     and the lower one of an Xbox-style pad, which is what a libTAS
+#'     recording of an SDL game controller holds.
+#'   \item \strong{By place, for PlayStation pads.} Their buttons carry shapes.
+#'     They have the IDs of the SNES buttons in the same places: Cross is B,
+#'     Circle is A, Triangle is X and Square is Y.
+#'   \item \strong{In order, for numbered buttons.} The first is A, then B, X,
+#'     Y, L1, R1, L2 and R2. This covers arcade and joystick buttons, Master
+#'     System 1 and 2, and PC Engine I to VI. The Neo Geo's row of A, B, C
+#'     and D is read the same way, so its C and D are X and Y. A device's
+#'     only fire button or trigger is A.
+#'   \item \strong{By role, for the rest.} The button that starts or pauses
+#'     play is Start (PC Engine Run, the Lynx's Pause, the Neo Geo Pocket's
+#'     Option, keypad Enter, Wii Plus); keypad Clear, Wii Minus, the Lynx's
+#'     Option 1 and an arcade View Change are Select; Wii Home, libTAS
+#'     Guide, the Lynx's Option 2 and the PC Engine's switch between two and
+#'     six buttons are Mode (19); Wii 1 and 2 are X and Y.
+#'     Mouse left, right and middle are A, B and X, and buttons 4 and 5 are
+#'     L1 and R1. A light-gun trigger is A; GunCon side A, side B and
+#'     offscreen shot are B, X and Y.
+#' }
+#'
+#' Arcade buttons that BizHawk shows under the name a cabinet gives them
+#' follow one table for the whole platform: Attack and Punch are A, Jump and
+#' Missile are B, Kick is X.
+#'
+#' Of two direction pads, the left one is the direction pad (IDs 1-4) and
+#' the right one has the IDs of the N64's C-buttons (20-23): the Virtual
+#' Boy's pads and the WonderSwan's X and Y crosses. An arcade cabinet's two
+#' joysticks have the direction IDs of the left and the right analogue
+#' stick (N, E, S and W of 24-31 and of 32-39). Controls without a
+#' counterpart keep IDs of their own; these are keyboard keys, in the code
+#' set of their source. The Intellivision disc has the direction IDs of
+#' the left stick: one for each of its eight main directions, and the two
+#' neighbours together for a direction between them, such as N and NE for
+#' NNE. Keypad Star and Pound are Select and Start, like Clear and Enter in
+#' the same places. On the Channel F stick, forward and back are Up and
+#' Down, the twist is L1 and R1, pushing down is A and pulling up is B. A
+#' mouse wheel turned up or down is C-Up or C-Down. A touch on a screen or
+#' pad is L3, the press of a pointing input.
+#' Each device of an openMSX recording is a controller of its own, with the
+#' IDs of its kind. Buttons on the console itself,
+#' such as Reset, the Master System's Pause or the lid of a DS, are not part
+#' of a pad; they are returned by [system_channels()].
+#'
+#' A shared ID says that two buttons are the same control, not that they do
+#' the same thing: what a button does depends on the game. Some recordings
+#' store what the game was asked to do, not which button was pressed: a Doom
+#' demo holds attack, use and jump, whatever keys or buttons the player had
+#' bound to them. These game actions are kept apart from device buttons.
+#' They have kind `action` and IDs of the form `action:<name>`, shared by
+#' every game that records the same action.
+#'
+#' @section Several source controls under one ID:
+#' When the rules place several source controls of one recording under one
+#' ID, `source_inputs` retains the decoded input array and `source_layout`
+#' identifies its columns and their `universal_key` mapping. That column is
+#' active whenever any of them is pressed. Reading with `aliases = FALSE`
+#' keeps every control of the recording in a column of its own instead: a
+#' control that would be placed under another control's ID keeps the key of
+#' its source and an ID of the form `control:<key>`.
+#'
+#' @details
 #' Registered controls use fixed numeric IDs; a mixed layout represents all
 #' IDs as character strings. Use keys or IDs for matching, rather than coercing
 #' the complete ID column to integers. Source keyboard code sets remain distinct.
@@ -117,17 +197,27 @@ button_layout <- function(movie = NULL) {
 }
 #' Universal controller mnemonics
 #'
-#' Returns the mnemonic column of [button_layout()]. A movie's compact columns
-#' use these registered mnemonics where applicable. Named source controls use
-#' additional mnemonics such as `{key_space}`. Use [button_layout()] on a movie
+#' Returns the mnemonic column of [button_layout()]: one character for each
+#' registered control, for writing a controller state as compact text. Controls
+#' outside the registry have mnemonics such as `{key_space}`. The accessors
+#' name their columns by key, not by mnemonic; use [button_layout()] on a movie
 #' to obtain its complete layout.
 #' @return Character vector.
 #' @export
+#' @examples
+#' head(universal_buttons(), 12)
+#' # A controller state as text: Right, B and A held.
+#' layout <- button_layout()
+#' paste(layout$mnemonic[match(c("dpad_right", "b", "a"), layout$key)], collapse = "")
 universal_buttons <- function() .controller_registry()$mnemonic
 #' Universal controller names
 #' @return Character vector in stable registry order.
 #' @export
 #' @seealso [button_layout()]
+#' @examples
+#' head(universal_button_names(), 12)
+#' # The registry, with the ID and key of each name.
+#' head(button_layout()[, c("id", "key", "name")], 12)
 universal_button_names <- function() .controller_registry()$name
 .stick_modes <- function(analog) {
   allowed <- c("raw", "cardinal4", "cardinal8", "angle", "angle+magnitude")
@@ -144,9 +234,21 @@ universal_button_names <- function() .controller_registry()$name
   }
   analog[c("left", "right")]
 }
-.stick_deadzones <- function(deadzone, format) {
-  default <- if (format %in% c("bk2", "pxm", "pjm")) 0.25 else 0.125
-  if (is.null(deadzone)) return(stats::setNames(rep(default, 2L), c("left", "right")))
+# Without a value the threshold follows the controller, whichever emulator
+# recorded it. The sticks of Nintendo's consoles have a small central region:
+# the controller library of the GameCube discards 15 of 128 units on each
+# axis (PAD_Clamp in libogc's pad.c). Other sticks get a quarter: a released
+# PlayStation stick rests up to about 32 of 128 units from the centre
+# (psx-spx, "Analog Joypad Range"), and Microsoft gives 7849 and 8689 of
+# 32767 for the two thumbsticks of a PC gamepad (XInput).
+.default_deadzone <- function(movie) {
+  format <- movie$header[["_format"]]
+  platform <- .recording_platform(movie)$platform
+  nintendo <- format %in% c("m64", "gzm", "dtm", "ctm") || platform %in% c("N64", "GC", "Wii", "3DS")
+  if (nintendo) 0.125 else 0.25
+}
+.stick_deadzones <- function(deadzone, movie) {
+  if (is.null(deadzone)) return(stats::setNames(rep(.default_deadzone(movie), 2L), c("left", "right")))
   if (!is.numeric(deadzone) || !length(deadzone) || length(deadzone) > 2L ||
     anyNA(deadzone) || any(!is.finite(deadzone) | deadzone < 0 | deadzone > 1)) {
     stop("deadzone must be one value in [0, 1], or named left/right values.", call. = FALSE)
@@ -176,16 +278,62 @@ universal_button_names <- function() .controller_registry()$name
     gmv = c(1:5, 7:8, 13L, if (any(c(movie$header$p1PadType, movie$header$p2PadType) != "3")) c(9:10, 14:15)),
     m64 = c(1:5, 7:8, 11:12, 14L, 17:20),
     dtm = c(1:5, 7:12, 14L),
-    pxm = c(1:12, 29:30, if (any(c(movie$header$controllerType1, movie$header$controllerType2) %in% c("5", "7")) || any(vapply(movie$analog, ncol, integer(1)) > 0L)) 41:42),
-    pjm = c(1:12, 29:30, if (any(c(movie$header$controllerType1, movie$header$controllerType2) %in% c("5", "7")) || any(vapply(movie$analog, ncol, integer(1)) > 0L)) 41:42),
-    lmp = 7:8,
+    pxm = c(
+      1:12, 29:30,
+      if (any(c(movie$header$controllerType1, movie$header$controllerType2) %in% c("5", "7")) ||
+        any(vapply(movie$analog, ncol, integer(1)) > 0L)) 41:42
+    ),
+    pjm = c(
+      1:12, 29:30,
+      if (any(c(movie$header$controllerType1, movie$header$controllerType2) %in% c("5", "7")) ||
+        any(vapply(movie$analog, ncol, integer(1)) > 0L)) 41:42
+    ),
+    lmp = 7:9,
     seq_len(width)
   )
   slots[slots <= width]
 }
+# MAME records the raw value of an analogue joystick. Its centre and range
+# differ from cabinet to cabinet and are not in the file, so both are
+# estimated from the recording: the middle and half the span of the values
+# on the joystick axes of that controller. The estimate is exact when the
+# recording reaches both ends of an axis. A smaller Y value is up, as in
+# MAME's default key assignment.
+.arcade_stick_vectors <- function(movie, raw, roles) {
+  result <- list()
+  sides <- list(left = match(c("lstick_x", "lstick_y"), roles), right = match(c("rstick_x", "rstick_y"), roles))
+  sides <- sides[!vapply(sides, anyNA, logical(1))]
+  if (!length(sides)) return(result)
+  if (!nrow(raw)) {
+    for (side in names(sides)) result[[side]] <- matrix(numeric(), 0L, 2L, dimnames = list(NULL, c("x", "y")))
+    return(result)
+  }
+  if (!is.null(movie$header$firstObservation)) {
+    result$unsupported <- "an arcade joystick in a chunk (its centre and range are estimated from the whole recording)"
+    return(result)
+  }
+  span <- range(raw[, unlist(sides)], na.rm = TRUE)
+  center <- mean(span)
+  reach <- diff(span) / 2
+  warning(
+    if (!is.na(movie$source_path %||% NA)) paste0(basename(movie$source_path), ": "),
+    "the recording does not hold the centre and range of its arcade joystick; ",
+    "estimated from its values as centre ", format(center), " and reach ", format(reach),
+    ". Directions and magnitudes rest on that estimate.",
+    call. = FALSE
+  )
+  if (reach == 0) reach <- 1
+  for (side in names(sides)) {
+    axes <- (raw[, sides[[side]], drop = FALSE] - center) / reach
+    axes[, 2L] <- -axes[, 2L]
+    colnames(axes) <- c("x", "y")
+    result[[side]] <- axes
+  }
+  result
+}
 .n64_override_channels <- function(movie, idx) {
   if (!is.null(movie$stick_overrides)) return(movie$stick_overrides[[idx]])
-  n <- n_frames(movie)
+  n <- n_observations(movie)
   if (!identical(movie$header[["_format"]], "bk2") ||
     toupper(movie$header$Platform %||% "") != "N64") return(matrix(FALSE, n, 0L))
   slots <- c(21L, 23L, 25L, 27L)
@@ -199,7 +347,8 @@ universal_button_names <- function() .controller_registry()$name
   if (!ncol(overrides) || !any(overrides)) return(axes)
   text <- movie$header$emuVersion %||% ""
   version <- regmatches(text, regexpr("[0-9]+[.][0-9]+([.][0-9]+)*", text))
-  if (!length(version)) return(structure(axes, unsupported = "Active N64 stick overrides require a known BizHawk emuVersion."))
+  if (!length(version))
+    return(structure(axes, unsupported = "Active N64 stick overrides require a known BizHawk emuVersion."))
   # Official N64Input.cs: before 2.3 minima were -127, from 2.3 -128.
   # Left takes precedence over right, and up over down. Numeric log axes
   # remain unchanged in analog_channels(), even where a Boolean overrides them.
@@ -211,8 +360,9 @@ universal_button_names <- function() .controller_registry()$name
   axes
 }
 .stick_vectors <- function(movie, idx) {
-  if (!is.null(movie$stick_calibration) || !is.null(movie$decoded_stick_vectors)) return(.calibrated_stick_vectors(movie, idx))
-  raw <- analog_channels(movie, idx)
+  if (!is.null(movie$stick_calibration) || !is.null(movie$decoded_stick_vectors))
+    return(.calibrated_stick_vectors(movie, idx))
+  raw <- .source_channels(movie, idx)
   format <- movie$header[["_format"]]
   result <- list()
   if (!ncol(raw) || !format %in% c("m64", "dtm", "pxm", "pjm", "bk2")) return(result)
@@ -232,6 +382,7 @@ universal_button_names <- function() .controller_registry()$name
     n64 <- grepl("n64|nintendo64|mupen", platform)
     saturn <- grepl("(^| )(sat|saturn|saturnus)( |$)", platform) &&
       all(c("stick horizontal", "stick vertical") %in% channels)
+    if (grepl("arcade", platform) && any(!is.na(roles))) return(.arcade_stick_vectors(movie, raw, roles))
     if (!psx && !n64 && !saturn && any(!is.na(roles))) {
       result$unsupported <- platform
       return(result)
@@ -278,10 +429,12 @@ universal_button_names <- function() .controller_registry()$name
 }
 # The registry does not depend on frame content, so silent or short recordings
 # have the same columns as active recordings of that controller type.
-.configure_movie <- function(movie, analog = "raw", deadzone = NULL, triggers = "raw") {
+.configure_movie <- function(movie, analog = "raw", deadzone = NULL, triggers = "raw", aliases = TRUE) {
+  if (!is.logical(aliases) || length(aliases) != 1L || is.na(aliases))
+    stop("aliases must be TRUE or FALSE", call. = FALSE)
   if (is.null(movie$header[["_format"]])) movie$header[["_format"]] <- "fm2"
   modes <- .stick_modes(analog)
-  zones <- .stick_deadzones(deadzone, movie$header[["_format"]])
+  zones <- .stick_deadzones(deadzone, movie)
   triggers <- match.arg(triggers, c("raw", "digital"))
   registry <- .controller_registry()
   if (!is.null(movie$decoded_layout)) {
@@ -289,34 +442,55 @@ universal_button_names <- function() .controller_registry()$name
     old_slots <- seq_len(nrow(layout))
   } else {
     old_slots <- sort(unique(.decoded_slots(movie)))
-    keys <- .legacy_control_keys()[old_slots]
-    if (identical(movie$header[["_format"]], "lmp")) keys <- c("doom_use", "doom_attack")
-    layout <- .control_identity_layout(keys)
+    layout <- if (identical(movie$header[["_format"]], "lmp")) {
+      .action_layout(c("attack", "use", "jump")[seq_along(old_slots)])
+    } else {
+      .control_identity_layout(.legacy_control_keys()[old_slots])
+    }
+    # PlayStation pads carry shapes, not letters. Their columns keep the shape
+    # as name, under the identity of the SNES button in the same place.
+    if (movie$header[["_format"]] %in% c("pxm", "pjm")) {
+      shapes <- c(b = "Cross", a = "Circle", x = "Triangle", y = "Square")
+      found <- match(names(shapes), layout$key)
+      layout$name[found[!is.na(found)]] <- shapes[!is.na(found)]
+    }
   }
-  canonical <- .canonical_control_keys(layout$key)
+  # Without aliases every decoded control keeps the key of its source.
+  canonical <- if (aliases) .canonical_control_keys(layout$key) else layout$key
+  second <- if (aliases) .second_control_keys(layout$key) else rep(NA_character_, nrow(layout))
   alias <- which(canonical != layout$key)
+  # The labels of the device's controls, one for each decoded control.
+  labels <- layout$name
   if (length(alias)) {
     movie$source_inputs <- movie$inputs[, , old_slots, drop = FALSE]
     movie$source_layout <- layout
     movie$source_layout$universal_key <- canonical
+    if (any(!is.na(second))) movie$source_layout$second_key <- second
     layout[alias, ] <- registry[match(canonical[alias], registry$key), ]
   }
   registry <- rbind(registry, layout[!layout$id %in% registry$id, , drop = FALSE])
   matched <- match(layout$id, registry$id)
-  registry$name[matched] <- layout$name
   registry$kind[matched] <- layout$kind
   old_to_new <- rep(NA, max(c(0L, old_slots)))
   old_to_new[old_slots] <- layout$id
   ids <- layout$id
   if (anyNA(ids)) stop("Invalid decoded controller identity", call. = FALSE)
-  n <- n_frames(movie)
+  second_ids <- registry$id[match(second, registry$key)]
+  ids <- union(ids, second_ids[!is.na(second_ids)])
+  # A column is named after the control of the device that it holds; where it
+  # holds several, their labels are joined.
+  for (id in unique(ids)) {
+    held <- which(layout$id == id | (!is.na(second_ids) & second_ids == id))
+    registry$name[match(id, registry$id)] <- paste(unique(labels[held]), collapse = " / ")
+  }
+  n <- n_observations(movie)
   np <- n_players(movie)
   numeric_values <- .empty_analog(n, np)
   direction_values <- vector("list", np)
   ready <- logical(np)
   if (all(modes == "raw")) {
     # Availability depends on channel definitions, so raw import only needs
-    # a zero-row probe. Full normalized axis copies can be very large.
+    # a zero-row probe. Full normalised axis copies can be very large.
     probe <- movie
     probe$inputs <- movie$inputs[integer(), , , drop = FALSE]
     probe$analog <- lapply(movie$analog, function(x) x[integer(), , drop = FALSE])
@@ -368,8 +542,8 @@ universal_button_names <- function() .controller_registry()$name
     }
     if (length(fields)) numeric_values[[p]] <- do.call(cbind, fields)
     if (triggers == "digital" && identical(movie$header[["_format"]], "dtm") &&
-      all(c("ltrigger", "rtrigger") %in% colnames(analog_channels(movie, p)))) {
-      raw <- analog_channels(movie, p)
+      all(c("ltrigger", "rtrigger") %in% colnames(.source_channels(movie, p)))) {
+      raw <- .source_channels(movie, p)
       trigger_values <- raw[, c("ltrigger", "rtrigger"), drop = FALSE] >= 128
       trigger_values[is.na(trigger_values)] <- FALSE
       colnames(trigger_values) <- c("13", "14")
@@ -384,6 +558,9 @@ universal_button_names <- function() .controller_registry()$name
     positions <- match(old_to_new[old_slots], ids)
     for (p in seq_len(np)) for (j in seq_along(old_slots))
       inputs[, p, positions[j]] <- inputs[, p, positions[j]] | movie$inputs[, p, old_slots[j]]
+    also <- match(second_ids, ids)
+    for (p in seq_len(np)) for (j in which(!is.na(also)))
+      inputs[, p, also[j]] <- inputs[, p, also[j]] | movie$inputs[, p, old_slots[j]]
   }
   for (p in seq_len(np)) for (derived in direction_values[[p]]) {
     positions <- match(as.integer(colnames(derived)), ids)
@@ -393,6 +570,15 @@ universal_button_names <- function() .controller_registry()$name
   movie$stick_overrides <- lapply(seq_len(np), function(p) .n64_override_channels(movie, p))
   movie$inputs <- inputs
   selected <- registry[match(ids, registry$id), , drop = FALSE]
+  # No two columns share a name. Where two controls of a device carry the same
+  # label, each is told apart by the name of its shared control.
+  repeated <- selected$name %in% selected$name[duplicated(selected$name)]
+  if (any(repeated)) {
+    shared <- .controller_registry()
+    usual <- shared$name[match(selected$key[repeated], shared$key)]
+    usual[is.na(usual)] <- selected$key[repeated][is.na(usual)]
+    selected$name[repeated] <- paste0(selected$name[repeated], " (", usual, ")")
+  }
   movie$button_ids <- ids
   movie$button_keys <- selected$key
   movie$button_mnemonics <- selected$mnemonic
@@ -404,10 +590,17 @@ universal_button_names <- function() .controller_registry()$name
   movie$stick_deadzone <- zones
   movie$stick_available <- lapply(vectors, function(x) intersect(names(x), c("left", "right")))
   movie$analysis_ready <- ready
-  movie$analog_mode <- if (all(modes == "raw")) "raw" else if (all(modes %in% c("cardinal4", "cardinal8"))) "cardinal" else "continuous"
+  movie$analog_mode <- if (all(modes == "raw")) {
+    "raw"
+  } else if (all(modes %in% c("cardinal4", "cardinal8"))) {
+    "cardinal"
+  } else {
+    "continuous"
+  }
   movie$trigger_mode <- triggers
   movie$layout_version <- 3L
   movie$decoded_button_slots <- NULL
+  movie <- .name_system(.name_channels(movie))
   if (identical(movie$header$controllerAssignment, "unassigned")) {
     class(movie) <- "replayr_poll_stream"
   }
@@ -415,7 +608,7 @@ universal_button_names <- function() .controller_registry()$name
 }
 #' Selected stick directions, angles and magnitudes
 #'
-#' Angles are degrees counterclockwise from right: right = 0, up = 90,
+#' Angles are degrees anticlockwise from right: right = 0, up = 90,
 #' left = 180, down = 270. Neutral angles and missing observations are `NA`.
 #' Cardinal columns contain the nearest direction's centre angle. Magnitude
 #' is Euclidean length after dividing each centred source axis by its declared

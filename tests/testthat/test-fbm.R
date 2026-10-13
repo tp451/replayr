@@ -15,8 +15,8 @@ test_that("an original arcade sequence retains movement, actions, and both playe
 test_that("FBM analog values, nonbinary source bytes, and DIP values remain exact", {
   schema <- jsonlite::fromJSON(fbm_example("synthetic-arcade-analog-schema.json"), simplifyVector = FALSE)
   m <- read_fbm(fbm_example("synthetic-arcade-analog.fbm"), input_schema = schema)
-  expect_equal(analog_channels(m, 1L)[, "stick_x"], c(0, 1000, 2000, 0, -2000, -32768, 0, 0))
-  expect_equal(analog_channels(m, 1L)[, "stick_y"], c(0, 0, 1000, 2000, 1000, 32767, 0, 0))
+  expect_equal(analog_channels(m, 1L)[, "left_x"], c(0, 1000, 2000, 0, -2000, -32768, 0, 0))
+  expect_equal(analog_channels(m, 1L)[, "left_y"], c(0, 0, 1000, 2000, 1000, 32767, 0, 0))
   expect_equal(analog_channels(m, 2L)[, "dial"], c(0, 64, 128, 192, -64, -32768, 32767, 0))
   expect_equal(system_channels(m)$dip_a, c(255, 255, 255, 254, 254, 128, 0, 255))
   expect_equal(system_channels(m)$raw_p1_dpad_right, c(0, 1, 1, 0, 128, 129, 0, 0))
@@ -49,4 +49,45 @@ test_that("FBM requires explicit valid source schemas and validates frame bounda
   on.exit(unlink(tmp))
   writeBin(broken, tmp)
   expect_error(read_fbm(tmp, game = "ghouls"), "frequency-counter resets")
+})
+test_that("read_fbm() returns the text its author entered after the input", {
+  path <- fbm_example("synthetic-arcade.fbm")
+  bytes <- readBin(path, "raw", file.size(path))
+  plain <- read_fbm(path, game = "ghouls")
+  expect_null(plain$header$metadata)
+  expect_null(plain$source_tail)
+  # The emulator appends the text as a chunk FRM1: its length in bytes, then
+  # two bytes for each character, the low byte first.
+  with_text <- function(text, declared = NULL, after = raw()) {
+    units <- as.vector(rbind(utf8ToInt(text) %% 256L, utf8ToInt(text) %/% 256L))
+    size <- if (is.null(declared)) length(units) else declared
+    file <- tempfile(fileext = ".fbm")
+    writeBin(c(bytes, charToRaw("FRM1"), writeBin(as.integer(size), raw(), size = 4L, endian = "little"),
+      as.raw(units), after), file)
+    file
+  }
+  author <- paste("by", intToUtf8(c(163L, 101L, 32L, 78L, 233L)), "in 2026")
+  file <- with_text(author)
+  on.exit(unlink(file))
+  movie <- read_fbm(file, game = "ghouls")
+  expect_identical(movie$header$metadata, enc2utf8(author))
+  expect_identical(movie$inputs, plain$inputs)
+  expect_identical(read_movie(file, game = "ghouls")$header$metadata, movie$header$metadata)
+  # A text that the file does not hold completely is read as far as it goes.
+  cut <- with_text("abcdef", declared = 40L)
+  on.exit(unlink(cut), add = TRUE)
+  expect_warning(short <- read_fbm(cut, game = "ghouls"), "text after the input is cut short; 12 of its 40 bytes")
+  expect_identical(short$header$metadata, "abcdef")
+  # Bytes that are no such text are kept and reported.
+  more <- with_text("abc", after = as.raw(1:5))
+  on.exit(unlink(more), add = TRUE)
+  expect_warning(kept <- read_fbm(more, game = "ghouls"), "5 byte[(]s[)] follow the recording")
+  expect_identical(kept$header$metadata, "abc")
+  expect_identical(kept$source_tail, as.raw(1:5))
+  other <- tempfile(fileext = ".fbm")
+  on.exit(unlink(other), add = TRUE)
+  writeBin(c(bytes, charToRaw("XYZ")), other)
+  expect_warning(unknown <- read_fbm(other, game = "ghouls"), "3 byte[(]s[)] follow the recording")
+  expect_null(unknown$header$metadata)
+  expect_identical(unknown$source_tail, charToRaw("XYZ"))
 })

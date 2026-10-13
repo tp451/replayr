@@ -753,59 +753,59 @@
         "fields": [
           {
             "mask": 1,
-            "key": "left_dpad_right",
+            "key": "left_e",
             "player": 1,
             "type": "button",
-            "name": "left dpad right"
+            "name": "Left joystick Right"
           },
           {
             "mask": 2,
-            "key": "left_dpad_left",
+            "key": "left_w",
             "player": 1,
             "type": "button",
-            "name": "left dpad left"
+            "name": "Left joystick Left"
           },
           {
             "mask": 4,
-            "key": "left_dpad_up",
+            "key": "left_n",
             "player": 1,
             "type": "button",
-            "name": "left dpad up"
+            "name": "Left joystick Up"
           },
           {
             "mask": 8,
-            "key": "left_dpad_down",
+            "key": "left_s",
             "player": 1,
             "type": "button",
-            "name": "left dpad down"
+            "name": "Left joystick Down"
           },
           {
             "mask": 16,
-            "key": "right_dpad_right",
+            "key": "right_e",
             "player": 1,
             "type": "button",
-            "name": "right dpad right"
+            "name": "Right joystick Right"
           },
           {
             "mask": 32,
-            "key": "right_dpad_left",
+            "key": "right_w",
             "player": 1,
             "type": "button",
-            "name": "right dpad left"
+            "name": "Right joystick Left"
           },
           {
             "mask": 64,
-            "key": "right_dpad_up",
+            "key": "right_n",
             "player": 1,
             "type": "button",
-            "name": "right dpad up"
+            "name": "Right joystick Up"
           },
           {
             "mask": 128,
-            "key": "right_dpad_down",
+            "key": "right_s",
             "player": 1,
             "type": "button",
-            "name": "right dpad down"
+            "name": "Right joystick Down"
           }
         ]
       },
@@ -814,59 +814,59 @@
         "fields": [
           {
             "mask": 1,
-            "key": "left_dpad_right",
+            "key": "left_e",
             "player": 2,
             "type": "button",
-            "name": "left dpad right"
+            "name": "Left joystick Right"
           },
           {
             "mask": 2,
-            "key": "left_dpad_left",
+            "key": "left_w",
             "player": 2,
             "type": "button",
-            "name": "left dpad left"
+            "name": "Left joystick Left"
           },
           {
             "mask": 4,
-            "key": "left_dpad_up",
+            "key": "left_n",
             "player": 2,
             "type": "button",
-            "name": "left dpad up"
+            "name": "Left joystick Up"
           },
           {
             "mask": 8,
-            "key": "left_dpad_down",
+            "key": "left_s",
             "player": 2,
             "type": "button",
-            "name": "left dpad down"
+            "name": "Left joystick Down"
           },
           {
             "mask": 16,
-            "key": "right_dpad_right",
+            "key": "right_e",
             "player": 2,
             "type": "button",
-            "name": "right dpad right"
+            "name": "Right joystick Right"
           },
           {
             "mask": 32,
-            "key": "right_dpad_left",
+            "key": "right_w",
             "player": 2,
             "type": "button",
-            "name": "right dpad left"
+            "name": "Right joystick Left"
           },
           {
             "mask": 64,
-            "key": "right_dpad_up",
+            "key": "right_n",
             "player": 2,
             "type": "button",
-            "name": "right dpad up"
+            "name": "Right joystick Up"
           },
           {
             "mask": 128,
-            "key": "right_dpad_down",
+            "key": "right_s",
             "player": 2,
             "type": "button",
-            "name": "right dpad down"
+            "name": "Right joystick Down"
           }
         ]
       },
@@ -921,59 +921,59 @@
         "fields": [
           {
             "mask": 1,
-            "key": "left_dpad_right",
+            "key": "left_e",
             "player": 1,
             "type": "button",
-            "name": "left dpad right"
+            "name": "Left joystick Right"
           },
           {
             "mask": 2,
-            "key": "left_dpad_left",
+            "key": "left_w",
             "player": 1,
             "type": "button",
-            "name": "left dpad left"
+            "name": "Left joystick Left"
           },
           {
             "mask": 4,
-            "key": "left_dpad_up",
+            "key": "left_n",
             "player": 1,
             "type": "button",
-            "name": "left dpad up"
+            "name": "Left joystick Up"
           },
           {
             "mask": 8,
-            "key": "left_dpad_down",
+            "key": "left_s",
             "player": 1,
             "type": "button",
-            "name": "left dpad down"
+            "name": "Left joystick Down"
           },
           {
             "mask": 16,
-            "key": "right_dpad_right",
+            "key": "right_e",
             "player": 1,
             "type": "button",
-            "name": "right dpad right"
+            "name": "Right joystick Right"
           },
           {
             "mask": 32,
-            "key": "right_dpad_left",
+            "key": "right_w",
             "player": 1,
             "type": "button",
-            "name": "right dpad left"
+            "name": "Right joystick Left"
           },
           {
             "mask": 64,
-            "key": "right_dpad_up",
+            "key": "right_n",
             "player": 1,
             "type": "button",
-            "name": "right dpad up"
+            "name": "Right joystick Up"
           },
           {
             "mask": 128,
-            "key": "right_dpad_down",
+            "key": "right_s",
             "player": 1,
             "type": "button",
-            "name": "right dpad down"
+            "name": "Right joystick Down"
           }
         ]
       },
@@ -982,59 +982,59 @@
         "fields": [
           {
             "mask": 1,
-            "key": "left_dpad_right",
+            "key": "left_e",
             "player": 2,
             "type": "button",
-            "name": "left dpad right"
+            "name": "Left joystick Right"
           },
           {
             "mask": 2,
-            "key": "left_dpad_left",
+            "key": "left_w",
             "player": 2,
             "type": "button",
-            "name": "left dpad left"
+            "name": "Left joystick Left"
           },
           {
             "mask": 4,
-            "key": "left_dpad_up",
+            "key": "left_n",
             "player": 2,
             "type": "button",
-            "name": "left dpad up"
+            "name": "Left joystick Up"
           },
           {
             "mask": 8,
-            "key": "left_dpad_down",
+            "key": "left_s",
             "player": 2,
             "type": "button",
-            "name": "left dpad down"
+            "name": "Left joystick Down"
           },
           {
             "mask": 16,
-            "key": "right_dpad_right",
+            "key": "right_e",
             "player": 2,
             "type": "button",
-            "name": "right dpad right"
+            "name": "Right joystick Right"
           },
           {
             "mask": 32,
-            "key": "right_dpad_left",
+            "key": "right_w",
             "player": 2,
             "type": "button",
-            "name": "right dpad left"
+            "name": "Right joystick Left"
           },
           {
             "mask": 64,
-            "key": "right_dpad_up",
+            "key": "right_n",
             "player": 2,
             "type": "button",
-            "name": "right dpad up"
+            "name": "Right joystick Up"
           },
           {
             "mask": 128,
-            "key": "right_dpad_down",
+            "key": "right_s",
             "player": 2,
             "type": "button",
-            "name": "right dpad down"
+            "name": "Right joystick Down"
           }
         ]
       },
@@ -1755,31 +1755,31 @@
         "fields": [
           {
             "mask": 1,
-            "key": "right_dpad_left",
+            "key": "right_w",
             "player": 1,
             "type": "button",
-            "name": "right dpad left"
+            "name": "Right joystick Left"
           },
           {
             "mask": 2,
-            "key": "right_dpad_right",
+            "key": "right_e",
             "player": 1,
             "type": "button",
-            "name": "right dpad right"
+            "name": "Right joystick Right"
           },
           {
             "mask": 4,
-            "key": "right_dpad_down",
+            "key": "right_s",
             "player": 1,
             "type": "button",
-            "name": "right dpad down"
+            "name": "Right joystick Down"
           },
           {
             "mask": 8,
-            "key": "right_dpad_up",
+            "key": "right_n",
             "player": 1,
             "type": "button",
-            "name": "right dpad up"
+            "name": "Right joystick Up"
           },
           {
             "mask": 16,
@@ -1802,31 +1802,31 @@
         "fields": [
           {
             "mask": 1,
-            "key": "right_dpad_left",
+            "key": "right_w",
             "player": 2,
             "type": "button",
-            "name": "right dpad left"
+            "name": "Right joystick Left"
           },
           {
             "mask": 2,
-            "key": "right_dpad_right",
+            "key": "right_e",
             "player": 2,
             "type": "button",
-            "name": "right dpad right"
+            "name": "Right joystick Right"
           },
           {
             "mask": 4,
-            "key": "right_dpad_down",
+            "key": "right_s",
             "player": 2,
             "type": "button",
-            "name": "right dpad down"
+            "name": "Right joystick Down"
           },
           {
             "mask": 8,
-            "key": "right_dpad_up",
+            "key": "right_n",
             "player": 2,
             "type": "button",
-            "name": "right dpad up"
+            "name": "Right joystick Up"
           },
           {
             "mask": 16,
@@ -1882,31 +1882,31 @@
         "fields": [
           {
             "mask": 1,
-            "key": "left_dpad_left",
+            "key": "left_w",
             "player": 1,
             "type": "button",
-            "name": "left dpad left"
+            "name": "Left joystick Left"
           },
           {
             "mask": 2,
-            "key": "left_dpad_right",
+            "key": "left_e",
             "player": 1,
             "type": "button",
-            "name": "left dpad right"
+            "name": "Left joystick Right"
           },
           {
             "mask": 4,
-            "key": "left_dpad_down",
+            "key": "left_s",
             "player": 1,
             "type": "button",
-            "name": "left dpad down"
+            "name": "Left joystick Down"
           },
           {
             "mask": 8,
-            "key": "left_dpad_up",
+            "key": "left_n",
             "player": 1,
             "type": "button",
-            "name": "left dpad up"
+            "name": "Left joystick Up"
           },
           {
             "mask": 16,
@@ -1929,31 +1929,31 @@
         "fields": [
           {
             "mask": 1,
-            "key": "left_dpad_left",
+            "key": "left_w",
             "player": 2,
             "type": "button",
-            "name": "left dpad left"
+            "name": "Left joystick Left"
           },
           {
             "mask": 2,
-            "key": "left_dpad_right",
+            "key": "left_e",
             "player": 2,
             "type": "button",
-            "name": "left dpad right"
+            "name": "Left joystick Right"
           },
           {
             "mask": 4,
-            "key": "left_dpad_down",
+            "key": "left_s",
             "player": 2,
             "type": "button",
-            "name": "left dpad down"
+            "name": "Left joystick Down"
           },
           {
             "mask": 8,
-            "key": "left_dpad_up",
+            "key": "left_n",
             "player": 2,
             "type": "button",
-            "name": "left dpad up"
+            "name": "Left joystick Up"
           }
         ]
       },

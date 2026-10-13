@@ -2,9 +2,18 @@
 % Please edit documentation in R/readers.R
 \name{read_lmp}
 \alias{read_lmp}
-\title{Read a Doom or Boom demo}
+\title{Read a Doom-engine demo}
 \usage{
-read_lmp(path, analog = "raw", deadzone = NULL, triggers = "raw", ...)
+read_lmp(
+  path,
+  analog = "raw",
+  deadzone = NULL,
+  triggers = "raw",
+  aliases = TRUE,
+  game = NULL,
+  longtics = NULL,
+  ...
+)
 }
 \arguments{
 \item{path}{Recording file path.}
@@ -18,12 +27,38 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
+
+\item{game}{\code{"doom"}, \code{"heretic"} or \code{"hexen"}. Required for a demo without
+a version byte; every other demo identifies its own layout.}
+
+\item{longtics}{For Heretic and Hexen demos: \code{TRUE} if turning was
+recorded with 16 bits and the header does not say so, \code{FALSE} to rule
+that out, \code{NULL} (default) to follow the header.}
 
 \item{...}{Reader-specific arguments, such as \code{controller_order} for M64 or DTM,
 or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_members]{movie_members()}}).}
@@ -32,20 +67,47 @@ or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_me
 A \link{replayr_movie} with compact digital columns and source metadata.
 }
 \description{
-Imports vanilla Doom 1.9 demos (version 109) and Boom 2.00-2.02 demos
-(versions 200-202). Each row represents a game tic at 35 tics per second.
-\code{header$enabledPorts} identifies the players whose commands were stored.
+Imports demos of Doom, Heretic and Hexen and of the source ports that keep
+their demo format: Doom 1.2 and earlier, Doom 1.4 to 1.9 (versions
+104-109), TASDoom (110), Doom 1.91 (111), Boom (200-202), LxDoom and MBF
+(203), PrBoom (210-214) and MBF21 (221), with or without the outer header
+that dsda-doom or PrBoom+um put in front. Each row is a game tic at 35
+tics per second. \code{header$enabledPorts} identifies the players whose
+commands were stored.
 }
 \details{
-\code{\link[=player]{player()}} exposes Use and Attack. \code{\link[=analog_channels]{analog_channels()}} returns signed
-\code{forwardmove}, \code{sidemove}, and \code{angleturn}; the turning unit is 1/256 of a
-revolution per tic. These are game commands assembled from the input
-devices, so stick options leave them unchanged. Weapon selection and
-special-command flags remain in \code{header$weaponselect} and
-\code{header$has_special}; \code{commands} retains the special-command bytes.
+A demo stores what the game was asked to do in each tic, not the keys or
+buttons behind it. \code{\link[=player]{player()}} returns the actions Attack and Use, and Jump
+for Hexen and for demos with dsda-doom's header; \code{\link[=button_layout]{button_layout()}} lists
+them with IDs of their own (\code{action:attack}, \code{action:use}, \code{action:jump}).
+\code{\link[=analog_channels]{analog_channels()}} returns signed \code{forwardmove}, \code{sidemove} and
+\code{angleturn}: how fast the player asked to move forward and sideways, and
+how far to turn in that tic, in 1/256 of a revolution. Demos with 16-bit
+turning keep the finer steps as fractions of that unit. Heretic and Hexen
+add \code{look} and \code{fly}, from -7 to 7; -8 asks to centre the view or to stop
+flying. All of these are commands assembled from the input devices, so
+stick options leave them unchanged.
 
-Boom options remain in \code{header$gameOptions}. \code{source_header} and
-\code{source_packets} preserve the recorded bytes, and \code{source_tail} preserves
-bytes after the demo-end marker. Later extended and longtics layouts are
-outside the supported versions.
+Weapon selection and special-command flags remain in \code{header$weaponselect}
+and \code{header$has_special}; \code{commands} retains the special-command bytes.
+Artifact commands of Heretic and Hexen are in \code{header$artifact}, Hexen's
+player classes in \code{header$playerClass}, and dsda-doom's extended commands
+in \code{header$extendedCommands}. Game options remain in \code{header$gameOptions}.
+
+Demos of Doom 1.2 and earlier, of Heretic and of Hexen begin with the
+skill level and do not name their game, and the three layouts differ, so
+\code{game} is required for them. Heretic and Hexen demos can store 16-bit
+turning; later ports mark this in the header, Heretic+ and Hexen+ do not,
+and \code{longtics = TRUE} reads such a demo. A demo that fits the file only
+when read that way is refused with a message that says so.
+
+\code{source_header} and \code{source_packets} preserve the recorded bytes, and
+\code{source_tail} preserves bytes after the demo-end marker:
+\code{c(source_header, t(source_packets), as.raw(0x80), source_tail)} is the
+file.
+}
+\examples{
+demo <- read_lmp(system.file("extdata", "sample.lmp", package = "replayr"))
+button_layout(demo)
+head(analog_channels(demo))
 }

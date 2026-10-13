@@ -1,0 +1,5465 @@
+{
+ "armwrest": {
+  "source": "punchout.c",
+  "ports": [
+   {
+    "tag": "IN0",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_SERVICE1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW2",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 60,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW1",
+    "fields": [
+     {
+      "mask": 15,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_SPECIAL",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "ddragonw": {
+  "source": "ddragon.c",
+  "ports": [
+   {
+    "tag": "P1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW0",
+    "fields": [
+     {
+      "mask": 7,
+      "default": 7,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 56,
+      "default": 56,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW1",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 3,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 48,
+      "default": 48,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 192,
+      "default": 192,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "EXTRA",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_SERVICE1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_BUTTON3",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_BUTTON3",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_VBLANK",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_SPECIAL",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "dkongjo1": {
+  "source": "dkong.c",
+  "ports": [
+   {
+    "tag": "IN0",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_SPECIAL",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW0",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 12,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 112,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "VR2",
+    "fields": [
+     {
+      "mask": 255,
+      "default": 90,
+      "type": "IPT_ADJUSTER",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "VIDHW",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_CONFIG",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "dragrace": {
+  "source": "dragrace.c",
+  "ports": [
+   {
+    "tag": "IN0",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 192,
+      "default": 128,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 192,
+      "default": 128,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 192,
+      "default": 64,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DIAL1",
+    "fields": [
+     {
+      "mask": 255,
+      "default": 0,
+      "type": "IPT_DIAL_V",
+      "player": 1,
+      "condition": null,
+      "analog": true
+     }
+    ]
+   },
+   {
+    "tag": "DIAL2",
+    "fields": [
+     {
+      "mask": 255,
+      "default": 0,
+      "type": "IPT_DIAL_V",
+      "player": 2,
+      "condition": null,
+      "analog": true
+     }
+    ]
+   },
+   {
+    "tag": "P1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_BUTTON2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_BUTTON3",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_BUTTON4",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_BUTTON5",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_BUTTON6",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_BUTTON2",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_BUTTON3",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_BUTTON4",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_BUTTON5",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_BUTTON6",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "MOTOR1",
+    "fields": [
+     {
+      "mask": 255,
+      "default": 81,
+      "type": "IPT_ADJUSTER",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "MOTOR2",
+    "fields": [
+     {
+      "mask": 255,
+      "default": 85,
+      "type": "IPT_ADJUSTER",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "frontlin": {
+  "source": "taitosj.c",
+  "ports": [
+   {
+    "tag": "IN0",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICKRIGHT_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICKRIGHT_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICKRIGHT_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICKRIGHT_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICKRIGHT_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICKRIGHT_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICKRIGHT_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICKRIGHT_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN3",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICKLEFT_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICKLEFT_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICKLEFT_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICKLEFT_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_COIN3",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_TILT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN4",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICKLEFT_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICKLEFT_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICKLEFT_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICKLEFT_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 240,
+      "default": 0,
+      "type": "IPT_SPECIAL",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW1",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 3,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 24,
+      "default": 24,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW2",
+    "fields": [
+     {
+      "mask": 15,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 240,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW3",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "jailbrek": {
+  "source": "jailbrek.c",
+  "ports": [
+   {
+    "tag": "SYSTEM",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_SERVICE1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 224,
+      "default": 224,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW1",
+    "fields": [
+     {
+      "mask": 15,
+      "default": 15,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 240,
+      "default": 240,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW2",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 1,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 48,
+      "default": 16,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW3",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "jungleh": {
+  "source": "taitosj.c",
+  "ports": [
+   {
+    "tag": "IN0",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN3",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_COIN3",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_TILT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN4",
+    "fields": [
+     {
+      "mask": 15,
+      "default": 15,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 240,
+      "default": 0,
+      "type": "IPT_SPECIAL",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW1",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 3,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 24,
+      "default": 24,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW2",
+    "fields": [
+     {
+      "mask": 15,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 240,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW3",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 3,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "karatevs": {
+  "source": "kchamp.c",
+  "ports": [
+   {
+    "tag": "P1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICKLEFT_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICKLEFT_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICKLEFT_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICKLEFT_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_JOYSTICKRIGHT_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_JOYSTICKRIGHT_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_JOYSTICKRIGHT_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_JOYSTICKRIGHT_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICKLEFT_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICKLEFT_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICKLEFT_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICKLEFT_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_JOYSTICKRIGHT_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_JOYSTICKRIGHT_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_JOYSTICKRIGHT_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_JOYSTICKRIGHT_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "SYSTEM",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 3,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 12,
+      "default": 12,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 48,
+      "default": 16,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "kchamp": {
+  "source": "kchamp.c",
+  "ports": [
+   {
+    "tag": "P1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICKLEFT_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICKLEFT_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICKLEFT_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICKLEFT_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_JOYSTICKRIGHT_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_JOYSTICKRIGHT_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_JOYSTICKRIGHT_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_JOYSTICKRIGHT_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICKLEFT_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICKLEFT_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICKLEFT_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICKLEFT_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_JOYSTICKRIGHT_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_JOYSTICKRIGHT_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_JOYSTICKRIGHT_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_JOYSTICKRIGHT_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "SYSTEM",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 3,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 12,
+      "default": 12,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "kungfum": {
+  "source": "m62.c",
+  "ports": [
+   {
+    "tag": "SYSTEM",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_SERVICE1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 240,
+      "default": 240,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 12,
+      "default": 12,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "punchout": {
+  "source": "punchout.c",
+  "ports": [
+   {
+    "tag": "IN0",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_BUTTON2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_BUTTON3",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW2",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 12,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW1",
+    "fields": [
+     {
+      "mask": 15,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_SPECIAL",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "scontra": {
+  "source": "thunderx.c",
+  "ports": [
+   {
+    "tag": "SYSTEM",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_SERVICE1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW1",
+    "fields": [
+     {
+      "mask": 15,
+      "default": 15,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 240,
+      "default": 240,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW2",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 2,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 24,
+      "default": 24,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 96,
+      "default": 64,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW3",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 240,
+      "default": 240,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "spnchout": {
+  "source": "punchout.c",
+  "ports": [
+   {
+    "tag": "IN0",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_BUTTON2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_BUTTON3",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_BUTTON4",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW2",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 12,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW1",
+    "fields": [
+     {
+      "mask": 15,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_SPECIAL",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "tapper": {
+  "source": "mcr.c",
+  "ports": [
+   {
+    "tag": "SSIO.IP0",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_TILT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_SERVICE1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "SSIO.IP1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 224,
+      "default": 224,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "SSIO.IP2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 224,
+      "default": 224,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "SSIO.IP3",
+    "fields": [
+     {
+      "mask": 3,
+      "default": 3,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 56,
+      "default": 56,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "SSIO.IP4",
+    "fields": [
+     {
+      "mask": 255,
+      "default": 255,
+      "type": "IPT_UNUSED",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "SSIO.DIP",
+    "fields": [
+     {
+      "mask": 255,
+      "default": 255,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "tgm2p": {
+  "source": "psikyosh.c",
+  "ports": [
+   {
+    "tag": "INPUTS",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_SERVICE1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 256,
+      "default": 256,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 512,
+      "default": 512,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 1024,
+      "default": 1024,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2048,
+      "default": 2048,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4096,
+      "default": 4096,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8192,
+      "default": 8192,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16384,
+      "default": 16384,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32768,
+      "default": 32768,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 65536,
+      "default": 65536,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 131072,
+      "default": 131072,
+      "type": "IPT_BUTTON3",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 262144,
+      "default": 262144,
+      "type": "IPT_BUTTON2",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 524288,
+      "default": 524288,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 1048576,
+      "default": 1048576,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2097152,
+      "default": 2097152,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4194304,
+      "default": 4194304,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8388608,
+      "default": 8388608,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16777216,
+      "default": 16777216,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 33554432,
+      "default": 33554432,
+      "type": "IPT_BUTTON3",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 67108864,
+      "default": 67108864,
+      "type": "IPT_BUTTON2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 134217728,
+      "default": 134217728,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 268435456,
+      "default": 268435456,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 536870912,
+      "default": 536870912,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 1073741824,
+      "default": 1073741824,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2147483648,
+      "default": 2147483648,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "JP4",
+    "fields": [
+     {
+      "mask": 268435456,
+      "default": 0,
+      "type": "IPT_SPECIAL",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "trackfldc": {
+  "source": "trackfld.c",
+  "ports": [
+   {
+    "tag": "SYSTEM",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_SERVICE1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN0",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_BUTTON3",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_BUTTON2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_START3",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON3",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_BUTTON3",
+      "player": 3,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_BUTTON2",
+      "player": 3,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_BUTTON1",
+      "player": 3,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_START4",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON3",
+      "player": 4,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 4,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_BUTTON1",
+      "player": 4,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW1",
+    "fields": [
+     {
+      "mask": 15,
+      "default": 15,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 240,
+      "default": 240,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "DSW2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 96,
+      "default": 96,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "tron": {
+  "source": "mcr.c",
+  "ports": [
+   {
+    "tag": "SSIO.IP0",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_TILT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_SERVICE1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "SSIO.IP1",
+    "fields": [
+     {
+      "mask": 255,
+      "default": 0,
+      "type": "IPT_DIAL",
+      "player": 1,
+      "condition": null,
+      "analog": true
+     }
+    ]
+   },
+   {
+    "tag": "SSIO.IP2",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "SSIO.IP3",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "SSIO.IP4",
+    "fields": [
+     {
+      "mask": 255,
+      "default": 0,
+      "type": "IPT_DIAL",
+      "player": 2,
+      "condition": null,
+      "analog": true
+     }
+    ]
+   },
+   {
+    "tag": "SSIO.DIP",
+    "fields": [
+     {
+      "mask": 255,
+      "default": 255,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ },
+ "viostormj": {
+  "source": "mystwarr.c",
+  "ports": [
+   {
+    "tag": "IN0",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_COIN1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_COIN2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_SERVICE1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_SERVICE2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_UNKNOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "IN1",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_SPECIAL",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_SPECIAL",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_SPECIAL",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_SERVICE",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 0,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_DIPSWITCH",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P1_P3",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_BUTTON3",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_START1",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 256,
+      "default": 256,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 3,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 512,
+      "default": 512,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 3,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 1024,
+      "default": 1024,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 3,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2048,
+      "default": 2048,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 3,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4096,
+      "default": 4096,
+      "type": "IPT_BUTTON1",
+      "player": 3,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8192,
+      "default": 8192,
+      "type": "IPT_BUTTON2",
+      "player": 3,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16384,
+      "default": 16384,
+      "type": "IPT_BUTTON3",
+      "player": 3,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32768,
+      "default": 32768,
+      "type": "IPT_START3",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "P2_P4",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 1,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 4,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8,
+      "default": 8,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16,
+      "default": 16,
+      "type": "IPT_BUTTON1",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32,
+      "default": 32,
+      "type": "IPT_BUTTON2",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 64,
+      "default": 64,
+      "type": "IPT_BUTTON3",
+      "player": 2,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 128,
+      "default": 128,
+      "type": "IPT_START2",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 256,
+      "default": 256,
+      "type": "IPT_JOYSTICK_LEFT",
+      "player": 4,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 512,
+      "default": 512,
+      "type": "IPT_JOYSTICK_RIGHT",
+      "player": 4,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 1024,
+      "default": 1024,
+      "type": "IPT_JOYSTICK_UP",
+      "player": 4,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2048,
+      "default": 2048,
+      "type": "IPT_JOYSTICK_DOWN",
+      "player": 4,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4096,
+      "default": 4096,
+      "type": "IPT_BUTTON1",
+      "player": 4,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 8192,
+      "default": 8192,
+      "type": "IPT_BUTTON2",
+      "player": 4,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 16384,
+      "default": 16384,
+      "type": "IPT_BUTTON3",
+      "player": 4,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 32768,
+      "default": 32768,
+      "type": "IPT_START4",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   },
+   {
+    "tag": "EEPROMOUT",
+    "fields": [
+     {
+      "mask": 1,
+      "default": 0,
+      "type": "IPT_OUTPUT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 2,
+      "default": 2,
+      "type": "IPT_OUTPUT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     },
+     {
+      "mask": 4,
+      "default": 0,
+      "type": "IPT_OUTPUT",
+      "player": 1,
+      "condition": null,
+      "analog": false
+     }
+    ]
+   }
+  ]
+ }
+}

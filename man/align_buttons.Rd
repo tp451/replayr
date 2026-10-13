@@ -16,7 +16,8 @@ selection are omitted deliberately.}
 \item{idx}{One-based player index, used for every movie.}
 }
 \value{
-List of logical matrices with matching columns and stable ID metadata.
+List of logical matrices with matching columns, named by control
+key as in \code{\link[=player]{player()}}, and stable ID metadata.
 }
 \description{
 Use this explicitly before comparing different controllers. Missing controls

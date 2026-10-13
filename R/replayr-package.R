@@ -8,25 +8,25 @@
 #' [replayr_poll_stream]. [read_movie()] dispatches to the appropriate reader.
 #' [movie_members()] lists movies in a downloaded ZIP archive.
 #'
-#' @section Quick start:
-#' \preformatted{
-#'   library(replayr)
-#'   path <- system.file("extdata", "sample.fm2", package = "replayr")
-#'   mv <- read_movie(path)
-#'   n_frames(mv)                       # observation count
-#'   press_counts(mv)                   # per-button active-observation counts
-#'   p1 <- player(mv, 1L)               # logical matrix, observations x controls
-#' }
-#'
 #' @section Controller layout:
 #' Each movie uses compact columns. [button_layout()] maps local columns to
 #' stable control identities. Use [align_buttons()] for an explicit common
 #' matrix layout across controllers. Original numeric values are returned by
-#' [analog_channels()]; selected stick representations by [stick_channels()].
+#' [analog_channels()], under the keys that [channel_layout()] lists; selected
+#' stick representations by [stick_channels()].
 #' BK2 N64 Boolean stick overrides are retained in `movie$stick_overrides`
 #' (right, up, left, down per player) and applied using the recording's
 #' BizHawk version when computing stick angles and directions.
 #'
+#' @examples
+#' path <- system.file("extdata", "sample.fm2", package = "replayr")
+#' movie <- read_movie(path)
+#' movie
+#' summary(movie)
+#' recording_info(movie)
+#' # Button states of the first controller: observations by controls.
+#' states <- player(movie, 1L)
+#' dim(states)
 #' @importFrom utils head tail
 #' @keywords internal
 "_PACKAGE"

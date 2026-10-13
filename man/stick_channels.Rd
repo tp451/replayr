@@ -16,7 +16,7 @@ stick_channels(movie, idx = 1L)
 Numeric matrix with selected fields. Absent sticks have no columns.
 }
 \description{
-Angles are degrees counterclockwise from right: right = 0, up = 90,
+Angles are degrees anticlockwise from right: right = 0, up = 90,
 left = 180, down = 270. Neutral angles and missing observations are \code{NA}.
 Cardinal columns contain the nearest direction's centre angle. Magnitude
 is Euclidean length after dividing each centred source axis by its declared

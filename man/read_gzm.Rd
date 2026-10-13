@@ -4,7 +4,14 @@
 \alias{read_gzm}
 \title{Read a gz input macro}
 \usage{
-read_gzm(path, analog = "raw", deadzone = NULL, triggers = "raw", ...)
+read_gzm(
+  path,
+  analog = "raw",
+  deadzone = NULL,
+  triggers = "raw",
+  aliases = TRUE,
+  ...
+)
 }
 \arguments{
 \item{path}{Recording file path.}
@@ -18,12 +25,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{...}{Reader-specific arguments, such as \code{controller_order} for M64 or DTM,
 or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_members]{movie_members()}}).}
@@ -32,14 +58,21 @@ or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_me
 A \link{replayr_movie} with compact digital columns and source metadata.
 }
 \description{
-Imports gz Nintendo 64 macros, with one row per recorded game update.
+Imports the macros of gz, a practice version of the Nintendo 64 game
+\emph{The Legend of Zelda: Ocarina of Time}, with one row per recorded game
+update.
 \code{\link[=player]{player()}} returns the N64 buttons. \code{\link[=analog_channels]{analog_channels()}} retains signed
-\code{stick_x} and \code{stick_y}; \code{analog} selects a derived stick representation.
+\code{left_x} and \code{left_y}; \code{analog} selects a derived stick representation.
 }
 \details{
 \code{frame_fields} retains pad deltas and press/release masks. \code{system_events}
-retains random-seed changes and any ocarina-input, audio-synchronization,
+retains random-seed changes and any ocarina-input, audio-synchronisation,
 or room-load records. The \code{commands} component marks reset events, and
 \code{source_packets} retains the six-byte input records. Game updates provide
 the observation order; elapsed time requires the game's update timing.
+}
+\examples{
+movie <- read_gzm(system.file("extdata", "legacy", "buttons.gzm", package = "replayr"))
+observation_unit(movie)
+head(analog_channels(movie), 3)
 }

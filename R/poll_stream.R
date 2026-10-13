@@ -8,7 +8,7 @@
 #' maps digital keys to stable IDs. [analog_channels()] and [stick_channels()]
 #' select the single stored stream with `idx = 1`.
 #'
-#' [n_frames()] counts polls; [n_players()] returns `NA_integer_`. [player()]
+#' [n_observations()] counts polls; [n_players()] returns `NA_integer_`. [player()]
 #' requires an assigned controller and therefore directs callers to [polls()].
 #' If emulator evidence establishes a repeating polling order, supply
 #' `controller_order` to [read_m64()] or [read_dtm()] to construct a
@@ -22,13 +22,24 @@
 #'
 #' @name replayr_poll_stream
 #' @seealso read_m64, read_dtm
+#' @examples
+#' # Two GameCube controllers are enabled, and the file does not say which
+#' # poll belongs to which.
+#' stream <- read_movie(system.file("extdata", "paper", "unassigned.dtm", package = "replayr"))
+#' class(stream)
+#' stream
+#' n_players(stream)
+#' button_layout(stream)$key
+#' polls(stream)[, c("poll", "port", "a", "left_x", "left_y")]
 NULL
 .is_recording <- function(x) inherits(x, c("replayr_movie", "replayr_poll_stream"))
 #' Extract an unassigned controller-poll stream
 #'
 #' @param x A [replayr_poll_stream].
-#' @return Data frame in source order. Digital column names use stable control
-#'   keys. For M64, `commands` uses bit 0 for reset. For DTM, bit 0 is disc
+#' @return Data frame in source order. `poll` is the position of the poll in
+#'   the file. Digital and numeric columns are named
+#'   by the keys of [button_layout()] and [channel_layout()]. For M64, `commands` uses bit 0 for
+#'   reset. For DTM, bit 0 is disc
 #'   change and bit 1 is reset. Standard DTM exposes `is_connected` and
 #'   `get_origin`; Zelda Edition exposes `loading`, `tuner_event`, `link_x`,
 #'   and `link_z` (see [read_dtm()]). The object's `poll_bytes` component
@@ -38,13 +49,19 @@ NULL
 #'   mixed HID records include the length byte. `source_tail` retains incomplete
 #'   final Wii records. Use observation flags before analysing device-specific fields.
 #' @export
+#' @examples
+#' stream <- read_movie(system.file("extdata", "paper", "unassigned.dtm", package = "replayr"))
+#' stream
+#' polls(stream)[, c("poll", "port", "a", "left_x", "left_y", "is_connected")]
+#' # A selection keeps the positions of the polls in the file.
+#' polls(stream[2:3])$poll
 polls <- function(x) {
   stopifnot(inherits(x, "replayr_poll_stream"))
-  n <- n_frames(x)
+  n <- n_observations(x)
   buttons <- matrix(x$inputs[, 1L, , drop = FALSE], nrow = n, ncol = n_buttons(x))
   colnames(buttons) <- x$button_keys
   result <- data.frame(
-    poll = seq_len(n), port = rep(NA_integer_, n), buttons,
+    poll = x$observation_index %||% seq_len(n), port = rep(NA_integer_, n), buttons,
     analog_channels(x), stick_channels(x), commands = x$commands,
     check.names = FALSE
   )
@@ -61,7 +78,7 @@ polls <- function(x) {
 format.replayr_poll_stream <- function(x, ...) {
   sprintf(
     "<replayr_poll_stream [%s] polls=%d buttons=%d enabled_ports=%s assignment=%s>",
-    x$header[["_format"]], n_frames(x), n_buttons(x),
+    x$header[["_format"]], n_observations(x), n_buttons(x),
     paste(x$header$enabledPorts, collapse = ","),
     x$header$assignmentReason %||% x$header$controllerAssignment %||% "device polls"
   )

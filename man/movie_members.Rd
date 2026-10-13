@@ -17,3 +17,12 @@ Some published downloads contain several recordings. Inspect their member
 names, then pass one as \code{member} to \code{\link[=read_movie]{read_movie()}}. ZIP-based emulator formats
 such as BK2 use their normal extension and format-specific reader.
 }
+\examples{
+# A download that holds two recordings.
+archive <- tempfile(fileext = ".zip")
+files <- system.file("extdata", c("sample.fm2", "sample.smv"), package = "replayr")
+zip::zip(archive, files, mode = "cherry-pick")
+movie_members(archive)
+read_movie(archive, member = "sample.smv")
+unlink(archive)
+}

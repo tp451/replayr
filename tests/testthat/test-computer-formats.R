@@ -29,14 +29,14 @@ test_that('libTAS retains independent sticks, keyboard chords, mouse modes, and 
 })
 test_that('legacy libTAS fields have the same source meaning', {
   x <- .computer_read('ltm', 'legacy-menu.ltm')
-  expect_equal(n_frames(x), 2L)
+  expect_equal(n_observations(x), 2L)
   expect_equal(analog_channels(x)[, 'mouse_x'], c(40, 0))
   expect_equal(analog_channels(x)[, 'left_x'], c(32767, 0))
   expect_true(x$header$legacy_input_format)
 })
 test_that('Hourglass terminates held-key lists at their first zero', {
   x <- .computer_read('wtf', 'keyboard-jump.wtf')
-  expect_equal(n_frames(x), 5L)
+  expect_equal(n_observations(x), 5L)
   expect_setequal(button_layout(x)$key, c('windows_vk_20', 'windows_vk_27'))
   expect_equal(x$inputs[, 1, match('windows_vk_20', button_layout(x)$key)], c(FALSE, TRUE, TRUE, FALSE, FALSE))
   expect_equal(x$source_keycodes[5, 2], 65L)
@@ -60,11 +60,15 @@ test_that('openMSX retains event timing, source key matrix, and joystick identit
   x <- .computer_read('omr', 'keyboard-joystick.omr')
   keys <- button_layout(x)$key
   expect_equal(x$header$observation_unit, 'event')
-  expect_equal(n_buttons(x), 4L)
+  # The keyboard, the joystick and the mouse are three controllers.
+  expect_identical(x$header$controllers, c('keyboard', 'keyjoystick1', 'mouse'))
+  expect_equal(n_buttons(x), 8L)
   expect_equal(x$events$timestamp_seconds[1:5], c(0, 1, 1, 2, 2))
   expect_equal(x$inputs[, 1, match('openmsx_key_r8_b7', keys)], c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE))
-  expect_equal(x$inputs[, 1, match('openmsx_keyjoystick1_a', keys)], c(FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE))
-  expect_equal(analog_channels(x)[, 'openmsx_mouse_dx'], c(0, 0, 0, 0, -6, 0, 0))
+  expect_equal(x$inputs[, 2, match('a', keys)], c(FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE))
+  expect_false(any(x$inputs[, 1, match('a', keys)]))
+  expect_equal(analog_channels(x, 3L)[, 'mouse_dx'], c(0, 0, 0, 0, -6, 0, 0))
+  expect_equal(ncol(analog_channels(x, 1L)), 0L)
   expect_match(x$events$source_xml[5], '<deltaX>-6</deltaX>')
 })
 test_that('CoffeeTools retains held states, independent edges, and randomization data', {
@@ -106,7 +110,7 @@ test_that('libTAS Guide shares Mode while source keyboard D and W stay distinct'
   m <- read_ltm(path)
   layout <- button_layout(m)
   expect_identical(as.integer(layout$id[match('mode', layout$key)]), 19L)
-  expect_identical(unname(player(m)[, 'M']), c(TRUE, FALSE))
+  expect_identical(unname(player(m)[, 'mode']), c(TRUE, FALSE))
   expect_identical(m$inputs[, 1, match('keysym_64', layout$key)], c(TRUE, FALSE))
   expect_identical(m$inputs[, 1, match('keysym_77', layout$key)], c(FALSE, TRUE))
   expect_false('d' %in% layout$key)
@@ -134,5 +138,5 @@ test_that('libTAS literal input lines survive universal button normalization', {
     movie$source_inputs[, 1L, match('a', movie$source_layout$key)],
     c(TRUE, TRUE, FALSE)
   )
-  expect_identical(unname(player(movie)[, 'A']), c(TRUE, TRUE, FALSE))
+  expect_identical(unname(player(movie)[, 'a']), c(TRUE, TRUE, FALSE))
 })

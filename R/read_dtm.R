@@ -31,10 +31,10 @@
 #                            Dolphin ControllerState bitfield (NOT GCPadStatus order)
 #       byte 1  buttons high (D-Left, D-Right, L-dig, R-dig, disc, reset,
 #                            is_connected, get_origin)
-#       byte 2  L analog trigger (0-255)
-#       byte 3  R analog trigger (0-255)
-#       byte 4  analog stick X (0-255, 128=center)
-#       byte 5  analog stick Y
+#       byte 2  L analogue trigger (0-255)
+#       byte 3  R analogue trigger (0-255)
+#       byte 4  analogue stick X (0-255, 128=centre)
+#       byte 5  analogue stick Y
 #       byte 6  C-stick X
 #       byte 7  C-stick Y
 # Bit-index 0..15 in the GC button word -> 1-based private decoder slot. Order is the
@@ -56,26 +56,10 @@
   12L, # bit 11: R-digital   -> 12
   NA_integer_, NA_integer_, NA_integer_, NA_integer_ # bits 12-15: disc/reset/is_connected/get_origin
 )
-.DTM_STICK_DEADZONE <- 16L
-# Internal legacy slots for C-stick sectors (E, NE, N, NW, W, SW, S, SE).
-# Public layout configuration replaces these with right-stick controls;
-# original X/Y channels remain available for either stick.
-.DTM_CSTICK_SECTOR_TO_CSLOT <- c(
-  17L, # E   -> C-Right
-  17L, # NE  -> C-Right
-  20L, # N   -> C-Up
-  18L, # NW  -> C-Left
-  18L, # W   -> C-Left
-  18L, # SW  -> C-Left
-  19L, # S   -> C-Down
-  17L # SE  -> C-Right
-)
-# Decode GameCube polls or dispatch Wii and mixed-device reports.
-# Public stick representations are applied after the source values are decoded.
-.decode_dtm <- function(path, controller_order = NULL, analog = c("raw", "quantized"),
+.decode_dtm <- function(path, controller_order = NULL,
                         dtm_variant = c("auto", "standard", "zelda"),
-                        wii_variant = "auto", wii_extension = "raw", wii_key = NULL) {
-  analog <- match.arg(analog)
+                        wii_variant = "auto", wii_extension = "raw", wii_key = NULL,
+                        aliases = TRUE) {
   dtm_variant <- match.arg(dtm_variant)
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x100L || !identical(data[1:4], charToRaw("DTM\x1A"))) {
@@ -86,7 +70,7 @@
   rom_id <- enc2utf8(rom_id)
   is_wii <- as.integer(data[0x0BL]) != 0L
   if (bitwAnd(as.integer(data[12L]), 240L))
-    return(.decode_wii_dtm(path, data, controller_order, wii_variant, wii_extension, wii_key))
+    return(.decode_wii_dtm(path, data, controller_order, wii_variant, wii_extension, wii_key, aliases))
   frame_count <- .read_u64_le(data, 0x0DL)
   input_count <- .read_u64_le(data, 0x15L)
   rerec <- .read_u32_le(data, 0x2DL)
@@ -104,7 +88,7 @@
     any(controller_order != as.integer(controller_order)) ||
     anyDuplicated(controller_order) ||
     !identical(sort(as.integer(controller_order)), as.integer(enabled_ports))))
-    stop(path, ': controller_order must list every enabled port exactly once')
+    stop(path, ": controller_order must list every enabled port exactly once")
   controller_order <- as.integer(controller_order)
   body <- if (length(data) > 0x100L) data[(0x100L + 1L):length(data)] else raw(0)
   revision <- paste(sprintf("%02x", as.integer(data[210:229])), collapse = "")
@@ -118,8 +102,8 @@
   have_frames <- length(body) %/% bytes_per_frame
   if (length(body) %% bytes_per_frame) {
     stop(
-      path, ': partial final DTM poll for ', dtm_variant, ' layout (',
-      bytes_per_frame, ' bytes per poll)'
+      path, ": partial final DTM poll for ", dtm_variant, " layout (",
+      bytes_per_frame, " bytes per poll)"
     )
   }
   # Dolphin saves the input statistic and byte buffer independently. Playback
@@ -128,10 +112,10 @@
   difference <- input_count - have_frames
   n_frames <- have_frames
   if (length(controller_order) && n_frames %% length(controller_order))
-    stop(path, ': incomplete caller-supplied controller cycle')
-  # Raw imports need only the physical button slots. Direction slots are used
-  # exclusively by the private legacy projection path.
-  n_buttons <- if (analog == "raw") 14L else 28L
+    stop(path, ": incomplete caller-supplied controller cycle")
+  # The physical button slots; stick directions are added when a movie is
+  # configured.
+  n_buttons <- 14L
   inputs <- .empty_inputs(n_frames, 1L, n_buttons)
   commands <- integer(n_frames)
   channels <- c("ltrigger", "rtrigger", "lstick_x", "lstick_y", "rstick_x", "rstick_y")
@@ -177,19 +161,6 @@
           endian = "little"
         )
       }
-      if (analog == "quantized") {
-        inputs[rows, 1L, 11L] <- inputs[rows, 1L, 11L] | records[, 3L] >= 128L
-        inputs[rows, 1L, 12L] <- inputs[rows, 1L, 12L] | records[, 4L] >= 128L
-        for (stick in c(5L, 7L)) {
-          x <- records[, stick] - 128L
-          y <- records[, stick + 1L] - 128L
-          active <- which(x * x + y * y >= .DTM_STICK_DEADZONE^2)
-          if (!length(active)) next
-          sector <- as.integer((atan2(y[active], x[active]) + pi / 8) %/% (pi / 4)) %% 8L
-          slots <- if (stick == 5L) .STICK_SECTOR_TO_UNI else .DTM_CSTICK_SECTOR_TO_CSLOT
-          inputs[cbind(rows[active], 1L, slots[sector + 1L])] <- TRUE
-        }
-      }
     }
   }
   analog_values <- list(numeric_channels)
@@ -221,19 +192,26 @@
     inputCountRole = "emulator input statistic",
     availablePollCount = as.character(have_frames),
     pollCountDifference = as.character(difference),
+    observationUnit = if (length(controller_order) > 1L) "controller polling cycle" else "controller poll",
     dtmVariant = dtm_variant,
     bytesPerPoll = as.character(bytes_per_frame),
     revision = revision,
     controllerMask = sprintf("0x%02x", ctrl_mask),
     enabledPorts = as.integer(enabled_ports),
-    controllerOrder = paste(controller_order, collapse = ','),
-    controllerAssignment = if (unassigned) 'unassigned' else if (supplied_order) 'caller-supplied repeating order; not stored in DTM' else 'single enabled controller'
+    controllerOrder = paste(controller_order, collapse = ","),
+    controllerAssignment = if (unassigned) {
+      "unassigned"
+    } else if (supplied_order) {
+      "caller-supplied repeating order; not stored in DTM"
+    } else {
+      "single enabled controller"
+    }
   )
   mv <- .new_movie(
     header = header,
     commands = commands,
     inputs = inputs,
-    analog = analog_values, analog_mode = analog,
+    analog = analog_values,
     button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
     button_names = .legacy_button_names()[seq_len(n_buttons)]
   )

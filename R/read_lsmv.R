@@ -27,6 +27,7 @@
     !is.finite(max_input_bytes) || max_input_bytes < 1 ||
     max_input_bytes > .Machine$integer.max)
     stop("max_input_bytes must be positive and no greater than R's single-string limit (2147483647 bytes)")
+  if (!.is_zip_archive(path)) stop(path, ": not an LSMV file: a ZIP archive is expected", call. = FALSE)
   listing <- zip::zip_list(path)
   input_bytes <- listing$uncompressed_size[match("input", listing$filename)]
   if (is.na(input_bytes)) stop(path, ": lsmv missing input member", call. = FALSE)
@@ -115,6 +116,7 @@
   n <- length(lines)
   snes_keys <- c("b", "y", "select", "start", "dpad_up", "dpad_down", "dpad_left", "dpad_right", "a", "x", "l1", "r1")
   gb_keys <- c("a", "b", "select", "start", "dpad_right", "dpad_left", "dpad_up", "dpad_down")
+  spare <- list()
   if (!n) {
     header$observationUnit <- "input subframe"
     header$frameCount <- 0L
@@ -123,7 +125,8 @@
     movie$source_input <- text
     movie$subframes <- data.frame(
       source_line = integer(), frame_start = logical(), source_frame = integer(),
-      subframe = integer(), reset = logical(), hard_reset = logical(), reset_delay_high = integer(), reset_delay_low = integer()
+      subframe = integer(), reset = logical(), hard_reset = logical(), reset_delay_high = integer(),
+      reset_delay_low = integer()
     )
     return(movie)
   }
@@ -136,7 +139,7 @@
   scope <- identical(header$port2, "superscope")
   if ("superscope" %in% declared && !scope) stop("lsmv Super Scope requires port2")
   if (scope) {
-    # The schema serializes buttons first, then signed X/Y coordinates.
+    # The schema serialises buttons first, then signed X/Y coordinates.
     pad_count <- switch(header$port1 %||% "gamepad",
       none = 0L,
       multitap = 4L,
@@ -148,13 +151,21 @@
     if (any(lengths(parts) != pad_count + 2L)) stop("lsmv Super Scope controller fields do not match port settings")
     parts <- matrix(unlist(parts, use.names = FALSE), nrow = n, byrow = TRUE)
     pad_width <- if ((header$port1 %||% "gamepad") %in% c("gamepad16", "multitap16", "ygamepad16")) 16L else 12L
-    pad_keys <- c(snes_keys, if (pad_width == 16L) paste0("lsnes_ext", 0:3))
+    pad_keys <- snes_keys
     scope_keys <- c("gun_trigger", "lsnes_scope_cursor", "lsnes_scope_turbo", "lsnes_scope_pause")
     keys <- c(if (pad_count) pad_keys, scope_keys)
     inputs <- array(FALSE, c(n, pad_count + 1L, length(keys)))
     for (player in seq_len(pad_count)) {
-      if (any(nchar(parts[, player], type = "bytes") != pad_width)) stop("lsmv gamepad layout changes in Super Scope recording")
-      for (column in seq_len(pad_width)) inputs[, player, column] <- !substr(parts[, player], column, column) %in% c(".", " ", "\t")
+      if (any(nchar(parts[, player], type = "bytes") != pad_width))
+        stop("lsmv gamepad layout changes in Super Scope recording")
+      for (column in seq_len(pad_width)) {
+        held <- !substr(parts[, player], column, column) %in% c(".", " ", "\t")
+        if (column <= 12L) {
+          inputs[, player, column] <- held
+        } else {
+          spare[[sprintf("pad%d_ext%d", player, column - 13L)]] <- held
+        }
+      }
     }
     gun <- parts[, pad_count + 1L]
     if (any(!grepl("^[^|]{4}[[:blank:]]+[+-]?[0-9]+[[:blank:]]+[+-]?[0-9]+$", gun)))
@@ -165,7 +176,8 @@
       ncol = 2L, byrow = TRUE,
       dimnames = list(NULL, c("gun_x", "gun_y"))
     )
-    if (any(!is.finite(axes) | axes < -32768 | axes > 32767)) stop("lsmv Super Scope coordinates exceed their signed 16-bit source range")
+    if (any(!is.finite(axes) | axes < -32768 | axes > 32767))
+      stop("lsmv Super Scope coordinates exceed their signed 16-bit source range")
     analog <- .empty_analog(n, pad_count + 1L)
     analog[[pad_count + 1L]] <- axes
     accepted <- seq_len(pad_count + 1L)
@@ -180,16 +192,22 @@
     bad <- which(!grepl(pattern, body, perl = TRUE, useBytes = TRUE))
     if (length(bad)) stop("lsmv controller layout changes or is malformed at source line ", source_line[bad[1L]])
     width <- widths[accepted[1L]]
-    keys <- if (width == 8L) gb_keys else c(snes_keys, if (width == 16L) paste0("lsnes_ext", 0:3))
+    keys <- if (width == 8L) gb_keys else snes_keys
     inputs <- array(FALSE, c(n, length(accepted), length(keys)))
     starts <- cumsum(c(1L, head(widths, -1L) + 1L))
     for (player in seq_along(accepted)) for (column in seq_len(width)) {
       at <- starts[accepted[player]] + column - 1L
       ch <- substr(body, at, at)
-      inputs[, player, column] <- !ch %in% c(".", " ", "\t")
+      held <- !ch %in% c(".", " ", "\t")
+      if (column <= length(keys)) {
+        inputs[, player, column] <- held
+      } else {
+        spare[[sprintf("pad%d_ext%d", player, column - 13L)]] <- held
+      }
     }
     analog <- .empty_analog(n, length(accepted))
-    header$controllerTypes <- rep(if (width == 8L) "gb_gamepad" else if (width == 16L) "gamepad16" else "gamepad", length(accepted))
+    header$controllerTypes <- rep(if (width == 8L) "gb_gamepad" else if (width == 16L) "gamepad16" else "gamepad",
+      length(accepted))
   }
   unique_prefix <- unique(prefix)
   fields <- t(vapply(unique_prefix, .lsmv_system_fields, numeric(5L)))
@@ -207,6 +225,8 @@
   header$controllerFields <- accepted
   header$controllerWidths <- widths[accepted]
   movie <- .new_named_movie(header, commands, inputs, keys, analog = analog)
+  # The four spare bits of a 16-bit pad report are not buttons of the pad.
+  if (length(spare)) movie$system_inputs <- as.data.frame(spare)
   movie$subframes <- data.frame(
     source_line = source_line, frame_start = frame_start, source_frame = frame,
     subframe = subframe, reset = reset, hard_reset = hard,

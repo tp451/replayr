@@ -4,7 +4,14 @@
 \alias{read_omr}
 \title{Read an openMSX replay}
 \usage{
-read_omr(path, analog = "raw", deadzone = NULL, triggers = "raw", ...)
+read_omr(
+  path,
+  analog = "raw",
+  deadzone = NULL,
+  triggers = "raw",
+  aliases = TRUE,
+  ...
+)
 }
 \arguments{
 \item{path}{Recording file path.}
@@ -18,12 +25,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{...}{Reader-specific arguments, such as \code{controller_order} for M64 or DTM,
 or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_members]{movie_members()}}).}
@@ -35,9 +61,15 @@ A \link{replayr_movie} with event times, device controls, and source XML.
 Reads gzip-compressed openMSX XML replay files. Supported event schemas
 cover keyboard matrices, joysticks, mice, trackballs, paddles, touchpads,
 light guns, and autofire settings. The initial keyboard state is read from
-the first replay snapshot. Source device names qualify the control keys,
-such as \code{openmsx_keyjoystick1_a}; \code{openmsx_key_r8_b0} identifies a keyboard
-matrix row and bit. All devices share one event stream.
+the first replay snapshot. Every device is one controller: the keyboard
+first, then the devices on the joystick ports by name, as listed in
+\code{movie$header$controllers}. Their controls have the same IDs as in every
+other reader: a joystick is the direction pad with A and B, the buttons of
+a mouse or trackball are A and B, the JoyMega pad adds C, Start, X, Y, Z
+and Mode, a light-gun trigger and a paddle's button are A, and a touch on
+the touchpad is L3. \code{openmsx_key_r8_b0} identifies a keyboard matrix row
+and bit. All devices share one event stream, so each controller has a row
+for every event.
 }
 \details{
 Each row follows one replay event. \code{movie$events$timestamp_ticks} retains
@@ -46,11 +78,18 @@ time in openMSX master-clock ticks (3,579,545 * 960 ticks per second), and
 \code{timestamp_source}, \code{event_type}, \code{source_device}, and \code{source_xml} retain
 the event's original time, type, device, and XML.
 
-\code{\link[=analog_channels]{analog_channels()}} preserves device-specific values. Examples include
-\code{openmsx_mouse_dx} and \code{openmsx_mouse_dy} for movement,
-\code{openmsx_touchpad_x} and \code{openmsx_touchpad_y} for touch coordinates, and
-\code{openmsx_autofire_renshaturbo} for the recorded autofire setting.
+\code{\link[=analog_channels]{analog_channels()}} preserves the values of each device on its controller.
+Examples include \code{mouse_dx} and \code{mouse_dy} for movement and
+\code{touch_x} and \code{touch_y} for touch coordinates. A
+recorded autofire setting, such as \code{openmsx_autofire_renshaturbo}, belongs
+to the machine and is returned by \code{\link[=system_channels]{system_channels()}}.
 Movement deltas apply to their event; coordinates and settings persist
 until updated. The replay schema version and machine name remain in
 \code{movie$header$replay_version} and \code{movie$header$machine}.
+}
+\examples{
+movie <- read_omr(system.file("extdata", "computers", "keyboard-joystick.omr", package = "replayr"))
+# Every device is a controller.
+movie$header$controllers
+observation_time(movie)
 }

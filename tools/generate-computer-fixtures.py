@@ -5,6 +5,14 @@ root = Path(__file__).resolve().parents[1] / "inst/extdata/computers"
 root.mkdir(parents=True, exist_ok=True)
 
 
+def gz(data):
+    """Gzip with a fixed header, independent of Python version and platform."""
+    buffer = io.BytesIO()
+    with gzip.GzipFile(filename="", mode="wb", fileobj=buffer, mtime=0) as stream:
+        stream.write(data)
+    return buffer.getvalue()
+
+
 def tar(path, files):
     buffer = io.BytesIO()
     with tarfile.open(fileobj=buffer, mode="w", format=tarfile.USTAR_FORMAT) as archive:
@@ -14,7 +22,7 @@ def tar(path, files):
             member.size = len(data)
             member.mtime = 0
             archive.addfile(member, io.BytesIO(data))
-    path.write_bytes(gzip.compress(buffer.getvalue(), mtime=0))
+    path.write_bytes(gz(buffer.getvalue()))
 
 
 cfg = "[General]\nlibtas_major_version=1\nlibtas_minor_version=4\nlibtas_patch_version=6\nframe_count=5\nframerate_num=60\nframerate_den=1\nmouse_support=true\nnb_controllers=2\n"
@@ -87,13 +95,12 @@ event(
 )
 event(10309089600, "EndLog", "")
 (root / "keyboard-joystick.omr").write_bytes(
-    gzip.compress(
+    gz(
         (
             '<serial><replay version="4"><snapshots><item><name>Artificial MSX</name><scheduler><currentTime><time>0</time></currentTime></scheduler><keyboard><userKeyMatrix><item>255</item><item>255</item></userKeyMatrix></keyboard></item></snapshots><events>'
             + "".join(ev)
             + "</events></replay></serial>"
-        ).encode(),
-        mtime=0,
+        ).encode()
     )
 )
 header = bytearray(1024)

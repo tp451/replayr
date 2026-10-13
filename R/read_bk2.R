@@ -5,10 +5,9 @@
 #     LogKey:#Reset|Power|#P1 Up|P1 Down|...|P1 A|#P2 Up|...
 #     |..|........|........|
 #
-# The LogKey lists the buttons by name in column order; the parser
-# reads it to figure out which char position in each frame line means
-# which private decoder slot. Without a LogKey it falls back to the
-# NES-positional UDLRTSBA mapping.
+# The LogKey lists the controls by name in the order of the log, and every
+# control keeps the name its core gave it. Without a LogKey only the fixed
+# rows of two NES pads (UDLRTSBA) are read.
 #
 # bk2 covers many platforms: NES, SNES, Atari 2600, Game Boy / GBC,
 # GBA, N64, PlayStation, ... -- so the LogKey-driven mapping is the
@@ -16,8 +15,6 @@
 #
 # Reference: BizHawk source (BizHawk.Client.Common, MovieControllerAdapter)
 # and the tasvideos wiki at /EmulatorResources/BizHawk/Bk2.
-# Deadzone for the bk2 N64 / PSX analog-stick reading. 0..127 scale.
-.BK2_STICK_DEADZONE <- 32L
 # NES positional fallback for a missing LogKey. Header and row checks
 # below restrict this interpretation to compatible eight-button records.
 .BK2_POS_TO_UNI <- c(
@@ -30,9 +27,10 @@
   7L, # 7: B -> universal 7
   8L # 8: A -> universal 8
 )
-# Map BizHawk button-name (lowercase) -> 1-based private-slot index.
-# Extends the FM2 NES set with SNES X/Y, shoulders, Genesis C/Mode, N64
-# Z + C-buttons + analog-stick boolean cols, and PSX face buttons.
+# Map BizHawk button-name (lowercase) -> 1-based private-slot index, from
+# which a named control takes its shared identity. Extends the FM2 NES set
+# with SNES X/Y, shoulders, Genesis C/Mode, N64 Z and C-buttons, and PSX
+# face buttons.
 .BK2_NAME_TO_UNI <- c(
   # d-pad -- full names disambiguate from L/R shoulder
   "right" = 1L, "left" = 2L, "down" = 3L, "up" = 4L,
@@ -54,7 +52,7 @@
   # N64: hardware d-pad columns
   "dpad u" = 4L, "dpad d" = 3L, "dpad l" = 2L, "dpad r" = 1L,
   "d-pad up" = 4L, "d-pad down" = 3L, "d-pad left" = 2L, "d-pad right" = 1L,
-  # N64: BizHawk's quantised analog-stick boolean columns
+  # N64: BizHawk's Boolean columns for the directions of the analogue stick
   "a up" = 23L, # stick-N
   "a down" = 27L, # stick-S
   "a left" = 25L, # stick-W
@@ -131,31 +129,7 @@
   # QuickNES calls the Famicom P2 microphone "M"; NesHawk spells it out.
   "microphone" = 69L, "m" = 69L
 )
-# Substrings that mark analog / sensor / non-button channels. "disc" catches
-# the Intellivision control disc when a core logs it as numeric "Disc X|Disc Y"
-# axes (rather than the 16 named-direction boolean columns N|NNE|... that other
-# INTV bk2s use). Without this the two numeric axis columns are treated as
-# unmapped buttons, consuming column positions that the frame parser then
-# comma-strips -- shifting every keypad/side button read by two and zeroing the
-# whole track.
-.BK2_ANALOG_HINTS <- c("axis", "tilt", "sensor", "accel", "gyro", "stick", "disc", "paddle", "motion", "dial")
-# Source definitions: BizHawk NESControllers.cs (Zapper, PowerPad),
-# SNES/LibsnesControllerDeck.cs (Mouse), and SaturnusControllerDeck.cs v2.2.1
-# (3D pad). The latter's shoulder fields are numeric only in its analogue
-# controller group; they must not consume Boolean character positions.
-.bk2_is_numeric_control <- function(key, group_names) {
-  group_keys <- tolower(trimws(sub("^P[0-9]+ ", "", group_names)))
-  phaser <- all(c("x", "y", "trigger") %in% group_keys) &&
-    all(group_keys %in% c("x", "y", "trigger", "offscreen shot"))
-  if (phaser && key %in% c("x", "y")) return(TRUE)
-  if (grepl("stick, button$", key) || key == "tilt") return(FALSE)
-  if (key %in% c("left shoulder", "right shoulder") &&
-    any(grepl("stick horizontal|stick vertical", tolower(group_names)))) return(TRUE)
-  any(vapply(.BK2_ANALOG_HINTS, function(h) grepl(h, key, fixed = TRUE), logical(1))) ||
-    grepl("^(lightgun|zapper|mouse) [xy]( [0-9]+)?$", key) ||
-    key %in% c("disk index", "input cycle", "reset cycle", "reset instruction")
-}
-# Identify stick axes for the private slot projection. NA means that a
+# Identify stick axes by the names BizHawk gives them. NA means that a
 # channel is not a stick axis; named imports retain other numeric channels.
 .classify_analog_pair <- function(name_lower) {
   name_lower <- sub("^p[0-9]+ +", "", name_lower)
@@ -178,166 +152,18 @@
   if (grepl("left stick up / down", name_lower)) return("lstick_y")
   if (grepl("right stick left / right", name_lower)) return("rstick_x")
   if (grepl("right stick up / down", name_lower)) return("rstick_y")
+  # MAME's analogue joysticks; the fields of its second player are the
+  # second joystick.
+  if (name_lower == "ad stick x") return("lstick_x")
+  if (name_lower == "ad stick y") return("lstick_y")
+  if (name_lower == "ad stick x 2") return("rstick_x")
+  if (name_lower == "ad stick y 2") return("rstick_y")
   if (grepl("x axis", name_lower)) return("lstick_x")
   if (grepl("y axis", name_lower)) return("lstick_y")
-  # Intellivision control disc logged as numeric axes: quantise onto the same
-  # 8 stick-direction slots that the named-direction INTV disc (N|NE|...) uses.
+  # The Intellivision control disc, where a core logs it as two numeric axes.
   if (grepl("disc x", name_lower)) return("lstick_x")
   if (grepl("disc y", name_lower)) return("lstick_y")
   NA_character_
-}
-# Parse a BizHawk `LogKey:#Reset|Power|#P1 Up|...` line.
-# Returns a list with: $commands (character), $btn_map (per-player list of
-# (col_pos, slot) tuples), $analog_map (per-player list of (int_idx, axis)
-# tuples).
-.parse_bk2_logkey <- function(logkey, inactive_ports = integer()) {
-  columns <- strsplit(sub("^LogKey:", "", logkey), "|", fixed = TRUE)[[1L]]
-  groups <- list()
-  current <- character()
-  for (name in columns[nzchar(columns)]) {
-    if (startsWith(name, "#")) {
-      if (length(current)) groups[[length(groups) + 1L]] <- current
-      current <- substring(name, 2L)
-    } else current <- c(current, name)
-  }
-  if (length(current)) groups[[length(groups) + 1L]] <- current
-  inactive_controls <- character()
-  if (length(inactive_ports)) {
-    for (i in seq_along(groups)) {
-      controls <- groups[[i]]
-      ports <- suppressWarnings(as.integer(sub("^P([0-9]+) .*", "\\1", controls)))
-      inactive <- !is.na(ports) & ports %in% inactive_ports
-      inactive_controls <- c(inactive_controls, controls[inactive])
-      groups[[i]] <- controls[!inactive]
-    }
-    groups <- groups[lengths(groups) > 0L]
-  }
-  if (!length(groups)) stop("empty bk2 LogKey")
-  # LogKeys describe stream order. Global controls can follow a player group
-  # (Saturn SMPC reset), or share its group (handheld and MAME controls).
-  source <- list()
-  player_names <- list()
-  commands <- character()
-  command_numeric <- logical()
-  player_ports <- integer()
-  shared <- length(groups) == 1L && !any(grepl("^P[0-9]+ ", groups[[1L]]))
-  for (group in groups) {
-    entries <- list()
-    for (name in group) {
-      key <- tolower(trimws(sub("^P[0-9]+ ", "", name)))
-      numeric <- .bk2_is_numeric_control(key, group)
-      port <- if (grepl("^P[0-9]+ ", name)) as.integer(sub("^P([0-9]+) .*", "\\1", name)) else NA_integer_
-      system <- key %in% c("power", "reset", "smpc reset") ||
-        grepl("^(coin |service|[1-4] players? start$|tilt$|st-v (test|service|pause)$)", key) ||
-        (is.na(port) && !shared)
-      if (system) {
-        commands <- c(commands, name)
-        command_numeric <- c(command_numeric, numeric)
-        destination <- 0L
-      } else {
-        if (is.na(port)) port <- 1L
-        if (!port %in% player_ports) {
-          player_ports <- c(player_ports, port)
-          player_names[[length(player_ports)]] <- character()
-        }
-        destination <- match(port, player_ports)
-        player_names[[destination]] <- c(player_names[[destination]], name)
-      }
-      entries[[length(entries) + 1L]] <- list(name = name, numeric = numeric, player = destination)
-    }
-    # Bk2Controller emits axes before Boolean controls within each group.
-    numeric <- vapply(entries, function(e) e$numeric, logical(1))
-    source <- c(source, entries[c(which(numeric), which(!numeric))])
-  }
-  if (!length(player_names)) stop("bk2 LogKey declares no controller controls")
-  commands <- commands[c(which(command_numeric), which(!command_numeric))]
-  maps <- axes <- unknown <- vector("list", length(player_names))
-  analog_count <- button_count <- integer(length(player_names))
-  non_stick <- integer()
-  psx <- any(grepl("[\u25B3\u25A1\u25CB]", unlist(player_names)))
-  for (p in seq_along(player_names)) {
-    group <- player_names[[p]]
-    gun <- (any(grepl("(^| )([Oo]ffscreen [Ss]hot|[Tt]rigger)$", group)) &&
-      any(grepl("[XYxy] Axis$", group))) || any(grepl("[Zz]apper [XYxy]$", group)) ||
-      all(c("x", "y", "trigger") %in% tolower(sub("^P[0-9]+ ", "", group)))
-    if (gun) non_stick <- c(non_stick, p)
-    for (name in group) {
-      key <- tolower(trimws(sub("^P[0-9]+ ", "", name)))
-      numeric <- .bk2_is_numeric_control(key, group)
-      if (numeric) {
-        axis <- if (gun) NA_character_ else .classify_analog_pair(tolower(name))
-        axes[[p]][[length(axes[[p]]) + 1L]] <- list(int_idx = analog_count[p], axis = axis, name = name)
-        analog_count[p] <- analog_count[p] + 1L
-      } else {
-        slot <- if (psx && key == "x") 7L else if (gun && key %in% c("trigger", "fire")) 46L else unname(.BK2_NAME_TO_UNI[key])
-        if (length(slot) == 1L && !is.na(slot)) {
-          maps[[p]][[length(maps[[p]]) + 1L]] <- list(col_pos = button_count[p], slot = slot)
-        } else if (!grepl("^mode: set [26]-button$", key)) {
-          unknown[[p]][[length(unknown[[p]]) + 1L]] <- list(col_pos = button_count[p], name = name)
-        }
-        button_count[p] <- button_count[p] + 1L
-      }
-    }
-  }
-  if (any(vapply(seq_along(maps), function(p) length(unknown[[p]]) > length(maps[[p]]), logical(1))))
-    stop("bk2 LogKey is unsupported or too sparse for its input columns")
-  list(
-    commands = commands, command_analog_count = sum(command_numeric),
-    btn_map = maps, analog_map = axes, unknown_map = unknown,
-    analog_count = analog_count, button_count = button_count,
-    source = source, player_names = player_names, player_ports = player_ports,
-    non_stick_players = non_stick, source_group_lengths = lengths(groups),
-    n_logkey_groups = length(groups), inactive_controls = inactive_controls
-  )
-}
-# BizHawk skips pipes while consuming its declared controls. Decode that stream
-# first, then rebuild convenient command/player fields. Never infer a control
-# from its pressed-character mnemonic or assign a global dial to a gamepad.
-.bk2_normalize_rows <- function(rows, parsed) {
-  stream <- gsub("|", "", rows, fixed = TRUE)
-  values <- vector("list", length(parsed$source))
-  text <- vector("list", length(parsed$source))
-  for (i in seq_along(parsed$source)) {
-    entry <- parsed$source[[i]]
-    if (entry$numeric) {
-      lengths <- attr(regexpr("^[[:space:]]*[+-]?[0-9]+,", stream), "match.length")
-      bad <- which(lengths < 1L)
-      if (length(bad)) stop("bk2 numeric field is invalid at sample ", bad[1L])
-      text[[i]] <- substring(stream, 1L, lengths)
-      values[[i]] <- as.numeric(sub(",$", "", text[[i]]))
-      stream <- substring(stream, lengths + 1L)
-    } else {
-      bad <- which(!nzchar(stream) | startsWith(stream, ","))
-      if (length(bad)) stop("bk2 controller stream is truncated at sample ", bad[1L])
-      text[[i]] <- substring(stream, 1L, 1L)
-      values[[i]] <- if (entry$player == 0L) !text[[i]] %in% c(".", " ") else text[[i]] != "."
-      stream <- substring(stream, 2L)
-    }
-  }
-  permitted <- parsed$command_analog_count > 0L & grepl("^[.[:space:]]*[+-]?[0-9]+,", stream)
-  if (any(grepl(",", stream, fixed = TRUE) & !permitted))
-    stop("bk2 input columns disagree with their LogKey: unconsumed numeric field")
-  destination <- vapply(parsed$source, function(e) e$player, integer(1))
-  numeric <- vapply(parsed$source, function(e) e$numeric, logical(1))
-  groups <- list()
-  targets <- c(if (length(parsed$commands)) 0L, seq_along(parsed$btn_map))
-  for (p in targets) {
-    indices <- which(destination == p)
-    indices <- indices[c(which(numeric[indices]), which(!numeric[indices]))]
-    groups[[length(groups) + 1L]] <- if (length(indices)) do.call(paste0, text[indices]) else rep("", length(rows))
-  }
-  normalized <- paste0("|", do.call(paste, c(groups, sep = "|")), "|")
-  original_groups <- split(seq_along(text), rep(seq_along(parsed$source_group_lengths), parsed$source_group_lengths))
-  original <- lapply(original_groups, function(indices) do.call(paste0, text[indices]))
-  original <- paste0("|", do.call(paste, c(original, sep = "|")), "|")
-  system <- data.frame(row.names = seq_along(rows))
-  for (i in which(destination == 0L)) system[[parsed$source[[i]]$name]] <- values[[i]]
-  list(
-    rows = normalized, system = system, values = values,
-    boundary_samples = which(rows != original),
-    trailing_samples = which(nzchar(stream)),
-    trailing_active_samples = which(grepl("[^.]", stream))
-  )
 }
 # Locate a bk2 member by its canonical name, tolerating two export
 # variants: a leading "<game folder>/" subdirectory prefix (some BizHawk builds
@@ -364,9 +190,10 @@
     identical(controls[["NesLeftPort"]], "ControllerNES") &&
     identical(controls[["NesRightPort"]], "UnpluggedNES")) 2L else integer()
 }
-# Read BK2 metadata independently of the input log. Public imports use
-# named controls; private quantized decoding retains fixed slots for value tests.
+# Read BK2 metadata independently of the input log.
 .bk2_archive_info <- function(path) {
+  if (!.is_zip_archive(path))
+    stop(path, ": not a BizHawk movie (BK2, TASPROJ or GBMV): a ZIP archive is expected", call. = FALSE)
   header <- list("_format" = "bk2")
   zip_names <- utils::unzip(path, list = TRUE)$Name
   # Header (usually "Header.txt"; some exports nest it or drop the extension)
@@ -415,8 +242,7 @@
   input_bytes <- listing$Length[match(il_member, listing$Name)]
   list(header = header, member = il_member, input_bytes = input_bytes)
 }
-.decode_bk2 <- function(path, analog = c("raw", "quantized"), max_input_bytes = 256 * 1024^2) {
-  analog <- match.arg(analog)
+.decode_bk2 <- function(path, max_input_bytes = 256 * 1024^2) {
   if (length(max_input_bytes) != 1L || !is.numeric(max_input_bytes) || !is.finite(max_input_bytes) ||
     max_input_bytes < 1 || max_input_bytes > .Machine$integer.max)
     stop("max_input_bytes must be positive and no greater than R's single-string limit (2147483647 bytes)")
@@ -440,7 +266,7 @@
       class = c("replayr_resource_limit", "error", "condition")
     ))
   log_text <- .read_zip_member_text(path, il_member)
-  mv <- .parse_bk2_input_log(log_text, header = header, analog = analog)
+  mv <- .parse_bk2_input_log(log_text, header = header)
   mv$source_path <- path
   mv
 }
@@ -516,57 +342,116 @@
     enc2utf8(txt)
   }
 }
-.parse_bk2_input_log <- function(text, header = list("_format" = "bk2"), analog = c("raw", "quantized")) {
-  .parse_bk2_input_lines(strsplit(text, "\n", fixed = TRUE)[[1L]], header, analog)
+.parse_bk2_input_log <- function(text, header = list("_format" = "bk2")) {
+  .parse_bk2_input_lines(strsplit(text, "\n", fixed = TRUE)[[1L]], header)
 }
-.parse_bk2_input_lines <- function(lines, header = list("_format" = "bk2"), analog = c("raw", "quantized")) {
-  analog <- match.arg(analog)
-  lines <- sub("\r+$", "", lines)
+# BizHawk reads a LogKey, and an input row, only at the start of a line. A
+# log whose LogKey line is indented still declares its layout there, so the
+# layout is taken from it, with a warning. Indented input rows are not
+# records for BizHawk and stay excluded.
+.bk2_logkey_lines <- function(lines) {
+  exact <- which(startsWith(lines, "LogKey:"))
+  if (length(exact)) return(list(logkey = lines[exact[1L]], indented = FALSE, indented_rows = 0L))
+  spaced <- which(startsWith(lines, " ") | startsWith(lines, "\t"))
+  keys <- spaced[grepl("^[[:space:]]+LogKey:", lines[spaced])]
+  if (!length(keys)) return(list(logkey = NULL, indented = FALSE, indented_rows = 0L))
+  list(
+    logkey = sub("^[[:space:]]+", "", lines[keys[1L]]), indented = TRUE,
+    indented_rows = sum(grepl("^[[:space:]]+[|]", lines[spaced]))
+  )
+}
+# Gym Retro means to write "LogKey:#Reset|Power|#" before the names of its
+# controls, but writes the names over that text (openai/retro,
+# src/movie-bk2.cpp, writeHeader()). Its logs therefore name the players'
+# controls in a line without the prefix, while every row keeps the group of
+# Reset and Power. The LogKey it meant is put together again.
+.bk2_retro_logkey <- function(lines, header) {
+  if (!identical(header$MovieVersion, "Retro")) return(NULL)
+  named <- lines[grepl("^(P[0-9]+ [A-Za-z]+[|])+$", lines)]
+  if (length(named) != 1L) return(NULL)
+  # On a Master System or Game Gear pad Gym Retro writes B for button 1 and A
+  # for button 2 (cores/genesis/libretro/libretro.c, DEVICE_PAD2B). They get
+  # the names BizHawk writes for these buttons, so that each has one ID.
+  if (toupper(header$Platform %||% "") %in% c("SMS", "GAMEGEAR")) {
+    named <- gsub("(P[0-9]+) B[|]", "\\1 B1|", named)
+    named <- gsub("(P[0-9]+) A[|]", "\\1 B2|", named)
+  }
+  paste0("LogKey:#Reset|Power|#", named)
+}
+.BK2_RETRO_NOTE <- "Gym Retro names its controls in a line without the LogKey prefix"
+.bk2_indented_logkey_message <- function(indented_rows) {
+  paste0(
+    "bk2 LogKey line is indented; its control layout is used",
+    if (indented_rows > 0L) paste0(
+      "; ", indented_rows,
+      " indented input line(s) are not records for BizHawk and are excluded"
+    )
+  )
+}
+# The line that declares the controls and the input rows of a log. Without
+# named controls only the fixed NES layout can be verified: the platform
+# header AND every row must agree. Any other log would be read as
+# plausible-looking, incorrect buttons.
+.bk2_layout_source <- function(lines, header) {
   platform_text <- tolower(paste(
-    unlist(header[intersect(names(header), c("Platform", "Core", "SystemID"))],
-      use.names = FALSE
-    ),
+    unlist(header[intersect(names(header), c("Platform", "Core", "SystemID"))], use.names = FALSE),
     collapse = " "
   ))
-  unsigned_analog <- grepl(
-    "psx|playstation|nymashock|octoshock|psxhawk",
-    platform_text
-  )
-  # Nyma's generic 2.8 axis is 16-bit. The PSX-specific AddAxis override
-  # introduced in 2.9 makes these four axes 8-bit. Do not infer the range
-  # separately for each sample (a low 16-bit value is still 16-bit).
-  version_text <- if (is.null(header$emuVersion)) "" else header$emuVersion
-  nyma_16bit <- grepl("nymashock", platform_text) &&
-    grepl("(^|[^0-9])2\\.8([. ]|$)", version_text)
-  analog_center <- if (nyma_16bit) 32768L else 128L
-  analog_max <- if (nyma_16bit) 65535L else 255L
-  analog_divisor <- if (nyma_16bit) 256 else 1
-  # Octoshock casts the logged integer-valued float to byte (conv.u1),
-  # without clamping in the movie adapter. A logged 256 therefore becomes
-  # zero, not 255. Keep this core-specific; Nyma has a different input path.
-  octoshock_byte_axes <- grepl("octoshock", platform_text)
-  octoshock_wrapped_axes <- 0L
-  logkey_line <- NULL
-  for (ln in lines) {
-    if (startsWith(ln, "LogKey:")) {
-      logkey_line <- ln
-      break
-    }
-  }
+  found <- .bk2_logkey_lines(lines)
+  logkey_line <- found$logkey
   frame_lines <- lines[startsWith(lines, "|")]
-  if (!is.null(logkey_line) && !nzchar(trimws(sub('^LogKey:', '', logkey_line)))) {
-    # Empty LogKeys occur in otherwise standard NesHawk movies. The
-    # platform header AND every row's fixed NES layout must agree.
-    if (!grepl('(^| )nes( |$)|neshawk', platform_text) ||
-      !all(grepl('^\\|[^|]{2}\\|[^|]{8}\\|[^|]{8}\\|$', frame_lines)))
-      stop('empty bk2 LogKey without a verified NES layout')
+  if (found$indented) {
+    header$logKeyIndented <- TRUE
+    header$indentedInputLines <- found$indented_rows
+    warning(.bk2_indented_logkey_message(found$indented_rows))
+  }
+  if (is.null(logkey_line)) {
+    logkey_line <- .bk2_retro_logkey(lines, header)
+    if (!is.null(logkey_line)) header$logKeyRestored <- .BK2_RETRO_NOTE
+  }
+  verified_nes <- function() grepl("(^| )nes( |$)|neshawk", platform_text) &&
+    all(grepl("^\\|[^|]{2}\\|[^|]{8}\\|[^|]{8}\\|$", frame_lines))
+  if (!is.null(logkey_line) && !nzchar(trimws(sub("^LogKey:", "", logkey_line)))) {
+    # Empty LogKeys occur in otherwise standard NesHawk movies.
+    if (!verified_nes()) stop("empty bk2 LogKey without a verified NES layout")
     logkey_line <- NULL
-    header$logKeyFallback <- 'verified NES header and two 8-button ports'
+    header$logKeyFallback <- "verified NES header and two 8-button ports"
+  } else if (is.null(logkey_line) && length(frame_lines)) {
+    if (!verified_nes()) stop("bk2 input log has no LogKey line and no verified NES layout")
+    header$logKeyFallback <- "verified NES header and two 8-button ports"
   }
-  if (!is.null(logkey_line) && analog == "raw") {
-    return(.bk2_named_log(frame_lines, logkey_line, header))
+  list(logkey = logkey_line, rows = frame_lines, header = header)
+}
+.parse_bk2_input_lines <- function(lines, header = list("_format" = "bk2")) {
+  declared <- .bk2_layout_source(sub("\r+$", "", lines), header)
+  if (!is.null(declared$logkey)) {
+    return(.bk2_named_log(declared$rows, declared$logkey, declared$header))
   }
-  if (length(frame_lines) == 0L) {
+  .bk2_nes_rows(declared$rows, declared$header)
+}
+# The groups of one input row: the text between its pipes, without the empty
+# pieces before the first and after the last pipe.
+.bk2_row_groups <- function(row) {
+  parts <- strsplit(row, "|", fixed = TRUE)[[1]]
+  if (length(parts) > 0L && parts[1L] == "") parts <- parts[-1L]
+  while (length(parts) > 0L && parts[length(parts)] == "") {
+    parts <- parts[-length(parts)]
+  }
+  parts
+}
+# The command bits of a row: one bit for each of the first 31 characters of
+# the system group that is not a dot.
+.bk2_command_bits <- function(text) {
+  bits <- 0L
+  if (nzchar(text)) {
+    chars <- strsplit(substr(text, 1L, 31L), "", fixed = TRUE)[[1]]
+    for (i in seq_along(chars)) if (chars[i] != ".") bits <- bitwOr(bits, bitwShiftL(1L, i - 1L))
+  }
+  bits
+}
+# The rows of a log without LogKey: NES pads, read by position.
+.bk2_nes_rows <- function(rows, header) {
+  if (length(rows) == 0L) {
     return(.new_movie(
       header = header,
       commands = integer(0),
@@ -578,295 +463,31 @@
       )
     ))
   }
-  # Inspect the first frame line to count player groups.
-  first_parts <- strsplit(frame_lines[1L], "|", fixed = TRUE)[[1]]
-  if (length(first_parts) > 0L && first_parts[1L] == "") first_parts <- first_parts[-1L]
-  while (length(first_parts) > 0L && first_parts[length(first_parts)] == "") {
-    first_parts <- first_parts[-length(first_parts)]
-  }
-  n_groups <- length(first_parts)
-  per_player_map <- NULL
-  per_player_analog <- NULL
-  has_separate_cmd_group <- TRUE
-  no_cmd_coleco_style <- FALSE
-  if (!is.null(logkey_line)) {
-    parsed <- .parse_bk2_logkey(logkey_line, inactive_ports = header$inactiveControllerPorts)
-    if (length(parsed$inactive_controls))
-      header$inactiveLogKeyControls <- parsed$inactive_controls
-    if (!is.null(parsed) && length(parsed$btn_map) > 0L) {
-      per_player_map <- parsed$btn_map
-      per_player_analog <- parsed$analog_map
-      has_separate_cmd_group <- length(parsed$commands) > 0L
-      no_cmd_coleco_style <- !has_separate_cmd_group
-      header$bk2NonStickPlayers <- parsed$non_stick_players
-      header$controllerPorts <- parsed$player_ports
-      normalized <- .bk2_normalize_rows(frame_lines, parsed)
-      frame_lines <- normalized$rows
-      if (length(normalized$boundary_samples)) {
-        header$logKeyStreamBoundarySamples <- length(normalized$boundary_samples)
-        header$unconsumedTrailingSamples <- length(normalized$trailing_samples)
-        header$unconsumedTrailingActiveSamples <- length(normalized$trailing_active_samples)
-        warning(
-          'bk2 LogKey stream parsing: ', length(normalized$boundary_samples),
-          ' noncanonical boundaries; ', length(normalized$trailing_active_samples),
-          ' samples have active trailing characters not consumed by BizHawk'
-        )
-      }
-      first_parts <- strsplit(frame_lines[1L], '|', fixed = TRUE)[[1L]][-1L]
-      n_groups <- length(first_parts)
-    }
-  }
-  n_players <- if (has_separate_cmd_group) {
-    max(n_groups - 1L, 1L)
-  } else if (no_cmd_coleco_style) {
-    max(n_groups, 1L)
-  } else {
-    1L
-  }
-  # A present but unintelligible LogKey must not silently become an NES movie:
-  # that would turn unknown columns into plausible-looking, incorrect buttons.
-  if (!is.null(per_player_map)) {
-    if (!any(vapply(per_player_map, length, integer(1))) &&
-      !any(vapply(per_player_analog, length, integer(1))))
-      stop("bk2 LogKey declares no supported controls")
-  } else if (!is.null(logkey_line)) {
-    stop("bk2 LogKey could not be parsed")
-  }
-  if (!is.null(per_player_map)) {
-    per_player_map <- per_player_map[seq_len(min(length(per_player_map), n_players))]
-    while (length(per_player_map) < n_players) {
-      per_player_map[[length(per_player_map) + 1L]] <- list()
-    }
-  }
-  has_analog <- !is.null(per_player_analog) &&
-    any(vapply(per_player_analog, function(a) length(a) > 0L, logical(1)))
-  # Determine inputs-array width.
-  if (!is.null(per_player_map) &&
-    any(vapply(per_player_map, function(m) length(m) > 0L, logical(1)))) {
-    max_idx <- 8L
-    for (m in per_player_map) {
-      for (entry in m) max_idx <- max(max_idx, entry$slot)
-    }
-    n_buttons <- max(8L, max_idx)
-  } else {
-    n_buttons <- 8L
-  }
-  if (has_analog) n_buttons <- max(n_buttons, 28L)
-  n_frames <- length(frame_lines)
-  inputs <- .empty_inputs(n_frames, n_players, n_buttons)
-  commands <- integer(n_frames)
-  paddle_previous <- rep(80L, n_players)
-  analog_values <- .empty_analog(n_frames, n_players)
-  if (has_analog) for (pl in seq_len(n_players)) {
-    entries <- per_player_analog[[pl]]
-    channels <- vapply(entries, function(e) e$name, character(1))
-    analog_values[[pl]] <- .empty_analog(n_frames, 1L, channels)[[1L]]
-  }
-  if (analog == "raw" && !is.null(per_player_map)) {
-    # The stream normalizer has already decoded each field into a vector.
-    # Reuse those vectors rather than splitting every observation again.
-    source_player <- vapply(parsed$source, function(x) x$player, integer(1))
-    source_numeric <- vapply(parsed$source, function(x) x$numeric, logical(1))
-    global_bits <- which(source_player == 0L & !source_numeric)
-    for (j in seq_len(min(length(global_bits), 31L))) {
-      on <- normalized$values[[global_bits[j]]]
-      commands[on] <- bitwOr(commands[on], bitwShiftL(1L, j - 1L))
-    }
-    for (p in seq_len(n_players)) {
-      numeric_fields <- which(source_player == p & source_numeric)
-      button_fields <- which(source_player == p & !source_numeric)
-      for (ai in seq_along(per_player_analog[[p]])) {
-        entry <- per_player_analog[[p]][[ai]]
-        values <- normalized$values[[numeric_fields[entry$int_idx + 1L]]]
-        bad <- which(!is.finite(values))
-        if (length(bad)) stop("invalid bk2 numeric channel at sample ", bad[1L])
-        analog_values[[p]][, ai] <- values
-        if (is.na(entry$axis)) next
-        if (entry$axis == "paddle_position") {
-          platform <- toupper(if (is.null(header$Platform)) "" else header$Platform)
-          if (!platform %in% c("NES", "FDS") || any(values < 0 | values > 160))
-            stop("unsupported bk2 paddle platform or position outside 0..160")
-        } else if (unsigned_analog) {
-          if (octoshock_byte_axes) {
-            wrapped <- values < 0 | values > 255
-            octoshock_wrapped_axes <- octoshock_wrapped_axes + sum(wrapped)
-            values[wrapped] <- values[wrapped] %% 256
-          }
-          bad <- which(values < 0 | values > analog_max)
-          if (length(bad)) stop("bk2 PSX axis outside declared encoding range at sample ", bad[1L])
-        }
-      }
-      for (entry in parsed$unknown_map[[p]]) {
-        active <- which(normalized$values[[button_fields[entry$col_pos + 1L]]])
-        if (length(active))
-          stop("unmapped active bk2 control: ", entry$name, " at sample ", active[1L])
-      }
-      for (entry in per_player_map[[p]]) {
-        values <- normalized$values[[button_fields[entry$col_pos + 1L]]]
-        inputs[, p, entry$slot] <- inputs[, p, entry$slot] | values
-      }
-    }
-  } else for (fi in seq_len(n_frames)) {
-    ln <- frame_lines[fi]
-    parts <- strsplit(ln, "|", fixed = TRUE)[[1]]
-    if (length(parts) > 0L && parts[1L] == "") parts <- parts[-1L]
-    while (length(parts) > 0L && parts[length(parts)] == "") {
-      parts <- parts[-length(parts)]
-    }
+  n <- length(rows)
+  n_players <- max(length(.bk2_row_groups(rows[1L])) - 1L, 1L)
+  inputs <- .empty_inputs(n, n_players, 8L)
+  commands <- integer(n)
+  for (i in seq_len(n)) {
+    parts <- .bk2_row_groups(rows[i])
     if (length(parts) == 0L) next
-    if (has_separate_cmd_group) {
-      cmd_part <- parts[1L]
-      # Disk selection is a numeric state, not a row of pressed command bits.
-      if (grepl(',', cmd_part, fixed = TRUE)) cmd_part <- sub('^.*,', '', cmd_part)
-      player_parts <- if (length(parts) > 1L) parts[-1L] else character(0)
-    } else {
-      cmd_part <- ""
-      player_parts <- parts
-    }
-    cmd <- 0L
-    if (nzchar(cmd_part)) {
-      cmd_chars <- strsplit(substr(cmd_part, 1L, 31L), "", fixed = TRUE)[[1]]
-      for (bi in seq_along(cmd_chars)) {
-        ch <- cmd_chars[bi]
-        if (ch != "." && ch != " ") cmd <- bitwOr(cmd, bitwShiftL(1L, bi - 1L))
-      }
-    }
-    commands[fi] <- cmd
-    n_to_loop <- min(n_players, length(player_parts))
-    for (p_idx in seq_len(max(0L, n_to_loop))) {
-      col <- player_parts[p_idx]
-      # N64 / PSX BizHawk player cols are
-      # "<int1>,<int2>,...,<button_chars>". Split off the leading ints
-      # and parse them as analog channels.
-      int_strs <- character(0)
-      if (grepl(",", col, fixed = TRUE)) {
-        last_comma <- max(gregexpr(",", col, fixed = TRUE)[[1L]])
-        head <- substr(col, 1L, last_comma - 1L)
-        col <- substr(col, last_comma + 1L, nchar(col))
-        int_strs <- trimws(strsplit(head, ",", fixed = TRUE)[[1L]])
-        if (has_analog && !is.null(per_player_analog) && p_idx <= length(per_player_analog)) {
-          axis_vals <- list()
-          for (ai in seq_along(per_player_analog[[p_idx]])) {
-            entry <- per_player_analog[[p_idx]][[ai]]
-            ii <- entry$int_idx + 1L
-            if (ii > length(int_strs)) next
-            s <- int_strs[ii]
-            if (!nzchar(s) || s == ".") next
-            v <- suppressWarnings(as.numeric(s))
-            if (!is.finite(v)) stop("invalid bk2 numeric channel at sample ", fi)
-            analog_values[[p_idx]][fi, ai] <- v
-            if (is.na(entry$axis)) next
-            if (entry$axis == "paddle_position") {
-              platform <- toupper(if (is.null(header$Platform)) "" else header$Platform)
-              if (!platform %in% c("NES", "FDS") || v < 0L || v > 160L)
-                stop("unsupported bk2 paddle platform or position outside 0..160")
-              # BizHawk's NES paddle is an absolute position, not a centred
-              # stick. Do not wrap values above 127 or count a stationary
-              # off-centre position as continuous movement.
-              if (analog == "quantized" && v != paddle_previous[p_idx])
-                inputs[fi, p_idx, if (v > paddle_previous[p_idx]) 21L else 25L] <- TRUE
-              paddle_previous[p_idx] <- v
-              next
-            }
-            # PSX cores log unsigned axes (128 is centre); N64 and most other
-            # cores log signed axes. Determine the convention from metadata,
-            # not from the current sample: unsigned values below 128 are just
-            # as important as values above it.
-            if (unsigned_analog) {
-              if (octoshock_byte_axes && (v < 0L || v > 255L)) {
-                v <- v %% 256L
-                octoshock_wrapped_axes <- octoshock_wrapped_axes + 1L
-              }
-              if (v < 0L || v > analog_max)
-                stop('bk2 PSX axis outside declared encoding range at sample ', fi)
-              v <- (v - analog_center) / analog_divisor
-            } else if (v > 127L && v <= 255L) {
-              v <- v - 256L
-            }
-            axis_vals[[entry$axis]] <- v
-          }
-          # Quantise main stick (lstick) to 8 directions, slots 21..28.
-          if (analog == "quantized" &&
-            (!is.null(axis_vals$lstick_x) || !is.null(axis_vals$lstick_y))) {
-            sx <- if (is.null(axis_vals$lstick_x)) 0L else axis_vals$lstick_x
-            sy <- if (is.null(axis_vals$lstick_y)) 0L else axis_vals$lstick_y
-            if (sx * sx + sy * sy >= .BK2_STICK_DEADZONE * .BK2_STICK_DEADZONE) {
-              # Invert Y so up is positive (matches the m64 convention).
-              angle <- atan2(-sy, sx)
-              sector <- as.integer((angle + pi / 8) %/% (pi / 4)) %% 8L
-              inputs[fi, p_idx, .STICK_SECTOR_TO_UNI[sector + 1L]] <- TRUE
-            }
-          }
-          # Quantise right stick (rstick) onto the 4 cardinal C-slots.
-          if (analog == "quantized" &&
-            (!is.null(axis_vals$rstick_x) || !is.null(axis_vals$rstick_y))) {
-            rx <- if (is.null(axis_vals$rstick_x)) 0L else axis_vals$rstick_x
-            ry <- if (is.null(axis_vals$rstick_y)) 0L else axis_vals$rstick_y
-            if (rx * rx + ry * ry >= .BK2_STICK_DEADZONE * .BK2_STICK_DEADZONE) {
-              if (abs(rx) >= abs(ry)) {
-                inputs[fi, p_idx, if (rx > 0L) 17L else 18L] <- TRUE
-              } else {
-                inputs[fi, p_idx, if (ry > 0L) 19L else 20L] <- TRUE
-              }
-            }
-          }
-        }
-      }
-      if (!is.null(per_player_map)) {
-        if (p_idx <= length(parsed$analog_count) &&
-          (length(int_strs) != parsed$analog_count[p_idx] ||
-            nchar(col) != parsed$button_count[p_idx]))
-          stop(
-            'bk2 input columns disagree with their LogKey at sample ', fi,
-            ', player ', p_idx
-          )
-        if (p_idx <= length(parsed$unknown_map)) for (entry in parsed$unknown_map[[p_idx]]) {
-          ch <- substr(col, entry$col_pos + 1L, entry$col_pos + 1L)
-          if (nzchar(ch) && ch != '.')
-            stop('unmapped active bk2 control: ', entry$name, ' at sample ', fi)
-        }
-        # Use LogKey-derived mapping.
-        if (p_idx <= length(per_player_map)) {
-          for (entry in per_player_map[[p_idx]]) {
-            cp <- entry$col_pos + 1L
-            if (cp <= nchar(col)) {
-              ch <- substr(col, cp, cp)
-              if (ch != ".") {
-                inputs[fi, p_idx, entry$slot] <- TRUE
-              }
-            }
-          }
-        }
-      } else {
-        # Positional NES fallback.
-        col_chars <- strsplit(col, "", fixed = TRUE)[[1L]]
-        cols_to_check <- min(length(.BK2_POS_TO_UNI), length(col_chars))
-        for (bk_pos in seq_len(cols_to_check)) {
-          ch <- col_chars[bk_pos]
-          if (ch == "." || ch == " ") next
-          inputs[fi, p_idx, .BK2_POS_TO_UNI[bk_pos]] <- TRUE
-        }
-      }
+    # A number before a comma is a state of the system, not a pressed bit.
+    commands[i] <- .bk2_command_bits(sub("^.*,", "", parts[1L]))
+    pads <- parts[-1L]
+    for (p in seq_len(min(n_players, length(pads)))) {
+      chars <- strsplit(sub("^.*,", "", pads[p]), "", fixed = TRUE)[[1L]]
+      chars <- chars[seq_len(min(length(.BK2_POS_TO_UNI), length(chars)))]
+      inputs[i, p, .BK2_POS_TO_UNI[which(chars != ".")]] <- TRUE
     }
   }
-  if (octoshock_wrapped_axes > 0L) {
-    header$octoshockByteWrappedAxisValues <- octoshock_wrapped_axes
-    warning('bk2 Octoshock byte conversion applied to ', octoshock_wrapped_axes,
-      ' out-of-range axis values',
-      call. = FALSE
-    )
-  }
-  movie <- .new_movie(
+  .new_movie(
     header = header,
     commands = commands,
     inputs = inputs,
-    analog = analog_values, analog_mode = analog,
-    decoded_button_slots = if (is.null(per_player_map)) 1:8 else sort(unique(unlist(lapply(per_player_map, function(m) vapply(m, function(e) e$slot, integer(1)))))),
-    button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
-    button_names = .legacy_button_names()[seq_len(n_buttons)]
+    analog = .empty_analog(n, n_players),
+    decoded_button_slots = 1:8,
+    button_mnemonics = .legacy_buttons()[seq_len(8L)],
+    button_names = .legacy_button_names()[seq_len(8L)]
   )
-  if (!is.null(per_player_map)) movie$system_inputs <- normalized$system
-  movie
 }
 # Additional platform controls follow the emulator's declared names. A keyboard
 # key, a calculator key, and a controller button with the same printed letter
@@ -916,7 +537,8 @@
   if (grepl("^(power|reset|smpc reset|input cycle|input length|reset cycle|reset instruction)$", key)) return(TRUE)
   if (keyboard && grepl("^key ", key)) return(FALSE)
   if (platform == "TI83") return(FALSE)
-  if (grepl("^(fds |vs coin|insert coin|coin |service|[0-9]+ players? start$|st-v (test|service|pause)$)", key)) return(TRUE)
+  if (grepl("^(fds |vs coin|insert coin|coin |service|[0-9]+ players? start$|st-v (test|service|pause)$)", key))
+    return(TRUE)
   if (key %in% c(
     "disc select", "disk index", "previous disk", "next disk", "open", "close",
     "open tray", "close tray", "toggle cable", "next drive", "next slot", "insert disk", "eject disk",
@@ -929,6 +551,15 @@
   if (platform %in% c("A26", "A2600", "A78", "A7800", "SMS", "GG", "SG1000") &&
     unprefixed && key %in% c("select", "pause")) return(TRUE)
   if (platform == "CHANNELF" && unprefixed && key %in% c("time", "mode", "hold", "start")) return(TRUE)
+  # Not on a pad: the lid of a DS, the switch that turns touch into tilt on
+  # a 3DS, and the cable between two linked Game Boys.
+  if (platform %in% c("NDS", "DS") && key %in% c("lidopen", "lidclose", "lid open", "lid close")) return(TRUE)
+  if (platform == "3DS" && key %in% c("tilt", "debug", "gpio14")) return(TRUE)
+  if (key == "toggle link connection") return(TRUE)
+  # The Atari 7800's black-and-white switch is on the console; TIC-80's
+  # relative-mouse toggle is a setting of the machine.
+  if (platform %in% c("A78", "A7800") && key == "bw") return(TRUE)
+  if (platform == "TIC80" && key == "mouse relative toggle") return(TRUE)
   FALSE
 }
 .bk2_control_key <- function(name, platform, group, keyboard) {
@@ -948,22 +579,53 @@
   if (platform %in% c("JAGUAR", "JAGUARCD") && grepl("^[0-9]$", key)) return(paste0("keypad_", key))
   if (platform %in% c("JAGUAR", "JAGUARCD") && key %in% c("asterisk", "pound"))
     return(paste0("keypad_", if (key == "asterisk") "star" else key))
+  # Of two direction pads, the left one is the direction pad and the right
+  # one has the identities of the N64's C-buttons: the Virtual Boy's pads,
+  # and the WonderSwan's X and Y crosses, numbered clockwise from the top.
   if (platform %in% c("VB", "VBOY") && grepl("^[lr]_(up|down|left|right)$", key))
-    return(paste0(if (startsWith(key, "l_")) "left_dpad_" else "right_dpad_", substring(key, 3L)))
-  if (platform == "WSWAN" && grepl("^[xy][1-4]$", key)) return(paste0("wswan_", key))
+    return(paste0(if (startsWith(key, "l_")) "dpad_" else "c_", substring(key, 3L)))
+  if (platform == "WSWAN" && grepl("^[xy][1-4]$", key))
+    return(paste0(if (startsWith(key, "x")) "dpad_" else "c_",
+      c("up", "right", "down", "left")[as.integer(substring(key, 2L))]))
+  # Settings and option buttons take Start, Select and Mode. The Lynx has no
+  # Start: its Pause takes that identity, like PC Engine's Run, and Option 1
+  # and 2 are Select and Mode. The Neo Geo Pocket's only such button, Option,
+  # is Start. PC Engine's two controls that switch between two and six
+  # buttons are Mode, like the Genesis button with that use.
+  if (platform == "LYNX" && key == "pause") return("start")
+  if (platform == "LYNX" && key == "option 1") return("select")
+  if (platform == "LYNX" && key == "option 2") return("mode")
+  if (platform %in% c("NGP", "NGPC") && key == "option") return("start")
+  # The 3DO pad's P (play and pause) is Start.
+  if (platform == "3DO" && key == "p") return("start")
+  # The Jaguar's Pause is Start and its Option is Mode.
+  if (platform %in% c("JAGUAR", "JAGUARCD") && key == "pause") return("start")
+  if (platform %in% c("JAGUAR", "JAGUARCD") && key == "option") return("mode")
+  if (grepl("^mode: set [26]-button$", key)) return(paste0("pce_mode_set_", substring(key, 11L, 11L), "_button"))
+  # The Channel F stick: forward and back are up and down, its twist is the
+  # two shoulder buttons, pushing it down is A and pulling it up is B.
   if (platform == "CHANNELF" && key %in% c("forward", "back", "ccw", "cw", "pull", "push"))
-    return(paste0("channelf_", key))
+    return(c(forward = "dpad_up", back = "dpad_down", ccw = "l1", cw = "r1", push = "a", pull = "b")[[key]])
+  # The Atari 7800's two triggers are its first and second button.
+  if (platform %in% c("A78", "A7800") && key == "trigger 2") return("b")
   if (grepl("^joystick (up|down|left|right)$", key)) return(paste0("dpad_", sub("^joystick ", "", key)))
   if (grepl("^joystick button [0-9]+$", key)) return(paste0("joystick_button_", sub("^joystick button ", "", key)))
   if (key %in% c("mouse left button", "mouse left click")) return("mouse_left")
   if (key %in% c("mouse middle button", "mouse middle click")) return("mouse_middle")
   if (key %in% c("mouse right button", "mouse right click")) return("mouse_right")
   if (key == "fourth button" && platform == "3DO") return("mouse_fourth")
-  if (key == "touch") return("touch_contact")
+  # A touch on the screen is the press of a pointing input, like a stick click.
+  if (key == "touch") return("l3")
   if (key == "zl") return("l2")
   if (key == "zr") return("r2")
   if (key == "f" && platform == "O2") return("a")
   group_keys <- tolower(sub("^P[0-9]+ ", "", group))
+  # MAME's two joysticks have the direction identities of the left and the
+  # right analogue stick: "Left Stick/Up" is left_n, "Right Stick/Left" right_w.
+  if (platform == "ARCADE" && grepl("^(left|right) stick/(up|down|left|right)$", key)) {
+    way <- c(up = "n", down = "s", left = "w", right = "e")[[sub("^.*/", "", key)]]
+    return(paste0(sub(" .*$", "", key), "_", way))
+  }
   # Neo Geo's four-button row corresponds to A/B/X/Y. Six-button pads
   # retain C because their independently recorded X button is also present.
   if (platform == "ARCADE" && all(c("a", "b", "c", "d") %in% group_keys) &&
@@ -982,8 +644,10 @@
   }
   paste0(tolower(platform %||% "bk2"), "_", .bk2_key_slug(key))
 }
-.bk2_named_log <- function(rows, logkey, header) {
-  platform <- toupper(header$Platform %||% "BK2")
+# The controls that a LogKey declares, in the order of the log. Each entry
+# has the control's name, its port, whether it is numeric, whether it belongs
+# to the system and not to a controller, and its shared identity.
+.bk2_logkey_entries <- function(logkey, header, platform) {
   sections <- strsplit(sub("^LogKey:", "", logkey), "#", fixed = TRUE)[[1L]]
   groups <- lapply(sections[nzchar(sections)], function(x) {
     fields <- strsplit(x, "|", fixed = TRUE)[[1L]]
@@ -1030,7 +694,13 @@
     header$ignoredLogKeyControlReason <- "Absent from BizHawk 2.9.1 MelonDS controller definition"
     header$sourceLogKey <- logkey
   }
-  n <- length(rows)
+  list(entries = entries, header = header)
+}
+# Reads the fields of every row in the order of the entries, as BizHawk does:
+# a numeric field up to its comma, a Boolean field of one character. Pipes do
+# not delimit fields. Returns the values, the text of each field, and what
+# is left of each row.
+.bk2_read_fields <- function(rows, entries) {
   stream <- gsub("|", "", rows, fixed = TRUE)
   values <- vector("list", length(entries))
   field_text <- vector("list", length(entries))
@@ -1051,6 +721,12 @@
       stream <- substring(stream, 2L)
     }
   }
+  list(values = values, text = field_text, rest = stream)
+}
+# What the rows show beyond their declared fields: commas read as buttons,
+# pipes at other places than the LogKey has them, and text after the last
+# field. The findings go to the header; nothing is dropped from the rows.
+.bk2_stream_findings <- function(rows, entries, fields, header) {
   # Axis names are supplied by the core, not typed in LogKey. A comma consumed
   # as an ordinary button can therefore reveal an unknown numeric field even
   # when a stale declaration happens to consume the whole row. Preserve the
@@ -1059,7 +735,7 @@
   comma_fields <- character()
   for (i in seq_along(entries)) if (!entries[[i]]$numeric &&
     !entries[[i]]$key %in% c(",", "comma", "key comma")) {
-    at <- which(field_text[[i]] == ",")
+    at <- which(fields$text[[i]] == ",")
     comma_rows <- c(comma_rows, at)
     comma_fields <- c(comma_fields, rep(entries[[i]]$name, length(at)))
   }
@@ -1071,11 +747,12 @@
       call. = FALSE
     )
   }
+  stream <- fields$rest
   numeric_system <- any(vapply(entries, function(e) e$system && e$numeric, logical(1)))
   if (any(grepl(",", stream, fixed = TRUE)) && !numeric_system)
     stop("bk2 input columns disagree with their LogKey: unconsumed numeric field")
   source_groups <- split(seq_along(entries), vapply(entries, function(e) e$group, integer(1)))
-  canonical <- lapply(source_groups, function(ix) do.call(paste0, field_text[ix]))
+  canonical <- lapply(source_groups, function(ix) do.call(paste0, fields$text[ix]))
   canonical <- paste0("|", do.call(paste, c(canonical, sep = "|")), "|")
   boundary <- which(rows != canonical)
   if (length(boundary)) {
@@ -1103,20 +780,20 @@
       call. = FALSE
     )
   }
-  ports <- sort(unique(vapply(entries, function(e) e$port, integer(1))))
-  ports <- ports[ports > 0L]
-  if (!length(ports)) ports <- 1L
-  header$controllerPorts <- ports
-  header$bk2NonStickPlayers <- which(vapply(ports, function(p) {
-    k <- vapply(entries[vapply(entries, function(e) e$port == p, logical(1))], function(e) e$key, character(1))
-    any(grepl("zapper|lightgun|hpos|vpos", k)) ||
-      ("trigger" %in% k && any(k %in% c("x", "y", "x axis", "y axis")))
-  }, logical(1)))
-  header$sharedInputControls <- vapply(entries[vapply(entries, function(e) e$shared, logical(1))], function(e) e$name, character(1))
+  list(header = header, comma_rows = comma_rows, comma_fields = comma_fields)
+}
+# The button states of the controllers: one column for each shared identity,
+# those of the registry first. The Boolean stick overrides of the N64 are
+# kept apart.
+.bk2_named_buttons <- function(entries, values, ports, n, platform) {
   digital <- which(vapply(entries, function(e) !e$system && !e$numeric, logical(1)))
   # N64 Boolean stick overrides feed the effective analogue vector. Preserve
   # them separately; no invented pressed directions are added in raw mode.
-  override <- if (platform == "N64") digital[vapply(entries[digital], function(e) e$key %in% c("a right", "a up", "a left", "a down"), logical(1))] else integer()
+  override <- if (platform == "N64") {
+    digital[vapply(entries[digital], function(e) e$key %in% c("a right", "a up", "a left", "a down"), logical(1))]
+  } else {
+    integer()
+  }
   digital <- setdiff(digital, override)
   keys <- unique(vapply(entries[digital], function(e) e$identity, character(1)))
   registry <- .controller_registry()
@@ -1130,9 +807,13 @@
     inputs[, p, k] <- inputs[, p, k] | values[[i]]
     labels[k] <- sub("^P[0-9]+ ", "", e$name)
     kinds[k] <- e$kind
-    registered <- match(keys[k], .controller_registry()$key)
-    if (!is.na(registered)) kinds[k] <- .controller_registry()$kind[registered]
+    registered <- match(keys[k], registry$key)
+    if (!is.na(registered)) kinds[k] <- registry$kind[registered]
   }
+  list(inputs = inputs, keys = keys, labels = labels, kinds = kinds, override = override)
+}
+# The numeric fields of each controller, under the names of the log.
+.bk2_named_channels <- function(entries, values, ports, n) {
   raw <- .empty_analog(n, length(ports))
   for (p in seq_along(ports)) {
     fields <- which(vapply(entries, function(e) e$port == ports[p] && e$numeric, logical(1)))
@@ -1141,20 +822,32 @@
       colnames(raw[[p]]) <- vapply(entries[fields], function(e) e$name, character(1))
     }
   }
-  if (platform == "PSX") {
-    old16 <- grepl("nymashock", tolower(header$Core %||% "")) &&
-      grepl("(^|[^0-9])2\\.8([. ]|$)", header$emuVersion %||% "")
-    wrapped <- 0L
-    for (p in setdiff(seq_along(ports), header$bk2NonStickPlayers)) {
-      roles <- vapply(tolower(colnames(raw[[p]])), .classify_analog_pair, character(1))
-      axes <- raw[[p]][, !is.na(roles) & roles != "paddle_position", drop = FALSE]
-      if (grepl("octoshock", tolower(header$Core %||% ""))) wrapped <- wrapped + sum(axes < 0 | axes > 255) else if (any(axes < 0 | axes > if (old16) 65535 else 255)) stop("bk2 PSX axis outside declared encoding range")
-    }
-    if (wrapped) {
-      header$octoshockByteWrappedAxisValues <- wrapped
-      warning("bk2 Octoshock byte conversion applied to ", wrapped, " out-of-range axis values", call. = FALSE)
+  raw
+}
+# PlayStation stick axes must lie in the range their core declares. Octoshock
+# reduces a value outside 0..255 to a byte, which is counted and reported.
+.bk2_check_psx_axes <- function(raw, ports, header) {
+  old16 <- grepl("nymashock", tolower(header$Core %||% "")) &&
+    grepl("(^|[^0-9])2\\.8([. ]|$)", header$emuVersion %||% "")
+  wrapped <- 0L
+  for (p in setdiff(seq_along(ports), header$bk2NonStickPlayers)) {
+    roles <- vapply(tolower(colnames(raw[[p]])), .classify_analog_pair, character(1))
+    axes <- raw[[p]][, !is.na(roles) & roles != "paddle_position", drop = FALSE]
+    if (grepl("octoshock", tolower(header$Core %||% ""))) {
+      wrapped <- wrapped + sum(axes < 0 | axes > 255)
+    } else if (any(axes < 0 | axes > if (old16) 65535 else 255)) {
+      stop("bk2 PSX axis outside declared encoding range")
     }
   }
+  if (wrapped) {
+    header$octoshockByteWrappedAxisValues <- wrapped
+    warning("bk2 Octoshock byte conversion applied to ", wrapped, " out-of-range axis values", call. = FALSE)
+  }
+  header
+}
+# The controls of the system: a table with one column for each, and command
+# bits for the first 31 Boolean ones in the order of the log.
+.bk2_named_system <- function(entries, values, n) {
   system <- which(vapply(entries, function(e) e$system, logical(1)))
   sys <- data.frame(row.names = seq_len(n))
   commands <- integer(n)
@@ -1166,36 +859,67 @@
       bit <- bit + 1L
     }
   }
-  calibration <- NULL
-  # Encore.IInputPollable: both 3DS sticks are -128..127, centre 0,
-  # with positive Y pointing up; the core divides both axes by 128.
-  if (platform == "3DS") {
-    calibration <- lapply(raw, function(ch) {
-      out <- list()
-      for (side in c("left", "right")) {
-        prefix <- if (side == "left") "Circle Pad" else "C-Stick"
-        pair <- paste(prefix, c("X", "Y"))
-        if (all(pair %in% colnames(ch))) out[[side]] <- list(x = pair[1L], y = pair[2L], center = c(0, 0), scale = c(128, 128), sign = c(1, 1))
-      }
-      out
-    })
-  }
-  movie <- .new_named_movie(header, commands, inputs, keys, analog = raw, names = labels, kinds = kinds, stick_calibration = calibration)
-  movie$system_inputs <- sys
+  list(inputs = sys, commands = commands)
+}
+# Encore.IInputPollable: both 3DS sticks are -128..127, centre 0,
+# with positive Y pointing up; the core divides both axes by 128.
+.bk2_3ds_calibration <- function(raw) {
+  lapply(raw, function(ch) {
+    out <- list()
+    for (side in c("left", "right")) {
+      prefix <- if (side == "left") "Circle Pad" else "C-Stick"
+      pair <- paste(prefix, c("X", "Y"))
+      if (all(pair %in% colnames(ch)))
+        out[[side]] <- list(x = pair[1L], y = pair[2L], center = c(0, 0), scale = c(128, 128), sign = c(1, 1))
+    }
+    out
+  })
+}
+# A log with named controls: every control keeps the name the core gave it.
+.bk2_named_log <- function(rows, logkey, header) {
+  platform <- toupper(header$Platform %||% "BK2")
+  declared <- .bk2_logkey_entries(logkey, header, platform)
+  entries <- declared$entries
+  n <- length(rows)
+  fields <- .bk2_read_fields(rows, entries)
+  values <- fields$values
+  findings <- .bk2_stream_findings(rows, entries, fields, declared$header)
+  header <- findings$header
+  ports <- sort(unique(vapply(entries, function(e) e$port, integer(1))))
+  ports <- ports[ports > 0L]
+  if (!length(ports)) ports <- 1L
+  header$controllerPorts <- ports
+  header$bk2NonStickPlayers <- which(vapply(ports, function(p) {
+    k <- vapply(entries[vapply(entries, function(e) e$port == p, logical(1))], function(e) e$key, character(1))
+    any(grepl("zapper|lightgun|hpos|vpos", k)) ||
+      ("trigger" %in% k && any(k %in% c("x", "y", "x axis", "y axis")))
+  }, logical(1)))
+  header$sharedInputControls <- vapply(entries[vapply(entries, function(e) e$shared, logical(1))], function(e) e$name,
+    character(1))
+  buttons <- .bk2_named_buttons(entries, values, ports, n, platform)
+  raw <- .bk2_named_channels(entries, values, ports, n)
+  if (platform == "PSX") header <- .bk2_check_psx_axes(raw, ports, header)
+  system <- .bk2_named_system(entries, values, n)
+  movie <- .new_named_movie(
+    header, system$commands, buttons$inputs, buttons$keys,
+    analog = raw, names = buttons$labels, kinds = buttons$kinds,
+    stick_calibration = if (platform == "3DS") .bk2_3ds_calibration(raw)
+  )
+  movie$system_inputs <- system$inputs
   movie$source_controls <- data.frame(
     name = vapply(entries, function(e) e$name, character(1)),
     type = vapply(entries, function(e) if (e$numeric) "integer" else "logical", character(1)),
     port = vapply(entries, function(e) e$port, integer(1)),
     key = vapply(entries, function(e) e$identity, character(1)), stringsAsFactors = FALSE
   )
-  if (any(nzchar(stream))) movie$source_trailing <- stream
-  if (length(comma_rows)) movie$ambiguous_input <- data.frame(
-    observation = comma_rows, field = comma_fields, source_input = rows[comma_rows],
+  if (any(nzchar(fields$rest))) movie$source_trailing <- fields$rest
+  if (length(findings$comma_rows)) movie$ambiguous_input <- data.frame(
+    observation = findings$comma_rows, field = findings$comma_fields, source_input = rows[findings$comma_rows],
     stringsAsFactors = FALSE
   )
   movie$stick_overrides <- lapply(ports, function(p) {
     out <- matrix(FALSE, n, 4L, dimnames = list(NULL, c("right", "up", "left", "down")))
-    for (i in override) if (entries[[i]]$port == p) out[, sub("^a ", "", entries[[i]]$key)] <- values[[i]]
+    for (i in buttons$override) if (entries[[i]]$port == p) out[, sub("^a ", "", entries[[i]]$key)] <- values[[i]]
     out
   })
   movie
@@ -1220,13 +944,14 @@
 #'   attributes giving the total processed. An empty recording gives a list
 #'   with no callback results and zero observations.
 #' @examples
-#' path <- system.file('extdata', 'expanded', 'two-stick-3ds.bk2', package='replayr')
-#' counts <- read_bk2_chunks(path, function(chunk) n_frames(chunk), chunk_size=2L)
+#' path <- system.file("extdata", "expanded", "two-stick-3ds.bk2", package = "replayr")
+#' counts <- read_bk2_chunks(path, function(chunk) n_observations(chunk), chunk_size = 2L)
 #' sum(unlist(counts))
-#' attr(counts, 'observations')
+#' attr(counts, "observations")
 #' @export
 read_bk2_chunks <- function(path, FUN, chunk_size = 100000L, analog = "raw",
-                            deadzone = NULL, triggers = "raw", ...) {
+                            deadzone = NULL, triggers = "raw", aliases = TRUE, ...) {
+  .check_recording_path(path)
   if (!is.function(FUN)) stop("FUN must be a function")
   if (length(chunk_size) != 1L || !is.numeric(chunk_size) || !is.finite(chunk_size) ||
     chunk_size < 1 || chunk_size != floor(chunk_size) || chunk_size > .Machine$integer.max)
@@ -1248,6 +973,18 @@ read_bk2_chunks <- function(path, FUN, chunk_size = 100000L, analog = "raw",
     if (!length(lines)) break
     lines <- sub("\r+$", "", lines)
     keys <- lines[startsWith(lines, "LogKey:")]
+    if (!length(keys) && is.null(logkey)) {
+      found <- .bk2_logkey_lines(lines)
+      if (found$indented) {
+        keys <- found$logkey
+        indented_rows <- found$indented_rows
+        warning(.bk2_indented_logkey_message(indented_rows))
+      }
+      if (!length(keys)) {
+        keys <- .bk2_retro_logkey(lines, info$header)
+        if (length(keys)) info$header$logKeyRestored <- .BK2_RETRO_NOTE
+      }
+    }
     if (length(keys)) {
       if (!is.null(logkey) && any(keys != logkey)) stop("BK2 LogKey changes within recording")
       if (is.null(logkey)) logkey <- keys[1L]
@@ -1260,9 +997,9 @@ read_bk2_chunks <- function(path, FUN, chunk_size = 100000L, analog = "raw",
       h <- info$header
       h$firstObservation <- total + 1
       h$lastObservation <- total + length(rows)
-      movie <- .parse_bk2_input_lines(c(logkey, rows), h, "raw")
+      movie <- .parse_bk2_input_lines(c(logkey, rows), h)
       movie$source_path <- path
-      movie <- .configure_movie(movie, analog, deadzone, triggers)
+      movie <- .configure_movie(movie, analog, deadzone, triggers, aliases)
       results[length(results) + 1L] <- list(FUN(movie, ...))
       total <- total + length(rows)
     }
@@ -1271,9 +1008,9 @@ read_bk2_chunks <- function(path, FUN, chunk_size = 100000L, analog = "raw",
     h <- info$header
     h$firstObservation <- total + 1
     h$lastObservation <- total + length(pending)
-    movie <- .parse_bk2_input_lines(c(logkey, pending), h, "raw")
+    movie <- .parse_bk2_input_lines(c(logkey, pending), h)
     movie$source_path <- path
-    movie <- .configure_movie(movie, analog, deadzone, triggers)
+    movie <- .configure_movie(movie, analog, deadzone, triggers, aliases)
     results[length(results) + 1L] <- list(FUN(movie, ...))
     total <- total + length(pending)
   }

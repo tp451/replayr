@@ -13,7 +13,7 @@ maps digital keys to stable IDs. \code{\link[=analog_channels]{analog_channels()
 select the single stored stream with \code{idx = 1}.
 }
 \details{
-\code{\link[=n_frames]{n_frames()}} counts polls; \code{\link[=n_players]{n_players()}} returns \code{NA_integer_}. \code{\link[=player]{player()}}
+\code{\link[=n_observations]{n_observations()}} counts polls; \code{\link[=n_players]{n_players()}} returns \code{NA_integer_}. \code{\link[=player]{player()}}
 requires an assigned controller and therefore directs callers to \code{\link[=polls]{polls()}}.
 If emulator evidence establishes a repeating polling order, supply
 \code{controller_order} to \code{\link[=read_m64]{read_m64()}} or \code{\link[=read_dtm]{read_dtm()}} to construct a
@@ -24,6 +24,16 @@ CTM stores separate pad, touch, and auxiliary-device events. Its observation
 flags identify which controls were sampled; \code{observed_inputs} provides the
 per-control mask. Mixed DTM adds device family and physical port when known.
 Wii reports marked \code{valid_report = FALSE} preserve missing source payloads.
+}
+\examples{
+# Two GameCube controllers are enabled, and the file does not say which
+# poll belongs to which.
+stream <- read_movie(system.file("extdata", "paper", "unassigned.dtm", package = "replayr"))
+class(stream)
+stream
+n_players(stream)
+button_layout(stream)$key
+polls(stream)[, c("poll", "port", "a", "left_x", "left_y")]
 }
 \seealso{
 read_m64, read_dtm

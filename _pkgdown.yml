@@ -8,6 +8,7 @@ reference:
     contents:
       - read_movie
       - supported_formats
+      - recording_format
       - read_fm2
       - read_bk2
       - read_fcm
@@ -37,6 +38,8 @@ reference:
       - read_mar
       - read_fbm
       - read_dft
+      - read_dem
+      - read_txt
       - read_ltm
       - read_wtf
       - read_jrsr
@@ -49,7 +52,13 @@ reference:
       - replayr_movie
       - replayr_poll_stream
       - polls
-      - n_frames
+      - summary.replayr_movie
+      - as.data.frame.replayr_movie
+      - subset-recording
+      - n_observations
+      - observation_unit
+      - observation_time
+      - recording_info
       - n_players
       - n_buttons
       - player
@@ -57,8 +66,10 @@ reference:
       - button_layout
       - align_buttons
       - analog_channels
+      - channel_layout
       - stick_channels
       - system_channels
+      - system_layout
   - title: Stable controller registry
     contents:
       - universal_buttons

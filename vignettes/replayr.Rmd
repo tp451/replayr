@@ -54,26 +54,26 @@ str(mv, max.level = 1L, give.attr = FALSE)
 * `header` — named list of header keys (e.g. `version`, `emuVersion`,
   `romFilename`, `rerecordCount`). Plus a synthetic `_format` entry
   that records which parser produced the movie.
-* `commands` — integer vector of length `n_frames`. Per-frame
-  commands byte (Reset, Power, format-specific bits). Most movie
-  frames are 0.
+* `commands` — integer vector with one entry per observation: the
+  commands byte (Reset, Power, format-specific bits), 0 for most
+  observations.
 * `inputs` — logical 3D array, dimensions
-  `(n_frames, n_players, n_buttons)`. `TRUE` means the button was
-  held that frame.
+  `(observations, players, buttons)`. `TRUE` means the button was
+  held at that observation.
 * `source_path` — where the movie was loaded from.
-* `button_mnemonics` / `button_names` — short and
-  human-readable labels for the third dimension.
+* `button_keys` / `button_names` — the keys and the device's labels of
+  the controls along the third dimension.
 
 Three helpers return the array's dimensions:
 
 ```{r}
-c(n_frames(mv), n_players(mv), n_buttons(mv))
+c(n_observations(mv), n_players(mv), n_buttons(mv))
 ```
 
 ## Inspecting one player
 
-`player()` extracts a single player's frames as a 2D logical matrix
-with named columns:
+`player()` extracts a single player's frames as a 2D logical matrix. Its
+columns are named by control key, so `p1[, "a"]` is the A button:
 
 ```{r}
 p1 <- player(mv, 1L)
@@ -83,7 +83,7 @@ head(p1[active, , drop = FALSE])
 ```
 
 `press_counts()` returns the number of observations in which each control
-is active:
+is active, under the same keys:
 
 ```{r}
 press_counts(mv, 1L)
@@ -93,6 +93,19 @@ The counts summarise the time spent on each direction and action in this
 example. A long hold contributes once per observation, while a brief press
 contributes only for its active interval.
 
+`summary()` adds the number of activations, that is, of changes from released
+to active, so that one long hold and many short presses can be told apart.
+`as.data.frame()` returns one row per observation with the buttons and
+numeric channels of a controller, and `[` selects observations and returns a
+recording, on which every accessor works as before:
+
+```{r}
+summary(mv)
+first_ten_seconds <- mv[1:600]
+first_ten_seconds
+head(as.data.frame(first_ten_seconds)[, c("observation", "dpad_right", "a", "commands")], 3)
+```
+
 ## A quick visual
 
 Dividing these counts by the recording length gives the proportion of
@@ -100,7 +113,7 @@ observations for which each control is active:
 
 ```{r press-rate}
 counts <- press_counts(mv, 1L)
-rates  <- counts / n_frames(mv)
+rates  <- counts / n_observations(mv)
 barplot(rates,
         las = 2,
         ylab = "fraction of frames held",
@@ -122,26 +135,48 @@ digits have distinct identities. `button_layout()` lists the shared registry;
 `button_layout(mv)` gives the complete layout for this recording, including
 source-specific keyboard and peripheral controls.
 
-The registry contains 53 consecutive IDs. Buttons with comparable roles
-share an ID across devices. The main mappings are:
+The registry contains 53 consecutive IDs. The same rules decide in every
+reader which controls share an ID, so a console has the same IDs whichever
+emulator recorded it:
+
+- **By label.** A button that carries one of the registry's letters or words
+  (A, B, C, X, Y, Z, L, R, Start, Select, Mode) has that ID. The ID follows
+  the letter, not the place on the pad: A is the right-hand button of a
+  Nintendo pad, the left one of a Genesis pad, and the lower one of an
+  Xbox-style pad, which is what a libTAS recording of an SDL game controller
+  holds.
+- **By place, for PlayStation pads.** Their buttons carry shapes and have the
+  IDs of the SNES buttons in the same places.
+- **In order, for numbered buttons.** The first is A, then B, X, Y, L1, R1,
+  L2, and R2.
+- **By role, for the rest.** The table lists every such assignment.
+
+`button_layout(mv)$name` shows the label on the device beside the shared
+`key` and `id`.
 
 | Source controls | Shared control and ID |
 |---|---|
-| Arcade Attack, Punch, or button 1; Doom Attack | A (8) |
-| Arcade buttons 5–8 | L1, R1, L2, R2 (11–14) |
-| Arcade D or button 4 | Y (10) |
-| Arcade Jump, Jump/Start, or button 2; Doom Use; missile | B (7) |
-| Arcade Kick or button 3 | X (9) |
+| Arcade and joystick buttons 1–8 | A, B, X, Y, L1, R1, L2, R2 (8, 7, 9–14) |
+| Arcade buttons shown under a cabinet's name: Attack or Punch; Jump, Jump/Start, or Missile; Kick; View change | A (8); B (7); X (9); Select (6) |
+| Atari 7800 second trigger | B (7) |
+| Channel F stick: forward and back; twist left and right; push and pull | Up and Down (4, 3); L1 and R1 (11, 12); A and B (8, 7) |
 | GunCon trigger, side A, side B, and offscreen shot | A, B, X, Y (8, 7, 9, 10) |
 | Intellivision Top | X (9) |
-| Joystick buttons 1–8 | A, B, X, Y, L1, R1, L2, R2 (8, 7, 9–14) |
-| Keypad Clear and Enter | Select (6) and Start (5) |
+| Keypad Clear and Enter; keypad Star and Pound | Select (6) and Start (5) |
 | Keypad digits 0–9 and Power Pad sensors 1–12 | Equal numbers share `numbered_0`–`numbered_12` (40–52) |
+| Lynx Option 1 | Select (6) |
+| Master System 1 and 2; UFO 50 Fire 1 and 2 | A, B (8, 7) |
 | Mouse buttons 4 and 5 | L1 and R1 (11 and 12) |
 | Mouse left, right, and middle buttons | A, B, X (8, 7, 9) |
+| Mouse wheel up and down | C-Up and C-Down (23, 22) |
 | Neo Geo A, B, C, and D | A, B, X, Y (8, 7, 9, 10) |
+| Option buttons and mode switches: Jaguar Option, Lynx Option 2, PC Engine 2/6-button switch, PC-FX Mode 1 and 2 | Mode (19) |
+| PC Engine and PC-FX I–VI | A, B, X, Y, L1, R1 (8, 7, 9–12) |
+| PlayStation Cross, Circle, Triangle, and Square | B, A, X, Y (7, 8, 9, 10) |
+| Single fire button or trigger; light-gun trigger | A (8) |
+| Start and pause buttons: 3DO P, Dustmod Escape, Jaguar Pause, Lynx Pause, Neo Geo Pocket Option, PC Engine Run | Start (5) |
 | Super Scope trigger, cursor, turbo, and pause | A, B, Mode, Start (8, 7, 19, 5) |
-| View change | Select (6) |
+| Touch on a screen or touchpad | L3 (15) |
 | Wii Remote 1/2, +/−, and Home | X/Y (9/10), Start/Select (5/6), and Mode (19) |
 
 Wii Remote D-pad and A/B buttons use the gamepad IDs. Nunchuk C/Z use
@@ -149,16 +184,44 @@ Wii Remote D-pad and A/B buttons use the gamepad IDs. Nunchuk C/Z use
 libTAS Guide uses Mode. The microphone uses ID 53. Genesis and Saturn C
 retain ID 17 because those controllers have separate C and X buttons.
 
-These mappings align controller roles; the action performed by a button
-still depends on the game. Keyboard keys, keypad Star/Pound, and controls
-without a defined counterpart retain qualified source IDs. For example,
-an arcade D button uses Y (10), while a libTAS keyboard D keeps
-`control:keysym_64`. openMSX device-qualified controls also remain separate,
-because its recordings can combine several devices in one input stream.
+A shared ID says that two buttons are the same control; what a button does
+still depends on the game. Keyboard keys keep the code set of their source.
+For example, a Neo Geo D button uses Y (10), while a libTAS keyboard D keeps
+`control:keysym_64`. Each device of an openMSX recording is a controller of
+its own, listed in `header$controllers`, with the IDs of its kind.
+Of two direction pads, the left one is the direction pad (IDs 1–4) and the
+right one has the IDs of the N64's C-buttons (20–23): the Virtual Boy's pads
+and the WonderSwan's X and Y crosses. An arcade cabinet's two joysticks have
+the direction IDs of the left and the right analogue stick.
+The Intellivision disc has the eight direction IDs of the left stick; a
+direction between two of them, such as NNE, sets both.
+Buttons on the console itself, such as Reset, the Master System's Pause, or
+the lid of a DS, are not part of a pad; `system_channels()` returns them.
 
-When multiple source buttons share an ID, the column is active if either
-is pressed. `source_inputs` and `source_layout` preserve the separate
-states and their mapping whenever aliases are combined. Wii device states
+A Doom-engine demo stores no buttons at all. It stores what the game was
+asked to do in each tic, whatever keys the player had bound: attack, use
+and, in Hexen, jump. These game actions are kept apart from device buttons.
+They have kind `action` and IDs of their own (`action:attack`, `action:use`,
+`action:jump`), shared by every game that records the same action. A
+Dustmod script likewise holds jump, dash, light and heavy attack, taunt and
+restart as actions; its jump is the same `action:jump`. A GoldSrc demo
+(*Half-Life*, *Counter-Strike* 1.x) stores sixteen actions with every
+command, attack, use and jump among them, and the movement and view angles
+the command asks for as numeric channels. Numbered IDs are kept for what a
+player does to a device.
+
+When several controls of a recording share an ID, the column is active if
+any of them is pressed and is named after all of them. `source_inputs` and
+`source_layout` preserve the separate states and their mapping. To keep every
+control in a column of its own instead, read with `aliases = FALSE`:
+
+```{r}
+gun <- system.file("extdata", "paper", "light-gun.bk2", package = "replayr")
+button_layout(read_movie(gun))[, c("id", "key", "name")]
+button_layout(read_movie(gun, aliases = FALSE))[, c("id", "key", "name")]
+```
+
+Wii device states
 also appear in `poll_fields` as `wii_remote_*` and `wii_classic_*` columns,
 which `polls()` includes for unassigned streams.
 
@@ -172,9 +235,11 @@ the same action.
 
 ## Reading other formats
 
-The package has readers for 34 recording formats, with HGM as an additional
-extension alias for Hourglass WTF. Published-file checks cover 61 TASVideos
-platform labels:
+The package reads 33 recording formats under 37 file extensions: TASPROJ and
+GBMV files have the structure of BK2, TAS that of BKM, FM3 that of FM2, and
+HGM that of Hourglass WTF, and the extension `.txt` is that of two formats,
+the tables of two published data sets of Atari 2600 play. Published-file
+checks cover 61 TASVideos platform labels:
 
 | Family | Platforms represented in the checked recordings |
 |---|---|
@@ -201,11 +266,23 @@ fields in ZIP containers. PlayStation PXM and PJM distinguish digital pads
 from analogue controllers with L3/R3 and two sticks. File extension alone is
 therefore only the first step in choosing a decoder.
 
-Every supported extension dispatches through the same entry point:
+Every supported extension dispatches through the same entry point.
+`supported_formats()` lists the extensions; with `details = TRUE` it also
+names the reader and the emulator of each, and the platform where a format
+serves one console. A `.txt` file is read where its first line shows one of
+the two tables; `recording_format()` says which files of a folder are
+recordings:
 
 ```{r}
-supported_formats()
+supported_formats(details = TRUE)
 ```
+
+The extension of a file decides its reader. A recording under another
+extension is recognised by its content where its format has a signature, as
+most binary formats, FCEUX movies and BizHawk archives have. Doom demos, gz
+macros and a few text formats have none; `read_movie(path, format = "lmp")`
+names the format for them. A file whose extension contradicts its signature
+is refused, and the message says which format its content shows.
 
 Bundled samples live next to the FM2 one:
 
@@ -230,9 +307,31 @@ without rearranging columns.
 ## Analogue sticks and numeric channels
 
 `analog_channels(movie, 1L)` preserves the numeric source channels, including
-X/Y axes, triggers, and supported peripheral values. The default `analog = "raw"`
-keeps them separate from digital button states. Choose a representation for
-each stick explicitly:
+X/Y axes, triggers, and supported peripheral values. Its columns are named by
+key, as those of `player()` are: the X axis of the left stick is `left_x` in
+an M64, a DTM and a BizHawk recording alike. Only the names are shared;
+values keep the range and unit of their source. `channel_layout()` lists the
+keys beside the labels of the recording:
+
+```{r}
+path <- system.file("extdata", "paper", "mouse-drag.bk2", package = "replayr")
+channel_layout(read_movie(path))
+```
+
+| Key | Measurement |
+|---|---|
+| `left_x`, `left_y`, `right_x`, `right_y` | Axes of the analogue sticks. The N64 stick, the 3DS Circle Pad and the Nunchuk stick are the left stick. |
+| `left_trigger`, `right_trigger` | Analogue triggers |
+| `mouse_dx`, `mouse_dy` | Movement of a mouse since the previous observation (`mouse_x`, `mouse_y` are positions) |
+| `touch_x`, `touch_y` | Position on a touch surface |
+| `aim_x`, `aim_y` | Where a light gun points |
+| `accel_x`, `accel_y`, `accel_z`; `gyro_x`, `gyro_y`, `gyro_z` | Motion sensors |
+
+Any other channel has the key formed from its own name, such as `tilt_x` for
+the BizHawk field `Tilt X`.
+
+The default `analog = "raw"` keeps numeric channels separate from digital
+button states. Choose a representation for each stick explicitly:
 
 ```{r}
 path <- system.file("extdata", "sample.dtm", package = "replayr")
@@ -251,8 +350,10 @@ Euclidean length of centred, range-normalised X/Y axes; diagonal values can
 exceed one.
 
 `deadzone` accepts a scalar or named left/right values in [0,1]. It is a radial
-threshold: default 0.25 for PSX/BK2 and 0.125 for M64/DTM. A boundary between
-sectors selects the counterclockwise centre. DTM analogue triggers remain
+threshold whose default follows the controller: 0.125 for the sticks of
+Nintendo's consoles and 0.25 for all others (`?read_movie` gives the
+reasons). A boundary between
+sectors selects the anticlockwise centre. DTM analogue triggers remain
 numeric unless `triggers = "digital"` is requested (threshold 128).
 
 Stick conversion covers M64/GZM and BKM N64 axes, GameCube DTM, supported Wii
@@ -294,16 +395,33 @@ including mouse-button virtual keys when used. DS/DSi and 3DS recordings add
 touch input, and Dolphin Wii reports add pointing and motion channels. `analog_channels()` retains
 numeric fields in their original units. Source timing fields accompany event
 logs, so an event count should not be converted to seconds using a video rate.
-The individual reader help pages describe their observation units.
+`observation_unit()` names the unit of an imported recording, and the reader
+help pages describe it.
+
+Formats also name platform, video standard, frame rate and rerecord count
+differently. `recording_info()` reports them under one name each, and
+`observation_time()` gives the time of every observation in seconds:
+
+```{r}
+recording_info(mv)
+range(observation_time(mv))
+```
+
+The frame rate is read from the recording where it states one. Otherwise it
+is the nominal rate of the console and video standard, as `frame_rate_source`
+says. No rate is assumed where neither is known; `fallback_rate = 60` or `50`
+names one for such a recording. libTAS, JPC-RR and openMSX
+recordings carry their own times, which are used as they are. Controller
+polls have no time in the file, so `observation_time()` returns `NA` for them.
 
 LSMV recordings can contain several input observations per video frame.
-The reader retains every row, so `n_frames(movie)` counts input observations
+The reader retains every row, so `n_observations(movie)` counts input observations
 and `movie$header$frameCount` counts video-frame starts. `movie$subframes`
 provides `source_frame`, `subframe`, and `frame_start` for relating each input
 to its video frame, along with source-line and reset information. Extended
 SNES buttons and the full SNES-side layout of Super Game Boy recordings remain
 available. A declared Super Scope supplies trigger, cursor, turbo, and pause
-states and signed `gun_x`/`gun_y` coordinates in source units.
+states and signed `aim_x`/`aim_y` coordinates in source units.
 
 openMSX events distinguish relative trackball and paddle movement from absolute
 touchpad coordinates. JoyMega buttons, JoyHandle buttons and wheel values,
@@ -316,8 +434,9 @@ The original `peripheral-events.omr` example exercises these distinctions.
 Controls outside the core gamepad registry have qualified textual IDs.
 For example, a KeySym and a Windows virtual-key code retain different names.
 `button_layout(movie)` identifies both the core controls and those additional
-keys. A mnemonic may contain several characters; code should work with matrix
-columns or stable keys rather than split column names into characters.
+keys. `player()`, `press_counts()`, `align_buttons()` and `polls()` all name
+their columns by key; the `mnemonic` column is a compact code for writing a
+controller state as text, and may contain several characters.
 
 For CTM and mixed-controller DTM, `polls()` exposes the device and observation
 flags beside the inputs. Use those flags to select observations of the device
@@ -334,8 +453,7 @@ can be inspected alongside the movement values:
 ```{r mouse-drag}
 path <- system.file("extdata", "paper", "mouse-drag.bk2", package = "replayr")
 mouse <- read_movie(path)
-layout <- button_layout(mouse)
-left <- player(mouse)[, layout$column[layout$key == "a"]]
+left <- player(mouse)[, "a"]
 movement <- analog_channels(mouse)
 head(data.frame(observation = which(left), movement[left, , drop = FALSE]))
 ```

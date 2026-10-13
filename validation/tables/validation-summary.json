@@ -1,0 +1,119 @@
+{
+  "files": 7469,
+  "distinct_file_hashes": 7385,
+  "successful_distinct": 7385,
+  "conditional_distinct": 0,
+  "successful_files": 7469,
+  "samples_in_successful_files": 1042322643,
+  "unassigned_poll_streams": 38,
+  "formats": {
+    "bk2": {
+      "ok": 3071
+    },
+    "bkm": {
+      "ok": 106
+    },
+    "ctas": {
+      "ok": 4
+    },
+    "ctm": {
+      "ok": 5
+    },
+    "dft": {
+      "ok": 1
+    },
+    "dsm": {
+      "ok": 124
+    },
+    "dtm": {
+      "ok": 188
+    },
+    "fbm": {
+      "ok": 62
+    },
+    "fcm": {
+      "ok": 491
+    },
+    "fm2": {
+      "ok": 828
+    },
+    "fm3": {
+      "ok": 19
+    },
+    "fmv": {
+      "ok": 242
+    },
+    "gbmv": {
+      "ok": 36
+    },
+    "gmv": {
+      "ok": 378
+    },
+    "gzm": {
+      "ok": 1
+    },
+    "jrsr": {
+      "ok": 76
+    },
+    "lmp": {
+      "ok": 19
+    },
+    "lsmv": {
+      "ok": 93
+    },
+    "ltm": {
+      "ok": 446
+    },
+    "m64": {
+      "ok": 85
+    },
+    "mar": {
+      "ok": 21
+    },
+    "mc2": {
+      "ok": 21
+    },
+    "mcm": {
+      "ok": 6
+    },
+    "mmv": {
+      "ok": 35
+    },
+    "omr": {
+      "ok": 30
+    },
+    "pjm": {
+      "ok": 59
+    },
+    "pxm": {
+      "ok": 51
+    },
+    "smv": {
+      "ok": 413
+    },
+    "tas": {
+      "ok": 4
+    },
+    "tasproj": {
+      "ok": 1
+    },
+    "vbm": {
+      "ok": 428
+    },
+    "wtf": {
+      "ok": 38
+    },
+    "ymv": {
+      "ok": 2
+    },
+    "zmv": {
+      "ok": 1
+    }
+  },
+  "errors": [],
+  "files_with_warnings": 21,
+  "full_collection": true,
+  "default_analog_mode": "raw",
+  "source_archive_sha256": "42d1e8b3159c56298392f33351e73d7a0f80a39347ad3d6bc7a885fcb0408375",
+  "note": "Checks operate on distinct hashes. Mixed Dolphin framing uses source-verified native encoding rules; physical controller ports remain unassigned where the recording omits them."
+}

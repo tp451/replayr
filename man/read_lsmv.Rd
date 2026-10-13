@@ -9,6 +9,7 @@ read_lsmv(
   analog = "raw",
   deadzone = NULL,
   triggers = "raw",
+  aliases = TRUE,
   max_input_bytes = 256 * 1024^2,
   ...
 )
@@ -25,12 +26,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{max_input_bytes}{Maximum expanded input-log size for a full import,
 in bytes. The default is \code{256 * 1024^2}. Increase this explicitly when
@@ -47,11 +67,12 @@ A \link{replayr_movie} with one observation per input subframe.
 Reads ZIP input logs with \code{controlsversion} 0: Game Boy/Game Boy Color pads,
 SNES 12- and 16-button pads, multitaps, Y-cabled pads, and a declared
 Super Scope on port 2. Super Game Boy movies retain their SNES controller
-layout. The four extra pad controls have keys \code{lsnes_ext0} to \code{lsnes_ext3}.
+layout. The four spare bits of a 16-bit pad report are not buttons of the
+pad; \code{\link[=system_channels]{system_channels()}} returns them as \verb{pad<n>_ext0} to \verb{pad<n>_ext3}.
 }
 \details{
 Every non-empty input row is retained, including subframes between frame
-starts. \code{\link[=n_frames]{n_frames()}} counts these observations; \code{header$frameCount} counts
+starts. \code{\link[=n_observations]{n_observations()}} counts these observations; \code{header$frameCount} counts
 frame starts. \code{subframes} contains \code{source_line}, \code{frame_start},
 \code{source_frame}, and \code{subframe} (the row's one-based position within its
 source frame). Player indices follow controller fields in the source log.
@@ -63,11 +84,16 @@ including blank lines and original line endings.
 
 Super Scope controls use \code{a} (trigger), \code{b} (cursor), \code{mode} (turbo),
 and \code{start} (pause). Their separate source keys remain in \code{source_layout}.
-\code{\link[=analog_channels]{analog_channels()}} returns its signed source \code{gun_x} and \code{gun_y} coordinates. \code{\link[=button_layout]{button_layout()}} gives
+\code{\link[=analog_channels]{analog_channels()}} returns its signed source coordinates as \code{aim_x} and \code{aim_y}. \code{\link[=button_layout]{button_layout()}} gives
 stable control IDs. Mouse and Justifier port types raise an error.
 
 The input member's ZIP checksum is verified before parsing. Full imports
 default to a 256 MiB expanded-input limit. Damaged controller metadata
 raises an error; other complete metadata with an integrity defect is
 retained with a warning.
+}
+\examples{
+movie <- read_lsmv(system.file("extdata", "sample.lsmv", package = "replayr"))
+observation_unit(movie)
+head(movie$subframes[, c("source_frame", "subframe", "reset")], 3)
 }

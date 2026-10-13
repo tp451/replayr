@@ -269,13 +269,13 @@ for sensor in range(1, 13):
     add("</g>")
 text(1153, 1191, "ID above · sensor number below", "small", "middle")
 
-text(40, 1251, "Shared action buttons", "head")
+text(40, 1251, "Numbered buttons and shapes", "head")
 path("M62 1275 H1338 L1360 1460 H40Z", "shell")
 for x, key, first, second in [
-    (220, "a", "Attack · Punch · Fire", "Arcade 1 · Doom Attack"),
-    (540, "b", "Jump · Use · Missile", "Arcade 2 · Jump/Start"),
-    (860, "x", "Kick · Arcade 3", "Mouse middle"),
-    (1180, "y", "Arcade D · Arcade 4", "Offscreen shot"),
+    (220, "a", "Button 1 · I · Fire", "Circle · Mouse left"),
+    (540, "b", "Button 2 · II", "Cross · Mouse right"),
+    (860, "x", "Button 3 · III", "Triangle · Mouse middle"),
+    (1180, "y", "Button 4 · IV", "Square · Offscreen shot"),
 ]:
     add(f'<g data-key="{key}" data-id="{ident(key)}">')
     circle(x, 1320, 32)
@@ -287,7 +287,7 @@ for x, key, first, second in [
 text(
     700,
     1446,
-    "Arcade buttons 5–8 → L1, R1, L2, R2. View change → Select.",
+    "Buttons 5–8 → L1, R1, L2, R2. Run and a handheld's Pause → Start.",
     "small",
     "middle",
 )

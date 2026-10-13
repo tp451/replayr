@@ -9,7 +9,7 @@
 #   0x30  author byte length 0x34 author bytes
 #
 # Each frame contains one record per configured controller followed by one
-# command byte. Standard controllers use two bytes; analog controllers use
+# command byte. Standard controllers use two bytes; analogue controllers use
 # those same two button bytes followed by four unsigned stick-axis bytes.
 .PXM_CONTROLLER_WIDTH <- c(
   `0` = 0L, # disconnected
@@ -19,7 +19,7 @@
   `4` = 2L, # standard digital controller
   `5` = 6L, # analog joystick
   `6` = NA, # Namco GunCon
-  `7` = 6L # analog controller / DualShock
+  `7` = 6L # analogue controller / DualShock
 )
 # Bit 0..15 in the active-high PSX button word -> private decoder slot.
 .PSX_BIT_TO_UNI <- c(
@@ -28,53 +28,9 @@
   29L, 30L, 11L, 12L,
   9L, 8L, 7L, 10L
 )
-.pxm_quantise_sticks <- function(inputs, frame, player, raw_axes,
-                                 deadzone = 32L) {
-  lx <- as.integer(raw_axes[1L]) - 128L
-  ly <- 128L - as.integer(raw_axes[2L])
-  rx <- as.integer(raw_axes[3L]) - 128L
-  ry <- 128L - as.integer(raw_axes[4L])
-  if (lx * lx + ly * ly >= deadzone * deadzone) {
-    angle <- atan2(ly, lx)
-    sector <- as.integer((angle + pi / 8) %/% (pi / 4)) %% 8L
-    inputs[frame, player, .STICK_SECTOR_TO_UNI[sector + 1L]] <- TRUE
-  }
-  if (rx * rx + ry * ry >= deadzone * deadzone) {
-    if (abs(rx) >= abs(ry)) {
-      inputs[frame, player, if (rx > 0L) 17L else 18L] <- TRUE
-    } else {
-      inputs[frame, player, if (ry > 0L) 20L else 19L] <- TRUE
-    }
-  }
-  inputs
-}
-# Vectorized equivalent of .pxm_quantise_sticks: avoid copying the entire movie
-# array for each frame of a long analog recording.
-.pxm_stick_matrix <- function(axes, deadzone = 32L) {
-  axes <- matrix(axes, ncol = 4L)
-  result <- matrix(FALSE, nrow(axes), 30L)
-  lx <- axes[, 1L] - 128L
-  ly <- 128L - axes[, 2L]
-  rx <- axes[, 3L] - 128L
-  ry <- 128L - axes[, 4L]
-  active <- which(lx * lx + ly * ly >= deadzone * deadzone)
-  if (length(active)) {
-    sectors <- as.integer((atan2(ly[active], lx[active]) + pi / 8) %/% (pi / 4)) %% 8L
-    result[cbind(active, .STICK_SECTOR_TO_UNI[sectors + 1L])] <- TRUE
-  }
-  active <- which(rx * rx + ry * ry >= deadzone * deadzone)
-  if (length(active)) {
-    slots <- ifelse(abs(rx[active]) >= abs(ry[active]),
-      ifelse(rx[active] > 0, 17L, 18L), ifelse(ry[active] > 0, 20L, 19L)
-    )
-    result[cbind(active, slots)] <- TRUE
-  }
-  result
-}
 # Decode configured controller widths into private button slots and raw
 # axes. The public reader applies compact IDs and requested stick representations.
-.decode_pxm <- function(path, analog = c("raw", "quantized")) {
-  analog <- match.arg(analog)
+.decode_pxm <- function(path) {
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x34L || !identical(data[1:4], charToRaw("PXM "))) {
     stop(path, ": not a PXM file")
@@ -146,10 +102,6 @@
         axes <- matrix(axes, nrow = n_frames, ncol = 4L)
         colnames(axes) <- c("lstick_x", "lstick_y", "rstick_x", "rstick_y")
         analog_values[[port]] <- axes
-        if (analog == "quantized") {
-          stick <- .pxm_stick_matrix(axes)
-          for (slot in 17:28) inputs[, port, slot] <- stick[, slot]
-        }
       }
     }
     commands <- as.integer(data[frame_off + sum(widths) + 1L])
@@ -168,6 +120,8 @@
     version = as.character(version),
     emulatorVersion = as.character(.read_u32_le(data, 8L)),
     flags = sprintf("0x%x", flags),
+    # Bit 2 of the movie flags: PAL timing.
+    isPal = bitwAnd(flags, 4L) != 0L,
     controllerType1 = as.character(controller_types[1L]),
     controllerType2 = as.character(controller_types[2L]),
     reservedDigitalPadBitCounts = reserved_digital_bits,
@@ -179,7 +133,7 @@
     header = header,
     commands = commands,
     inputs = inputs,
-    analog = analog_values, analog_mode = analog,
+    analog = analog_values,
     source_path = path,
     button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
     button_names = .legacy_button_names()[seq_len(n_buttons)]

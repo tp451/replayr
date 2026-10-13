@@ -4,7 +4,14 @@
 \alias{read_mc2}
 \title{Read a PCEjin or VBjin recording}
 \usage{
-read_mc2(path, analog = "raw", deadzone = NULL, triggers = "raw", ...)
+read_mc2(
+  path,
+  analog = "raw",
+  deadzone = NULL,
+  triggers = "raw",
+  aliases = TRUE,
+  ...
+)
 }
 \arguments{
 \item{path}{Recording file path.}
@@ -18,12 +25,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{...}{Reader-specific arguments, such as \code{controller_order} for M64 or DTM,
 or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_members]{movie_members()}}).}
@@ -34,12 +60,19 @@ A \link{replayr_movie} with compact digital columns and source metadata.
 \description{
 Imports version-1 text and binary recordings from PCEjin and VBjin, with
 one row per recorded frame. PC Engine recordings support up to five
-controller ports. VBjin recordings include both Virtual Boy directional
-pads; the second pad uses the \verb{vboy_right_*} keys in \code{\link[=button_layout]{button_layout()}}.
+controller ports; buttons I and II have the IDs of A and B, and Run that
+of Start. VBjin recordings include both Virtual Boy direction pads: the
+left one has the IDs of the direction pad and the right one those of the
+N64's C-buttons.
 }
 \details{
 \code{\link[=player]{player()}} returns the buttons for a selected port. The original command
 byte is retained in \code{commands}. Header fields identify the emulator and,
 when recorded, PC Engine CD mode. Incomplete binary packets and inconsistent
 controller fields produce an error.
+}
+\examples{
+movie <- read_mc2(system.file("extdata", "legacy", "vboy.mc2", package = "replayr"))
+# The Virtual Boy has two direction pads.
+button_layout(movie)[, c("key", "name")]
 }

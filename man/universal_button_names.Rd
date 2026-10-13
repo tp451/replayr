@@ -12,6 +12,11 @@ Character vector in stable registry order.
 \description{
 Universal controller names
 }
+\examples{
+head(universal_button_names(), 12)
+# The registry, with the ID and key of each name.
+head(button_layout()[, c("id", "key", "name")], 12)
+}
 \seealso{
 \code{\link[=button_layout]{button_layout()}}
 }

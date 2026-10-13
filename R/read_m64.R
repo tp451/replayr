@@ -26,8 +26,8 @@
 #       bit 2: C-Down         bit 3: C-Up
 #       bit 4: R-shoulder     bit 5: L-shoulder
 #       bits 6-7: reserved
-#   byte 2  signed int8  analog stick X
-#   byte 3  signed int8  analog stick Y (+Y == up)
+#   byte 2  signed int8  analogue stick X
+#   byte 3  signed int8  analogue stick Y (+Y == up)
 #
 # Public readers retain stick coordinates by default and apply the requested
 # representation through the shared controller-layout code.
@@ -53,14 +53,9 @@
   NA_integer_, # bit 6: reserved
   NA_integer_ # bit 7: reserved
 )
-# Sector -> 1-based private decoder slot in (E, NE, N, NW, W, SW, S, SE) order.
-.STICK_SECTOR_TO_UNI <- c(21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L)
-# Magnitude threshold below which the stick is treated as neutral.
-.M64_STICK_DEADZONE <- 16L
 # Decode polls in file order. An explicit controller order groups polls
 # into cycles; otherwise multiple enabled ports remain unassigned.
-.decode_m64 <- function(path, analog = c("raw", "quantized"), controller_order = NULL) {
-  analog <- match.arg(analog)
+.decode_m64 <- function(path, controller_order = NULL) {
   data <- readBin(path, what = "raw", n = file.info(path)$size)
   if (length(data) < 0x400L || !identical(data[1:4], charToRaw("M64\x1A"))) {
     stop(path, ": not an M64 file")
@@ -140,11 +135,6 @@
       slot <- .M64_HIGH_BIT_TO_UNI[bit + 1L]
       if (!is.na(slot)) inputs[, 1L, slot] <- bitwAnd(high, bitwShiftL(1L, bit)) != 0L
     }
-    if (analog == "quantized") {
-      active <- which(sx * sx + sy * sy >= .M64_STICK_DEADZONE^2)
-      sector <- as.integer((atan2(sy[active], sx[active]) + pi / 8) %/% (pi / 4)) %% 8L
-      inputs[cbind(active, 1L, .STICK_SECTOR_TO_UNI[sector + 1L])] <- TRUE
-    }
   }
   if (length(controller_order) > 1L) {
     poll_inputs <- inputs
@@ -191,7 +181,7 @@
     header = header,
     commands = commands,
     inputs = inputs,
-    analog = analog_values, analog_mode = analog,
+    analog = analog_values,
     button_mnemonics = .legacy_buttons()[seq_len(n_buttons)],
     button_names = .legacy_button_names()[seq_len(n_buttons)]
   )

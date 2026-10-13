@@ -440,37 +440,37 @@ text{font-family:Georgia,'Times New Roman',serif;fill:#222}
 <text class="label" x="1303" y="1125">12</text>
 </g>
 <text class="small" x="1153" y="1191" text-anchor="middle">ID above · sensor number below</text>
-<text class="head" x="40" y="1251">Shared action buttons</text>
+<text class="head" x="40" y="1251">Numbered buttons and shapes</text>
 <path class="shell" d="M62 1275 H1338 L1360 1460 H40Z"/>
 <g data-key="a" data-id="8">
 <circle class="button" cx="220" cy="1320" r="32"/>
 <text class="id" x="220" y="1318">8</text>
 <text class="label" x="220" y="1340">A</text>
-<text class="small" x="220" y="1384" text-anchor="middle">Attack · Punch · Fire</text>
-<text class="small" x="220" y="1413" text-anchor="middle">Arcade 1 · Doom Attack</text>
+<text class="small" x="220" y="1384" text-anchor="middle">Button 1 · I · Fire</text>
+<text class="small" x="220" y="1413" text-anchor="middle">Circle · Mouse left</text>
 </g>
 <g data-key="b" data-id="7">
 <circle class="button" cx="540" cy="1320" r="32"/>
 <text class="id" x="540" y="1318">7</text>
 <text class="label" x="540" y="1340">B</text>
-<text class="small" x="540" y="1384" text-anchor="middle">Jump · Use · Missile</text>
-<text class="small" x="540" y="1413" text-anchor="middle">Arcade 2 · Jump/Start</text>
+<text class="small" x="540" y="1384" text-anchor="middle">Button 2 · II</text>
+<text class="small" x="540" y="1413" text-anchor="middle">Cross · Mouse right</text>
 </g>
 <g data-key="x" data-id="9">
 <circle class="button" cx="860" cy="1320" r="32"/>
 <text class="id" x="860" y="1318">9</text>
 <text class="label" x="860" y="1340">X</text>
-<text class="small" x="860" y="1384" text-anchor="middle">Kick · Arcade 3</text>
-<text class="small" x="860" y="1413" text-anchor="middle">Mouse middle</text>
+<text class="small" x="860" y="1384" text-anchor="middle">Button 3 · III</text>
+<text class="small" x="860" y="1413" text-anchor="middle">Triangle · Mouse middle</text>
 </g>
 <g data-key="y" data-id="10">
 <circle class="button" cx="1180" cy="1320" r="32"/>
 <text class="id" x="1180" y="1318">10</text>
 <text class="label" x="1180" y="1340">Y</text>
-<text class="small" x="1180" y="1384" text-anchor="middle">Arcade D · Arcade 4</text>
-<text class="small" x="1180" y="1413" text-anchor="middle">Offscreen shot</text>
+<text class="small" x="1180" y="1384" text-anchor="middle">Button 4 · IV</text>
+<text class="small" x="1180" y="1413" text-anchor="middle">Square · Offscreen shot</text>
 </g>
-<text class="small" x="700" y="1446" text-anchor="middle">Arcade buttons 5–8 → L1, R1, L2, R2. View change → Select.</text>
+<text class="small" x="700" y="1446" text-anchor="middle">Buttons 5–8 → L1, R1, L2, R2. Run and a handheld&#x27;s Pause → Start.</text>
 <line class="rule" x1="40" y1="1480" x2="1360" y2="1480"/>
 <text class="head" x="40" y="1521">Shared controls and keyboard identities</text>
 <text class="small" x="40" y="1552">Equivalent buttons share an ID. Keyboard keys retain their source key codes.</text>

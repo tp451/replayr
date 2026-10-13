@@ -13,7 +13,7 @@ test_that("unprefixed arcade controls retain numeric channels and named buttons"
   expect_equal(unname(analog_channels(mv)), rbind(c(127, 127, 0, 255), c(1, 2, 3, 4)))
   expect_identical(button_layout(mv)$key, c("select", "b", "a"))
   expect_equal(unname(player(mv)), rbind(c(FALSE, TRUE, FALSE), c(TRUE, FALSE, TRUE)), ignore_attr = TRUE)
-  expect_identical(system_channels(mv)[["Coin 1"]], c(TRUE, FALSE))
+  expect_identical(system_channels(mv)[["coin_1"]], c(TRUE, FALSE))
 })
 test_that("global numeric controls stay outside compact gamepad columns", {
   mv <- decode_log(
@@ -21,9 +21,9 @@ test_that("global numeric controls stay outside compact gamepad columns", {
     c("|12,-3,.C|D.J.|", "|0,4,R.|.A.U|")
   )
   expect_identical(button_layout(mv)$key, c("dpad_up", "b", "a", "y"))
-  expect_identical(system_channels(mv)$Dial, c(12, 0))
-  expect_identical(system_channels(mv)[["Dial 2"]], c(-3, 4))
-  expect_identical(system_channels(mv)$Reset, c(FALSE, TRUE))
+  expect_identical(system_channels(mv)$dial, c(12, 0))
+  expect_identical(system_channels(mv)[["dial_2"]], c(-3, 4))
+  expect_identical(system_channels(mv)$reset, c(FALSE, TRUE))
   expect_equal(ncol(analog_channels(mv)), 0)
 })
 test_that("light gun coordinates are preserved without gamepad calibration", {
@@ -44,6 +44,6 @@ test_that("mouse motion and trailing Saturn system controls keep stream order", 
   expect_equal(n_players(mv), 1)
   expect_identical(button_layout(mv)$key, c("start", "b", "a", "x"))
   expect_equal(unname(analog_channels(mv)), rbind(c(127, -50), c(0, 20)))
-  expect_identical(system_channels(mv)[["P13 Smpc Reset"]], c(TRUE, FALSE))
-  expect_identical(system_channels(mv)$Power, c(FALSE, TRUE))
+  expect_identical(system_channels(mv)[["smpc_reset"]], c(TRUE, FALSE))
+  expect_identical(system_channels(mv)$power, c(FALSE, TRUE))
 })

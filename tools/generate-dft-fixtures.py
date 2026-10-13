@@ -35,6 +35,14 @@ MOUSE:1:2:01000
 00000000001
 """,
 }
+def gz(data):
+    """Gzip with a fixed header, independent of Python version and platform."""
+    buffer = io.BytesIO()
+    with gzip.GzipFile(filename="", mode="wb", fileobj=buffer, mtime=0) as stream:
+        stream.write(data)
+    return buffer.getvalue()
+
+
 buf = io.BytesIO()
 with tarfile.open(fileobj=buf, mode="w", format=tarfile.USTAR_FORMAT) as archive:
     for name, text in scripts.items():
@@ -44,4 +52,4 @@ with tarfile.open(fileobj=buf, mode="w", format=tarfile.USTAR_FORMAT) as archive
         info.mode = 0o644
         info.mtime = 0
         archive.addfile(info, io.BytesIO(data))
-(TARGET / "menu-double-tap.dft").write_bytes(gzip.compress(buf.getvalue(), mtime=0))
+(TARGET / "menu-double-tap.dft").write_bytes(gz(buf.getvalue()))

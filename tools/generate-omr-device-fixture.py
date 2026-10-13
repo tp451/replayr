@@ -13,11 +13,21 @@ semantics; emulator cursor smoothing and paddle limits are not simulated.
 """
 
 from pathlib import Path
-import gzip, json, xml.etree.ElementTree as ET
+import gzip, io, json, xml.etree.ElementTree as ET
 
 repo = Path(__file__).resolve().parents[1]
 root = repo / "inst/extdata/computers"
 root.mkdir(parents=True, exist_ok=True)
+
+
+def gz(data):
+    """Gzip with a fixed header, independent of Python version and platform."""
+    buffer = io.BytesIO()
+    with gzip.GzipFile(filename="", mode="wb", fileobj=buffer, mtime=0) as stream:
+        stream.write(data)
+    return buffer.getvalue()
+
+
 serial = ET.Element("serial")
 replay = ET.SubElement(serial, "replay", version="4")
 snap = ET.SubElement(ET.SubElement(replay, "snapshots"), "item")
@@ -109,7 +119,7 @@ for device, states in [(0, [63, 47, 61, 45, 63]), (1, [47, 15, 63, 31, 47])]:
         event("LightGunState", label, id=device, status=status)
 event("EndLog", "end")
 data = ET.tostring(serial, encoding="utf-8", xml_declaration=True)
-(root / "peripheral-events.omr").write_bytes(gzip.compress(data, mtime=0))
+(root / "peripheral-events.omr").write_bytes(gz(data))
 (root / "peripheral-events-expected.json").write_text(
     json.dumps(expected, indent=2), encoding="utf-8"
 )

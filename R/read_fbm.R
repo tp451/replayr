@@ -77,14 +77,15 @@
   answer
 }
 # Input schemas record facts about the driver's ordered input fields. They do
-# not contain emulator code. A byte input is unsigned; analog inputs use BE16.
+# not contain emulator code. A byte input is unsigned; analogue inputs use BE16.
 .fbm_input_schema <- function(game = NULL, input_schema = NULL) {
   if (!is.null(game) && !is.null(input_schema))
     stop("Supply either game or input_schema for FBM, not both")
   if (is.null(input_schema)) {
     if (!is.character(game) || length(game) != 1L || is.na(game) || !nzchar(game))
       stop("FBM does not identify its input layout: supply a verified game ROM identifier or input_schema")
-    schemas <- jsonlite::fromJSON(system.file("extdata", "fbm-layouts.json", package = "replayr"), simplifyVector = FALSE)
+    schemas <- jsonlite::fromJSON(system.file("extdata", "fbm-layouts.json", package = "replayr"),
+      simplifyVector = FALSE)
     input_schema <- schemas[[game]]
     if (is.null(input_schema)) stop("FBM game '", game, "' requires a source-verified input_schema")
   }
@@ -141,14 +142,45 @@
     }
     result[i, ] <- current
   }
-  if (pos <= length(bytes)) stop("FBM input data remains after the declared frame count; check the supplied input schema")
+  if (pos <= length(bytes))
+    stop("FBM input data remains after the declared frame count; check the supplied input schema")
   result
 }
+# What follows the input chunk. The emulator writes there the text that the
+# author of a recording entered in its recording dialog, as a chunk FRM1: the
+# length of the text in bytes, then two bytes for each character, the low
+# byte first (fbarr, src/burner/win32/replay.cpp). Bytes that are no such
+# chunk, or that follow it, are returned as they are.
+.fbm_trailer <- function(data, end, path) {
+  out <- list(metadata = NULL, tail = raw())
+  if (end >= length(data)) return(out)
+  rest <- data[(end + 1L):length(data)]
+  if (length(rest) < 8L || !identical(rest[1:4], charToRaw("FRM1"))) {
+    out$tail <- rest
+    return(out)
+  }
+  size <- .read_u32_le(rest, 4L)
+  available <- length(rest) - 8L
+  if (size > available) {
+    warning(basename(path), ": the text after the input is cut short; ", available, " of its ", size,
+      " bytes are read", call. = FALSE)
+  }
+  take <- min(size, available)
+  units <- matrix(rest[8L + seq_len(take - take %% 2L)], nrow = 2L)
+  # The text ends at a character of value zero, as it does for the emulator.
+  ended <- which(units[1L, ] == as.raw(0L) & units[2L, ] == as.raw(0L))
+  if (length(ended)) units <- units[, seq_len(ended[1L] - 1L), drop = FALSE]
+  out$metadata <- if (length(units)) iconv(list(as.vector(units)), "UTF-16LE", "UTF-8", sub = "?") else ""
+  if (available > size) out$tail <- rest[(8L + size + 1L):length(rest)]
+  out
+}
 .decode_fbm <- function(path, game = NULL, input_schema = NULL) {
-  schema <- .fbm_input_schema(game, input_schema)
+  # The file is looked at before the layout is asked for, so that a file of
+  # another format is not answered with a request for an input schema.
   data <- readBin(path, "raw", n = file.info(path)$size)
   if (length(data) < 45L || !identical(data[1:4], charToRaw("FB1 ")))
     stop("Not a FinalBurn Alpha FBM recording")
+  schema <- .fbm_input_schema(game, input_schema)
   flags <- as.integer(data[5L])
   offset <- 5L
   if (identical(data[offset + 1:4], charToRaw("FS1 "))) {
@@ -208,8 +240,17 @@
     frameCount = n, rerecordCount = rerecords, sourceFlags = flags, controllerPorts = players,
     inputSchemaSource = schema$source %||% "caller-supplied", huffmanDecodedBytes = count
   )
+  trailer <- .fbm_trailer(data, offset + 8L + chunk_size, path)
+  header$metadata <- trailer$metadata
+  plain <- labels == gsub("_", " ", keys, fixed = TRUE)
+  labels[plain] <- .control_identity_layout(keys[plain])$name
   movie <- .new_named_movie(header, integer(n), inputs, keys, source_path = path, analog = analog, names = labels)
   movie$system_inputs <- system
   movie$input_schema <- schema
+  if (length(trailer$tail)) {
+    warning(basename(path), ": ", length(trailer$tail), " byte(s) follow the recording that are no text of its ",
+      "author; retaining them in source_tail", call. = FALSE)
+    movie$source_tail <- trailer$tail
+  }
   movie
 }

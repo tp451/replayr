@@ -10,8 +10,10 @@ polls(x)
 \item{x}{A \link{replayr_poll_stream}.}
 }
 \value{
-Data frame in source order. Digital column names use stable control
-keys. For M64, \code{commands} uses bit 0 for reset. For DTM, bit 0 is disc
+Data frame in source order. \code{poll} is the position of the poll in
+the file. Digital and numeric columns are named
+by the keys of \code{\link[=button_layout]{button_layout()}} and \code{\link[=channel_layout]{channel_layout()}}. For M64, \code{commands} uses bit 0 for
+reset. For DTM, bit 0 is disc
 change and bit 1 is reset. Standard DTM exposes \code{is_connected} and
 \code{get_origin}; Zelda Edition exposes \code{loading}, \code{tuner_event}, \code{link_x},
 and \code{link_z} (see \code{\link[=read_dtm]{read_dtm()}}). The object's \code{poll_bytes} component
@@ -23,4 +25,11 @@ final Wii records. Use observation flags before analysing device-specific fields
 }
 \description{
 Extract an unassigned controller-poll stream
+}
+\examples{
+stream <- read_movie(system.file("extdata", "paper", "unassigned.dtm", package = "replayr"))
+stream
+polls(stream)[, c("poll", "port", "a", "left_x", "left_y", "is_connected")]
+# A selection keeps the positions of the polls in the file.
+polls(stream[2:3])$poll
 }

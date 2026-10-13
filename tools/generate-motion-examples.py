@@ -48,7 +48,7 @@ for i in range(180):
     assert len(packet) == 24
     body += bytes([len(packet)]) + packet
     expected.append(
-        (i + 1, a, accel_x, 513, 617, ir_x, ir_y, pitch, roll, yaw, 1, 1, 1)
+        (i + 1, a, accel_x, accel_y, accel_z, ir_x, ir_y, pitch, roll, yaw, 1, 1, 1)
     )
 
 header = bytearray(256)
@@ -133,7 +133,8 @@ separate pitch/roll changes illustrate motion channels. Gyroscope fields
 are counts in the slow range. The values specify an input sequence, with
 no claim to reproduce a physical gesture or a game's response.
 wii-motion-expected.csv gives the expected decoded values. Y/Z acceleration
-is expanded from nine to ten bits using Dolphin's bit-replication rule.
+is stored in nine bits and widened to ten as Dolphin widens it, by repeating
+the lowest stored bit.
 Infrared points 3 and 4 are absent, encoded as 1023, 1023, and size 15.
 
 Regenerate from the package root:

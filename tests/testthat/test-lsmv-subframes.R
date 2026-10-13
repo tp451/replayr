@@ -4,24 +4,26 @@ lsmv_subframe_movie <- function(text, header = list(`_format` = 'lsmv')) {
 test_that('LSMV retains subframe inputs and source timing metadata', {
   text <- paste0('F.|........\r\n..|A.......\r\n\r\n .|.B......\r\nQ.|..s.....\r\n')
   m <- lsmv_subframe_movie(text)
-  expect_identical(n_frames(m), 4L)
+  expect_identical(n_observations(m), 4L)
   expect_identical(m$header$observationUnit, 'input subframe')
   expect_equal(m$header$frameCount, 2)
   expect_identical(m$subframes$source_line, c(1L, 2L, 4L, 5L))
   expect_identical(m$subframes$frame_start, c(TRUE, FALSE, FALSE, TRUE))
   expect_identical(m$subframes$source_frame, c(1L, 1L, 1L, 2L))
   expect_identical(m$subframes$subframe, c(1L, 2L, 3L, 1L))
-  expect_identical(player(m)[, 'A'], c(FALSE, TRUE, FALSE, FALSE))
-  expect_identical(player(m)[, 'B'], c(FALSE, FALSE, TRUE, FALSE))
+  expect_identical(player(m)[, 'a'], c(FALSE, TRUE, FALSE, FALSE))
+  expect_identical(player(m)[, 'b'], c(FALSE, FALSE, TRUE, FALSE))
   expect_identical(m$inputs[, 1, match('select', m$button_keys)], c(FALSE, FALSE, FALSE, TRUE))
   expect_identical(m$source_input, text)
 })
 test_that('LSMV retains every 16-button and Super Game Boy source control', {
   text <- 'F.|............0123\n..|BYsSudlrAXLR....\n'
   m <- lsmv_subframe_movie(text, list(`_format` = 'lsmv', gametype = 'gambatte_sgb_ntsc', port1 = 'gamepad16'))
-  expect_equal(n_buttons(m), 16)
-  expect_identical(tail(button_layout(m)$key, 4), paste0('lsnes_ext', 0:3))
-  expect_true(all(m$inputs[1, 1, 13:16]))
+  # The four spare bits of the report are not buttons of the pad.
+  expect_equal(n_buttons(m), 12)
+  expect_identical(names(system_channels(m)), paste0('pad1_ext', 0:3))
+  expect_true(all(unlist(system_channels(m)[1, ])))
+  expect_false(any(unlist(system_channels(m)[2, ])))
   expect_true(all(m$inputs[2, 1, 1:12]))
   expect_identical(m$header$controllerWidths, 16L)
   expect_identical(m$header$port1, 'gamepad16')
@@ -29,7 +31,7 @@ test_that('LSMV retains every 16-button and Super Game Boy source control', {
   # An empty unused field does not change the known controller's source data.
   m <- lsmv_subframe_movie('F.|B...........|\n..|.Y..........|\n')
   expect_equal(n_players(m), 1)
-  expect_true(player(m)[1, 'B'])
+  expect_true(player(m)[1, 'b'])
   expect_true(m$inputs[2, 1, match('y', m$button_keys)])
 })
 test_that('LSMV resets, hard resets, and delay fields survive every subframe', {
@@ -53,7 +55,7 @@ test_that('LSMV rejects changing layouts and unsupported fields visibly', {
   expect_error(lsmv_subframe_movie('F.|............\n', list(controlsversion = '1')), 'controlsversion')
   expect_error(lsmv_subframe_movie('F.|............\n', list(port1 = 'mouse')), 'controller type')
   m <- lsmv_subframe_movie('')
-  expect_equal(n_frames(m), 0)
+  expect_equal(n_observations(m), 0)
   expect_equal(nrow(m$subframes), 0)
 })
 test_that('LSMV declared Super Scope preserves firing and aim separately', {

@@ -14,9 +14,19 @@ press_counts(movie, idx = 1L)
 }
 \value{
 Named integer vector of length \code{n_buttons(movie)}. Names are
-the control display names. Counts give the observations held, rather than
-the number of off-to-on transitions.
+the control keys of \code{\link[=button_layout]{button_layout()}}, as for the columns of \code{\link[=player]{player()}}.
+Counts give the observations held, rather than the number of off-to-on
+transitions.
 }
 \description{
 Held-observation counts per control
+}
+\examples{
+movie <- read_movie(system.file("extdata", "sample.fm2", package = "replayr"))
+press_counts(movie)
+# As a share of the recording, for the second controller.
+round(press_counts(movie, 2L) / n_observations(movie), 3)
+}
+\seealso{
+\code{\link[=summary.replayr_movie]{summary()}} for the number of activations.
 }

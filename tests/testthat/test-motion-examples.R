@@ -6,8 +6,8 @@ test_that('the authored Wii sequence retains sensor values and button timing', {
   movie <- read_dtm(path)
   channels <- analog_channels(movie)
   expect_identical(movie$header$dtmVariant, 'wii-serialized')
-  expect_equal(n_frames(movie), 180L)
-  expect_equal(as.integer(player(movie)[, 'A']), expected$a)
+  expect_equal(n_observations(movie), 180L)
+  expect_equal(as.integer(player(movie)[, 'a']), expected$a)
   sensor_names <- setdiff(names(expected), c('poll', 'a'))
   expect_equal(
     unname(channels[, sensor_names]),
@@ -36,9 +36,9 @@ test_that('a source-specified packet separates gyro axes and rate flags', {
   writeBin(c(h, as.raw(length(packet)), packet), path)
   movie <- read_dtm(path)
   a <- analog_channels(movie)
-  expect_true(player(movie)[1, 'B'])
-  expect_true(player(movie)[1, 'L'])
-  expect_false(player(movie)[1, 'A'])
+  expect_true(player(movie)[1, 'b'])
+  expect_true(player(movie)[1, 'dpad_left'])
+  expect_false(player(movie)[1, 'a'])
   expect_equal(unname(a[1, c('accel_x', 'accel_y', 'accel_z')]), c(515, 515, 619))
   expect_equal(unname(a[1, c('gyro_pitch', 'gyro_roll', 'gyro_yaw')]), c(4660, 9029, 13398))
   expect_equal(unname(a[1, c('gyro_pitch_slow', 'gyro_roll_slow', 'gyro_yaw_slow')]), c(1, 0, 1))

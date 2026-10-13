@@ -40,10 +40,19 @@ Additional original examples are grouped by purpose:
 - `expanded/`: BizHawk keyboard, touchscreen, dual-stick, peripheral, and arcade gestures.
 - `computers/`: libTAS, Hourglass, JPC-rr, openMSX, and CoffeeTools input sequences.
 - `legacy/`: earlier emulator formats, Citra device polls, and ZSNES/GZ records.
+- `tables/`: two short tables in the layouts of the Atari Grand Challenge
+  data set and of Atari-HEAD, written by `tools/generate-atari-tables.R`. No
+  row is taken from either data set.
 
 The corresponding generators are `tools/generate_article_examples.R`,
 `tools/generate-bizhawk-examples.py`, `tools/generate-mar-examples.py`,
 `tools/generate-computer-fixtures.py`, and `tools/make-legacy-fixtures.py`.
+`tools/generate-bk2-warning-fixtures.py` writes `bk2-variants/` and the
+test-suite fixture `nes-unplugged.bk2`; `tools/generate-motion-examples.py`
+and `tools/generate-omr-device-fixture.py` write the pointer, motion, and
+openMSX peripheral examples; `tools/make-semantic-fixtures.py` writes
+`semantic/`. Every generator uses only base R or the Python standard library
+and reproduces the distributed files byte for byte.
 Small malformed-input examples are also constructed inside the test suite.
 `mar-layouts.json` contains game-specific port mappings, with source references;
 it contains no recording of game play.
@@ -59,6 +68,12 @@ Read `expanded/synthetic-arcade.fbm` with `game = "ghouls"`, which identifies
 the input-field order used by the example. The accompanying analogue fixture
 has an explicit schema and exercises signed coordinates and raw button bytes.
 `fbm-layouts.json` records driver input layouts and their source references.
+
+`tools/generate-goldsrc-fixture.R` creates `computers/goldsrc-moves.dem`, a
+GoldSrc demo of two sections: a loading section without input, then 24
+frames with forward movement, two jumps, a sidestep, a turn, ducking and an
+attack, and the key actions as console commands. Every frame type of the
+format occurs in it.
 
 `tools/generate-dft-fixtures.py` creates `computers/menu-double-tap.dft`,
 a short Dustmod script with menu navigation, movement, a directional double

@@ -11,7 +11,7 @@ test_that("external Doom and Boom demos preserve their tic commands", {
     f <- external_fixture(file.path("doom_demos/lmp/extended", case[[1L]]))
     mv <- read_lmp(f)
     expect_identical(mv$header$version, as.character(case[[2L]]))
-    expect_equal(n_frames(mv), case[[3L]], info = case[[1L]])
+    expect_equal(n_observations(mv), case[[3L]], info = case[[1L]])
     expect_identical(mv$header$enabledPorts, 1L)
 
     # Both layouts store signed movement bytes followed by button bits.
@@ -27,9 +27,9 @@ test_that("external Doom and Boom demos preserve their tic commands", {
     expect_identical(bytes[header_size + length(body) + 1L], as.raw(0x80))
     special <- bitwAnd(wire[, 4L], 0x80L) != 0L
     expect_identical(mv$commands, ifelse(special, wire[, 4L], 0L))
-    expect_identical(unname(player(mv, 1L)[, match("a", mv$button_keys)]),
+    expect_identical(unname(player(mv, 1L)[, match("action_attack", mv$button_keys)]),
       !special & bitwAnd(wire[, 4L], 1L) != 0L)
-    expect_identical(unname(player(mv, 1L)[, match("b", mv$button_keys)]),
+    expect_identical(unname(player(mv, 1L)[, match("action_use", mv$button_keys)]),
       !special & bitwAnd(wire[, 4L], 2L) != 0L)
   }
 })
@@ -38,7 +38,7 @@ test_that("read_lmp parses a vanilla Doom demo into the standard movie shape", {
   f <- external_fixture("doom_demos/lmp/doom-demo1.lmp")
   mv <- replayr:::.decode_lmp(analog = "quantized", f)
   expect_s3_class(mv, "replayr_movie")
-  expect_equal(n_frames(mv), 1710L)
+  expect_equal(n_observations(mv), 1710L)
   expect_identical(mv$header[["_format"]], "lmp")
   # Skill must be a stringified 0..4
   expect_true(as.integer(mv$header$skill) %in% 0:4,
@@ -49,6 +49,6 @@ test_that("read_lmp parses a vanilla Doom demo into the standard movie shape", {
   expect_equal(dim(mv$inputs)[3], 8L)
   # forwardmove / sidemove / angleturn matrices are n_frames x 4
   expect_equal(dim(mv$header$forwardmove)[2], 4L)
-  expect_equal(nrow(mv$header$forwardmove), n_frames(mv))
+  expect_equal(nrow(mv$header$forwardmove), n_observations(mv))
 })
 

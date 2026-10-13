@@ -2,7 +2,7 @@ test_that("replayr:::.decode_lsmv() parses the bundled synthetic SNES movie", {
   mv <- replayr:::.decode_lsmv(fixture_path("sample.lsmv"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "lsmv")
-  expect_equal(n_frames(mv), 3600L)
+  expect_equal(n_observations(mv), 3600L)
   expect_equal(n_players(mv), 2L)
   # SNES gamepad is 12 buttons wide.
   expect_equal(n_buttons(mv), 12L)

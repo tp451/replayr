@@ -4,7 +4,14 @@
 \alias{read_mmv}
 \title{Read a Dega recording}
 \usage{
-read_mmv(path, analog = "raw", deadzone = NULL, triggers = "raw", ...)
+read_mmv(
+  path,
+  analog = "raw",
+  deadzone = NULL,
+  triggers = "raw",
+  aliases = TRUE,
+  ...
+)
 }
 \arguments{
 \item{path}{Recording file path.}
@@ -18,12 +25,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{...}{Reader-specific arguments, such as \code{controller_order} for M64 or DTM,
 or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_members]{movie_members()}}).}
@@ -35,7 +61,10 @@ A \link{replayr_movie} with compact digital columns and source metadata.
 Imports Master System and Game Gear input, including older MMV headers.
 Each row represents one complete stored frame. Master System recordings
 have two controller ports; Game Gear recordings have one player.
-\code{\link[=button_layout]{button_layout()}} retains the source labels 1, 2, and Pause or Start.
+Buttons 1 and 2 have the IDs of A and B and keep their labels in
+\code{\link[=button_layout]{button_layout()}}. The Game Gear's Start is a button of the handheld. The
+Master System's Pause sits on the console and is returned by
+\code{\link[=system_channels]{system_channels()}}.
 }
 \details{
 The header includes \code{declaredFrameCount}, \code{availableFrameCount},
@@ -43,4 +72,10 @@ The header includes \code{declaredFrameCount}, \code{availableFrameCount},
 playback rule, all complete packets through the end of the file are imported.
 \code{source_packets} retains packet bytes, including padding. An incomplete
 final packet produces a warning and remains in \code{source_tail}.
+}
+\examples{
+movie <- read_mmv(system.file("extdata", "legacy", "sms.mmv", package = "replayr"))
+# Buttons 1 and 2 are A and B; Pause is a button of the console.
+button_layout(movie)[, c("key", "name")]
+system_channels(movie)
 }

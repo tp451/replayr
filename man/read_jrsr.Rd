@@ -4,7 +4,14 @@
 \alias{read_jrsr}
 \title{Read a JPC-RR recording}
 \usage{
-read_jrsr(path, analog = "raw", deadzone = NULL, triggers = "raw", ...)
+read_jrsr(
+  path,
+  analog = "raw",
+  deadzone = NULL,
+  triggers = "raw",
+  aliases = TRUE,
+  ...
+)
 }
 \arguments{
 \item{path}{Recording file path.}
@@ -18,12 +25,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{...}{Reader-specific arguments, such as \code{controller_order} for M64 or DTM,
 or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_members]{movie_members()}}).}
@@ -35,7 +61,7 @@ A \link{replayr_movie} with event times, reconstructed states, and source events
 Reads JRSR text archives containing an \code{events} section. Keyboard edges,
 mouse buttons and movement, joystick events, and reset commands are decoded.
 Other emulator events remain in \code{movie$events} with their arguments and
-original source lines. Initialization sections remain in
+original source lines. Initialisation sections remain in
 \code{movie$header$initialization} and \code{movie$event_sections}.
 }
 \details{
@@ -51,4 +77,10 @@ mouse inputs occupy player 1. \code{\link[=analog_channels]{analog_channels()}} 
 \code{mouse_dy}, and \code{mouse_wheel}, and the joystick channels
 \code{joystick_x_hold_ns} and \code{joystick_y_hold_ns}. Joystick values are recorded
 game-port hold times in nanoseconds and remain \code{NA} before their first update.
+}
+\examples{
+movie <- read_jrsr(system.file("extdata", "computers", "keyboard-mouse.jrsr", package = "replayr"))
+observation_unit(movie)
+observation_time(movie)
+analog_channels(movie)[1:4, ]
 }

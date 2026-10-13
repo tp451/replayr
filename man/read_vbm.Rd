@@ -4,7 +4,14 @@
 \alias{read_vbm}
 \title{Read a VBM recording}
 \usage{
-read_vbm(path, analog = "raw", deadzone = NULL, triggers = "raw", ...)
+read_vbm(
+  path,
+  analog = "raw",
+  deadzone = NULL,
+  triggers = "raw",
+  aliases = TRUE,
+  ...
+)
 }
 \arguments{
 \item{path}{Recording file path.}
@@ -18,12 +25,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{...}{Reader-specific arguments, such as \code{controller_order} for M64 or DTM,
 or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_members]{movie_members()}}).}
@@ -32,7 +58,22 @@ or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_me
 A \link{replayr_movie} with compact digital columns and selected stick fields.
 }
 \description{
-VBA recordings for Game Boy, Game Boy Color and Game Boy Advance.
+VBA recordings for Game Boy, Game Boy Color, Super Game Boy and Game Boy
+Advance. Game Boy and Game Boy Color recordings have eight controls. Game
+Boy Advance and Super Game Boy recordings add L and R: a Super Game Boy is
+played with an SNES pad, and the format records both buttons.
 Digital columns are compact; \code{\link[=button_layout]{button_layout()}} gives their stable IDs.
 Numeric source channels are always retained in \code{\link[=analog_channels]{analog_channels()}}.
+}
+\details{
+Every stored controller record is imported; \code{header$declaredFrameCount}
+keeps the header's count. \code{commands} retains the bits of each controller
+word that lie outside the layout, with their original values: 1024 and
+2048 mark a reset (old timing, and the timing used since format version
+1.1), and 4096 to 32768 are the deprecated motion-sensor bits.
+}
+\examples{
+movie <- read_vbm(system.file("extdata", "sample.vbm", package = "replayr"))
+movie
+recording_info(movie)
 }

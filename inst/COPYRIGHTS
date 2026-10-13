@@ -13,8 +13,8 @@ FORMAT REFERENCES AND SOURCE PROVENANCE
 
 The readers implement file layouts described in public specifications and
 upstream serialization code. The references below identify those materials.
-The expanded readers are original R implementations; upstream source trees
-and privately downloaded recordings are not distributed with this package.
+The readers are original R implementations; upstream source trees and
+published recordings are not distributed with this package.
 The upstream license notices listed here describe the consulted material,
 whose terms vary by project and component.
 
@@ -24,6 +24,7 @@ TASVideos format documentation
   FCM: https://tasvideos.org/EmulatorResources/FCEU/FCM
   M64: https://tasvideos.org/EmulatorResources/Mupen/M64
   SMV: https://tasvideos.org/EmulatorResources/Snes9x/SMV
+  GMV: https://tasvideos.org/EmulatorResources/Gens/GMV
   MAR: https://tasvideos.org/EmulatorResources/Mamerr/Mar
   Additional format-specific references appear in the reader source headers.
 
@@ -38,7 +39,9 @@ BizHawk (BK2, BKM, TAS, TASPROJ, and GBMV container structure)
   The original BizHawk C# code is MIT-licensed. Controller definitions,
   Bk2Controller, Bk2LogEntryGenerator, and legacy InputAdapters establish
   field identities, serialization order, and axis ranges. Emulation cores
-  bundled with BizHawk have their own licenses.
+  bundled with BizHawk have their own licenses. The nominal console frame
+  rates of recording_info() are those of PlatformFrameRates in
+  BizHawk.Client.Common, which gives the clock derivation of each.
 
 Dolphin (GameCube and Wii DTM)
   https://github.com/dolphin-emu/dolphin
@@ -56,7 +59,7 @@ PCSX-rerecording (PXM) and PSXjin (PJM)
 
 lsnes (LSMV)
   https://repo.or.cz/lsnes.git
-  https://tasvideos.org/EmulatorResources/Lsnes/Movieformat
+  https://tasvideos.org/EmulatorResources/Lsnes/LSMV
   Movie and controller serialization; GPL-2.0-or-later.
 
 VBA-rerecording (VBM)
@@ -68,13 +71,23 @@ Mupen64 (M64)
   Header-declared controller sample count and playback boundaries;
   GPL-2.0-or-later, Mupen64 Organization.
 
-Doom and Boom (LMP)
+Doom, Heretic and Hexen (LMP)
   https://github.com/id-Software/DOOM/blob/master/linuxdoom-1.10/g_game.c
   id Software's released Doom source carries GPL version 2.
   https://github.com/coelckers/prboom-plus/blob/master/prboom2/src/g_game.c
   Boom versions 200-202, compatibility flags, game options, and tic commands;
   GPL-2.0-or-later. Notices identify id Software, Boom and PrBoom contributors,
   and Andrey Budko.
+  https://github.com/dsda-org/dsda-doom (v0.29.4: prboom2/src/g_game.c,
+  prboom2/src/dsda/demo.c, excmd.c, options.c)
+  Header layouts of every demo version, 16-bit turning, TASDoom command
+  order, the outer headers of dsda-doom and PrBoom+um, MBF21 options, and
+  extended commands; GPL-2.0-or-later. Notices identify id Software, the
+  Boom, MBF and PrBoom contributors, Andrey Budko, and Ryan Krafnick.
+  https://github.com/chocolate-doom/chocolate-doom (3.1.0: src/heretic and
+  src/hexen, g_game.c, p_user.c, h2def.h)
+  Heretic and Hexen commands: look, fly, artifact, jump, player classes;
+  GPL-2.0-or-later. Notices identify Raven Software and Simon Howard.
 
 Dega (MMV)
   https://github.com/Plombo/dega/blob/master/mast/video.cpp
@@ -133,6 +146,10 @@ FinalBurn Alpha (FBM)
   mathematical algorithm described by Jeffrey Scott Vitter (1987), section 2:
   https://doi.org/10.1145/31846.42227
   FBM word order and chunk structure were checked against published recordings.
+  https://github.com/TASEmulators/fbarr/blob/b679678de6b9f6548c46862d4c74ba4fb7cc1fdf/fbarr/src/burner/win32/replay.cpp
+  src/burner/win32/replay.cpp gives the layout of the text that follows the
+  input (chunk FRM1). FB Alpha licence (free to use and modify, not for profit), FB Alpha team and
+  the fbarr contributors. No code is taken from it.
   Bundled fbm-layouts.json contains factual input-field order, names, and types
   with source references. No emulator decompressor implementation is included.
 
@@ -145,6 +162,33 @@ Dustmod (DFT)
   Dusted uses the MIT license, Alex Morson. The R reader independently parses
   the script syntax and retains commands as data.
 
+
+Atari Grand Challenge data set and Atari-HEAD (TXT tables of actions)
+  https://arxiv.org/abs/1705.10998
+  https://github.com/yobibyte/atarigrandchallenge/blob/master/agc/dataset.py
+  agc/dataset.py reads the trajectory files and agc/util.py lists the
+  action names. No licence stated; Vitaly Kurin and co-authors. No code is
+  taken from it.
+  https://doi.org/10.5281/zenodo.3451402
+  The description of the data set and its action_enums.txt give the columns
+  of a trial and the action numbers of the Arcade Learning Environment.
+  Creative Commons Attribution 4.0; Ruohan Zhang and co-authors.
+  Neither data set is distributed with this package; the two tables under
+  inst/extdata/tables were written for replayr.
+
+GoldSrc (DEM)
+  https://github.com/YaLTeR/hldemo-rs/blob/cbc1efa212a4fc49c776304058efd07e0369caa7/src/types.rs
+  src/types.rs and src/parse/frame describe the header, the directory of
+  sections and the frames of demo protocol 5. Apache-2.0 or MIT, Ivan
+  Molodetskikh.
+  https://github.com/ValveSoftware/halflife/blob/de70fada5061965884492178a7d6166646424a4e/common/usercmd.h
+  common/usercmd.h and common/in_buttons.h give the fields of the command
+  and the action bits. Half-Life 1 SDK License, Valve Corporation.
+  https://github.com/jpcy/coldemoplayer/blob/9c97ab128ac889739c1643baf0d5fdf884d8a65f/compLexity%20Demo%20Player/demo%20parser/HalfLifeDemoParser.cs
+  The demo parser of the compLexity Demo Player gives the length of a
+  network-message frame in demos up to network protocol 43. GPL-3.0, Jonathan
+  Young. No code is taken from it; the place of the command in those frames
+  was found in demos of 2001.
 
 libTAS (LTM)
   https://github.com/clementgallet/libTAS/blob/master/src/program/movie/InputSerialization.cpp

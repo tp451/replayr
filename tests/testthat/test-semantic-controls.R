@@ -104,7 +104,7 @@ test_that("PlayStation binary face buttons follow physical geometry, with distin
       c(128, 128, 255, 128), c(128, 128, 128, 0),
       c(128, 128, 0, 128), c(128, 128, 128, 255)
     )
-    expect_equal(colnames(analog_channels(movie)), c("lstick_x", "lstick_y", "rstick_x", "rstick_y"))
+    expect_equal(colnames(analog_channels(movie)), c("left_x", "left_y", "right_x", "right_y"))
     expect_equal(unname(analog_channels(movie)), axes)
   }
 })

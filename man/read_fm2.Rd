@@ -4,7 +4,14 @@
 \alias{read_fm2}
 \title{Read a FM2 recording}
 \usage{
-read_fm2(path, analog = "raw", deadzone = NULL, triggers = "raw", ...)
+read_fm2(
+  path,
+  analog = "raw",
+  deadzone = NULL,
+  triggers = "raw",
+  aliases = TRUE,
+  ...
+)
 }
 \arguments{
 \item{path}{Recording file path.}
@@ -18,12 +25,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{...}{Reader-specific arguments, such as \code{controller_order} for M64 or DTM,
 or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_members]{movie_members()}}).}
@@ -35,4 +61,18 @@ A \link{replayr_movie} with compact digital columns and selected stick fields.
 FCEUX text movies; NES and Famicom button states.
 Digital columns are compact; \code{\link[=button_layout]{button_layout()}} gives their stable IDs.
 Numeric source channels are always retained in \code{\link[=analog_channels]{analog_channels()}}.
+}
+\details{
+A position of a gamepad field is held unless it shows \code{.} or a space, as
+FCEUX reads it; the letter written there is a convention. Controllers
+follow the port declarations: a port declared empty is no controller, and
+\code{header$controllerPorts} gives the port of each player. As in FCEUX, a
+file is an FM2 movie only if it begins with \verb{version 3}; any other file
+is refused.
+}
+\examples{
+path <- system.file("extdata", "sample.fm2", package = "replayr")
+movie <- read_fm2(path)
+movie
+recording_info(movie)
 }

@@ -2,7 +2,7 @@ test_that("replayr:::.decode_fcm() parses the bundled synthetic FCEU movie", {
   mv <- replayr:::.decode_fcm(fixture_path("sample.fcm"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "fcm")
-  expect_equal(n_frames(mv), 3600L)
+  expect_equal(n_observations(mv), 3600L)
   expect_equal(n_buttons(mv), 8L)
   expect_equal(n_players(mv), 4L) # FCM reserves 4 ports
 })
@@ -66,7 +66,7 @@ test_that('FCM version 1 can start its body immediately after the 32-byte header
   fp <- make_fcm_timing_fixture(c(0x00, 0xa0, 3), 3, version = 1L)
   on.exit(unlink(fp))
   mv <- replayr:::.decode_fcm(fp)
-  expect_equal(n_frames(mv), 3)
+  expect_equal(n_observations(mv), 3)
   expect_true(all(mv$inputs[, 1, 8]))
   expect_true(is.na(mv$header$emuVersion))
 })

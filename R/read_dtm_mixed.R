@@ -16,7 +16,7 @@
   "b92e354389bb7c0bd114a8631b8af110d3cb3a14" # Dolphin 2407
 )
 .decode_dtm_mixed_hid <- function(path, data, wii_extension = "raw", wii_key = NULL,
-                                  connected = FALSE, native = FALSE) {
+                                  connected = FALSE, native = FALSE, aliases = TRUE) {
   mask <- as.integer(data[12L])
   body <- data[-seq_len(256L)]
   gc_ports <- which(bitwAnd(mask, bitwShiftL(1L, 0:3)) != 0L)
@@ -74,17 +74,29 @@
     # set it to the exact source record count; retain the original on the result.
     header[22:29] <- as.raw(floor(length(rows) / 256^(0:7)) %% 256)
     flattened <- if (length(rows)) as.vector(t(packets[rows, , drop = FALSE])) else raw()
-    if (length(rows)) flattened <- flattened[as.vector(t(matrix(seq_len(ncol(packets)), length(rows), ncol(packets), byrow = TRUE) <= sizes[rows]))]
+    if (length(rows)) {
+      flattened <- flattened[as.vector(t(
+        matrix(seq_len(ncol(packets)), length(rows), ncol(packets), byrow = TRUE) <= sizes[rows]
+      ))]
+    }
     split_data <- c(header, flattened)
     if (device == "gc") {
-      temporary <- tempfile(fileext = '.dtm')
+      temporary <- tempfile(fileext = ".dtm")
       on.exit(unlink(temporary), add = TRUE)
       writeBin(split_data, temporary)
-      movies[[device]] <- .configure_movie(.decode_dtm(temporary, dtm_variant = "standard"))
-    } else movies[[device]] <- .configure_movie(.decode_wii_dtm(path, split_data, wii_variant = if (markerless) "hid-nomarker" else "hid", wii_extension = wii_extension, wii_key = wii_key))
+      movies[[device]] <- .configure_movie(.decode_dtm(temporary, dtm_variant = "standard"), aliases = aliases)
+    } else {
+      movies[[device]] <- .configure_movie(
+        .decode_wii_dtm(
+          path, split_data, wii_variant = if (markerless) "hid-nomarker" else "hid",
+          wii_extension = wii_extension, wii_key = wii_key
+        ),
+        aliases = aliases
+      )
+    }
   }
   keys <- unique(unlist(lapply(movies, `[[`, "button_keys")))
-  channel_names <- unique(unlist(lapply(movies, function(m) colnames(analog_channels(m)))))
+  channel_names <- unique(unlist(lapply(movies, function(m) colnames(.source_channels(m, 1L)))))
   inputs <- array(FALSE, c(n, 1L, length(keys)))
   channels <- matrix(NA_real_, n, length(channel_names), dimnames = list(NULL, channel_names))
   commands <- integer(n)
@@ -94,7 +106,7 @@
     rows <- groups[[device]]
     movie <- movies[[device]]
     inputs[rows, 1L, match(movie$button_keys, keys)] <- movie$inputs[, 1L, , drop = FALSE]
-    a <- analog_channels(movie)
+    a <- .source_channels(movie, 1L)
     channels[rows, match(colnames(a), channel_names)] <- a
     commands[rows] <- movie$commands
     v <- .stick_vectors(movie, 1L)
@@ -105,8 +117,11 @@
     if (!is.null(movie$poll_fields$valid_report)) valid[rows] <- movie$poll_fields$valid_report
   }
   header <- list(
-    `_format` = "dtm", Platform = "Wii", dtmVariant = if (native) "mixed-hid-nomarker" else if (connected) "mixed-hid-connected" else "mixed-hid", controllerAssignment = "unassigned",
-    assignmentReason = "interleaved controller families", enabledPorts = c(paste0("gc", gc_ports), paste0("wii", wii_ports)),
+    `_format` = "dtm", Platform = "Wii",
+    dtmVariant = if (native) "mixed-hid-nomarker" else if (connected) "mixed-hid-connected" else "mixed-hid",
+    controllerAssignment = "unassigned",
+    assignmentReason = "interleaved controller families",
+    enabledPorts = c(paste0("gc", gc_ports), paste0("wii", wii_ports)),
     frameCount = .read_u64_le(data, 13L), inputCount = .read_u64_le(data, 21L), availablePollCount = n,
     observationUnit = "controller poll", controllerMask = mask, romId = rawToChar(data[5:10])
   )

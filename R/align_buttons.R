@@ -11,7 +11,8 @@
 #'   union of controls present in the movies, with registered controls first. Controls outside this
 #'   selection are omitted deliberately.
 #' @param idx One-based player index, used for every movie.
-#' @return List of logical matrices with matching columns and stable ID metadata.
+#' @return List of logical matrices with matching columns, named by control
+#'   key as in [player()], and stable ID metadata.
 #' @export
 #' @examples
 #' paths <- system.file("extdata", c("sample.fm2", "sample.smv"), package = "replayr")
@@ -44,13 +45,12 @@ align_buttons <- function(movies, ids = NULL, idx = 1L) {
   result_list <- lapply(seq_along(movies), function(i) {
     source <- player(movies[[i]], idx)
     result <- matrix(FALSE, nrow(source), length(ids),
-      dimnames = list(rownames(source), selected$mnemonic)
+      dimnames = list(rownames(source), selected$key)
     )
     positions <- match(ids, layouts[[i]]$id)
     found <- which(!is.na(positions))
     if (length(found)) result[, found] <- source[, positions[found], drop = FALSE]
     attr(result, "button_ids") <- ids
-    attr(result, "button_keys") <- selected$key
     attr(result, "button_names") <- selected$name
     result
   })

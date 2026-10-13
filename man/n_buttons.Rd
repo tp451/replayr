@@ -16,3 +16,9 @@ Integer scalar.
 \description{
 Use \code{\link[=button_layout]{button_layout()}} to map these columns to stable controller IDs.
 }
+\examples{
+path <- system.file("extdata", "sample.m64", package = "replayr")
+n_buttons(read_movie(path))
+# Stick directions selected with `analog` are further columns.
+n_buttons(read_movie(path, analog = "cardinal8"))
+}

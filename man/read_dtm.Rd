@@ -9,6 +9,7 @@ read_dtm(
   analog = "raw",
   deadzone = NULL,
   triggers = "raw",
+  aliases = TRUE,
   controller_order = NULL,
   dtm_variant = "auto",
   wii_variant = "auto",
@@ -29,12 +30,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{controller_order}{Optional integer sequence listing every enabled
 controller port once, in its verified repeating polling order.
@@ -113,11 +133,14 @@ which \code{polls()} includes for unassigned streams.
 Legacy HID reports retain extension bytes; \code{wii_extension = "nunchuk"} or
 \code{"classic"} decodes a caller-identified extension. Supply \code{wii_key} when its
 reports are encrypted. The default retains the bytes because older DTM files
-do not store an extension identity or encryption key. New serialized Dolphin
+do not store an extension identity or encryption key. New serialised Dolphin
 states include their extension type; Nunchuk and Classic Controller states
 are decoded automatically. Other extension payloads remain source bytes.
 Each row is a poll. \code{poll_lengths} gives valid bytes in the padded
 \code{poll_bytes} matrix; historical eight-byte prefixes remain in \code{poll_prefix_bytes}.
+Wii Remote acceleration is given on Dolphin's ten-bit scale. A report
+stores nine bits for Y and Z, which are widened as Dolphin widens them,
+by repeating the lowest stored bit.
 Mixed GameCube/Wii streams from the verified legacy Dolphin layout retain
 device family and physical port (when unique) on each poll. They stay in
 source order and do not accept \code{controller_order}. Automatic mixed recognition
@@ -128,4 +151,12 @@ Invalid reports retain their raw bytes and have \code{valid_report = FALSE}.
 \code{poll_fields$report_issue} describes the problem, and \code{source_offset} gives
 the zero-based byte position in the file. Filter digital fields using the
 validity flag before analysis.
+}
+\examples{
+movie <- read_dtm(system.file("extdata", "sample.dtm", package = "replayr"))
+head(analog_channels(movie), 3)
+# Polls of several controllers without a known order stay one stream.
+stream <- read_dtm(system.file("extdata", "paper", "unassigned.dtm", package = "replayr"))
+class(stream)
+polls(stream)[, c("poll", "port", "a", "left_x", "left_y")]
 }

@@ -40,19 +40,24 @@
     header$microphoneSampleStored <- expected == 4L
   }
   if (any(!channels[, "touch_pressed"] %in% 0:1)) stop(path, ": invalid DSM touch state")
+  # A touch on the screen is L3, the press of a pointing input. The debug
+  # button and the lid are not on the pad; they are console controls.
   keys <- c(
     "dpad_right", "dpad_left", "dpad_down", "dpad_up", "select", "start",
-    "b", "a", "y", "x", "l1", "r1", "debug", "touch", "microphone", "lid_closed"
+    "b", "a", "y", "x", "l1", "r1", "l3", "microphone"
   )
+  labels <- c("Right", "Left", "Down", "Up", "Select", "Start", "B", "A", "Y", "X", "L", "R", "Touch", "Microphone")
   states <- cbind(
-    pad, channels[, "touch_pressed"] != 0L,
-    bitwAnd(commands, 1L) != 0L, bitwAnd(commands, 4L) != 0L
+    pad[, 1:12, drop = FALSE], channels[, "touch_pressed"] != 0L,
+    bitwAnd(commands, 1L) != 0L
   )
   header$system <- "DS"
   header$commandEncoding <- "DeSmuME: microphone=1, reset=2, lid=4"
   header$touchUnits <- "screen coordinates: origin top-left, nominal extent 256 by 192"
   if (binary && header$version == "2") header$microphoneSampleStored <- FALSE
-  .new_named_movie(header, commands, array(states, c(nrow(states), 1L, ncol(states))), keys, path,
-    analog = list(channels)
+  movie <- .new_named_movie(header, commands, array(states, c(nrow(states), 1L, ncol(states))), keys, path,
+    analog = list(channels), names = labels
   )
+  movie$system_inputs <- data.frame(debug = as.logical(pad[, 13L]), lid_closed = bitwAnd(commands, 4L) != 0L)
+  movie
 }

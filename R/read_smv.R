@@ -86,11 +86,18 @@
   # SMV stores an initial state before frame zero, so standard-pad movies have
   # frame_count + 1 input samples. Never silently truncate a declared movie.
   required_frames <- n_frames_field + 1
+  # Versions 4 and 5 also count input samples. Snes9x stores that count plus
+  # one records; when it exceeds the frame count and the stream holds them,
+  # they are recorded input as well.
+  if (version >= 4L && input_sample_count > n_frames_field &&
+    input_sample_count + 1 <= have_frames) {
+    required_frames <- input_sample_count + 1
+  }
   # A rerecorded SMV can retain unused bytes after its declared input range.
   # Only an incomplete sample INSIDE that range is truncation. Do not decode
   # stale tail bytes, or reject a complete movie because its unused tail is odd.
   if (have_frames < required_frames && length(body) %% bytes_per_frame)
-    stop(path, ': partial final SMV sample')
+    stop(path, ": partial final SMV sample")
   shortfall <- max(0, required_frames - have_frames)
   if (shortfall > 1L) {
     stop(
@@ -98,34 +105,30 @@
       " samples, has ", have_frames, ")"
     )
   }
-  if (shortfall) warning(path, ': SMV header exceeds the complete stream by one sample; no input invented', call. = FALSE)
+  if (shortfall)
+    warning(path, ": SMV header exceeds the complete stream by one sample; no input invented", call. = FALSE)
   n_frames <- min(required_frames, have_frames)
   n_buttons <- 12L
   n_players <- polled
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
   if (n_frames > 0L) {
-    for (fi in seq_len(n_frames)) {
-      off <- (fi - 1L) * bytes_per_frame
-      words <- integer(polled)
-      for (pi in seq_len(polled)) {
-        po <- off + (pi - 1L) * 2L
-        word <- as.integer(body[po + 1L]) +
-          bitwShiftL(as.integer(body[po + 2L]), 8L)
-        words[pi] <- word
-        for (bit in 0:15) {
-          if (bitwAnd(word, bitwShiftL(1L, bit)) == 0L) next
-          slot <- .SMV_BIT_TO_UNI[bit + 1L]
-          if (is.na(slot) || slot > n_buttons) next
-          inputs[fi, pi, slot] <- TRUE
-        }
-      }
-      # An all-ones sample is Snes9x's reset marker, not every button pressed.
-      if (all(words == 0xffffL)) {
-        inputs[fi, , ] <- FALSE
-        commands[fi] <- 1L
+    # One row per sample; every bit of a controller word is tested for all
+    # samples at once.
+    bytes <- matrix(as.integer(body[seq_len(n_frames * bytes_per_frame)]), ncol = bytes_per_frame, byrow = TRUE)
+    reset <- rep(TRUE, n_frames)
+    for (pi in seq_len(polled)) {
+      words <- bytes[, 2L * pi - 1L] + bitwShiftL(bytes[, 2L * pi], 8L)
+      reset <- reset & words == 0xffffL
+      for (bit in 0:15) {
+        slot <- .SMV_BIT_TO_UNI[bit + 1L]
+        if (is.na(slot) || slot > n_buttons) next
+        inputs[bitwAnd(words, bitwShiftL(1L, bit)) != 0L, pi, slot] <- TRUE
       }
     }
+    # An all-ones sample is Snes9x's reset marker, not every button pressed.
+    inputs[reset, , ] <- FALSE
+    commands[reset] <- 1L
   }
   # Best-effort ROM name extraction. Different SMV versions push the
   # name to different offsets; scan the 0x23..0x60 region for the first
@@ -157,6 +160,8 @@
     rerecordCount = as.character(rerec),
     ctrlMask = sprintf("0x%x", ctrl_mask),
     opts = sprintf("0x%x", opts),
+    # Bit 1 of the movie options: PAL timing.
+    isPal = bitwAnd(opts, 2L) != 0L,
     sync = sprintf("0x%x", sync),
     inputSampleCount = if (is.na(input_sample_count)) "" else as.character(input_sample_count),
     declaredFrameCount = as.character(n_frames_field),

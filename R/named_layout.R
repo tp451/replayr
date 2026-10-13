@@ -31,6 +31,26 @@
     stick_calibration = stick_calibration
   ), class = "replayr_movie")
 }
+# Labels of source controls outside the registry, for readers whose format
+# does not carry the device's own wording.
+.source_control_labels <- function(keys) {
+  known <- c(
+    gun_trigger = "Trigger", offscreen_shot = "Offscreen shot", light_sensor = "Light sensor",
+    mouse_left = "Mouse left", mouse_middle = "Mouse middle", mouse_right = "Mouse right",
+    mouse_button_4 = "Mouse button 4", mouse_fourth = "Mouse button 4", mouse_button_5 = "Mouse button 5",
+    mouse_scroll_up = "Mouse wheel up", mouse_scroll_down = "Mouse wheel down",
+    lsnes_scope_cursor = "Cursor", lsnes_scope_turbo = "Turbo", lsnes_scope_pause = "Pause",
+    wii_one = "1", wii_two = "2", wii_home = "Home", guide = "Guide",
+    ufo50_fire1 = "Fire 1", ufo50_fire2 = "Fire 2", dustforce_escape = "Escape",
+    keypad_enter = "Enter", keypad_clear = "Clear", keypad_star = "Star", keypad_pound = "Pound"
+  )
+  labels <- unname(known[keys])
+  plain <- is.na(labels)
+  labels[plain] <- gsub("_", " ", keys[plain], fixed = TRUE)
+  numbered <- plain & grepl("^(arcade|joystick)_button_[0-9]+$", keys)
+  labels[numbered] <- paste("Button", sub("^.*_", "", keys[numbered]))
+  labels
+}
 .control_identity_layout <- function(keys, names = NULL, kinds = NULL) {
   base <- .controller_registry()
   index <- match(keys, base$key)
@@ -43,9 +63,18 @@
   mnemonic <- base$mnemonic[index]
   mnemonic[custom] <- paste0("{", keys[custom], "}")
   labels <- base$name[index]
-  labels[custom] <- gsub("_", " ", keys[custom], fixed = TRUE)
+  labels[custom] <- .source_control_labels(keys[custom])
   types <- base$kind[index]
   types[custom] <- "button"
+  # What a game was asked to do is not a button. Game actions have identities
+  # of their own, shared by every game that records the same action.
+  action <- startsWith(keys, "action_")
+  if (any(action)) {
+    verbs <- substring(keys[action], 8L)
+    ids[action] <- paste0("action:", verbs)
+    labels[action] <- paste0(toupper(substring(verbs, 1L, 1L)), substring(verbs, 2L))
+    types[action] <- "action"
+  }
   if (!is.null(names)) {
     if (length(names) != length(keys) || anyNA(names)) stop("names must match keys")
     labels <- names
@@ -59,12 +88,23 @@
     stringsAsFactors = FALSE
   )
 }
+# Game actions that a recording stores in place of device buttons. Their IDs
+# are separate from the button registry and shared by every game that
+# records the same action.
+.action_layout <- function(actions) {
+  data.frame(
+    id = paste0("action:", actions), key = paste0("action_", actions),
+    mnemonic = paste0("{action_", actions, "}"),
+    name = paste0(toupper(substring(actions, 1L, 1L)), substring(actions, 2L)),
+    kind = "action", stringsAsFactors = FALSE
+  )
+}
 .calibrated_stick_vectors <- function(movie, idx) {
   if (!is.null(movie$decoded_stick_vectors)) return(movie$decoded_stick_vectors[[idx]])
   specification <- movie$stick_calibration[[idx]]
   result <- list()
   if (is.null(specification)) return(result)
-  channels <- analog_channels(movie, idx)
+  channels <- .source_channels(movie, idx)
   for (side in intersect(names(specification), c("left", "right"))) {
     s <- specification[[side]]
     if (!all(c(s$x, s$y) %in% colnames(channels)) || length(s$center) != 2L ||

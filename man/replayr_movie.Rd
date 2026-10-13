@@ -13,13 +13,14 @@ is a list with the following elements:
 \item{\code{header}}{Named list of header key-value pairs lifted from
 the source file. The synthetic \verb{_format} entry records which
 parser produced the movie, such as \code{"fm2"}, \code{"bk2"}, or \code{"ltm"}.}
-\item{\code{commands}}{Integer vector of length \code{n_frames}. Per-observation
+\item{\code{commands}}{Integer vector with one entry per observation. Per-observation
 emulator command bits, where the format uses them.}
 \item{\code{inputs}}{Logical 3D array, dimensions
-\verb{(n_frames, n_players, n_buttons)}. \code{TRUE} means the button was
+\verb{(observations, players, buttons)}. \code{TRUE} means the button was
 held at that observation.}
 \item{\code{analog}}{List of numeric channel matrices, one per player.
-Rows align with \code{inputs}; channel names and units depend on the format.}
+Rows align with \code{inputs}; columns are named by the keys of
+\code{\link[=channel_layout]{channel_layout()}}, and units depend on the format.}
 \item{\code{analog_mode}}{Selected representation label. Numeric source
 values are retained in every mode.}
 \item{\code{stick_modes}}{Named left/right choices: \code{"raw"}, \code{"cardinal4"},
@@ -39,9 +40,25 @@ multi-character labels.}
 with \code{button_mnemonics}.}
 }
 
-Use \code{\link[=n_frames]{n_frames()}}, \code{\link[=n_players]{n_players()}}, \code{\link[=n_buttons]{n_buttons()}} to read the array
-shape; \code{\link[=player]{player()}} to extract one player's frames as a 2D matrix;
-\code{\link[=press_counts]{press_counts()}} to summarise hold-counts per button.
+The accessors name control columns by \code{button_keys}; mnemonics and labels
+are further columns of \code{\link[=button_layout]{button_layout()}}.
+
+Use \code{\link[=n_observations]{n_observations()}}, \code{\link[=n_players]{n_players()}}, \code{\link[=n_buttons]{n_buttons()}} to read the array
+shape and \code{\link[=player]{player()}} to extract one player's buttons as a 2D matrix.
+\code{\link[=summary.replayr_movie]{summary()}} counts held observations and
+activations per control, \code{\link[=as.data.frame.replayr_movie]{as.data.frame()}}
+returns one row per observation, and [\code{movie[i]}][subset-recording] selects
+observations and keeps the class.
+}
+\examples{
+movie <- read_movie(system.file("extdata", "sample.dtm", package = "replayr"))
+class(movie)
+# Observations, controllers and controls.
+dim(movie$inputs)
+names(movie$header)[1:5]
+movie
+# The accessors and methods work on a selection as on the whole recording.
+summary(movie[1:600])
 }
 \seealso{
 \code{\link[=read_movie]{read_movie()}}, \code{\link[=universal_buttons]{universal_buttons()}}

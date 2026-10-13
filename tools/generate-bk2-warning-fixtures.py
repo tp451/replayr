@@ -1,4 +1,5 @@
-"""Original examples of BizHawk timing axes, throttle, and legal separators.
+"""Original examples of BizHawk timing axes, throttle, legal separators,
+and an unplugged controller port.
 
 Field definitions: BizHawk ab81ea25762af8ece499ba278e3f5cc3848ec742,
 Gambatte.cs CreateControllerDefinition, MGBAHawk.IEmulator.cs, and
@@ -89,4 +90,27 @@ for name, (platform, core, key, rows) in examples.items():
     + "\n",
     encoding="utf-8",
 )
-print("Generated four original BK2 variant examples.")
+# Test-only example: SyncSettings declare the right NES port unplugged while
+# the LogKey still lists its controls.
+unplugged = root.parents[2] / "tests/testthat/fixtures/nes-unplugged.bk2"
+unplugged.parent.mkdir(parents=True, exist_ok=True)
+with zipfile.ZipFile(unplugged, "w", compression=zipfile.ZIP_DEFLATED) as z:
+    for member, text in [
+        (
+            "Header.txt",
+            "MovieVersion BizHawk v2.0\nPlatform NES\nCore NesHawk\nGameName Original parser test\n",
+        ),
+        (
+            "SyncSettings.json",
+            '{ "o": { "Controls": { "NesRightPort": "UnpluggedNES", "Famicom": false, "NesLeftPort": "ControllerNES" } } }\n',
+        ),
+        (
+            "Input Log.txt",
+            "[Input]\nLogKey:#Power|Reset|#P1 Up|P1 Down|P1 Left|P1 Right|P1 Start|P1 Select|P1 B|P1 A|"
+            "#P2 Up|P2 Down|P2 Left|P2 Right|P2 Start|P2 Select|P2 B|P2 A|\n|..|U.......|\n|R.|.......A|\n[/Input]\n",
+        ),
+    ]:
+        info = zipfile.ZipInfo(member, date_time=(2026, 10, 9, 0, 0, 0))
+        info.compress_type = zipfile.ZIP_DEFLATED
+        z.writestr(info, text.encode())
+print("Generated four original BK2 variant examples and one test fixture.")

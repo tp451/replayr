@@ -1,12 +1,23 @@
+# The first bytes of an archive member, without unpacking the member.
+.archive_member_start <- function(path, member) {
+  tryCatch({
+    con <- unz(path, member, "rb")
+    on.exit(close(con))
+    readBin(con, "raw", 256L)
+  }, error = function(e) raw(), warning = function(w) raw())
+}
 .movie_archive_listing <- function(path) {
   listing <- zip::zip_list(path)
   formats <- tolower(tools::file_ext(listing$filename))
-  supported <- c(
-    "fm2", "fm3", "bk2", "bkm", "tas", "tasproj", "gbmv", "fcm", "lsmv", "gmv",
-    "vbm", "m64", "smv", "pxm", "pjm", "dtm", "lmp", "fmv", "mmv", "dsm", "mc2", "mcm", "ymv",
-    "ltm", "wtf", "hgm", "jrsr", "omr", "ctm", "ctas", "fbm", "mar", "zmv", "gzm", "dft"
-  )
-  take <- formats %in% supported
+  take <- formats %in% .FORMAT_REGISTRY$extension
+  # A member under an extension that formats share (.txt) is a recording
+  # where its first line shows one of them, and is listed under its name.
+  for (i in which(take & vapply(formats, .shared_extension, logical(1)))) {
+    start <- .archive_member_start(path, listing$filename[i])
+    line <- if (length(start) && !any(start == as.raw(0L))) strsplit(rawToChar(start), "\r?\n")[[1L]][1L] else NA
+    shown <- if (is.na(line)) NA_character_ else .table_format(line)
+    if (is.na(shown)) take[i] <- FALSE else formats[i] <- shown
+  }
   data.frame(
     member = listing$filename[take], format = formats[take],
     bytes = listing$uncompressed_size[take], type = listing$type[take],
@@ -21,10 +32,19 @@
 #' @param path ZIP archive path.
 #' @return Data frame with member, format, and uncompressed byte count.
 #' @export
+#' @examples
+#' # A download that holds two recordings.
+#' archive <- tempfile(fileext = ".zip")
+#' files <- system.file("extdata", c("sample.fm2", "sample.smv"), package = "replayr")
+#' zip::zip(archive, files, mode = "cherry-pick")
+#' movie_members(archive)
+#' read_movie(archive, member = "sample.smv")
+#' unlink(archive)
 movie_members <- function(path) {
+  .check_recording_path(path)
   .movie_archive_listing(path)[c("member", "format", "bytes")]
 }
-.read_movie_archive <- function(path, analog, deadzone, triggers, member = NULL, ...) {
+.read_movie_archive <- function(path, analog, deadzone, triggers, member = NULL, aliases = TRUE, ...) {
   listing <- .movie_archive_listing(path)
   if (is.null(member)) {
     if (nrow(listing) != 1L) stop("Archive contains ", nrow(listing),
@@ -66,7 +86,7 @@ movie_members <- function(path) {
   if (dirname(target) != scratch || basename(target) != leaf ||
     isTRUE(file.info(target)$isdir) || file.info(target)$size != chosen$bytes)
     stop("Archive extraction produced an unexpected file", call. = FALSE)
-  movie <- read_movie(target, analog = analog, deadzone = deadzone, triggers = triggers, ...)
+  movie <- read_movie(target, analog = analog, deadzone = deadzone, triggers = triggers, aliases = aliases, ...)
   movie$source_path <- path
   movie$source_member <- member
   movie

@@ -16,12 +16,12 @@ test_that('localized and empty NES LogKeys retain their actual columns', {
     'P1 \u5f00\u59cb|P1 \u9009\u62e9|P1 B|P1 A|#P2 Up|P2 Down|P2 Left|P2 Right|P2 Start|P2 Select|P2 B|P2 A|'
   )
   log <- paste(keys, '|..|U...S...|........|', sep = '\r\r\n')
-  mv <- .parse_bk2_input_log(analog = "quantized", log, hdr)
+  mv <- .parse_bk2_input_log(log, hdr)
   expect_identical(which(mv$inputs[1, 1, ]), c(4L, 5L))
   empty <- paste('LogKey:', '|..|U...S...|........|', sep = '\r\r\n')
-  expect_identical(.parse_bk2_input_log(analog = "quantized", empty, hdr)$inputs, mv$inputs)
-  expect_error(.parse_bk2_input_log(analog = "quantized", empty, list(Platform = 'PSX')), 'verified NES')
-  expect_error(.parse_bk2_input_log(analog = "quantized", 'LogKey:\n|..|......|........|', hdr), 'verified NES')
+  expect_identical(.parse_bk2_input_log(empty, hdr)$inputs, mv$inputs)
+  expect_error(.parse_bk2_input_log(empty, list(Platform = 'PSX')), 'verified NES')
+  expect_error(.parse_bk2_input_log('LogKey:\n|..|......|........|', hdr), 'verified NES')
 })
 test_that('overstated FCM byte length requires complete records and duration', {
   hdr <- raw(56)
@@ -34,7 +34,7 @@ test_that('overstated FCM byte length requires complete records and duration', {
   on.exit(unlink(tf))
   writeBin(c(hdr, as.raw(c(32, 10))), tf)
   expect_warning(mv <- replayr:::.decode_fcm(tf), 'complete records cover')
-  expect_equal(n_frames(mv), 10L)
+  expect_equal(n_observations(mv), 10L)
   expect_false(any(mv$inputs[, 1, 8])) # A changes only at the end of the ten-frame wait
   writeBin(c(hdr, as.raw(c(32, 9))), tf)
   expect_error(replayr:::.decode_fcm(tf), 'does not cover')

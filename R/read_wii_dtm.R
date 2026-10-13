@@ -63,25 +63,33 @@
     pos <- p + size + 1L
   }
   if (!serialized && n && !known_hid) return(NULL)
-  list(start = starts[seq_len(n)], length = lengths[seq_len(n)], prefix = prefix, tail = tail, valid = validity[seq_len(n)])
+  list(start = starts[seq_len(n)], length = lengths[seq_len(n)], prefix = prefix, tail = tail,
+    valid = validity[seq_len(n)])
 }
 .decode_wii_dtm <- function(path, data, controller_order = NULL, wii_variant = "auto",
-                            wii_extension = "raw", wii_key = NULL) {
-  wii_variant <- match.arg(wii_variant, c("auto", "hid", "hid-prefix8", "hid-nomarker", "serialized", "mixed-hid", "mixed-hid-nomarker", "mixed-hid-connected"))
+                            wii_extension = "raw", wii_key = NULL, aliases = TRUE) {
+  wii_variant <- match.arg(wii_variant, c(
+    "auto", "hid", "hid-prefix8", "hid-nomarker", "serialized", "mixed-hid", "mixed-hid-nomarker",
+    "mixed-hid-connected"
+  ))
   wii_extension <- match.arg(wii_extension, c("raw", "nunchuk", "classic"))
   mask <- as.integer(data[12L])
   if (bitwAnd(mask, 15L)) {
-    if (!is.null(controller_order)) stop("controller_order cannot assign mixed GC/Wii polls; inspect device and physical_port in polls()")
+    if (!is.null(controller_order))
+      stop("controller_order cannot assign mixed GC/Wii polls; inspect device and physical_port in polls()")
     revision <- paste(sprintf("%02x", as.integer(data[210:229])), collapse = "")
     if (wii_variant == "mixed-hid" || (wii_variant == "auto" &&
       revision == "7804f388aeb075266ae8c363e0932c355ba6ed5e"))
-      return(.decode_dtm_mixed_hid(path, data, wii_extension, wii_key))
+      return(.decode_dtm_mixed_hid(path, data, wii_extension, wii_key, aliases = aliases))
     if (wii_variant == "mixed-hid-nomarker" || (wii_variant == "auto" &&
       revision %in% .dtm_native_mixed_revisions))
-      return(.decode_dtm_mixed_hid(path, data, wii_extension, wii_key, native = TRUE))
+      return(.decode_dtm_mixed_hid(path, data, wii_extension, wii_key, native = TRUE, aliases = aliases))
     if (wii_variant == "mixed-hid-connected")
-      return(.decode_dtm_mixed_hid(path, data, wii_extension, wii_key, connected = TRUE))
-    stop(path, ": mixed controller framing requires a verified Dolphin revision, an explicit mixed-hid/mixed-hid-nomarker variant, or an explicit mixed-hid-connected assumption")
+      return(.decode_dtm_mixed_hid(path, data, wii_extension, wii_key, connected = TRUE, aliases = aliases))
+    stop(
+      path, ": mixed controller framing requires a verified Dolphin revision, ",
+      "an explicit mixed-hid/mixed-hid-nomarker variant, or an explicit mixed-hid-connected assumption"
+    )
   }
   ports <- which(bitwAnd(mask, bitwShiftL(1L, 4:7)) != 0L)
   if (!length(ports)) stop(path, ": no Wii Remote ports enabled")
@@ -145,7 +153,9 @@
   ext_bytes <- matrix(NA_integer_, n, 21L)
   ext_types <- rep(NA_integer_, n)
   core_present <- index$valid
-  expand9 <- function(x) x * 2L + x %/% 256L
+  # Dolphin widens a shorter accelerometer value by repeating its lowest
+  # bit in the added low bits (Common::ExpandValue in Common/BitUtils.h).
+  expand9 <- function(x) x * 2L + bitwAnd(x, 1L)
   ir_extended <- function(rows, b) {
     for (k in seq_len(ncol(b) %/% 3L)) {
       j <- (k - 1L) * 3L
@@ -185,7 +195,7 @@
       # Interleaved reports contain only one accelerometer axis and half the IR
       # field. Keep those observations separate instead of joining unknown ports.
       if (id %in% c(62L, 63L)) {
-        add(if (id == 62L) "accel_x" else "accel_y", rows, b[, 5L] * 4L + b[, 5L] %/% 64L)
+        add(if (id == 62L) "accel_x" else "accel_y", rows, b[, 5L] * 4L + 3L * bitwAnd(b[, 5L], 1L))
         add("accel_z_fragment", rows, bitwAnd(bitwShiftR(b[, 3L], 5L), 3L) + bitwAnd(bitwShiftR(b[, 4L], 5L), 3L) * 4L)
         for (j in 1:18) add(paste0("ir_fragment_byte", j), rows, b[, j + 5L])
       }
@@ -204,7 +214,8 @@
       }
     }
     add("report_id", seq_len(n), report)
-    if (wii_extension != "raw") ext_types[rowSums(!is.na(ext_bytes)) >= 6L] <- if (wii_extension == "nunchuk") 1L else 2L
+    if (wii_extension != "raw")
+      ext_types[rowSums(!is.na(ext_bytes)) >= 6L] <- if (wii_extension == "nunchuk") 1L else 2L
     if (!is.null(wii_key)) {
       if (!is.numeric(wii_key) || length(wii_key) != 16L || anyNA(wii_key) ||
         any(wii_key < 0 | wii_key > 255 | wii_key != as.integer(wii_key)))
@@ -228,10 +239,13 @@
       if (has_buttons) {
         button_keys <- c("a", "b", "start", "select", "wii_one", "wii_two", "wii_home")
         for (j in 0:6) values[rows, button_keys[j + 1L]] <- bitwAnd(b[, p], bitwShiftL(1L, j)) != 0L
-        for (j in 0:3) values[rows, c("dpad_up", "dpad_down", "dpad_left", "dpad_right")[j + 1L]] <- bitwAnd(b[, p + 1L], bitwShiftL(1L, j)) != 0L
+        for (j in 0:3) {
+          values[rows, c("dpad_up", "dpad_down", "dpad_left", "dpad_right")[j + 1L]] <-
+            bitwAnd(b[, p + 1L], bitwShiftL(1L, j)) != 0L
+        }
         p <- p + 2L
       }
-      # Omitted serialized fields have documented default values.
+      # Omitted serialised fields have documented default values.
       if (has_accel) {
         if (has_buttons) p <- p - 1L
         low <- bitwShiftR(b[, p], 4L)
@@ -290,11 +304,18 @@
       press("z", rows, bitwAnd(b[, 6L], 1L) == 0L)
       add("nunchuk_x", rows, b[, 1L])
       add("nunchuk_y", rows, b[, 2L])
-      for (j in 1:3) add(paste0("nunchuk_accel_", c("x", "y", "z")[j]), rows, b[, j + 2L] * 4L + bitwAnd(bitwShiftR(b[, 6L], j * 2L), 3L))
+      for (j in 1:3) {
+        add(
+          paste0("nunchuk_accel_", c("x", "y", "z")[j]), rows,
+          b[, j + 2L] * 4L + bitwAnd(bitwShiftR(b[, 6L], j * 2L), 3L)
+        )
+      }
       calibration$left <- list(x = "nunchuk_x", y = "nunchuk_y", center = c(128, 128), scale = c(128, 128))
     } else {
       word <- b[, 5L] + b[, 6L] * 256L
-      mapping <- c(`1` = "r1", `2` = "start", `3` = "wii_home", `4` = "select", `5` = "l1", `6` = "dpad_down", `7` = "dpad_right", `8` = "dpad_up", `9` = "dpad_left", `10` = "r2", `11` = "x", `12` = "a", `13` = "y", `14` = "b", `15` = "l2")
+      mapping <- c(`1` = "r1", `2` = "start", `3` = "wii_home", `4` = "select", `5` = "l1", `6` = "dpad_down",
+        `7` = "dpad_right", `8` = "dpad_up", `9` = "dpad_left", `10` = "r2", `11` = "x", `12` = "a", `13` = "y",
+        `14` = "b", `15` = "l2")
       for (j in seq_along(mapping)) {
         state <- bitwAnd(word, bitwShiftL(1L, as.integer(names(mapping)[j]))) == 0L
         key <- unname(mapping[j])
@@ -305,7 +326,8 @@
       }
       add("classic_left_x", rows, bitwAnd(b[, 1L], 63L))
       add("classic_left_y", rows, bitwAnd(b[, 2L], 63L))
-      add("classic_right_x", rows, bitwShiftR(b[, 1L], 6L) * 8L + bitwShiftR(b[, 2L], 6L) * 2L + bitwShiftR(b[, 3L], 7L))
+      add("classic_right_x", rows,
+        bitwShiftR(b[, 1L], 6L) * 8L + bitwShiftR(b[, 2L], 6L) * 2L + bitwShiftR(b[, 3L], 7L))
       add("classic_right_y", rows, bitwAnd(b[, 3L], 31L))
       add("classic_ltrigger", rows, bitwAnd(bitwShiftR(b[, 3L], 5L), 3L) * 8L + bitwShiftR(b[, 4L], 5L))
       add("classic_rtrigger", rows, bitwAnd(b[, 4L], 31L))
@@ -330,7 +352,8 @@
   assignment <- if (length(ports) > 1L && is.null(controller_order)) "unassigned" else "single enabled controller"
   if (variant != "serialized" && any(!index$valid)) {
     assignment <- "unassigned"
-    warning(path, ": retained ", sum(!index$valid), " unrecognised Wii reports as unobserved polls; poll_bytes preserves their source data", call. = FALSE)
+    warning(path, ": retained ", sum(!index$valid),
+      " unrecognised Wii reports as unobserved polls; poll_bytes preserves their source data", call. = FALSE)
   }
   order <- controller_order
   if (!is.null(order)) {
@@ -338,7 +361,10 @@
       !length(order) || any(!order %in% ports) || n %% length(order))
       stop("controller_order must contain distinct enabled Wii Remote ports and divide the poll count")
     if (any(!index$valid) && length(order) > 1L)
-      stop("unobserved Wii reports prevent grouping into complete controller cycles; use polls() without controller_order")
+      stop(
+        "unobserved Wii reports prevent grouping into complete controller cycles; ",
+        "use polls() without controller_order"
+      )
     order <- as.integer(order)
     if (all(index$valid)) assignment <- "caller-supplied repeating order; not stored in DTM"
   } else if (length(ports) == 1L) order <- ports

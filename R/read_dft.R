@@ -89,7 +89,8 @@
   width <- nchar(source_digits)
   n <- length(source_digits)
   nc <- if (n) max(width) else 9L
-  action_names <- c("left", "right", "up", "down", "jump", "dash", "light", "heavy", "escape", "taunt", "restart")[seq_len(nc)]
+  action_names <- c("left", "right", "up", "down", "jump", "dash", "light", "heavy", "escape", "taunt",
+    "restart")[seq_len(nc)]
   source_values <- matrix(NA_integer_, n, nc, dimnames = list(NULL, action_names))
   for (j in seq_len(nc)) {
     available <- which(width >= j)
@@ -122,9 +123,13 @@
     mouse_button_observed[row, seq_along(state)] <- TRUE
     mouse_source_state[row] <- parts[4L]
   }
+  # Jump, dash, the two attacks, taunt and restart are what the game is
+  # asked to do, not buttons: they are game actions. Escape opens the menu
+  # and is Start.
+  verbs <- action_names[-(1:4)]
   action_keys <- c(
     "dpad_left", "dpad_right", "dpad_up", "dpad_down",
-    paste0("dustforce_", action_names[-(1:4)])
+    ifelse(verbs == "escape", "dustforce_escape", paste0("action_", verbs))
   )
   mouse_present <- length(mouse_commands) > 0L
   keys <- c(action_keys, if (mouse_present) colnames(mouse_buttons))

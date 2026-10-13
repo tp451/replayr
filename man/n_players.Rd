@@ -19,3 +19,10 @@ participating players cannot be determined from its records.
 Keyboard and mouse controls can share a stream. The format-specific header
 describes device grouping; a stream is not evidence of a distinct person.
 }
+\examples{
+movie <- read_movie(system.file("extdata", "sample.fm2", package = "replayr"))
+n_players(movie)
+# Polls of two controllers without a known order have no number of players.
+stream <- read_movie(system.file("extdata", "paper", "unassigned.dtm", package = "replayr"))
+n_players(stream)
+}

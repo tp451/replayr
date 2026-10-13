@@ -1,5 +1,5 @@
 # Gens-rerecording .gmv movie format. Reference: tasvideos.org wiki at
-# /EmulatorResources/Gens.
+# /EmulatorResources/Gens/GMV.
 #
 # Layout:
 #   0x00-0x0F  16  magic "Gens Movie TESTA" (last byte = version letter)
@@ -50,17 +50,17 @@
     stop(path, ": not a GMV file")
   }
   version <- rawToChar(data[16])
-  version_num <- as.integer(data[16]) - utf8ToInt('0')
-  if (!version %in% c(as.character(0:9), 'A', 'J')) stop(path, ': unsupported GMV version')
+  version_num <- as.integer(data[16]) - utf8ToInt("0")
+  if (!version %in% c(as.character(0:9), "A", "J")) stop(path, ": unsupported GMV version")
   rerec <- .read_u32_le(data, 0x10L)
   p1_pad <- rawToChar(data[0x15L])
   p2_pad <- rawToChar(data[0x16L])
   # Gens GetMovieInfo reads pad types only from TEST9 onward, and flags
   # only from TESTA. Earlier files still record all three input bytes;
   # retain their extra-button bits without claiming a known hardware type.
-  if (version_num < 9L) p1_pad <- p2_pad <- 'unspecified'
+  if (version_num < 9L) p1_pad <- p2_pad <- "unspecified"
   flags <- if (version_num >= 17L) as.integer(data[0x17L]) else 0L
-  if (!(p1_pad %in% c("3", "6", 'unspecified')) || !(p2_pad %in% c("3", "6", 'unspecified'))) {
+  if (!(p1_pad %in% c("3", "6", "unspecified")) || !(p2_pad %in% c("3", "6", "unspecified"))) {
     stop(path, ": unsupported GMV controller type")
   }
   is_three_player <- bitwAnd(flags, 0x20L) != 0L
@@ -77,33 +77,24 @@
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
   commands <- integer(n_frames)
   if (n_frames > 0L) {
-    for (fi in seq_len(n_frames)) {
-      base <- (fi - 1L) * 3L
-      b0 <- as.integer(body[base + 1L])
-      b1 <- as.integer(body[base + 2L])
-      b2 <- as.integer(body[base + 3L])
-      for (bit in 0:7) {
-        # active-low: bit clear means pressed
-        if (bitwAnd(b0, bitwShiftL(1L, bit)) == 0L) {
-          inputs[fi, 1L, .GMV_STD_BIT_TO_UNI[bit + 1L]] <- TRUE
-        }
-        if (bitwAnd(b1, bitwShiftL(1L, bit)) == 0L) {
-          inputs[fi, 2L, .GMV_STD_BIT_TO_UNI[bit + 1L]] <- TRUE
-        }
-      }
+    # One row per frame. The words are active-low: a clear bit is a press.
+    bytes <- matrix(as.integer(body), ncol = bytes_per_frame, byrow = TRUE)
+    pressed <- function(column, bit) bitwAnd(bytes[, column], bitwShiftL(1L, bit)) == 0L
+    for (bit in 0:7) {
+      inputs[pressed(1L, bit), 1L, .GMV_STD_BIT_TO_UNI[bit + 1L]] <- TRUE
+      inputs[pressed(2L, bit), 2L, .GMV_STD_BIT_TO_UNI[bit + 1L]] <- TRUE
+      set <- pressed(3L, bit)
       if (is_three_player) {
-        for (bit in 0:7) {
-          if (bitwAnd(b2, bitwShiftL(1L, bit)) == 0L) {
-            inputs[fi, 3L, .GMV_STD_BIT_TO_UNI[bit + 1L]] <- TRUE
-          }
-        }
+        inputs[set, 3L, .GMV_STD_BIT_TO_UNI[bit + 1L]] <- TRUE
       } else {
-        for (bit in 0:7) {
-          if (bitwAnd(b2, bitwShiftL(1L, bit)) == 0L) {
-            ps <- .GMV_6B_BIT_TO_PLAYER_SLOT[[bit + 1L]]
-            pad_type <- if (ps[1L] == 1L) p1_pad else p2_pad
-            if (pad_type %in% c("6", 'unspecified')) inputs[fi, ps[1L], ps[2L]] <- TRUE
-          }
+        ps <- .GMV_6B_BIT_TO_PLAYER_SLOT[[bit + 1L]]
+        pad_type <- if (ps[1L] == 1L) p1_pad else p2_pad
+        if (pad_type %in% c("6", "unspecified")) {
+          inputs[set, ps[1L], ps[2L]] <- TRUE
+        } else {
+          # Recorded for a pad declared as three-button: outside its
+          # layout, so the pressed bit is kept with the commands.
+          commands[set] <- bitwOr(commands[set], bitwShiftL(1L, bit))
         }
       }
     }
@@ -112,7 +103,7 @@
     "_format" = "gmv",
     version = version,
     rerecordCount = as.character(rerec),
-    fps = if (version_num < 17L) '' else if (is_pal) "50" else "60",
+    fps = if (version_num < 17L) "" else if (is_pal) "50" else "60",
     p1PadType = p1_pad,
     p2PadType = p2_pad,
     threePlayer = as.character(is_three_player),

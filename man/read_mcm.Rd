@@ -4,7 +4,14 @@
 \alias{read_mcm}
 \title{Read a Mednafen rerecording movie}
 \usage{
-read_mcm(path, analog = "raw", deadzone = NULL, triggers = "raw", ...)
+read_mcm(
+  path,
+  analog = "raw",
+  deadzone = NULL,
+  triggers = "raw",
+  aliases = TRUE,
+  ...
+)
 }
 \arguments{
 \item{path}{Recording file path.}
@@ -18,12 +25,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{...}{Reader-specific arguments, such as \code{controller_order} for M64 or DTM,
 or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_members]{movie_members()}}).}
@@ -35,8 +61,14 @@ A \link{replayr_movie} with compact digital columns and source metadata.
 Imports MCM version 1 with fixed gamepad layouts for PC Engine, PC-FX,
 Atari Lynx, WonderSwan, Neo Geo Pocket, NES, and Master System. Each row
 represents one stored frame, with separate players for the format's
-controller ports. PC Engine six-button controls and platform-specific
-buttons keep their own keys in \code{\link[=button_layout]{button_layout()}}.
+controller ports. Numbered buttons have the lettered IDs in order: PC
+Engine and PC-FX I to VI are A, B, X, Y, L1 and R1, and Master System
+Fire 1 and 2 are A and B; \code{\link[=button_layout]{button_layout()}} keeps their labels. Run, the
+Lynx's Pause and the Neo Geo Pocket's Option are Start; the Lynx's Option
+1 and 2 are Select and Mode; PC Engine's switch between two and six
+buttons is Mode. The WonderSwan's X cross is the direction pad and its Y
+cross has the IDs of the N64's C-buttons. The Master System's Pause sits
+on the console and is returned by \code{\link[=system_channels]{system_channels()}}.
 }
 \details{
 \code{\link[=player]{player()}} returns the digital input. \code{commands} retains the command byte,
@@ -44,4 +76,10 @@ and \code{source_packets} retains complete packets. An incomplete final packet
 produces a warning and remains in \code{source_tail}. The ROM checksum bytes are
 preserved in \code{header$romMD5Bytes}. Peripheral layouts beyond these fixed
 gamepads require a separate decoder.
+}
+\examples{
+movie <- read_mcm(system.file("extdata", "legacy", "pce.mcm", package = "replayr"))
+n_players(movie)
+# The numbered buttons of the PC Engine take the lettered identities in order.
+button_layout(movie)[, c("key", "name")]
 }

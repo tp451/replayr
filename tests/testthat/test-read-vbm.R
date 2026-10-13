@@ -2,7 +2,7 @@ test_that("replayr:::.decode_vbm() parses the bundled synthetic Game Boy movie",
   mv <- replayr:::.decode_vbm(fixture_path("sample.vbm"))
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "vbm")
-  expect_equal(n_frames(mv), 3600L)
+  expect_equal(n_observations(mv), 3600L)
   expect_equal(n_buttons(mv), 8L)
   expect_equal(mv$header$isGBA, "0")
 })
@@ -23,10 +23,32 @@ test_that("replayr:::.decode_vbm() decodes grouped SGB controllers", {
   tf <- .mk_vbm(c(1L, 2L), controller_flags = 3L, system_flags = 4L)
   on.exit(unlink(tf))
   mv <- replayr:::.decode_vbm(tf)
-  expect_equal(dim(mv$inputs), c(1L, 2L, 8L))
+  expect_equal(dim(mv$inputs), c(1L, 2L, 12L))
   expect_true(mv$inputs[1L, 1L, 8L])
   expect_true(mv$inputs[1L, 2L, 7L])
   expect_equal(mv$header$isSGB, "1")
+})
+test_that("read_vbm() keeps the L and R buttons of Super Game Boy recordings", {
+  # A, then R, then L, then L+R with a new-timing reset.
+  tf <- .mk_vbm(c(0x0001L, 0x0100L, 0x0200L, 0x0b00L), system_flags = 4L)
+  on.exit(unlink(tf))
+  mv <- read_vbm(tf)
+  keys <- button_layout(mv)$key
+  expect_identical(keys, c("dpad_right", "dpad_left", "dpad_down", "dpad_up",
+                           "start", "select", "b", "a", "l1", "r1"))
+  states <- unname(player(mv))
+  expect_identical(states[, keys == "a"], c(TRUE, FALSE, FALSE, FALSE))
+  expect_identical(states[, keys == "r1"], c(FALSE, TRUE, FALSE, TRUE))
+  expect_identical(states[, keys == "l1"], c(FALSE, FALSE, TRUE, TRUE))
+  expect_identical(mv$commands, c(0L, 0L, 0L, 0x0800L))
+})
+test_that("read_vbm() retains bits outside a Game Boy layout in commands", {
+  tf <- .mk_vbm(c(0x0101L, 0x0400L, 0x1002L), system_flags = 2L)
+  on.exit(unlink(tf))
+  mv <- read_vbm(tf)
+  expect_identical(n_buttons(mv), 8L)
+  expect_identical(unname(colSums(player(mv))), c(0, 0, 0, 0, 0, 0, 1, 1))
+  expect_identical(mv$commands, c(0x0100L, 0x0400L, 0x1000L))
 })
 test_that("replayr:::.decode_vbm() reads GBA shoulder buttons from system flags", {
   tf <- .mk_vbm(bitwShiftL(1L, 9L), system_flags = 1L)

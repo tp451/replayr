@@ -119,18 +119,22 @@
   rows <- lapply(unique_lines, .ltm_frame, config = cfg, legacy = legacy)
   nk <- sort(unique(unlist(lapply(rows, `[[`, "keyboard"), use.names = FALSE)))
   nc <- .computer_number(cfg$nb_controllers %||% 0, "libTAS controller count", 0, 4)
-  seen <- which(vapply(seq_len(4L), function(p) any(vapply(rows, function(r) !is.null(r$controllers[[p]]), logical(1))), logical(1)))
+  seen <- which(vapply(seq_len(4L), function(p) any(vapply(rows, function(r) !is.null(r$controllers[[p]]), logical(1))),
+    logical(1)))
   if (length(seen)) nc <- max(nc, seen)
   mouse <- tolower(cfg$mouse_support %||% "false") %in% c("true", "1") ||
-    any(grepl("\\|M", unique_lines)) || any(vapply(rows, function(r) any(r$mouse != 0) || any(r$mouse_buttons), logical(1)))
+    any(grepl("\\|M", unique_lines)) || any(vapply(rows, function(r) any(r$mouse != 0) || any(r$mouse_buttons),
+      logical(1)))
   keys <- as.character(c(nk, if (mouse) .ltm_mouse_keys, if (nc) .ltm_controller_keys))
   nu <- length(rows)
   np <- max(1L, nc)
   compact <- array(FALSE, c(nu, np, length(keys)))
   analog_names <- c(if (mouse) c("mouse_x", "mouse_y", "mouse_wheel", "mouse_mode"), if (nc) .ltm_axis_names)
   analog <- lapply(seq_len(np), function(p) matrix(0, nu, length(analog_names), dimnames = list(NULL, analog_names)))
-  timing <- matrix(0, nu, 4L, dimnames = list(NULL, c("framerate_num", "framerate_den", "realtime_sec", "realtime_nsec")))
-  default_rate <- .computer_number(c(cfg$framerate_num %||% 60, cfg$framerate_den %||% 1), "libTAS default frame rate", 1)
+  timing <- matrix(0, nu, 4L,
+    dimnames = list(NULL, c("framerate_num", "framerate_den", "realtime_sec", "realtime_nsec")))
+  default_rate <- .computer_number(c(cfg$framerate_num %||% 60, cfg$framerate_den %||% 1), "libTAS default frame rate",
+    1)
   for (i in seq_along(rows)) {
     r <- rows[[i]]
     if (length(r$keyboard)) compact[i, 1L, match(r$keyboard, keys)] <- TRUE
@@ -173,6 +177,9 @@
   )
   movie$timing <- as.data.frame(timing[row_id, , drop = FALSE])
   movie$timing$duration_seconds <- movie$timing$framerate_den / movie$timing$framerate_num
+  # Each frame has its own length, so the start of a frame is the sum of the
+  # lengths before it.
+  movie$timing$start_seconds <- cumsum(c(0, movie$timing$duration_seconds))[seq_len(nrow(movie$timing))]
   movie$flags <- flags
   movie$input_events <- lapply(rows, `[[`, "events")[row_id]
   movie$source_input_log <- list(lines = unique_lines, row = row_id)

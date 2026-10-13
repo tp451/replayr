@@ -14,8 +14,10 @@ Description: Import emulator input recordings from 'FCEUX', 'BizHawk',
     and magnitudes can be selected independently. Allows analysis of input
     recordings without running an emulator.
 License: GPL (>= 2)
+URL: https://github.com/tp451/replayr
+BugReports: https://github.com/tp451/replayr/issues
 Encoding: UTF-8
-Language: en-US
+Language: en-GB
 Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 4.0)

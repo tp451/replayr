@@ -3,6 +3,11 @@
 # In BKM, unlike BK2, axes follow the Boolean buttons. The last axis is
 # terminated by the group delimiter rather than a comma.
 .decode_bkm <- function(path) {
+  # A BizHawk text movie is a header of key and value lines that names its
+  # platform, followed by the input rows.
+  start <- readBin(path, "raw", min(file.info(path)$size, 65536L))
+  if (any(start == as.raw(0L)) || !grepl("(^|\n)Platform ", rawToChar(start), useBytes = TRUE))
+    stop(path, ": not a BizHawk BKM or TAS text movie: its header has no Platform line", call. = FALSE)
   lines <- readLines(path, warn = FALSE, encoding = "UTF-8")
   lines <- sub("\r+$", "", lines)
   header <- list("_format" = "bkm")
@@ -38,11 +43,14 @@
     A26 = c("Up", "Down", "Left", "Right", "Button"),
     A78 = c("Up", "Down", "Left", "Right", "Trigger", "Trigger 2"),
     COLECO = c("Up", "Down", "Left", "Right", "L", "R", paste0("Key", 1:9), "Star", "Key0", "Pound"),
-    N64 = c("DPad U", "DPad D", "DPad L", "DPad R", "B", "A", "Z", "Start", "L", "R", "C Up", "C Down", "C Left", "C Right", "X Axis", "Y Axis"),
+    N64 = c("DPad U", "DPad D", "DPad L", "DPad R", "B", "A", "Z", "Start", "L", "R", "C Up", "C Down", "C Left",
+      "C Right", "X Axis", "Y Axis"),
     SAT = c("Up", "Down", "Left", "Right", "Start", "X", "Y", "Z", "A", "B", "C", "L", "R"),
     DGB = c("Power", "Up", "Down", "Left", "Right", "Select", "Start", "B", "A"),
     WSWAN = c("X1", "X3", "X4", "X2", "Y1", "Y3", "Y4", "Y2", "Start", "B", "A"),
-    TI83 = c(as.character(0:9), "DOT", "ON", "ENTER", "UP", "DOWN", "LEFT", "RIGHT", "PLUS", "MINUS", "MULTIPLY", "DIVIDE", "CLEAR", "EXP", "DASH", "PARAOPEN", "PARACLOSE", "TAN", "VARS", "COS", "PRGM", "STAT", "MATRIX", "X", "STO", "LN", "LOG", "SQUARED", "NEG1", "MATH", "ALPHA", "GRAPH", "TRACE", "ZOOM", "WINDOW", "Y", "2ND", "MODE")
+    TI83 = c(as.character(0:9), "DOT", "ON", "ENTER", "UP", "DOWN", "LEFT", "RIGHT", "PLUS", "MINUS", "MULTIPLY",
+      "DIVIDE", "CLEAR", "EXP", "DASH", "PARAOPEN", "PARACLOSE", "TAN", "VARS", "COS", "PRGM", "STAT", "MATRIX", "X",
+      "STO", "LN", "LOG", "SQUARED", "NEG1", "MATH", "ALPHA", "GRAPH", "TRACE", "ZOOM", "WINDOW", "Y", "2ND", "MODE")
   )
   order <- orders[[platform]]
   if (is.null(order)) stop("Unsupported legacy BizHawk platform: ", original)
@@ -51,13 +59,9 @@
   # the last delimiter (older editor exports can append a marker such as *).
   trailing <- sub("^.*\\|", "", rows)
   rows <- sub("\\|[^|]*$", "|", rows)
-  parts <- strsplit(rows, "|", fixed = TRUE)
   # Empty groups at the end are emitted by some historical Genesis writers.
-  parts <- lapply(parts, function(x) {
-    x <- x[-1L]
-    while (length(x) && !nzchar(tail(x, 1L))) x <- head(x, -1L)
-    x
-  })
+  # A row is split between its first pipe and its closing pipes.
+  parts <- strsplit(sub("[|]+$", "", substring(rows, 2L)), "|", fixed = TRUE)
   counts <- lengths(parts)
   if (length(unique(counts)) != 1L) stop("BKM controller group count changes between samples")
   groups <- lapply(seq_len(counts[1L]), function(i) vapply(parts, `[[`, character(1), i))
@@ -104,7 +108,7 @@
   if (length(groups) > maximum) stop("Too many BKM controller groups for ", original)
   # BizHawk 1.4.1 indexes Game Boy buttons at fixed character offsets.
   # Its final delimiter therefore becomes an active A button in a row with
-  # seven button characters. Reproduce that documented historical behavior;
+  # seven button characters. Reproduce that documented historical behaviour;
   # newer importers skip delimiters and reject such a truncated record.
   if (platform == "GB" && grepl("(^| )1\\.4\\.1$", header$emuVersion %||% "")) {
     short <- which(nchar(groups[[1L]]) == 7L)
@@ -115,11 +119,15 @@
   }
   for (p in seq_along(groups)) {
     if (platform == "N64") {
-      if (any(!grepl("^.{14}[[:space:]]*[+-]?[0-9]+,[[:space:]]*[+-]?[0-9]+$", groups[[p]]))) stop("Invalid BKM N64 stick record")
+      if (any(!grepl("^.{14}[[:space:]]*[+-]?[0-9]+,[[:space:]]*[+-]?[0-9]+$", groups[[p]])))
+        stop("Invalid BKM N64 stick record")
       groups[[p]] <- paste0(groups[[p]], ",")
-    } else if (any(nchar(groups[[p]]) != length(order))) stop("BKM button count disagrees with ", original, " controller definition")
+    } else if (any(nchar(groups[[p]]) != length(order))) {
+      stop("BKM button count disagrees with ", original, " controller definition")
+    }
   }
-  key_groups <- lapply(seq_along(groups), function(p) paste0("#", paste(paste0("P", p, " ", order), collapse = "|"), "|"))
+  key_groups <- lapply(seq_along(groups),
+    function(p) paste0("#", paste(paste0("P", p, " ", order), collapse = "|"), "|"))
   if (length(command_names)) {
     key_groups <- c(list(paste0("#", paste(command_names, collapse = "|"), "|")), key_groups)
     groups <- c(list(command_rows), groups)
@@ -132,7 +140,14 @@
     movie$source_trailing <- trailing
     movie$header$unconsumedTrailingSamples <- sum(nzchar(trailing))
   }
-  if (platform == "N64") movie$stick_calibration <- lapply(seq_len(dim(movie$inputs)[2L]), function(p) list(left = list(x = paste0("P", p, " X Axis"), y = paste0("P", p, " Y Axis"), center = c(0, 0), scale = c(128, 128), sign = c(1, 1))))
+  if (platform == "N64") {
+    movie$stick_calibration <- lapply(seq_len(dim(movie$inputs)[2L]), function(p) {
+      list(left = list(
+        x = paste0("P", p, " X Axis"), y = paste0("P", p, " Y Axis"),
+        center = c(0, 0), scale = c(128, 128), sign = c(1, 1)
+      ))
+    })
+  }
   movie
 }
 .decode_tas <- function(path) {

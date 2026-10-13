@@ -6,7 +6,7 @@ test_that("explicit NES controller configuration overrides stale LogKey entries"
   expect_true(all(startsWith(movie$header$inactiveLogKeyControls, "P2 ")))
   expect_identical(unname(player(movie)[, button_layout(movie)$key == "dpad_up"]), c(TRUE, FALSE))
   expect_identical(unname(player(movie)[, button_layout(movie)$key == "a"]), c(FALSE, TRUE))
-  expect_identical(system_channels(movie)$Power, c(FALSE, TRUE))
+  expect_identical(system_channels(movie)$power, c(FALSE, TRUE))
 })
 test_that("NES port settings use JSON values independent of formatting and key order", {
   cases <- c(

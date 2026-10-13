@@ -13,17 +13,20 @@ analog_channels(movie, idx = 1L)
 \item{idx}{Player index, 1-based. Defaults to 1 (player 1).}
 }
 \value{
-Numeric matrix with one row per observation and named channels;
-zero columns for a player with no analogue channels.
+Numeric matrix with one row per observation and one column per
+channel, named by the keys of \code{\link[=channel_layout]{channel_layout()}}; zero columns for a
+player with no analogue channels.
 }
 \description{
 Returns the original numeric channels decoded from the recording. These
 values are retained in every representation mode. No cross-platform
-normalization is applied: M64 sticks use signed -128..127 values; PXM/PJM
+normalisation is applied: M64 sticks use signed -128..127 values; PXM/PJM
 sticks and DTM sticks/triggers use unsigned 0..255 values; BK2 keeps its
-logged numeric values and LogKey column names, including sensors and paddles.
-Doom channels are signed movement commands and the stored signed angle byte,
-not physical device events. See the format-specific reader for interpretation.
+logged numeric values, including sensors and paddles. Columns are named by
+key, so that the X axis of the left stick is \code{left_x} in every format;
+\code{\link[=channel_layout]{channel_layout()}} lists the keys beside the labels of the recording.
+Doom-engine channels are the signed movement and turning commands of each
+tic, not physical device events. See the format-specific reader for interpretation.
 }
 \details{
 For an unassigned \link{replayr_poll_stream}, \code{idx = 1} selects the single

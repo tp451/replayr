@@ -5,7 +5,7 @@ test_that("replayr:::.decode_bk2() tolerates a NUL-padded Header.txt field", {
   mv <- replayr:::.decode_bk2(analog = "quantized", fp)
   expect_s3_class(mv, "replayr_movie")
   expect_equal(mv$header[["_format"]], "bk2")
-  expect_gt(n_frames(mv), 0L)
+  expect_gt(n_observations(mv), 0L)
   expect_gt(sum(press_counts(mv, 1L)), 0L)
 })
 
@@ -19,7 +19,7 @@ test_that("real Arkanoid paddle movie matches its literal position and Fire fiel
   fire <- grepl(',F\\|$', lines)
   motion <- diff(c(80L, position))
   mv <- replayr:::.decode_bk2(analog = "quantized", fp)
-  expect_equal(n_frames(mv), 37298L)
+  expect_equal(n_observations(mv), 37298L)
   expect_identical(unname(mv$inputs[, 1, 8]), fire)
   expect_identical(unname(mv$inputs[, 1, 21]), motion > 0)
   expect_identical(unname(mv$inputs[, 1, 25]), motion < 0)

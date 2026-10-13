@@ -57,3 +57,29 @@
 .read_u16_le <- function(data, off) {
   as.integer(data[off + 1L]) + bitwShiftL(as.integer(data[off + 2L]), 8L)
 }
+# Signatures: a reader looks at the first bytes of a file before it decodes
+# anything, so that a file of another format is refused by name and not
+# decoded into an empty or meaningless recording.
+.starts_with_bytes <- function(path, signature) {
+  if (is.character(signature)) signature <- charToRaw(signature)
+  identical(readBin(path, "raw", length(signature)), signature)
+}
+.is_zip_archive <- function(path) {
+  # A local file header, or the end record of an archive without members.
+  .starts_with_bytes(path, as.raw(c(0x50, 0x4b, 0x03, 0x04))) ||
+    .starts_with_bytes(path, as.raw(c(0x50, 0x4b, 0x05, 0x06)))
+}
+.is_gzip_file <- function(path) .starts_with_bytes(path, as.raw(c(0x1f, 0x8b)))
+# Every entry point is given one existing file. A wrong path is reported as
+# such, and not as a failure to open a connection.
+.check_recording_path <- function(path) {
+  if (!is.character(path) || length(path) != 1L || is.na(path) || !nzchar(path))
+    stop("path must be one file path as a character string.", call. = FALSE)
+  if (dir.exists(path)) stop("Not a file but a folder: ", path, call. = FALSE)
+  if (!file.exists(path)) {
+    # A relative path is looked up from the working directory.
+    absolute <- grepl("^(/|~|[A-Za-z]:|\\\\\\\\)", path)
+    stop("File not found: ", path, if (!absolute) paste0(" (working directory: ", getwd(), ")"), call. = FALSE)
+  }
+  invisible(path)
+}

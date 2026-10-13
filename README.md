@@ -6,8 +6,11 @@ sensors, together with recording metadata and timing information.
 
 ## Formats and platforms
 
-The package reads 34 recording formats from BizHawk, Dolphin, FCEUX, libTAS,
-Mupen64, Snes9x, openMSX, and other recording tools. Supported platforms include:
+The package reads 33 recording formats, under 37 file extensions, from
+BizHawk, Dolphin, FCEUX, libTAS, Mupen64, Snes9x, openMSX, and other
+recording tools, the demos of the Doom and Half-Life engines, and the tables
+of two published data sets of human play on the Atari 2600, the Atari Grand
+Challenge data set and Atari-HEAD. Supported platforms include:
 
 | Family | Platforms |
 |---|---|
@@ -23,15 +26,18 @@ The [compatibility catalogue](COMPATIBILITY.md) lists each format, version,
 controller variant, and platform combination. Some desktop and browser games
 use input recorded through a host application such as libTAS or Hourglass;
 the catalogue identifies these cases. It is also included in the installed
-package: `vignette("compatibility", package = "replayr")`.
+package: `vignette("compatibility", package = "replayr")`. The readers were
+checked against published files; the repository's
+[validation folder](https://github.com/tp451/replayr/tree/main/validation)
+lists the source of every file and provides the scripts to repeat the checks.
 
 ## Getting started
 
-Install from a local source checkout:
+Install from GitHub:
 
 ```r
 # install.packages("remotes")
-remotes::install_local("path/to/replayr")
+remotes::install_github("tp451/replayr")
 ```
 
 Read a recording and summarise the use of one controller:
@@ -59,9 +65,11 @@ mapping, and `align_buttons()` aligns matrices from several recordings.
 
 See the [universal controller layout](CONTROLLERS.md) for the shared identifiers.
 
-Recorded numeric values are available through `analog_channels()`. Stick input
-can additionally be represented as four or eight directions, an angle, or an
-angle with magnitude. Choose a representation for each stick:
+Recorded numeric values are available through `analog_channels()`, in columns
+named by key (`left_x`, `mouse_dx`); `channel_layout(movie)` lists the labels
+of the recording. Stick input can additionally be represented as four or
+eight directions, an angle, or an angle with magnitude. Choose a
+representation for each stick:
 
 ```r
 path <- system.file("extdata", "sample.dtm", package = "replayr")
@@ -73,9 +81,12 @@ The original coordinates remain available. Mouse, touch, light-gun, and motion
 values retain the units supplied by their recording format.
 
 Rows follow the source recording: they may be frames, controller polls, or
-timestamped events. `n_frames()` counts imported observations. Readers retain
+timestamped events. `n_observations()` counts imported observations. Readers retain
 available timing information and identify polls whose controller port is
 unknown, so these distinctions can be handled in an analysis.
+`recording_info()` reports platform, video standard, frame rate and rerecord
+count under one name each, whatever the format calls them, and
+`observation_time()` gives the time of each observation in seconds.
 
 ## Documentation
 

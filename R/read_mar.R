@@ -85,7 +85,11 @@
         )
         for (name in names(vals)) {
           key <- paste(f$key, slug, name, sep = "_")
-          if (f$player == 0L) sys[[key]] <- vals[[name]] else channels[[match(f$player, player_ids)]][[key]] <- vals[[name]]
+          if (f$player == 0L) {
+            sys[[key]] <- vals[[name]]
+          } else {
+            channels[[match(f$player, player_ids)]][[key]] <- vals[[name]]
+          }
         }
         offset <- offset + 13L
       }
@@ -102,6 +106,9 @@
     frameRate = rate, frameCount = n, rerecordCount = .read_u32_le(data, 60L), controllerPorts = player_ids,
     inputSchemaSource = input_schema$source %||% "caller-supplied"
   )
+  # A layout entry without wording of its own takes the usual label of its control.
+  plain <- labels == gsub("_", " ", keys, fixed = TRUE)
+  labels[plain] <- .control_identity_layout(keys[plain])$name
   movie <- .new_named_movie(header, integer(n), inputs, keys, source_path = path, analog = analog, names = labels)
   movie$system_inputs <- sys
   movie$input_schema <- input_schema

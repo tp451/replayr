@@ -1,0 +1,26 @@
+"data_set","game","tables","observations","hours","values","differences","with_warning","equal_to_listing"
+"Atari-HEAD","alien",22,380802,5.42,3427218,0,0,22
+"Atari-HEAD","asterix",20,288948,4.81,2600532,0,0,20
+"Atari-HEAD","bank_heist",24,416312,5.92,3746808,0,0,24
+"Atari-HEAD","berzerk",27,459029,6.75,4131261,0,0,27
+"Atari-HEAD","breakout",17,257494,4.18,2317446,0,0,17
+"Atari-HEAD","centipede",27,435704,6.75,3921336,0,0,27
+"Atari-HEAD","demon_attack",27,464997,6.75,4184973,0,0,27
+"Atari-HEAD","enduro",27,477217,6.75,4294953,0,0,27
+"Atari-HEAD","freeway",10,174812,2.5,1573308,0,0,10
+"Atari-HEAD","frostbite",27,452249,6.75,4070241,0,0,27
+"Atari-HEAD","hero",27,411870,6.75,3706830,0,0,27
+"Atari-HEAD","montezuma_revenge",27,447327,6.75,4025943,0,0,27
+"Atari-HEAD","ms_pacman",22,388624,5.5,3497616,0,0,22
+"Atari-HEAD","name_this_game",22,378167,5.43,3403503,0,0,22
+"Atari-HEAD","phoenix",27,470543,6.75,4234887,0,0,27
+"Atari-HEAD","riverraid",22,374263,5.45,3368367,0,0,22
+"Atari-HEAD","road_runner",20,354501,5,3190509,0,0,20
+"Atari-HEAD","seaquest",27,430799,6.75,3877191,0,0,27
+"Atari-HEAD","space_invaders",27,456298,6.75,4106682,0,0,27
+"Atari-HEAD","venture",22,417203,5.36,3754827,0,0,22
+"Atari Grand Challenge v1","mspacman",382,1560979,7.23,10926853,0,0,NA
+"Atari Grand Challenge v1","pinball",207,1196807,5.54,8377649,0,0,NA
+"Atari Grand Challenge v1","qbert",649,1484788,6.87,10393516,0,0,NA
+"Atari Grand Challenge v1","revenge",652,2361871,10.93,16533097,0,0,NA
+"Atari Grand Challenge v1","spaceinvaders",423,1766078,8.18,12362546,0,0,NA

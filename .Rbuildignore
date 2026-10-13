@@ -39,3 +39,4 @@
 ^.*\.(pyc|swp|swo)$
 (^|/)(\.DS_Store|Thumbs\.db|Desktop\.ini)$
 ^tools/compatibility-tests$
+^validation$

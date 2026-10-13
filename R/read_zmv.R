@@ -2,27 +2,27 @@
 # https://github.com/emillon/zsnes/blob/master/src/zmovie.c
 # https://tasvideos.org/OtherEmulators/ZMV
 .decode_zmv <- function(path) {
-  data <- readBin(path, 'raw', n = file.info(path)$size)
-  if (length(data) < 43L || !identical(data[1:3], charToRaw('ZMV'))) stop(path, ': not an enhanced ZMV file')
+  data <- readBin(path, "raw", n = file.info(path)$size)
+  if (length(data) < 43L || !identical(data[1:3], charToRaw("ZMV"))) stop(path, ": not an enhanced ZMV file")
   u24 <- function(offset) {
-    if (offset + 3L > length(data)) stop(path, ': truncated ZMV state size')
+    if (offset + 3L > length(data)) stop(path, ": truncated ZMV state size")
     sum(as.numeric(data[offset + 1:3]) * c(1, 256, 65536))
   }
   nf <- .read_u32_le(data, 9L)
   input_flags <- .read_u16_le(data, 37L)
-  if (bitwAnd(input_flags, 1792L) != 0L) stop(path, ': ZMV mouse and Super Scope records require a peripheral decoder')
+  if (bitwAnd(input_flags, 1792L) != 0L) stop(path, ": ZMV mouse and Super Scope records require a peripheral decoder")
   ports <- which(vapply(15:11, function(bit) bitwAnd(input_flags, bitwShiftL(1L, bit)) != 0L, logical(1)))
-  if (!length(ports)) stop(path, ': ZMV has no enabled gamepad')
+  if (!length(ports)) stop(path, ": ZMV has no enabled gamepad")
   chapters <- .read_u16_le(data, 30L)
   author_size <- .read_u16_le(data, 32L)
   state_size <- u24(34L)
   end_count <- length(data) - author_size - 2L
-  if (end_count < 43L) stop(path, ': invalid ZMV footer')
+  if (end_count < 43L) stop(path, ": invalid ZMV footer")
   external <- .read_u16_le(data, end_count)
   stream_end <- end_count - external * (state_size + 19L) - chapters * 4L
   offset <- 43L + bitwAnd(u24(40L), 8388607L)
-  if (offset > stream_end) stop(path, ': truncated ZMV initial savestate')
-  keys <- c('b', 'y', 'select', 'start', 'dpad_up', 'dpad_down', 'dpad_left', 'dpad_right', 'a', 'x', 'l1', 'r1')
+  if (offset > stream_end) stop(path, ": truncated ZMV initial savestate")
+  keys <- c("b", "y", "select", "start", "dpad_up", "dpad_down", "dpad_left", "dpad_right", "a", "x", "l1", "r1")
   event_states <- list()
   event_lengths <- integer()
   reset_frames <- integer()
@@ -30,7 +30,7 @@
   frame <- 0L
   pending_reset <- FALSE
   chapter_offsets <- integer()
-  need <- function(n) if (offset + n > stream_end) stop(path, ': truncated ZMV controller stream')
+  need <- function(n) if (offset + n > stream_end) stop(path, ": truncated ZMV controller stream")
   # Records either reset, repeat the current state, skip a chapter snapshot,
   # or replace selected controllers. Expand repeated states after this pass.
   while (offset < stream_end) {
@@ -39,7 +39,7 @@
     offset <- offset + 1L
     if (bitwAnd(flag, 1L)) {
       command <- bitwShiftR(flag, 1L)
-      if (command != 0L) stop(path, ': unknown ZMV command ', command)
+      if (command != 0L) stop(path, ": unknown ZMV command ", command)
       pending_reset <- TRUE
       next
     }
@@ -47,7 +47,7 @@
       need(4L)
       until <- .read_u32_le(data, offset)
       offset <- offset + 4L
-      if (until <= frame || until > .Machine$integer.max) stop(path, ': invalid ZMV repeat endpoint')
+      if (until <= frame || until > .Machine$integer.max) stop(path, ": invalid ZMV repeat endpoint")
       run <- until - frame
     } else if (bitwAnd(flag, 4L)) {
       need(3L)
@@ -76,21 +76,26 @@
     }
     frame <- frame + run
   }
-  if (offset != stream_end) stop(path, ': unparsed data remains before the ZMV chapter index')
-  if (length(chapter_offsets) != chapters) stop(path, ': inconsistent ZMV internal chapter count')
+  if (offset != stream_end) stop(path, ": unparsed data remains before the ZMV chapter index")
+  if (length(chapter_offsets) != chapters) stop(path, ": inconsistent ZMV internal chapter count")
   stored <- if (length(event_states)) do.call(rbind, event_states) else matrix(FALSE, 0L, length(ports) * length(keys))
-  inputs <- array(stored[rep(seq_along(event_lengths), event_lengths), , drop = FALSE], c(frame, length(ports), length(keys)))
+  inputs <- array(stored[rep(seq_along(event_lengths), event_lengths), , drop = FALSE],
+    c(frame, length(ports), length(keys)))
   commands <- integer(frame)
   commands[reset_frames] <- 1L
-  if (frame != nf) warning(path, ': ZMV header declares ', nf, ' frames; importing ', frame, ' complete stored frames', call. = FALSE)
+  if (frame != nf)
+    warning(path, ": ZMV header declares ", nf, " frames; importing ", frame, " complete stored frames", call. = FALSE)
   header <- list(
-    `_format` = 'zmv', system = 'SNES', zsnesVersion = .read_u16_le(data, 3L), romCRC32 = .read_u32_le(data, 5L),
-    declaredFrameCount = nf, frameCount = frame, rerecordCount = .read_u32_le(data, 13L), removedFrames = .read_u32_le(data, 17L),
-    stepAdvancedFrames = .read_u32_le(data, 21L), averageFps = as.integer(data[26]), keyCombos = .read_u32_le(data, 26L),
+    `_format` = "zmv", system = "SNES", zsnesVersion = .read_u16_le(data, 3L), romCRC32 = .read_u32_le(data, 5L),
+    declaredFrameCount = nf, frameCount = frame, rerecordCount = .read_u32_le(data, 13L),
+    removedFrames = .read_u32_le(data, 17L),
+    stepAdvancedFrames = .read_u32_le(data, 21L), averageFps = as.integer(data[26]),
+    keyCombos = .read_u32_le(data, 26L),
     controllerPorts = ports, initialInputFlags = input_flags, startMethod = bitwShiftR(as.integer(data[40]), 6L),
     isPal = bitwAnd(as.integer(data[40]), 32L) != 0L, internalChapters = chapters, externalChapters = external,
     trailingReset = pending_reset,
-    author = if (author_size) .read_cstring(data, length(data) - author_size, author_size) else '', commandEncoding = 'bit 0: reset before observation'
+    author = if (author_size) .read_cstring(data, length(data) - author_size, author_size) else "",
+    commandEncoding = "bit 0: reset before observation"
   )
   movie <- .new_named_movie(header, commands, inputs, keys, path)
   movie$chapter_offsets <- chapter_offsets

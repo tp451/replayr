@@ -33,7 +33,7 @@ test_that("NES Zapper fields retain positions and a primary-action trigger", {
     "LogKey:#Power|Reset|#P1 Up|P1 Down|P1 Left|P1 Right|P1 Start|P1 Select|P1 B|P1 A|#P2 Zapper X|P2 Zapper Y|P2 Fire|",
     c("|..|........|120,45,F|", "|..|........|0,239,.|"), "NES"
   )
-  expect_identical(colnames(analog_channels(movie, 2)), c("P2 Zapper X", "P2 Zapper Y"))
+  expect_identical(colnames(analog_channels(movie, 2)), c("aim_x", "aim_y"))
   expect_equal(analog_channels(movie, 2), rbind(c(120, 45), c(0, 239)), ignore_attr = TRUE)
   trigger <- which(button_layout(movie)$key == "a")
   expect_identical(unname(player(movie, 2)[, trigger]), c(TRUE, FALSE))
@@ -56,10 +56,10 @@ test_that("Saturn 3D shoulder axes and ST-V system controls stay separate", {
   expect_identical(n_players(movie), 1L)
   expect_equal(analog_channels(movie), rbind(c(128, 64, 32, 255), c(255, 128, 0, 128)), ignore_attr = TRUE)
   expect_identical(button_layout(movie)$key, c("b", "a"))
-  expect_identical(system_channels(movie)[["P13 St-V Test"]], c(TRUE, FALSE))
-  expect_identical(system_channels(movie)[["P13 St-V Pause"]], c(FALSE, TRUE))
+  expect_identical(system_channels(movie)[["st_v_test"]], c(TRUE, FALSE))
+  expect_identical(system_channels(movie)[["st_v_pause"]], c(FALSE, TRUE))
 })
-test_that("arcade action aliases remain distinct when they coexist", {
+test_that("arcade buttons shown under a name follow one table for the platform", {
   movie <- decode_device_fields(
     "LogKey:#Coin 1|#P1 Button 7|P1 Jump/Start|P1 Kick|P1 Punch|",
     c("|.|7...|", "|.|.J..|", "|.|..K.|", "|.|...P|"), "Arcade"
@@ -70,6 +70,7 @@ test_that("arcade action aliases remain distinct when they coexist", {
   )
   expect_identical(as.integer(button_layout(movie)$id), c(7L, 8L, 9L, 13L))
   expect_equal(player(movie), (diag(4) == 1)[, c(2, 4, 3, 1)], ignore_attr = TRUE)
+  expect_identical(movie$source_layout$name[movie$source_layout$universal_key == "a"], "Punch")
 })
 test_that("arcade gun and viewport labels keep their source values", {
   movie <- decode_device_fields(
@@ -98,8 +99,8 @@ test_that("Game Boy input-cycle timing remains a numeric system channel", {
     "LogKey:#Input Cycle|#P1 Up|P1 Down|P1 Left|P1 Right|P1 Start|P1 Select|P1 B|P1 A|P1 Power|",
     c("|70224,|.......A.|", "|35112,|........P|"), "GB"
   )
-  expect_identical(system_channels(movie)[["Input Cycle"]], c(70224, 35112))
-  expect_identical(system_channels(movie)[["P1 Power"]], c(FALSE, TRUE))
+  expect_identical(system_channels(movie)[["input_cycle"]], c(70224, 35112))
+  expect_identical(system_channels(movie)[["power"]], c(FALSE, TRUE))
   expect_identical(unname(player(movie)[, which(button_layout(movie)$key == "a")]), c(TRUE, FALSE))
 })
 test_that("arcade lightgun coordinates without port prefixes retain their names", {

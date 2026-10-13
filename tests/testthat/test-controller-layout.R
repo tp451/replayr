@@ -67,7 +67,8 @@ test_that("both sticks independently support all four selected modes", {
   for (left in c("cardinal4", "cardinal8", "angle", "angle+magnitude")) {
     for (right in c("cardinal4", "cardinal8", "angle", "angle+magnitude")) {
       movie <- replayr:::.configure_movie(source, c(left = left, right = right))
-      expect_identical(analog_channels(movie), analog_channels(source))
+      expect_identical(unname(analog_channels(movie)), unname(analog_channels(source)))
+      expect_identical(colnames(analog_channels(movie)), c("left_x", "left_y", "right_x", "right_y"))
       expect_equal(movie$stick_modes, c(left = left, right = right))
       expect_equal(button_layout(movie)$id[button_layout(movie)$key %in% c("l3", "r3")], 15:16)
       expect_true(all(player(movie)[3, button_layout(movie)$key %in% c("l3", "r3")]))
@@ -87,7 +88,7 @@ test_that("deadzone, missing data and invalid settings are explicit", {
   source$analog[[1L]][2L, 1L] <- NA_real_
   movie <- replayr:::.configure_movie(source, "cardinal8")
   expect_false(movie$analysis_ready[1L])
-  expect_error(replayr:::.configure_movie(source, "quantized"), "analog must")
+  expect_error(replayr:::.configure_movie(source, "diagonal"), "analog must")
   expect_error(replayr:::.configure_movie(source, c("angle", "cardinal4")), "named")
   expect_error(replayr:::.configure_movie(source, "angle", deadzone = -1), "deadzone")
 })
@@ -102,13 +103,13 @@ test_that("core gamepad examples expose compact capabilities and preserve source
     layout <- button_layout(movie)
     expect_equal(layout$column, seq_len(n_buttons(movie)))
     expect_identical(attr(player(movie), "button_ids"), movie$button_ids)
-    expect_equal(nrow(analog_channels(movie)), n_frames(movie))
+    expect_equal(nrow(analog_channels(movie)), n_observations(movie))
     if (!ext %in% c(".bk2", ".lmp")) expect_false(any(layout$kind == "numbered"))
     if (ext %in% c(".m64", ".dtm", ".pxm", ".pjm")) {
       for (mode in c("cardinal4", "cardinal8", "angle", "angle+magnitude")) {
         selected <- read_movie(path, analog = mode)
         expect_identical(analog_channels(selected), analog_channels(movie))
-        expect_equal(nrow(stick_channels(selected)), n_frames(movie))
+        expect_equal(nrow(stick_channels(selected)), n_observations(movie))
       }
     }
   }
@@ -123,7 +124,7 @@ test_that("BK2 N64 Boolean directions override axes without becoming physical bu
   movie <- replayr:::.configure_movie(source, "angle+magnitude")
   expect_equal(n_buttons(raw), 1L)
   expect_identical(analog_channels(movie), analog_channels(raw))
-  expect_equal(analog_channels(movie)[3, ], c("P1 X Axis" = 30, "P1 Y Axis" = 40))
+  expect_equal(analog_channels(movie)[3, ], c(left_x = 30, left_y = 40))
   expect_equal(stick_channels(movie)[3, "left_angle"], c(left_angle = 135))
   expect_equal(stick_channels(movie)[3, "left_magnitude"], c(left_magnitude = sqrt(2) * 127 / 128))
   expect_equal(colSums(movie$stick_overrides[[1]]), c(right = 1, up = 2, left = 1, down = 1))

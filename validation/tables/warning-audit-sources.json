@@ -1,0 +1,528 @@
+[
+  {
+    "url": "https://github.com/Nitrofski/psxjin/blob/534fd3856913c3198e649806a91db5c232e4d34a/psxjin/movie.cpp",
+    "sha256": "ab2dfe7d87274d9006623f63114db58ee4b3b28065dbb1ed66d7642e5c6ed125",
+    "evidence": "SetBytesPerFrame lines27-140; MOV_ReadMovieFile lines247-252; MOV_ReadJoy lines610-665; MOV_ReadControl lines1025-1049. Physical length overrides summary count; text button semantics are byte != dot; field offsets skip separator bytes."
+  },
+  {
+    "url": "https://github.com/Nitrofski/psxjin/blob/534fd3856913c3198e649806a91db5c232e4d34a/psxjin/PsxCommon.h",
+    "sha256": "e2338d59cef1e4f55d0b143867b84345a1bf975685cb3f2ba5f2dfb48f808381",
+    "evidence": "Lines283-285 define text encoding bit6 and port multitap flags bits7/8."
+  },
+  {
+    "url": "https://github.com/Nitrofski/psxjin/blob/534fd3856913c3198e649806a91db5c232e4d34a/psxjin/movie.h",
+    "sha256": "e28c19e476bbd3268dbeba0acd87454a98198d02d7927b0ff82ca67d65683ecb",
+    "evidence": "Lines4-6 define standard-pad15 and analog-pad33 text field widths including their separator."
+  },
+  {
+    "url": "https://github.com/Plombo/dega/blob/master/mast/video.cpp",
+    "sha256": "eea966be556f990541e45b6f8b1b57a3d4db24390efdb0c58bdfc4eeca9edb7e",
+    "evidence": "MvidPreFrame lines244-273 reads two controller bytes per frame until fread reaches EOF; vidFrameCount is not a playback bound. Writer updates count separately. Exact cached bytes identified below."
+  },
+  {
+    "url": "https://github.com/TASEmulators/fceux/blob/ce042d758a08f9434a6625580b2cc72495e8aa9a/src/oldmovie.cpp",
+    "sha256": "f040f19c2d11bbed416afc26066200426c4eee51ffce017681d7587d64b2d2f0",
+    "evidence": "movie_readchar/_addjoy lines469-542 and convert_fcm lines580-650 define declared controller byte length, wait-before-toggle events, and legacy zero-delta extension."
+  },
+  {
+    "url": "https://github.com/TASEmulators/snes9x-rr/blob/450b6cba06996046f31ccc08561b258af75f4e35/movie.cpp",
+    "sha256": "0345d2812adf48872297cdeedd8361237fa09d7448352011e071f8ff0d134dab",
+    "evidence": "flush_movie writes BytesPerFrame*(MaxFrame+1); S9xMovieOpen reads that many bytes and then baseline controller state. This establishes one sample beyond the header frame count."
+  },
+  {
+    "url": "https://github.com/emillon/zsnes/blob/master/src/zmovie.c",
+    "sha256": "6f8ccebc6efd1865cf77d60c9aa94f765e637cb62a153e310e982c9d4f7199ce",
+    "evidence": "zmv_record increments header.frames for each input sample; zmv_record_finish flushes input and writes a separate two-byte external chapter count. zmv_replay handles reset/chapter records without incrementing controller-frame count. Exact cached bytes identified below."
+  },
+  {
+    "url": "https://github.com/TASEmulators/mednafen-rr/blob/master/src/movie.cpp",
+    "sha256": "804d2c8fb02848602bc3141553142f3e5292c44b9a71bc23ebc6c610e4428149",
+    "evidence": "Historical commented MDFNMOV_AddJoy block lines2006-2055 preserves the MCM serializer: command once per frame, port bytes on each call, playback stops on incomplete port read. Current MC2 code is separate."
+  },
+  {
+    "url": "https://github.com/TASEmulators/mednafen-rr/blob/master/src/pce/input.cpp",
+    "sha256": "abb7250820d6974c54c37737cc1c8716e11112da8ea6e33faa56625e7399d694",
+    "evidence": "PCE device descriptors define two bytes per controller port. MCM PCE contains five ports after the command byte."
+  },
+  {
+    "url": "https://tasvideos.org/EmulatorResources/Famtasia/FMV",
+    "evidence": "144-byte header; one byte per enabled pad plus one FDS byte; explicitly no terminator byte. Famtasia implementation source was unavailable, so this classification uses the published format specification."
+  },
+  {
+    "url": "https://api.github.com/repos/dolphin-emu/dolphin/git/trees/3.0?recursive=1",
+    "sha256": "c0286f637649325375088b6dd336e48befb228234e28e8faa0ea56d4807ad864"
+  },
+  {
+    "url": "https://api.github.com/repos/dolphin-emu/dolphin/commits/3.0",
+    "sha256": "d0212fa4d84b9111d0f2edb5e37748e460fda478b2005e8e32a0b4d54ee84034"
+  },
+  {
+    "url": "https://api.github.com/repos/TASEmulators/mupen64-rr/commits?path=main/vcr.c&per_page=100",
+    "sha256": "1815b60849ef5063cfb3d80a1c215ba7e11c4883e86a030584b8806d5acfb8ea"
+  },
+  {
+    "url": "https://api.github.com/repos/mupen64/mupen64-rr-lua/git/trees/9d3770fe5582cbd119d5b0d7e57150ead753ca73?recursive=1",
+    "sha256": "220773acfc06d17fd1d3011e3f0d3fb87df71d8a16a8821d22c48b1644cee35a"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/ac267a29405ae768037a8774b84b805a4180d1af/Source/Core/DolphinWX/TASInputDlg.cpp",
+    "sha256": "5cc280315f6776948eea1b7c69f3d7b7337273c67aed494d79703fc3e5052d25"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/ac267a29405ae768037a8774b84b805a4180d1af/Source/Core/Core/HW/WiimoteEmu/EmuSubroutines.cpp",
+    "sha256": "0920dfc05fd13f603935bf43b9ab40a5deac9bbd0c2208101a13f60528d7ef42"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/ac267a29405ae768037a8774b84b805a4180d1af/Source/Core/Core/HW/WiimoteEmu/WiimoteHid.h",
+    "sha256": "a21c6336e8f57df6f9d5bcf7d998f68776bf2c91e5f196eb931d7608edb3377d"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/0015d2e86b76772a57fb4554c84c4b47adce341e/Source/Core/DolphinWX/TASInputDlg.cpp",
+    "sha256": "af4e256aa66534538672410755dbc0e7aa33187b98fc57c77de961a84db09ae2"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/0015d2e86b76772a57fb4554c84c4b47adce341e/Source/Core/Core/HW/WiimoteEmu/EmuSubroutines.cpp",
+    "sha256": "a433b347f381f677c8c13fa5732ef200857d5bcc2c65b99a02f896408fd97f3d"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/0015d2e86b76772a57fb4554c84c4b47adce341e/Source/Core/Core/HW/WiimoteEmu/WiimoteHid.h",
+    "sha256": "5648bcb4b3cb4dee9c881a04c9e406cb774c4c8e60c52227b62037ab1abed1d5"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/35d1599724a4c41d0c93e4cbf05ba109feaa969c/Source/Core/Core/Src/CoreRerecording.cpp",
+    "sha256": "957276036c5396597ba3bf8516ab0a26b608451a0cf83bd3ca1708c57257e0b0"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/mupen64/mupen64-rr-lua/9d3770fe5582cbd119d5b0d7e57150ead753ca73/main/vcr.c",
+    "sha256": "e02328ad5d08add8ddfe9e62428f213b953b4e80842b0eb22466fa249bf1dc57"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/TASEmulators/mupen64-rr/f27a689083c6fdee55801062a46fed25e6496a84/main/vcr.c",
+    "sha256": "92faf5209972dcfafb4fdd6b1427768cfd545a6153c8d615c6a89844e2953424"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/TASEmulators/mupen64-rr/f27a689083c6fdee55801062a46fed25e6496a84/main/vcr.h",
+    "sha256": "5823628bb79fbb0f2afa09e909c3ca5ba0e2455d98d7a799ee950a4a4ddfccc5"
+  },
+  {
+    "url": "https://api.github.com/repos/TASEmulators/mupen64-rr/commits/f27a689083c6fdee55801062a46fed25e6496a84",
+    "sha256": "8a68d9e1c9c2c41303df3f7d293de5f3762cc093411c60d2821e0b16eb962eb4"
+  },
+  {
+    "url": "https://api.github.com/repos/dolphin-emu/dolphin/git/ref/tags/3.0",
+    "sha256": "648f7110b0b3cbe21fd0cab0cf2e517286213905483dd2e5f5d84cce9de709fe"
+  },
+  {
+    "url": "https://api.github.com/repos/dolphin-emu/dolphin/commits/2879cbd2b5648bf896ed521628284bd4d96c3d4f",
+    "sha256": "a3635c5bc236f723563775a23fe3782755ac5b6b9e331e0c3113e9a95ee614dd"
+  },
+  {
+    "url": "https://tasvideos.org/883S",
+    "sha256": "e8e2931bf19d8a75d8bebd925666fcbfe84ccd75d2383e8d38f71feea348035c"
+  },
+  {
+    "url": "https://tasvideos.org/1065S",
+    "sha256": "bc6f7b7cf262aef845ff31cfef7133e17afbb1e660a87f6d595e06eba4b42249"
+  },
+  {
+    "url": "https://tasvideos.org/1140S",
+    "sha256": "3fbc1d546b2711ae193670565619804adb62d53647beb2c757f8215286353afd"
+  },
+  {
+    "url": "https://tasvideos.org/1355S",
+    "sha256": "17b6afab49d5e30f325029ae3379114a9e6920e2a789bda4a04cb50ae8d3d42b"
+  },
+  {
+    "url": "https://tasvideos.org/1366S",
+    "sha256": "0843536045774c85727ec0b4a71ceefe12e43a86e8d07bd01ca0da2019437551"
+  },
+  {
+    "url": "https://tasvideos.org/1373S",
+    "sha256": "b767b52849195d4532f75e645baa096451fdf6813ffec0e1b15422b46f6c0882"
+  },
+  {
+    "url": "https://tasvideos.org/1387S",
+    "sha256": "039f45e2db28d41b5b1bb60ed86eaf62fd6ffff9cba778c8227db72bae050d55"
+  },
+  {
+    "url": "https://tasvideos.org/1444S",
+    "sha256": "383e6172acfcaa749c8929c70f9b391a200cb30a06634c94c22118c9ec4504f6"
+  },
+  {
+    "url": "https://tasvideos.org/1348S",
+    "sha256": "01139dd4c4a1718c960ea0e8e3b788eb1dcc6d32d7daafc73fda651113417248"
+  },
+  {
+    "url": "https://tasvideos.org/1541S",
+    "sha256": "6a394ec67168775d88048ee0072322d095123af21bad19a141f9aab102126bb7"
+  },
+  {
+    "url": "https://tasvideos.org/1544S",
+    "sha256": "1e2e3f93e48b3cfbcccf51069edcf307f9cd5e0003ba21e7c8314ca77d978ec7"
+  },
+  {
+    "url": "https://tasvideos.org/1539S",
+    "sha256": "47f4d1bac5014d1b6ee77835cd2990d6fada0be4f72bdf6b66f2f889e0c842ea"
+  },
+  {
+    "url": "https://tasvideos.org/1569S",
+    "sha256": "5a367f212b4e953e2f22f5ba7ef4613be8b71f555dc94ac36a1d1ceaff620ba7"
+  },
+  {
+    "url": "https://tasvideos.org/1657S",
+    "sha256": "748d37cb976e700be97124d55d0b2f092234385ceaee394553af945178a36e16"
+  },
+  {
+    "url": "https://tasvideos.org/1617S",
+    "sha256": "9a80b589456157a5d71258229bdd4a897f6ea88e7941a3da5f195c633febf48b"
+  },
+  {
+    "url": "https://tasvideos.org/1675S",
+    "sha256": "6531cae90e8cdbb39ba1a9b9511d905b4d34b6f29e7c5f9f85e02dffaead2363"
+  },
+  {
+    "url": "https://tasvideos.org/1681S",
+    "sha256": "8f2c5116a72d16498eeca856d6855383722fd275f1a0fae5ad3cc6c347c9e696"
+  },
+  {
+    "url": "https://tasvideos.org/1695S",
+    "sha256": "888512c5e3ba8cb0fc6d77fe7dc90c5486356d5e686b53c98383a00ba1ad9006"
+  },
+  {
+    "url": "https://tasvideos.org/1665S",
+    "sha256": "524d6cc3fdda5640cddaa1f72e7e65fa47daf485fc213138183c82b2dc784506"
+  },
+  {
+    "url": "https://tasvideos.org/1721S",
+    "sha256": "9e8308df47efd0b5798d96721252c2729b79b2f8d17c9e9dc5e396644927bedb"
+  },
+  {
+    "url": "https://tasvideos.org/1780S",
+    "sha256": "a1ba2c60bda8510e08376bf699173f67c393c6b0435311f4862f6fe55c474ec9"
+  },
+  {
+    "url": "https://tasvideos.org/1733S",
+    "sha256": "76e6c112e0ce4f2741403064752d18eab7ad32e87536f4bc4761e5a35fdc16f4"
+  },
+  {
+    "url": "https://tasvideos.org/1897S",
+    "sha256": "b6022d4d53c3144c2d856bbc7ade08a54ddb8c4b510baa9b308c3fdccfcbe980"
+  },
+  {
+    "url": "https://tasvideos.org/1872S",
+    "sha256": "1f0566426f7d814e84432ae14fd51349993f2d3be100e69ae130717540b6ce7a"
+  },
+  {
+    "url": "https://tasvideos.org/2029S",
+    "sha256": "ac8d7e8938310dce2f0f0b3d3fd6b620a7ad9246ae76fbca6d37a6b48fe593d6"
+  },
+  {
+    "url": "https://tasvideos.org/2077S",
+    "sha256": "bc3c7bef90cb4cc1428ffb3675e33f2027fe43deacc44246e9dedb2595188dcd"
+  },
+  {
+    "url": "https://tasvideos.org/2102S",
+    "sha256": "8d134b9fe07a5fed5535190edb374add9a7ff1d9647e6697a404a543d7ff976b"
+  },
+  {
+    "url": "https://tasvideos.org/2083S",
+    "sha256": "c0b65d21df7bfcaa6371a7633c38ff51797be64335ad1d70e0f6a6f95db1a276"
+  },
+  {
+    "url": "https://tasvideos.org/2087S",
+    "sha256": "6fdf79eebeb3ac5cc88969de7b4be22d015dbf4f31e0cf2d2e0f08f8eceb9a4b"
+  },
+  {
+    "url": "https://tasvideos.org/2139S",
+    "sha256": "d2153c3e0eea0af942e99441002458865083ad786b7cc8697355f31284c98a80"
+  },
+  {
+    "url": "https://tasvideos.org/2144S",
+    "sha256": "38c9ba8af88bc2cd481eeac91b278e03e3174f2ce9cdb54087b4005f6774a712"
+  },
+  {
+    "url": "https://tasvideos.org/2227S",
+    "sha256": "7cb9c9e564c3c3b1f534d4835791f4f0d0f41e7fba1ffa02bcfb6267e783f624"
+  },
+  {
+    "url": "https://tasvideos.org/2183S",
+    "sha256": "25ef17bbb6730f6109ee8c49f7d9c84495adcef41c383f1022970b37ca56e59b"
+  },
+  {
+    "url": "https://tasvideos.org/2549S",
+    "sha256": "a5a539d7bd9e91a1f6a8c29a7d96198afd8b7c6bea4d58be4180fc5fee786433"
+  },
+  {
+    "url": "https://tasvideos.org/2600S",
+    "sha256": "43efa32bf2695f2f3a5b93be00654b5496dcebcc515962a8f2b7b785a8568ade"
+  },
+  {
+    "url": "https://tasvideos.org/2637S",
+    "sha256": "e3334db19d3ff883e73f60739f63f7b6597d05fbeeed3ef405b802e12c990250"
+  },
+  {
+    "url": "https://tasvideos.org/2644S",
+    "sha256": "cb644037684ed003ad57746798b6ef75c254b328251f6bea5bbe3cf63c3a6229"
+  },
+  {
+    "url": "https://tasvideos.org/2793S",
+    "sha256": "6a15c4c418fd5a4349cf708faa64b32e5828f4436d3e0c1fd6ddce702a5e59f0"
+  },
+  {
+    "url": "https://tasvideos.org/2873S",
+    "sha256": "8b1ca961add6f0f060ea060d3cc3bebc5cc3c9c22d1e6c00faa5bed52ffc29fd"
+  },
+  {
+    "url": "https://tasvideos.org/3007S",
+    "sha256": "dc4167b0f13b21da2ff4fb5b97b9092f706f3c0c34a57144b68c738a8ebd524d"
+  },
+  {
+    "url": "https://tasvideos.org/3011S",
+    "sha256": "a05f8e1034b7d3708ac4349e7c9931a2b6b08fb18c5097ebbc3abd2742ed0191"
+  },
+  {
+    "url": "https://tasvideos.org/3105S",
+    "sha256": "f69efad32235af33abd0befca535af6c44aab993be0bcc6b3d9615fbdf393b60"
+  },
+  {
+    "url": "https://tasvideos.org/3113S",
+    "sha256": "28f8f774482818cc649eaa892ddf6a00899ae7cfe0c0fefeb053a585dcfe80b1"
+  },
+  {
+    "url": "https://tasvideos.org/3111S",
+    "sha256": "7aa1a0c030228e638e151b1876ef0f9cc0d5ec14a0674ac45a46c424db18ebeb"
+  },
+  {
+    "url": "https://tasvideos.org/3194S",
+    "sha256": "6e5415f2fadb421394c6567c35189aef7bff7900671145730016216b0809a2dd"
+  },
+  {
+    "url": "https://tasvideos.org/3245S",
+    "sha256": "6898096c0afa9773d049e9c6cda2f5bb39b93101f0879aec3d66c5abfbcb3f88"
+  },
+  {
+    "url": "https://tasvideos.org/3425S",
+    "sha256": "a77287287e83339d1c2b6a2dfaa87456df5738cb87cc0956321e435062ef7d6e"
+  },
+  {
+    "url": "https://tasvideos.org/3469S",
+    "sha256": "bb4576ea6b3f24ee0f4ad8278ca686f4441235b39165a886aa1684596112bc36"
+  },
+  {
+    "url": "https://tasvideos.org/3468S",
+    "sha256": "37451f9a1ee4672f3a5f6644df4e01cd2129c21e9197fc991df017ed78e8cbf9"
+  },
+  {
+    "url": "https://tasvideos.org/3491S",
+    "sha256": "7e90c34fafc7e2389329781b2ffce4c0edd0560555b98bfce503ca1762e91d60"
+  },
+  {
+    "url": "https://tasvideos.org/3555S",
+    "sha256": "f394d1d8df6c41e0280b95d9c300865286b1a4c4f2595a451d1e4caceaaf8a7a"
+  },
+  {
+    "url": "https://tasvideos.org/3554S",
+    "sha256": "8c7e0fe693a9af119651e26c915c968aabbd3721207f459e88fdbac76b7e61f2"
+  },
+  {
+    "url": "https://tasvideos.org/3643S",
+    "sha256": "774e082f3671cfab3e2f94de3ba5b8845ddf5859a82a5cffb046eb5fcb4b7bff"
+  },
+  {
+    "url": "https://tasvideos.org/3663S",
+    "sha256": "6b9e3b6bc68e4aa0c5afe6cef5edc06fcfbe52b702d7ae67f578bc2b6d849550"
+  },
+  {
+    "url": "https://tasvideos.org/3815S",
+    "sha256": "064041112d0a8c2674977204389d682d9a2b0bd4e83d207dd8f012f1be96f2c5"
+  },
+  {
+    "url": "https://tasvideos.org/3764S",
+    "sha256": "7b569c6437ba7682b46d23ea08e16584924492675b7e7ce0dc9f8803b924661c"
+  },
+  {
+    "url": "https://tasvideos.org/3879S",
+    "sha256": "032e7b750c02648da08af3782050664e21ebb58e0f877b07a8afaed81d451f68"
+  },
+  {
+    "url": "https://tasvideos.org/3789S",
+    "sha256": "5b21c29d343804b0183dca6c72d94ee75d12390c995f975afc0b24b96dde5d77"
+  },
+  {
+    "url": "https://tasvideos.org/3826S",
+    "sha256": "fa960b6b7f671f22b446d0c9ac889dfc17417e056e53bd2d205c46602478a67a"
+  },
+  {
+    "url": "https://tasvideos.org/3964S",
+    "sha256": "1f09709182f10907f120c74163fabdafadafce8c0f7072afc6f38999115b699b"
+  },
+  {
+    "url": "https://tasvideos.org/3986S",
+    "sha256": "2ffc33db5094be3f925061a72edbc0fe52276f3af93d533f6eafad497ab698f6"
+  },
+  {
+    "url": "https://tasvideos.org/4088S",
+    "sha256": "6db5a22c593fac995ebdff190a21e4415a4313b2715822e6f4d7d8f108c49cd0"
+  },
+  {
+    "url": "https://tasvideos.org/4147S",
+    "sha256": "1457a61d039788c2d6fa18c9287019567191d5e0e47899cd47cb1956936afd6d"
+  },
+  {
+    "url": "https://tasvideos.org/4222S",
+    "sha256": "b43521499295d860d60145e085c20cc6d4038682766c3af41e6eaec58f1f7457"
+  },
+  {
+    "url": "https://tasvideos.org/4375S",
+    "sha256": "e753faa67647748cc445109465331727cb6e5f7900e499ac7830a62079fabbe0"
+  },
+  {
+    "url": "https://tasvideos.org/4601S",
+    "sha256": "00a00835b517322d3cd27af22d043655dab44121e70d8f941823519d09ade8e2"
+  },
+  {
+    "url": "https://tasvideos.org/4677S",
+    "sha256": "08d5a868600a85baa8b765a99da184e1ffb224e9dc6ace603245a2ee6b62dc77"
+  },
+  {
+    "url": "https://tasvideos.org/4743S",
+    "sha256": "e73fdbfde26d8ea2f7217de5fe4f97683e5c2bcd011bfa41162a044c18df98d1"
+  },
+  {
+    "url": "https://tasvideos.org/4859S",
+    "sha256": "91c3ac314ad6590b0c56085ef2168ad9c113674638eb1f7624afca8d3700414b"
+  },
+  {
+    "url": "https://tasvideos.org/4960S",
+    "sha256": "e896213525b3c5c19770dd548b81fa8daaab9dcf9543c108ac9da594072935a1"
+  },
+  {
+    "url": "https://tasvideos.org/5370S",
+    "sha256": "c4f46bf5b7e24ae8456000f64c79499d4ce84870edc982502d47229af1e105d1"
+  },
+  {
+    "url": "https://tasvideos.org/5557S",
+    "sha256": "02b2604f0cd5ce2fb47bf4824a8deedfc63b9d06ce903f1e3c57f656e7b07518"
+  },
+  {
+    "url": "https://tasvideos.org/5627S",
+    "sha256": "a9b430424765616ac4fb5afe2afd0c6b001576fd4b3411e03949b87ba1255f06"
+  },
+  {
+    "url": "https://tasvideos.org/8482S",
+    "sha256": "6d5f7becc6692a3f2e7821af6a4d5c8f9daa0f69ef877e4be374a6cf34ece433"
+  },
+  {
+    "url": "https://tasvideos.org/9139S",
+    "sha256": "8716a355b77025c80b17ea19c147e1749474c3357ab1a5ec41638e6a24c813d2"
+  },
+  {
+    "url": "https://tasvideos.org/9147S",
+    "sha256": "dd2b080a9579b24ba9b30c6b0a4d4ea3f02898a586907a444810996760cdb0a1"
+  },
+  {
+    "url": "https://tasvideos.org/9230S",
+    "sha256": "b0a7bd08aa22e4177f7de58d8e5a8c93f5c20bbfcddd96f3b07b0485dc8b7014"
+  },
+  {
+    "url": "https://tasvideos.org/5655S",
+    "sha256": "9856d44d32450465d916c71e5e66e01326ab9c7c63f4c3aacf7b6ee2948e1ddf"
+  },
+  {
+    "url": "https://tasvideos.org/3231S",
+    "sha256": "32ce9786a5c7824ff0b27a3ce91ea8d5be15bf969863e95fdbe5810339f01f90"
+  },
+  {
+    "url": "https://tasvideos.org/2976S",
+    "sha256": "84fe02b14412641dceef63cd57eef640f757a48502d4aaa82a638469f0a3d869"
+  },
+  {
+    "url": "https://api.github.com/repos/mupen64/mupen64-rr-lua/tags?per_page=100",
+    "sha256": "c2c3c0a4b8b037da79e0c6a7cd19e67480fad91fd8ad5d9c89b639458ca3297c"
+  },
+  {
+    "url": "https://api.github.com/repos/TASEmulators/mupen64-rr/git/trees/master?recursive=1",
+    "sha256": "9fd87f0921c497171e043b938e52d8de4c00b9086c06b60b5143cf3b0b9f6fcd"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/2879cbd2b5648bf896ed521628284bd4d96c3d4f/Source/Core/Core/Src/Movie.cpp",
+    "sha256": "33d010dffc1585bad196b5b0717b80084cbd5a48816f2b7786d3ea0acac08a7e"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/2879cbd2b5648bf896ed521628284bd4d96c3d4f/Source/Core/Core/Src/Movie.h",
+    "sha256": "43c25ddede32fcbc5f07ef5973264170279607b065a5dc5110df7366c555f7d5"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/ac267a29405ae768037a8774b84b805a4180d1af/Source/Core/Core/HW/WiimoteEmu/WiimoteEmu.cpp",
+    "sha256": "ba5cfdbe0d95d7f3d7ccd7cfe8300c087545af80e16aab600086bd3b5fe632b8"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/ac267a29405ae768037a8774b84b805a4180d1af/Source/Core/Core/HW/WiimoteEmu/WiimoteEmu.h",
+    "sha256": "44e101d92eaeffadd0c39f64414e0b3b94a339b1edad837cb21b7b593fba4303"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/ac267a29405ae768037a8774b84b805a4180d1af/Source/Core/Core/HW/WiimoteEmu/EmuSubroutines.cpp",
+    "sha256": "0920dfc05fd13f603935bf43b9ab40a5deac9bbd0c2208101a13f60528d7ef42"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/ac267a29405ae768037a8774b84b805a4180d1af/Source/Core/Core/HW/WiimoteReal/WiimoteReal.cpp",
+    "sha256": "b3d12a6afaa7b3c698251ebce88194eb9dc3b89dd69171f49bedb4c8f9b1bcb4"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/0015d2e86b76772a57fb4554c84c4b47adce341e/Source/Core/Core/HW/WiimoteEmu/WiimoteEmu.cpp",
+    "sha256": "a3778f6c565ec4633994048be62617aa502ba8aba590d563badbd179e5c3a0fc"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/0015d2e86b76772a57fb4554c84c4b47adce341e/Source/Core/Core/HW/WiimoteEmu/WiimoteEmu.h",
+    "sha256": "fa29058c281601bd98edcf6dc91e4f4e054e8ac923e500d40aad25234f1d899f"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/0015d2e86b76772a57fb4554c84c4b47adce341e/Source/Core/Core/HW/WiimoteEmu/EmuSubroutines.cpp",
+    "sha256": "a433b347f381f677c8c13fa5732ef200857d5bcc2c65b99a02f896408fd97f3d"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/0015d2e86b76772a57fb4554c84c4b47adce341e/Source/Core/Core/HW/WiimoteReal/WiimoteReal.cpp",
+    "sha256": "756aac128c3058849c15622a08624dc95fe0306512fa2c0559b88ead74a20374"
+  },
+  {
+    "url": "https://api.github.com/repos/mupen64/mupen64-rr-lua/commits/main",
+    "sha256": "f845d4c3f93c79a77e4a752673506b26e745eb8add7b79371efdb27e6ef09dc2"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/mupen64/mupen64-rr-lua/main/src/Core/R4300/VCR.cpp",
+    "pinned_url": "https://github.com/mupen64/mupen64-rr-lua/blob/d3e7a15745478084bb2feb76a2f8e990357d2a0f/src/Core/R4300/VCR.cpp",
+    "sha256": "d833b6468db66e9f2cf4ed8337dfadae4f15dcecc60e5e68d41066046431ae8d"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/2a9742c74cbd7e090cd06d28faf72c63948f06c7/Source/Core/Core/Movie.cpp",
+    "sha256": "1ff87238160f0131a77868161f1a0bb9a3fb4a5c2cf515fc90d01e8fdb306c0e"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/2a9742c74cbd7e090cd06d28faf72c63948f06c7/Source/Core/Core/Movie.h",
+    "sha256": "f3ede7735885b396601c0bbe8c09302ee99b393846ea92f49e3bba7730cdad57"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/7eb02ecfa452578d9596501cc097d26b80a15931/Source/Core/Core/Movie.cpp",
+    "sha256": "00d4b28da45fa6f7c7a2e1be1b751940027952546f0e6146881e8953bb8d7e9f"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/7eb02ecfa452578d9596501cc097d26b80a15931/Source/Core/Core/Movie.h",
+    "sha256": "86002d34197b25117cd82e314f493eef61852e7fa1d91360fa568b7c08eac89e"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/0015d2e86b76772a57fb4554c84c4b47adce341e/Source/Core/Core/Movie.cpp",
+    "sha256": "45afbc2cf69442a638c33937bdf4346ecbe92909170095dafa12b37953a19dad"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/0015d2e86b76772a57fb4554c84c4b47adce341e/Source/Core/Core/Movie.h",
+    "sha256": "0087095a3424d9f3659ab796c371273c43ac0d2c95ed58815b3ff4081c8b381a"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/ac267a29405ae768037a8774b84b805a4180d1af/Source/Core/Core/Movie.cpp",
+    "sha256": "1ae8d8987cb4dc40e5a3aad53f36076e36b20370fcc35028336d78d250f4d0fa"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/dolphin-emu/dolphin/ac267a29405ae768037a8774b84b805a4180d1af/Source/Core/Core/Movie.h",
+    "sha256": "550cb99ab10af8795039ba967b5946eee64b2a71134ab28285507c04338ca3a8"
+  }
+]

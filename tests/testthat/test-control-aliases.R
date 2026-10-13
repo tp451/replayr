@@ -61,27 +61,27 @@ test_that("numbered devices share equal labels while zero and ten remain distinc
   expect_identical(unname(movie$source_inputs[, 1L, ]), diag(5) == 1)
 })
 test_that("legacy wire aliases preserve the original states and field identities", {
-  input <- array(FALSE, c(4L, 1L, 45L))
+  input <- array(FALSE, c(4L, 1L, 50L))
   input[1, 1, 43] <- TRUE # D
-  input[2, 1, 44] <- TRUE # Attack
-  input[3, 1, 45] <- TRUE # Jump
-  input[4, 1, 43:45] <- TRUE
+  input[2, 1, 46] <- TRUE # Gun trigger
+  input[3, 1, 50] <- TRUE # Mouse right
+  input[4, 1, c(43, 46, 50)] <- TRUE
   wire <- replayr:::.new_movie(
     list(`_format` = "bk2", Platform = "Arcade"),
     integer(4), input
   )
-  wire$decoded_button_slots <- 43:45
+  wire$decoded_button_slots <- c(43L, 46L, 50L)
   movie <- replayr:::.configure_movie(wire)
   expect_identical(button_layout(movie)$key, c("b", "a", "y"))
-  expect_identical(movie$source_layout$key, c("d", "attack", "jump"))
+  expect_identical(movie$source_layout$key, c("d", "gun_trigger", "mouse_right"))
   expect_identical(movie$source_layout$universal_key, c("y", "a", "b"))
-  expect_identical(unname(movie$source_inputs), input[, , 43:45, drop = FALSE])
+  expect_identical(unname(movie$source_inputs), input[, , c(43, 46, 50), drop = FALSE])
   expect_identical(
     .alias_states(movie, c("y", "a", "b")),
     rbind(diag(3) == 1, rep(TRUE, 3))
   )
 })
-test_that("Doom attack and use share primary actions without losing source commands", {
+test_that("Doom attack and use are game actions, apart from pad buttons", {
   path <- tempfile(fileext = ".lmp")
   on.exit(unlink(path))
   header <- as.raw(c(109, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0))
@@ -91,17 +91,16 @@ test_that("Doom attack and use share primary actions without losing source comma
   ))
   writeBin(c(header, records, as.raw(128)), path)
   movie <- read_lmp(path)
-  expect_identical(button_layout(movie)$key, c("b", "a"))
+  expect_identical(button_layout(movie)$key, c("action_attack", "action_use"))
+  expect_identical(button_layout(movie)$id, c("action:attack", "action:use"))
+  expect_identical(button_layout(movie)$kind, c("action", "action"))
   expect_identical(
-    .alias_states(movie, c("a", "b")),
+    .alias_states(movie, c("action_attack", "action_use")),
     rbind(c(TRUE, FALSE), c(FALSE, TRUE), c(TRUE, TRUE), c(FALSE, FALSE))
   )
-  expect_identical(movie$source_layout$key, c("doom_use", "doom_attack"))
-  expect_identical(movie$source_layout$universal_key, c("b", "a"))
-  expect_identical(
-    unname(movie$source_inputs[, 1L, ]),
-    rbind(c(FALSE, TRUE), c(TRUE, FALSE), c(TRUE, TRUE), c(FALSE, FALSE))
-  )
+  expect_false(any(c("a", "b") %in% movie$button_keys))
+  expect_null(movie$source_layout)
+  expect_null(movie$source_inputs)
 })
 test_that("Neo Geo C and D join the four face actions without changing Genesis C", {
   parse <- function(platform, labels) {
@@ -135,20 +134,27 @@ test_that("keypad symbols and qualified device controls survive consolidation", 
     "openmsx_lightgunstate_0_light", "keysym_64", "keysym_77"
   )
   movie <- .alias_movie(keys)
-  retained <- keys[-(1:2)]
-  expect_identical(.alias_states(movie, c("start", "select", retained)), diag(10) == 1)
+  # Star and Pound sit where Clear and Enter do and share Select and Start.
+  retained <- keys[-(1:4)]
+  expected <- diag(10) == 1
+  expected <- cbind(expected[, 1L] | expected[, 4L], expected[, 2L] | expected[, 3L], expected[, 5:10])
+  expect_identical(.alias_states(movie, c("start", "select", retained)), expected)
   layout <- button_layout(movie)
   expect_identical(as.character(layout$id[match(retained, layout$key)]), paste0("control:", retained))
 })
-test_that("Dustforce and CoffeeTools actions use shared face buttons", {
+test_that("Dustforce's verbs are game actions and CoffeeTools buttons share face buttons", {
   dustforce <- .alias_movie(c(
-    "dustforce_light", "dustforce_jump", "dustforce_heavy",
-    "dustforce_dash", "dustforce_escape", "dustforce_taunt", "dustforce_restart"
+    "action_light", "action_jump", "action_heavy",
+    "action_dash", "dustforce_escape", "action_taunt", "action_restart"
   ))
   expect_identical(.alias_states(
     dustforce,
-    c("a", "b", "x", "y", "start", "dustforce_taunt", "dustforce_restart")
+    c("action_light", "action_jump", "action_heavy", "action_dash", "start", "action_taunt", "action_restart")
   ), diag(7) == 1)
+  expect_identical(
+    as.character(button_layout(dustforce)$id[match("action_jump", button_layout(dustforce)$key)]),
+    "action:jump"
+  )
   coffee <- .alias_movie(c("ufo50_fire1", "ufo50_fire2"))
   expect_identical(.alias_states(coffee, c("a", "b")), diag(2) == 1)
 })

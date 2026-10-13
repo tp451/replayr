@@ -1,13 +1,18 @@
 # Recording compatibility
 
-`replayr` reads 34 recording formats, with HGM as an additional alias for
-Hourglass WTF. A format can serve several platforms and controller layouts.
+`replayr` reads 37 file extensions in 33 recording formats: TASPROJ and GBMV
+files have the structure of BK2, TAS that of BKM, FM3 that of FM2, and HGM
+that of Hourglass WTF; the extension TXT is that of two formats, the tables
+of two published data sets, which are told apart by their first line. A
+format can serve several platforms and controller layouts.
 For example, a BK2 file can contain a calculator keypad, a PlayStation pad,
 or a computer keyboard; its named fields determine the imported controls.
 
 The tables identify supported layouts, format versions, and the recordings
 used to check them. External checks cover 7,385 distinct recordings obtained
-from [TASVideos](https://tasvideos.org/Movies), including obsolete publications.
+from [TASVideos](https://tasvideos.org/Movies), including obsolete publications,
+and further files for the formats that TASVideos holds few or none of.
+These checks are documented in the repository's [validation folder](validation/README.md), which lists the source of every file and provides the scripts to repeat them.
 The package includes original artificial examples for testing and demonstration.
 
 ## Platforms represented in the checked recordings
@@ -100,23 +105,24 @@ not certify every intervening release or every optional device.
 
 | Format / recorder | Implemented variants | Published-file evidence | Input scope |
 |---|---|---|---|
-| **BK2** — [BizHawk](https://github.com/TASEmulators/BizHawk/tree/ab81ea25762af8ece499ba278e3f5cc3848ec742) | Named LogKey fields in ZIP containers; Header and Input Log members with or without .txt; ordinary movies and embedded TAStudio input logs. | 3,071; MovieVersion 0.0.1, 2.0, and 2.0.0; TAStudio 1.0 and 1.1 labels also occur. | Controller definitions determine Boolean and numeric fields. Linked Game Boy layouts, core-specific pad layouts, keyboards, and peripherals are included. Unknown calibration retains raw numeric values. |
+| **BK2** — [BizHawk](https://github.com/TASEmulators/BizHawk/tree/ab81ea25762af8ece499ba278e3f5cc3848ec742) | Named LogKey fields in ZIP containers; Header and Input Log members with or without .txt; ordinary movies and embedded TAStudio input logs. The BK2 files of Gym Retro (`MovieVersion Retro`), whose control names lack the LogKey prefix. | 3,071; MovieVersion 0.0.1, 2.0, and 2.0.0; TAStudio 1.0 and 1.1 labels also occur. | Controller definitions determine Boolean and numeric fields. Linked Game Boy layouts, core-specific pad layouts, keyboards, and peripherals are included. Unknown calibration retains raw numeric values. |
 | **BKM** — [BizHawk](https://github.com/TASEmulators/BizHawk/tree/ab81ea25762af8ece499ba278e3f5cc3848ec742/src/BizHawk.Client.Common/movie/import/bkm) | Legacy text layout, MovieVersion 0.0.1; fixed per-platform field order. | 106; legacy 0.0.1 headers, from several BizHawk 1.x releases. | Gamepads, ColecoVision keypads, and N64 axes; additional implemented layouts are described below. |
-| **CTAS** — [CoffeeTools](https://github.com/Blaizer/CoffeeTools/blob/main/patches/CoffeeTools/code/gml_GlobalScript_CoffeeTools.gml) | Format versions 3 and 4. | 4; one v3 and three v4. | Two-player *UFO 50* held states, press/release flags, Start press events, and randomization seeds. |
+| **CTAS** — [CoffeeTools](https://github.com/Blaizer/CoffeeTools/blob/main/patches/CoffeeTools/code/gml_GlobalScript_CoffeeTools.gml) (*UFO 50*) | Format versions 3 and 4. | 4; one v3 and three v4. | Two-player *UFO 50* held states, press/release flags, Start press events, and randomisation seeds. |
 | **CTM** — [Citra / Azahar](https://github.com/azahar-emu/azahar/blob/master/src/core/movie.cpp) | CTM 0x1B signature; 256-byte header and seven-byte tagged device polls (types 0–5). | 5; pad, touch, acceleration, gyroscope, and extra-HID polls. IR-RST C-stick polls have original-fixture coverage. | Pad/Circle Pad, touch, accelerometer, gyroscope, IR C-stick, and extra-HID fields. Device polls retain observation masks and source bytes. |
-| **DFT** — [Dustmod](https://tasvideos.org/EmulatorResources/Dustmod) | Gzip tar archives of input scripts, with INCLUDE and optional entry selection. | 1; Dustmod 27.6.1 publication. | Movement, actions, double taps, optional taunt/restart, mouse commands, and loading/synchronization commands. Script rows provide an order; SYNCLOAD duration requires execution. |
+| **DEM** — [GoldSrc](https://github.com/YaLTeR/hldemo-rs/blob/cbc1efa212a4fc49c776304058efd07e0369caa7/src/types.rs) | Demo protocol 5 of the Half-Life engine, network protocols 42 to 48: sections, network-message frames with the command the client was sending (in the longer frames of protocols 42 and 43 as well), console commands. Demos that were not closed or were cut short are read up to their last complete frame. | Not in the TASVideos catalogue. 684 demos from the test material of four demo parsers and from nine collections of the Internet Archive: *Gunman Chronicles* (371), *Counter-Strike* (223), *Adrenaline Gamer* (64), *Half-Life* (15), *Natural Selection* (10), *Condition Zero* (1); network protocols 42 to 48; 96 of them recorded by a broadcast proxy. Eight demos of demo protocol 4 are refused: they store no command. | 16 game actions; the forward, side and up movement and the view angles a command asks for; impulse and weapon numbers; console commands with the key actions. A demo of a broadcast proxy (HLTV) holds no commands of a player, which the reader reports. Quake and Source demos, also `.dem`, are other formats. |
+| **DFT** — [Dustmod](https://tasvideos.org/EmulatorResources/Dustmod) (*Dustforce DX*) | Gzip tar archives of input scripts, with INCLUDE and optional entry selection. | 1; Dustmod 27.6.1 publication. | Movement, actions, double taps, optional taunt/restart, mouse commands, and loading/synchronisation commands. Script rows provide an order; SYNCLOAD duration requires execution. |
 | **DSM** — [DeSmuME](https://github.com/TASEmulators/desmume/blob/master/desmume/src/movie.cpp) | Versions 1 and 2; text and six-byte binary records; historical three- and four-field touch/microphone text records. | 124 text files: 119 v1 and five v2. Binary records have original-fixture coverage. | DS pad, touch coordinates/validity, microphone values, reset, and lid commands. Text-field variation follows the upstream parser. |
-| **DTM** — [Dolphin](https://github.com/dolphin-emu/dolphin/tree/master/Source/Core/Core) | DTM 0x1A signature; standard eight-byte GameCube polls, 17-byte Zelda Edition polls, legacy Wii HID reports, newer serialized Wii states, and mixed device streams. | 188; GameCube, Wii, Zelda Edition, and mixed-device recordings, including source-verified Dolphin 5.0-20571 and 2407 framing. | GameCube buttons/sticks/triggers; Wii buttons, acceleration, IR, MotionPlus fields, and supported extensions. Device family and physical port are separate assignments; see the qualifications below. |
-| **FBM** — [FinalBurn Alpha rerecording](https://tasvideos.org/EmulatorResources/Fbarr) | FB1/FR1 container with FGK adaptive Huffman input data and frame deltas. | 62; 42 verified driver layouts. | An explicit game or input_schema supplies field identities and order. Digital, byte, and signed analogue fields retain their raw values. Streams requiring Huffman counter rescaling are outside the current decoder. |
+| **DTM** — [Dolphin](https://github.com/dolphin-emu/dolphin/tree/master/Source/Core/Core) | DTM 0x1A signature; standard eight-byte GameCube polls, 17-byte Zelda Edition polls, legacy Wii HID reports, newer serialised Wii states, and mixed device streams. | 188; GameCube, Wii, Zelda Edition, and mixed-device recordings, including source-verified Dolphin 5.0-20571 and 2407 framing. | GameCube buttons/sticks/triggers; Wii buttons, acceleration, IR, MotionPlus fields, and supported extensions. Device family and physical port are separate assignments; see the qualifications below. |
+| **FBM** — [FinalBurn Alpha rerecording](https://tasvideos.org/EmulatorResources/Fbarr) | FB1/FR1 container with FGK adaptive Huffman input data and frame deltas; the text of the author after the input (FRM1). | 62; 42 verified driver layouts; 42 recordings with a text of their author. | An explicit game or input_schema supplies field identities and order. Digital, byte, and signed analogue fields retain their raw values. Streams requiring Huffman counter rescaling are outside the current decoder. |
 | **FCM** — [FCEU](https://tasvideos.org/EmulatorResources/FCEU/FCM) | Binary format versions 1 and 2, with delta-coded controller changes. | 491; four v1 and 487 v2. | NES/FDS gamepads and emulator commands; version-specific header and metadata offsets. |
 | **FM2** — [FCEUX](https://fceux.com/web/FM2.html) | Version-3 movie structure; text and binary input records. | 828; all version-3 headers, including Four Score and Zapper configurations. | NES/FDS pads, four-pad Four Score layouts, and Zapper trigger, coordinates, and light-hit fields. Famicom expansion-port devices need their own decoding. |
 | **FM3** — [FCEUX TAS Editor](https://github.com/TASEmulators/fceux/blob/master/src/movie.cpp) | Version-3 movie section in a TAS Editor project; text and binary logs bounded by the declared movie length. | 19; 18 binary logs and one text log. | The FM2 controller layouts apply; trailing editor data is retained separately from the input log. |
 | **FMV** — [Famtasia](https://tasvideos.org/EmulatorResources/Famtasia/FMV) | FMV 0x1A signature; 144-byte header, enabled-port flags, and optional FDS byte. | 242; Famtasia 5.1 publications. | One or two NES controllers and recorded disk-system values. |
 | **GBMV** — [GBAHawk](https://github.com/alyosha-tas/GBAHawk) | BK2-style ZIP/LogKey container, including linked GBA controllers. | 36; GBAHawk MovieVersion 1.0 and 1.0.0; GBA, GBAL, GBAHawk, SubGBAHawk, and GBAHawkLink headers. | Game Boy Advance controls and any declared numeric/source timing fields. |
-| **GMV** — [Gens](https://tasvideos.org/EmulatorResources/Gens) | Gens Movie TEST0–TEST9, TESTA, and TESTJ signatures; pad flags depend on the revision. | 378; TEST6 (7), TEST9 (51), TESTA (318), and TESTJ (2). | Three- and six-button pads; two- and three-player layouts. Earlier headers leave pad type unspecified while preserving the stored button bits. |
-| **GZM** — [gz](https://github.com/MrPancakeTurtle/gz/blob/master/src/gz/gz_macro.c) | Big-endian input/seed sections, optional synchronization sections, and footer; the format has no version signature. | 1; GZ 0.37 publication. | N64 buttons and signed stick axes per game update; press/release masks, reset, seeds, ocarina, and room-load records. |
-| **JRSR** — [JPC-RR](https://tasvideos.org/EmulatorResources/JPC/JRSRFormat) | JRSR text archive with events and initialization sections; absolute and relative timestamps. | 76; several JPC-RR 10.x and 11.x builds. | Keyboard transitions, mouse movement/buttons, joystick buttons and game-port hold times, and reset events. Additional emulator events retain their arguments. |
-| **LMP** — [Doom / Boom](https://github.com/coelckers/prboom-plus/blob/master/prboom2/src/g_game.c) | Doom 1.9 version 109 and Boom demo versions 200–202. | 19; version 109 (18) and version 202 (1). Versions 200/201 have original-fixture coverage. | Signed forward/side movement, turning, attack/use, weapon commands, and multiplayer tic records. Later extensions and longtics layouts require separate decoding. |
+| **GMV** — [Gens](https://tasvideos.org/EmulatorResources/Gens/GMV) | Gens Movie TEST0–TEST9, TESTA, and TESTJ signatures; pad flags depend on the revision. | 378; TEST6 (7), TEST9 (51), TESTA (318), and TESTJ (2). | Three- and six-button pads; two- and three-player layouts. Earlier headers leave pad type unspecified while preserving the stored button bits. |
+| **GZM** — [gz](https://github.com/MrPancakeTurtle/gz/blob/master/src/gz/gz_macro.c) (*The Legend of Zelda: Ocarina of Time*) | Big-endian input/seed sections, optional synchronisation sections, and footer; the format has no version signature. | 1; GZ 0.37 publication. | N64 buttons and signed stick axes per game update; press/release masks, reset, seeds, ocarina, and room-load records. |
+| **JRSR** — [JPC-RR](https://tasvideos.org/EmulatorResources/JPC/JRSRFormat) | JRSR text archive with events and initialisation sections; absolute and relative timestamps. | 76; several JPC-RR 10.x and 11.x builds. | Keyboard transitions, mouse movement/buttons, joystick buttons and game-port hold times, and reset events. Additional emulator events retain their arguments. |
+| **LMP** — [*Doom*, *Heretic*, *Hexen*](https://github.com/dsda-org/dsda-doom/blob/master/prboom2/src/g_game.c) | Doom 1.2 and earlier; Doom 1.4–1.9 (versions 104–109); TASDoom (110); Doom 1.91 (111); Boom (200–202); LxDoom and MBF (203); PrBoom (210–214); MBF21 (221); Heretic; Hexen. With or without the outer header of dsda-doom or PrBoom+um. | 19; version 109 (18) and version 202 (1). A further 352 demos from the [Doom Speed Demos Archive](https://dsdarchive.com) cover versions 106 (1), 109 (60), 202 (11), 203 (12), 214 (6) and 221 (238), Heretic (9) and Hexen (15). The other layouts are checked on FreeDoom's demos, rewritten in each layout and replayed in dsda-doom. | Attack, Use and Jump as game actions; signed forward/side movement and turning, stored with 8 or 16 bits; look, fly and artifact commands of Heretic and Hexen; weapon commands; dsda-doom's extended commands; multiplayer tic records. A demo without a version byte needs `game`. ZDoom, Doom Legacy and Doomsday write other formats. |
 | **LSMV** — [lsnes](https://tasvideos.org/EmulatorResources/Lsnes/LSMV) | ZIP input logs with controlsversion 0; eight-column GB/GBC and 12-/16-column SNES/Super Game Boy pad masks; declared Super Scope on port 2. | 93; snes_ntsc, snes_pal, gdmg, ggbc, and gambatte_sgb_ntsc. All 18,898,751 input observations are checked, including 12,446,792 subframes between frame starts. | Every input row is preserved, with source frame/subframe positions and reset fields. Extended buttons ext0–ext3 and the full SGB source layout remain available. Gamepad ports share a mask width; declared Super Scope adds buttons and signed coordinates. Other non-gamepad port types require separate decoding. |
 | **LTM** — [libTAS](https://github.com/clementgallet/libTAS/blob/master/src/program/movie/InputSerialization.cpp) | Native archives with config.ini and inputs; positional fields through 1.3.5 and later tagged fields, including ordered events. | 446; publications cite libTAS 1.3.1–1.4.8, with gaps between tested releases. | X KeySyms, absolute/relative mouse coordinates and wheel, up to four gamepads with six numeric axes each, rate changes, clocks, and event lists. |
 | **M64** — [Mupen64 rerecording](https://tasvideos.org/EmulatorResources/Mupen/M64) | Format version 3; four-byte controller polls. | 85; all version 3. | N64 buttons and signed stick axes. Multiple enabled controllers retain unassigned polls unless a verified polling order is supplied. |
@@ -130,6 +136,8 @@ not certify every intervening release or every optional device.
 | **SMV** — [Snes9x](https://tasvideos.org/EmulatorResources/Snes9x/SMV) | Format versions 1, 4, and 5; standard pads and multitaps. | 413; v1 (339), v4 (65), and v5 (9). | SNES/Satellaview pads and reset commands; sample counts remain distinct from video-frame counts. Mouse, Super Scope, and Justifier layouts require separate decoding. |
 | **TAS** — [Early BizHawk](https://github.com/TASEmulators/BizHawk/tree/ab81ea25762af8ece499ba278e3f5cc3848ec742) | Legacy BKM-style text, MovieVersion 0.0.1. | 4; one NES and three Master System movies. | Uses the BKM field decoder. This extension identifies the early BizHawk layout here; unrelated .tas scripts need their own reader. |
 | **TASPROJ** — [BizHawk TAStudio](https://github.com/TASEmulators/BizHawk/tree/ab81ea25762af8ece499ba278e3f5cc3848ec742) | BK2-style ZIP with a named input log; project metadata accompanies the movie. | 1 .tasproj; TAStudio 1.1 label. Additional TAStudio labels occur in BK2 files. | Imports the current input log using BK2 rules; editor history and branches remain outside the imported movie. |
+| **TXT** — [Atari Grand Challenge data set](https://arxiv.org/abs/1705.10998), version 1 | Text table of one episode, known by its first line: a line with the number of the trajectory, the names of the columns, and rows of frame, reward, score, terminal and action. | 2,313; every trajectory of the release, in five games. | The 18 action numbers of the Arcade Learning Environment as the five controls of one joystick. Reward, score and the end of the episode are states of the game and are not read. |
+| **TXT** — [Atari-HEAD data set](https://doi.org/10.5281/zenodo.3451402) | Text table of one trial, known by its first line: the names of the columns, then rows of frame identifier, episode, score, duration, reward, action and gaze positions (the points on the screen at which the player was looking, measured by an eye tracker), with `null` for a value that is missing. | 471; every trial of the release, in 20 games. | The same controls. The duration of each frame gives the time of each observation. Score, reward, episode and gaze positions are not read. |
 | **VBM** — [VBA rerecording](https://github.com/TASEmulators/vba-rerecording) | Format version 1; Game Boy, Game Boy Color, Game Boy Advance, and Super Game Boy flags. | 428; all version 1. | Gamepads and emulator command bits for the selected system. |
 | **WTF / HGM** — [Hourglass](https://tasvideos.org/EmulatorResources/Hourglass/WTF) | 66 54 77 02 signature; 1,024-byte header and eight-byte keyboard records. HGM is an extension alias. | 38 WTF recordings; HGM dispatch is tested with original data. | Windows virtual-key states, including mouse-button virtual keys when recorded. This layout supplies no pointer coordinates or movement. |
 | **YMV** — [Yabause rerecording](https://github.com/adelikat/yabause-rr/blob/master/src/windows/movie.cpp) | Enhanced version 1; text or three-byte binary Saturn-pad records. | 2; version-1 text, Yabause-rr r245. Binary records have original-fixture coverage. | One 13-control Saturn pad, including shoulders. The earlier unrelated pure-C movie layout requires a separate reader. |
@@ -166,7 +174,7 @@ command events. Original examples additionally exercise mouse movement and
 buttons, trackball and paddle deltas, absolute touchpad coordinates, each
 JoyMega and JoyHandle button, the JoyHandle wheel, the Arkanoid dial, and both
 light-gun models. These checks use distinct numeric values and individual
-button presses derived from the serialized event definitions. Gunstick and
+button presses derived from the serialised event definitions. Gunstick and
 Terminator Laser use different trigger pins and light-sensor polarity; both
 retain their complete port-status byte alongside the decoded trigger and
 light state. The gun events record sensor responses rather than aim coordinates.
@@ -174,7 +182,7 @@ light state. The gun events record sensor responses rather than aim coordinates.
 ### Input observations within video frames
 
 An lsnes movie can record several input observations within one video frame.
-LSMV import retains all of them: `n_frames()` counts input observations, while
+LSMV import retains all of them: `n_observations()` counts input observations, while
 `header$frameCount` counts the rows marked as new video frames. The
 `movie$subframes` table links each observation to its source line, video frame,
 and position within that frame, and retains the reset fields.
@@ -183,9 +191,9 @@ The exact input text remains in `source_input`.
 The 16-control SNES layout includes `lsnes_ext0` through `lsnes_ext3`.
 Super Game Boy recordings retain the complete SNES-side control layout.
 A declared Super Scope on port 2 supplies trigger, cursor, turbo, and pause
-states, plus signed `gun_x` and `gun_y` coordinates. The source UI uses ranges
+states, plus signed `aim_x` and `aim_y` coordinates. The source UI uses ranges
 of −16 to 271 horizontally and −16 to 255 vertically; the reader preserves
-the stored signed values without normalization.
+the stored signed values without normalisation.
 
 ### Controls beyond standard gamepads
 
@@ -208,8 +216,8 @@ and leaves unknown ports as `NA`. A verified `controller_order` can establish
 an assignment. GameCube and Wii device families can be distinguished in some
 mixed streams while the physical port within a family remains unknown.
 
-Legacy Wii HID reports and newer serialized Wii states use different field
-layouts. Serialized states identify their extension type. HID recordings
+Legacy Wii HID reports and newer serialised Wii states use different field
+layouts. Serialised states identify their extension type. HID recordings
 require `wii_extension = "nunchuk"` or `"classic"` when that extension is known,
 and `wii_key` for encrypted extension bytes. The default keeps those bytes
 available. Nunchuk and Classic controls are decoded when the required context
@@ -245,7 +253,7 @@ retained. `read_lsmv()` also has a 256 MiB default with an explicit override.
 
 ## Format references
 
-The table links the relevant specifications and serialization sources.
+The table links the relevant specifications and serialisation sources.
 Component-level provenance is recorded in [inst/COPYRIGHTS](inst/COPYRIGHTS).
 The original examples under `inst/extdata/` exercise supported layouts,
 including device combinations absent from the published collection; their

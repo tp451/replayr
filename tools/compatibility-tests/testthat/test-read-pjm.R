@@ -10,10 +10,10 @@ test_that("replayr:::.decode_pjm() parses real two-controller / analog / binary 
     expect_s3_class(mv, "replayr_movie")
     expect_equal(mv$header[["_format"]], "pjm")
     expect_equal(n_players(mv), cs[[2]])
-    expect_gt(n_frames(mv), 0L)
+    expect_gt(n_observations(mv), 0L)
     expect_equal(n_buttons(mv), 42L)
     pc <- press_counts(mv, 1L)
-    expect_true(all(pc <= n_frames(mv))) # nothing stuck above 100%
+    expect_true(all(pc <= n_observations(mv))) # nothing stuck above 100%
     expect_gt(sum(pc), 0L)
   }
 })

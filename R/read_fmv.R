@@ -71,7 +71,8 @@
   tail_size <- length(body) %% width
   tail <- if (tail_size) utils::tail(body, tail_size) else raw()
   if (tail_size) {
-    warning(path, ": FMV ends with ", tail_size, " byte(s) of an incomplete frame; retaining them in source_tail", call. = FALSE)
+    warning(path, ": FMV ends with ", tail_size, " byte(s) of an incomplete frame; retaining them in source_tail",
+      call. = FALSE)
     body <- utils::head(body, length(body) - tail_size)
   }
   packets <- matrix(as.integer(body), ncol = width, byrow = TRUE)

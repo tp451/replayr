@@ -36,7 +36,7 @@ test_that('verified native mixed records include disconnected GameCube commands'
     reconstructed <- as.raw(unlist(lapply(seq_along(records), function(i) m$poll_bytes[i, seq_len(m$poll_lengths[i])])))
     expect_identical(reconstructed, as.raw(unlist(records)))
     expect_true(all(is.na(stick_channels(m)[4:7, , drop = FALSE])))
-    expect_equal(unname(analog_channels(m)[3, c('ltrigger', 'rtrigger', 'lstick_x', 'lstick_y')]), c(12, 34, 255, 128))
+    expect_equal(unname(analog_channels(m)[3, c('left_trigger', 'right_trigger', 'left_x', 'left_y')]), c(12, 34, 255, 128))
   }
 })
 test_that('native mixed framing rejects noncanonical and truncated records', {

@@ -16,8 +16,8 @@ test_that('whole-corpus edge-case originals decode without dropping records', {
   for (case in cases) {
     fp <- external_fixture(case[[1]])
     mv <- suppressWarnings(get(paste0('read_', case[[2]]))(fp))
-    expect_gt(n_frames(mv), 0L)
-    if (!is.null(case[[3]])) expect_equal(n_frames(mv), case[[3]], info = case[[1]])
+    expect_gt(n_observations(mv), 0L)
+    if (!is.null(case[[3]])) expect_equal(n_observations(mv), case[[3]], info = case[[1]])
     if (case[[2]] == 'pjm') expect_gt(as.integer(mv$header$allNulRecordCount), 0L)
   }
 })

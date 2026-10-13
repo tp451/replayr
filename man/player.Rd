@@ -13,8 +13,12 @@ player(movie, idx = 1L)
 \item{idx}{Player index, 1-based. Defaults to 1 (player 1).}
 }
 \value{
-Logical matrix, \code{n_frames(movie)} rows by \code{n_buttons(movie)}
-columns. Column names are the mnemonics from \code{\link[=button_layout]{button_layout()}}.
+Logical matrix, \code{n_observations(movie)} rows by \code{n_buttons(movie)}
+columns. Columns are named by the control keys of \code{\link[=button_layout]{button_layout()}}, as
+in \code{\link[=press_counts]{press_counts()}}, \code{\link[=align_buttons]{align_buttons()}} and \code{\link[=polls]{polls()}}, so that
+\code{player(movie)[, "a"]} is the A button in every recording. The attributes
+\code{button_ids} and \code{button_names} hold the IDs and the labels of the
+columns; \code{\link[=button_layout]{button_layout()}} has the whole layout.
 }
 \description{
 Button states for one controller

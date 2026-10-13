@@ -26,7 +26,7 @@ alter_bk2_integrity_bytes <- function(path, from, to) {
 test_that("BK2 input checksums are required before imports or callbacks", {
   path <- make_bk2_integrity_fixture()
   on.exit(unlink(path))
-  expect_identical(unname(press_counts(read_bk2(path))["A"]), 1L)
+  expect_identical(unname(press_counts(read_bk2(path))["a"]), 1L)
   alter_bk2_integrity_bytes(path, "|..|.......A|", "|..|......B.|")
   before <- list.dirs(tempdir(), recursive = FALSE)
   expect_error(read_bk2(path), "corrupt|extract|CRC|checksum")
@@ -44,12 +44,12 @@ test_that("complete metadata with a bad CRC warns without discarding a valid log
   alter_bk2_integrity_bytes(path, "Author Alice", "Author Carol")
   expect_warning(movie <- read_bk2(path), "metadata integrity check failed for Header.txt")
   expect_identical(movie$header$Author, "Carol")
-  expect_identical(unname(press_counts(movie)["A"]), 1L)
+  expect_identical(unname(press_counts(movie)["a"]), 1L)
   expect_warning(
     chunks <- read_bk2_chunks(path, press_counts, chunk_size = 1L),
     "metadata integrity check failed for Header.txt"
   )
-  expect_identical(unname(chunks[[1L]]["A"]), 1L)
+  expect_identical(unname(chunks[[1L]]["a"]), 1L)
   expect_identical(attr(chunks, "observations"), 1)
 })
 test_that("BK2 temporary files are removed when a callback fails", {

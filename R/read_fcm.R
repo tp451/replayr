@@ -69,11 +69,11 @@
   while (scan <= stream_end) {
     nd <- bitwAnd(bitwShiftR(as.integer(data[scan]), 5L), 3L)
     scan <- scan + 1L
-    if (scan + nd - 1L > length(data)) stop(path, ': truncated FCM delta record')
+    if (scan + nd - 1L > length(data)) stop(path, ": truncated FCM delta record")
     delta <- if (nd) sum(as.integer(data[scan + seq_len(nd) - 1L]) * 256^(seq_len(nd) - 1L)) else 0
     if (nd %in% c(1L, 2L) && delta == 0) {
       nd <- nd + 1L
-      if (scan + nd - 1L > length(data)) stop(path, ': truncated FCM legacy delta extension')
+      if (scan + nd - 1L > length(data)) stop(path, ": truncated FCM legacy delta extension")
       delta <- as.integer(data[scan + nd - 1L]) * 256^(nd - 1L)
       legacy_delta_extensions <- legacy_delta_extensions + 1L
     }
@@ -82,11 +82,11 @@
       # are present in the file. Use only that complete record, and only
       # when it exactly completes the declared duration. Do not consume
       # unrelated stale bytes after the declared movie stream.
-      if (covered + delta != n_frames) stop(path, ': FCM boundary delta does not complete declared duration')
+      if (covered + delta != n_frames) stop(path, ": FCM boundary delta does not complete declared duration")
       terminal_delta_bytes <- scan + nd - 1L - stream_end
       stream_end <- scan + nd - 1L
-      warning(path, ': FCM byte range ends inside a complete final delta; using ', terminal_delta_bytes,
-        ' additional recorded byte(s)',
+      warning(path, ": FCM byte range ends inside a complete final delta; using ", terminal_delta_bytes,
+        " additional recorded byte(s)",
         call. = FALSE
       )
     }
@@ -94,8 +94,9 @@
     scan <- scan + nd
   }
   if (available_len < ctrl_len) {
-    if (covered < n_frames) stop(path, ': truncated FCM stream does not cover declared duration')
-    warning(path, ': FCM byte count exceeds available data, but complete records cover the declared duration', call. = FALSE)
+    if (covered < n_frames) stop(path, ": truncated FCM stream does not cover declared duration")
+    warning(path, ": FCM byte count exceeds available data, but complete records cover the declared duration",
+      call. = FALSE)
   }
   md5 <- if (version == 2L) paste(sprintf("%02x", as.integer(data[33:48])), collapse = "") else NA_character_
   emu_ver <- if (version == 2L) .read_u32_le(data, 48L) else NA_integer_

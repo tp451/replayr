@@ -9,6 +9,7 @@ read_dft(
   analog = "raw",
   deadzone = NULL,
   triggers = "raw",
+  aliases = TRUE,
   entry = NULL,
   ...
 )
@@ -25,12 +26,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{entry}{Entry script member. \code{NULL} selects the archive's unique
 \code{main.txt}; an explicit member resolves archives with several candidates.}
@@ -42,7 +62,8 @@ or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_me
 A \link{replayr_movie} with source scripts, commands, and locations.
 }
 \description{
-Imports DFT archives by following their entry script and INCLUDE commands.
+Imports the DFT archives of Dustmod, a modified version of the game
+\emph{Dustforce DX}, by following their entry script and INCLUDE commands.
 Each row represents one scripted input frame. Directional double taps are
 preserved in \code{double_tapped}; \code{source_digits} and \code{source_values} retain
 the original 0, 1, and 2 encoding. Optional taunt and restart columns are
@@ -50,9 +71,15 @@ retained when present.
 }
 \details{
 \code{source_locations} identifies the archive member and line for each row.
-\code{source_commands} preserves loading, synchronization, mouse, statistics,
+\code{source_commands} preserves loading, synchronisation, mouse, statistics,
 and include commands in script order. MOUSE coordinates and button states
 apply to the next scripted row, with observation masks identifying those
 rows. SYNCLOAD can add runtime waiting whose duration requires execution
 in the game; the imported rows retain script order.
+}
+\examples{
+movie <- read_dft(system.file("extdata", "computers", "menu-double-tap.dft", package = "replayr"))
+# Jump, dash and the attacks are actions of the game, not buttons.
+button_layout(movie)[, c("id", "key", "kind")]
+head(analog_channels(movie), 3)
 }

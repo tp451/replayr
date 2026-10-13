@@ -11,6 +11,7 @@ read_bk2_chunks(
   analog = "raw",
   deadzone = NULL,
   triggers = "raw",
+  aliases = TRUE,
   ...
 )
 }
@@ -31,12 +32,31 @@ remain in \code{\link[=analog_channels]{analog_channels()}} in every mode. Absen
 
 \item{deadzone}{Radial threshold in centred axis half-range units, from zero
 to one. One value applies to both sticks; named left/right values are allowed.
-\code{NULL} uses format defaults: 0.25 for BK2/PSX, 0.125 for M64/DTM.
+\code{NULL} uses the default of the controller, whichever emulator recorded
+it: 0.125 for the sticks of Nintendo's consoles (Nintendo 64, GameCube,
+Wii extensions, 3DS) and 0.25 for all other sticks. The first is close
+to the 15 of 128 units that the GameCube's controller library discards
+on each axis (\code{PAD_Clamp} in
+\href{https://github.com/devkitPro/libogc/blob/58ab796738292a60d4b7a937bc0707bd70f49366/libogc/pad.c}{libogc}).
+The second covers the resting position of a released PlayStation stick,
+up to about 32 of 128 units from the centre
+(\href{https://psx-spx.consoledev.net/controllersandmemorycards/}{psx-spx}),
+and is close to the 7849 and 8689 of 32767 that Microsoft gives for the
+thumbsticks of PC gamepads
+(\href{https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput}{XInput}).
+A game applies a threshold of its own, which the recording does not
+store; give that value to study one game.
 Neutral observations have no direction and an \code{NA} angle. Magnitude is kept.}
 
 \item{triggers}{\code{"raw"} (default) or \code{"digital"}. For DTM, digital additionally
 projects each analogue trigger at 128/255 into separate L2/R2 columns.
 Hardware L/R click bits remain distinct from thresholded analogue triggers.}
+
+\item{aliases}{\code{TRUE} (default) places the controls of a recording under
+the shared IDs that \code{\link[=button_layout]{button_layout()}} describes. With \code{FALSE}, a control
+that would be placed under another control's ID keeps the key of its
+source, so every control of the recording has a column of its own and no
+two are combined.}
 
 \item{...}{Additional arguments for \code{FUN}.}
 }
@@ -56,8 +76,8 @@ in the original recording. Return a small summary from \code{FUN} to keep memory
 use bounded; returning the movie itself retains every chunk in memory.
 }
 \examples{
-path <- system.file('extdata', 'expanded', 'two-stick-3ds.bk2', package='replayr')
-counts <- read_bk2_chunks(path, function(chunk) n_frames(chunk), chunk_size=2L)
+path <- system.file("extdata", "expanded", "two-stick-3ds.bk2", package = "replayr")
+counts <- read_bk2_chunks(path, function(chunk) n_observations(chunk), chunk_size = 2L)
 sum(unlist(counts))
-attr(counts, 'observations')
+attr(counts, "observations")
 }
