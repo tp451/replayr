@@ -2,7 +2,7 @@
 % Please edit documentation in R/readers.R
 \name{read_txt}
 \alias{read_txt}
-\title{Read a table of the Atari Grand Challenge data set or of Atari-HEAD}
+\title{Read Atari Grand Challenge and Atari-HEAD demonstration files}
 \usage{
 read_txt(
   path,
@@ -58,9 +58,11 @@ or \code{member} for a recording inside a ZIP archive (see \code{\link[=movie_me
 A \link{replayr_movie} with one player.
 }
 \description{
-Two published data sets of human play on the Atari 2600 give the input as
-text tables with one row for each frame, in \code{.txt} files. The reader knows
-by the first line which of the two a file is:
+The Atari Grand Challenge and Atari-HEAD data sets hold human
+demonstrations of Atari 2600 games, collected for research on
+reinforcement learning. Both store the input as text tables with one row
+for each frame, in \code{.txt} files. The reader knows by the first line which
+of the two a file is:
 }
 \details{
 \itemize{

@@ -38,11 +38,10 @@ Initial release.
 * Read the BK2 recordings of Gym Retro with `read_bk2()`.
 * Return the text that the author of a FinalBurn Alpha recording entered
   when recording, in `movie$header$metadata`.
-* Read the tables of two published data sets of human play on the Atari
-  2600 with `read_txt()`: the trajectories of the Atari Grand Challenge
-  data set and the trials of Atari-HEAD. Each frame's
+* Read the demonstration files of the Atari Grand Challenge and Atari-HEAD
+  data sets (Atari 2600) with `read_txt()`. Each frame's
   action becomes the five controls of the joystick. The states of the game
-  that the tables also hold (score, reward, episode) are not input and are
+  that the files also hold (score, reward, episode) are not input and are
   not read. Both are `.txt` files, which
   `read_movie()` tells apart by their first line; a trial of Atari-HEAD can
   be read out of the archive of its game.

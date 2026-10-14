@@ -1,6 +1,8 @@
-#' replayr: parsers for emulator movie ("input log") files
+#' replayr: readers for input recordings and demo files of video games
 #'
-#' Readers for emulator input recordings used in tool-assisted speedrunning.
+#' Readers for the input recordings and demo files made in tool-assisted
+#' speedrunning, reinforcement learning, and research on human-game
+#' interaction.
 #' S3 outputs contain compact logical controller states, stable control identities,
 #' source numeric channels, metadata, and commands. Rows follow each format's
 #' frames, controller polls, timestamped events, or game tics.

@@ -3,8 +3,8 @@
 # format serves one console. read_movie(), the listing of ZIP archives,
 # supported_formats() and recording_info() take what they know about formats
 # from this table, so a new format is entered here once. The extension txt
-# has two rows: the tables of two published data sets, which are told apart
-# by their first line (read_txt.R).
+# has two rows: the formats of the Atari Grand Challenge and Atari-HEAD data
+# sets, which are told apart by their first line (read_txt.R).
 .FORMAT_REGISTRY <- data.frame(
   extension = c(
     "fm2", "bk2", "fcm", "lsmv", "gmv", "vbm", "m64", "smv", "pxm", "pjm", "dtm", "lmp",
@@ -180,7 +180,7 @@
 #'
 #' The package reads 37 file extensions in 33 formats. Five extensions have
 #' the file structure of another format. One extension, `.txt`, is that of
-#' two formats: the tables of two published data sets of Atari 2600 play,
+#' two formats, those of the Atari Grand Challenge and Atari-HEAD data sets,
 #' which [read_movie()] tells apart by their first line. Any other `.txt`
 #' file is none of them; [recording_format()] says which files of a folder
 #' are recordings.

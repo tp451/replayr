@@ -2,8 +2,9 @@
 
 `replayr` reads 37 file extensions in 33 recording formats: TASPROJ and GBMV
 files have the structure of BK2, TAS that of BKM, FM3 that of FM2, and HGM
-that of Hourglass WTF; the extension TXT is that of two formats, the tables
-of two published data sets, which are told apart by their first line. A
+that of Hourglass WTF; the extension TXT is that of two formats, those of
+the Atari Grand Challenge and Atari-HEAD data sets, which are told apart by
+their first line. A
 format can serve several platforms and controller layouts.
 For example, a BK2 file can contain a calculator keypad, a PlayStation pad,
 or a computer keyboard; its named fields determine the imported controls.

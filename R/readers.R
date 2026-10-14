@@ -1070,11 +1070,13 @@ read_dem <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", al
   .stick_modes(analog)
   .configure_movie(.decode_dem(path, ...), analog, deadzone, triggers, aliases)
 }
-#' Read a table of the Atari Grand Challenge data set or of Atari-HEAD
+#' Read Atari Grand Challenge and Atari-HEAD demonstration files
 #'
-#' Two published data sets of human play on the Atari 2600 give the input as
-#' text tables with one row for each frame, in `.txt` files. The reader knows
-#' by the first line which of the two a file is:
+#' The Atari Grand Challenge and Atari-HEAD data sets hold human
+#' demonstrations of Atari 2600 games, collected for research on
+#' reinforcement learning. Both store the input as text tables with one row
+#' for each frame, in `.txt` files. The reader knows by the first line which
+#' of the two a file is:
 #'
 #' * A trajectory of the Atari Grand Challenge data set, version 1 (Kurin et
 #'   al. 2017, \doi{10.48550/arXiv.1705.10998}): one episode of play, recorded

@@ -1,16 +1,17 @@
 # replayr <img src="man/figures/logo.svg" align="right" height="139" alt="replayr hex logo" />
 
-`replayr` imports emulator input recordings into R for analysis. It reads
-buttons, keyboard keys, analogue sticks, mouse movement, touch, and motion
-sensors, together with recording metadata and timing information.
+`replayr` imports input recordings and demo files of video games into R for
+analysis, as they are made in tool-assisted speedrunning, reinforcement
+learning, and research on human-game interaction. It reads buttons,
+keyboard keys, analogue sticks, mouse movement, touch, and motion sensors,
+together with recording metadata and timing information.
 
 ## Formats and platforms
 
 The package reads 33 recording formats, under 37 file extensions, from
-BizHawk, Dolphin, FCEUX, libTAS, Mupen64, Snes9x, openMSX, and other
-recording tools, the demos of the Doom and Half-Life engines, and the tables
-of two published data sets of human play on the Atari 2600, the Atari Grand
-Challenge data set and Atari-HEAD. Supported platforms include:
+BizHawk, Dolphin, FCEUX, libTAS, Mupen64, Snes9x, openMSX, Gym Retro, and
+other recording tools, from the Doom and Half-Life engines, and from the
+Atari Grand Challenge and Atari-HEAD data sets. Supported platforms include:
 
 | Family | Platforms |
 |---|---|

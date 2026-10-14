@@ -30,7 +30,7 @@ otherwise \code{NA}: the recording names its platform).
 \description{
 The package reads 37 file extensions in 33 formats. Five extensions have
 the file structure of another format. One extension, \code{.txt}, is that of
-two formats: the tables of two published data sets of Atari 2600 play,
+two formats, those of the Atari Grand Challenge and Atari-HEAD data sets,
 which \code{\link[=read_movie]{read_movie()}} tells apart by their first line. Any other \code{.txt}
 file is none of them; \code{\link[=recording_format]{recording_format()}} says which files of a folder
 are recordings.

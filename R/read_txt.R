@@ -1,4 +1,4 @@
-# Tables of two published data sets of human play on the Atari 2600: the
+# The demonstration files of two data sets of Atari 2600 games: the
 # Atari Grand Challenge data set (Kurin et al. 2017, arXiv:1705.10998) and
 # Atari-HEAD (Zhang et al. 2020, doi:10.1609/aaai.v34i04.6161). Both are text
 # files with one row per frame and an action number in each row. Sources: the
