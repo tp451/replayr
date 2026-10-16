@@ -1081,6 +1081,178 @@ override.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="shared-control-identities">Shared control identities<a class="anchor" aria-label="anchor" href="#shared-control-identities"></a>
+</h2>
+<p>Every control of a recording has an ID from a shared registry, which
+<code><a href="../reference/button_layout.html">button_layout()</a></code> reports beside the control’s key and its
+label on the device. The registry contains 53 consecutive IDs. The same
+rules decide in every reader which controls share an ID, so a console
+has the same IDs whichever emulator recorded it:</p>
+<ul>
+<li>
+<strong>By label.</strong> A button that carries one of the
+registry’s letters or words (A, B, C, X, Y, Z, L, R, Start, Select,
+Mode) has that ID. The ID follows the letter, not the place on the pad:
+A is the right-hand button of a Nintendo pad, the left one of a Genesis
+pad, and the lower one of an Xbox-style pad, which is what a libTAS
+recording of an SDL game controller holds.</li>
+<li>
+<strong>By place, for PlayStation pads.</strong> Their buttons carry
+shapes and have the IDs of the SNES buttons in the same places.</li>
+<li>
+<strong>In order, for numbered buttons.</strong> The first is A,
+then B, X, Y, L1, R1, L2, and R2.</li>
+<li>
+<strong>By role, for the rest.</strong> The table lists every such
+assignment.</li>
+</ul>
+<p><code>button_layout(movie)$name</code> shows the label on the device
+beside the shared <code>key</code> and <code>id</code>.</p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Source controls</th>
+<th>Shared control and ID</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Arcade and joystick buttons 1–8</td>
+<td>A, B, X, Y, L1, R1, L2, R2 (8, 7, 9–14)</td>
+</tr>
+<tr class="even">
+<td>Arcade buttons shown under a cabinet’s name: Attack or Punch; Jump,
+Jump/Start, or Missile; Kick; View change</td>
+<td>A (8); B (7); X (9); Select (6)</td>
+</tr>
+<tr class="odd">
+<td>Atari 7800 second trigger</td>
+<td>B (7)</td>
+</tr>
+<tr class="even">
+<td>Channel F stick: forward and back; twist left and right; push and
+pull</td>
+<td>Up and Down (4, 3); L1 and R1 (11, 12); A and B (8, 7)</td>
+</tr>
+<tr class="odd">
+<td>GunCon trigger, side A, side B, and offscreen shot</td>
+<td>A, B, X, Y (8, 7, 9, 10)</td>
+</tr>
+<tr class="even">
+<td>Intellivision Top</td>
+<td>X (9)</td>
+</tr>
+<tr class="odd">
+<td>Keypad Clear and Enter; keypad Star and Pound</td>
+<td>Select (6) and Start (5)</td>
+</tr>
+<tr class="even">
+<td>Keypad digits 0–9 and Power Pad sensors 1–12</td>
+<td>Equal numbers share <code>numbered_0</code>–<code>numbered_12</code>
+(40–52)</td>
+</tr>
+<tr class="odd">
+<td>Lynx Option 1</td>
+<td>Select (6)</td>
+</tr>
+<tr class="even">
+<td>Master System 1 and 2; UFO 50 Fire 1 and 2</td>
+<td>A, B (8, 7)</td>
+</tr>
+<tr class="odd">
+<td>Mouse buttons 4 and 5</td>
+<td>L1 and R1 (11 and 12)</td>
+</tr>
+<tr class="even">
+<td>Mouse left, right, and middle buttons</td>
+<td>A, B, X (8, 7, 9)</td>
+</tr>
+<tr class="odd">
+<td>Mouse wheel up and down</td>
+<td>C-Up and C-Down (23, 22)</td>
+</tr>
+<tr class="even">
+<td>Neo Geo A, B, C, and D</td>
+<td>A, B, X, Y (8, 7, 9, 10)</td>
+</tr>
+<tr class="odd">
+<td>Option buttons and mode switches: Jaguar Option, Lynx Option 2, PC
+Engine 2/6-button switch, PC-FX Mode 1 and 2</td>
+<td>Mode (19)</td>
+</tr>
+<tr class="even">
+<td>PC Engine and PC-FX I–VI</td>
+<td>A, B, X, Y, L1, R1 (8, 7, 9–12)</td>
+</tr>
+<tr class="odd">
+<td>PlayStation Cross, Circle, Triangle, and Square</td>
+<td>B, A, X, Y (7, 8, 9, 10)</td>
+</tr>
+<tr class="even">
+<td>Single fire button or trigger; light-gun trigger</td>
+<td>A (8)</td>
+</tr>
+<tr class="odd">
+<td>Start and pause buttons: 3DO P, Dustmod Escape, Jaguar Pause, Lynx
+Pause, Neo Geo Pocket Option, PC Engine Run</td>
+<td>Start (5)</td>
+</tr>
+<tr class="even">
+<td>Super Scope trigger, cursor, turbo, and pause</td>
+<td>A, B, Mode, Start (8, 7, 19, 5)</td>
+</tr>
+<tr class="odd">
+<td>Touch on a screen or touchpad</td>
+<td>L3 (15)</td>
+</tr>
+<tr class="even">
+<td>Wii Remote 1/2, +/−, and Home</td>
+<td>X/Y (9/10), Start/Select (5/6), and Mode (19)</td>
+</tr>
+</tbody>
+</table>
+<p>Wii Remote D-pad and A/B buttons use the gamepad IDs. Nunchuk C/Z use
+17/18, Classic Controller buttons use the corresponding gamepad IDs, and
+libTAS Guide uses Mode. The microphone uses ID 53. Genesis and Saturn C
+retain ID 17 because those controllers have separate C and X
+buttons.</p>
+<p>A shared ID says that two buttons are the same control; what a button
+does still depends on the game. Keyboard keys keep the code set of their
+source. For example, a Neo Geo D button uses Y (10), while a libTAS
+keyboard D keeps <code>control:keysym_64</code>. Each device of an
+openMSX recording is a controller of its own, listed in
+<code>header$controllers</code>, with the IDs of its kind. Of two
+direction pads, the left one is the direction pad (IDs 1–4) and the
+right one has the IDs of the N64’s C-buttons (20–23): the Virtual Boy’s
+pads and the WonderSwan’s X and Y crosses. An arcade cabinet’s two
+joysticks have the direction IDs of the left and the right analogue
+stick. The Intellivision disc has the eight direction IDs of the left
+stick; a direction between two of them, such as NNE, sets both. Where a
+core logs the disc as two axes, its sixteen directions are those the
+console reads from them. Buttons on the console itself, such as Reset,
+the Master System’s Pause, or the lid of a DS, are not part of a pad;
+<code><a href="../reference/system_channels.html">system_channels()</a></code> returns them.</p>
+<p>A Doom-engine demo stores no buttons at all. It stores what the game
+was asked to do in each tic, whatever keys the player had bound: attack,
+use and, in Hexen, jump. These game actions are kept apart from device
+buttons. They have kind <code>action</code> and IDs of their own
+(<code>action:attack</code>, <code>action:use</code>,
+<code>action:jump</code>), shared by every game that records the same
+action. A Dustmod script likewise holds jump, dash, light and heavy
+attack, taunt and restart as actions; its jump is the same
+<code>action:jump</code>. A GoldSrc demo (<em>Half-Life</em>,
+<em>Counter-Strike</em> 1.x) stores sixteen actions with every command,
+attack, use and jump among them, and the movement and view angles the
+command asks for as numeric channels. Numbered IDs are kept for what a
+player does to a device.</p>
+<div class="float">
+<img src="../reference/figures/universal_buttons_layout.svg" style="width:100.0%" alt="Universal button IDs for gamepads, both sticks, keypads, and peripherals, with named controls and numeric channels"><div class="figcaption">Universal button IDs for gamepads, both sticks,
+keypads, and peripherals, with named controls and numeric channels</div>
+</div>
+</div>
+<div class="section level2">
 <h2 id="format-references">Format references<a class="anchor" aria-label="anchor" href="#format-references"></a>
 </h2>
 <p>The table links the relevant specifications and serialisation

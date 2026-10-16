@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Reading emulator movie files with replayr • replayr</title>
+<title>Getting started with replayr • replayr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -15,7 +15,7 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Reading emulator movie files with replayr">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting started with replayr">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -61,7 +61,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.svg" class="logo" alt=""><h1>Reading emulator movie files with replayr</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Getting started with replayr</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/tp451/replayr/blob/main/vignettes/replayr.Rmd" class="external-link"><code>vignettes/replayr.Rmd</code></a></small>
@@ -70,126 +70,41 @@
 
     
     
+<p>Emulators, game engines and research data sets record the input of a
+game as it is played: tool-assisted speedruns are written as movie
+files, <em>Doom</em> demos store every tic of a speedrun, and data sets
+for learning from demonstration keep the actions of human players. Each
+recorder has its own format. replayr reads them into the same R objects,
+so that the input of an NES movie, a <em>Doom</em> demo and a Wii
+recording can be inspected and compared in the same way. This guide
+reads a recording, looks at the input of one player, identifies its
+controls, and finds the time of every observation; it ends with numeric
+channels such as sticks and mice, recordings of several players, and the
+formats that replayr reads.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tp451/replayr" class="external-link">replayr</a></span><span class="op">)</span></span></code></pre></div>
-<p>Emulator movies record the inputs used during play.
-<code>replayr</code> reads their buttons, keys, numeric device channels,
-and timing fields into S3 objects for analysis in R. This vignette
-starts with an artificial NES recording, then shows how to inspect
-analogue sticks, mouse movement, and Wii motion fields. All examples are
-original recordings supplied with the package.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/tp451/replayr" class="external-link">"replayr"</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="reading-a-movie">Reading a movie<a class="anchor" aria-label="anchor" href="#reading-a-movie"></a>
+<h2 id="reading-a-recording">Reading a recording<a class="anchor" aria-label="anchor" href="#reading-a-recording"></a>
 </h2>
-<p>Assigned controller recordings use the S3 class
-<code>replayr_movie</code>. Ordered polls with unknown ports and
-heterogeneous device polls use <code>replayr_poll_stream</code>. Use
-<code><a href="../reference/read_movie.html">read_movie()</a></code> to dispatch on the file extension:</p>
+<p><code><a href="../reference/read_movie.html">read_movie()</a></code> reads a recording and chooses the reader
+from the file’s extension. replayr comes with small original recordings;
+this one holds a minute of artificial NES input for two controllers:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample.fm2"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
-<span><span class="va">mv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">fp</span><span class="op">)</span></span>
-<span><span class="va">mv</span></span>
+<code class="sourceCode R"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample.fm2"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
+<span><span class="va">movie</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
+<span><span class="va">movie</span></span>
 <span><span class="co">#&gt; &lt;replayr_movie [fm2] observations=3600 players=2 buttons=8 source=sample.fm2&gt;</span></span>
 <span><span class="co">#&gt; Header keys: version, emuVersion, rerecordCount, palFlag, romFilename, comment</span></span>
 <span><span class="co">#&gt; P1 active observations: dpad_right=900, dpad_left=900, dpad_down=900, dpad_up=900, start=6, select=4, b=900, a=450</span></span></code></pre></div>
-<p>The bundled <code>sample.fm2</code> contains repeating directional
-movement and button pulses for two NES controllers. The
-<code>print</code> method shows that the stream is 3,600 frames long,
-has two player slots, uses eight compact button columns, and identifies
-its source file.</p>
-</div>
-<div class="section level2">
-<h2 id="the-replayr_movie-object">The <code>replayr_movie</code> object<a class="anchor" aria-label="anchor" href="#the-replayr_movie-object"></a>
-</h2>
-<p>The object is an S3 list containing the imported input and
-metadata:</p>
+<p>A recording read this way is an object of class
+<code>replayr_movie</code>. It holds the input of every player as a
+logical array of observations, players and controls, together with the
+header of the file and the layout of its controls.
+<code><a href="../reference/n_observations.html">n_observations()</a></code>, <code><a href="../reference/n_players.html">n_players()</a></code> and
+<code><a href="../reference/n_buttons.html">n_buttons()</a></code> give its dimensions, and <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>
+describes the input of each player:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">mv</span>, max.level <span class="op">=</span> <span class="fl">1L</span>, give.attr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 20</span></span>
-<span><span class="co">#&gt;  $ header          :List of 7</span></span>
-<span><span class="co">#&gt;  $ commands        : int [1:3600] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;  $ inputs          : logi [1:3600, 1:2, 1:8] TRUE TRUE TRUE TRUE TRUE TRUE ...</span></span>
-<span><span class="co">#&gt;  $ source_path     : chr "/home/runner/work/_temp/Library/replayr/extdata/sample.fm2"</span></span>
-<span><span class="co">#&gt;  $ button_mnemonics: chr [1:8] "R" "L" "D" "U" ...</span></span>
-<span><span class="co">#&gt;  $ button_names    : chr [1:8] "Right" "Left" "Down" "Up" ...</span></span>
-<span><span class="co">#&gt;  $ analog          :List of 2</span></span>
-<span><span class="co">#&gt;  $ analog_mode     : chr "raw"</span></span>
-<span><span class="co">#&gt;  $ stick_overrides :List of 2</span></span>
-<span><span class="co">#&gt;  $ button_ids      : int [1:8] 1 2 3 4 5 6 7 8</span></span>
-<span><span class="co">#&gt;  $ button_keys     : chr [1:8] "dpad_right" "dpad_left" "dpad_down" "dpad_up" ...</span></span>
-<span><span class="co">#&gt;  $ control_layout  :'data.frame':    8 obs. of  5 variables:</span></span>
-<span><span class="co">#&gt;  $ stick_values    :List of 2</span></span>
-<span><span class="co">#&gt;  $ stick_modes     : Named chr [1:2] "raw" "raw"</span></span>
-<span><span class="co">#&gt;  $ stick_deadzone  : Named num [1:2] 0.25 0.25</span></span>
-<span><span class="co">#&gt;  $ stick_available :List of 2</span></span>
-<span><span class="co">#&gt;  $ analysis_ready  : logi [1:2] FALSE FALSE</span></span>
-<span><span class="co">#&gt;  $ trigger_mode    : chr "raw"</span></span>
-<span><span class="co">#&gt;  $ layout_version  : int 3</span></span>
-<span><span class="co">#&gt;  $ channel_source  :List of 2</span></span></code></pre></div>
-<ul>
-<li>
-<code>header</code> — named list of header keys
-(e.g. <code>version</code>, <code>emuVersion</code>,
-<code>romFilename</code>, <code>rerecordCount</code>). Plus a synthetic
-<code>_format</code> entry that records which parser produced the
-movie.</li>
-<li>
-<code>commands</code> — integer vector with one entry per
-observation: the commands byte (Reset, Power, format-specific bits), 0
-for most observations.</li>
-<li>
-<code>inputs</code> — logical 3D array, dimensions
-<code>(observations, players, buttons)</code>. <code>TRUE</code> means
-the button was held at that observation.</li>
-<li>
-<code>source_path</code> — where the movie was loaded from.</li>
-<li>
-<code>button_keys</code> / <code>button_names</code> — the keys and
-the device’s labels of the controls along the third dimension.</li>
-</ul>
-<p>Three helpers return the array’s dimensions:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="../reference/n_observations.html">n_observations</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span>, <span class="fu"><a href="../reference/n_players.html">n_players</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span>, <span class="fu"><a href="../reference/n_buttons.html">n_buttons</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 3600    2    8</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="inspecting-one-player">Inspecting one player<a class="anchor" aria-label="anchor" href="#inspecting-one-player"></a>
-</h2>
-<p><code><a href="../reference/player.html">player()</a></code> extracts a single player’s frames as a 2D
-logical matrix. Its columns are named by control key, so
-<code>p1[, "a"]</code> is the A button:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/player.html">player</a></span><span class="op">(</span><span class="va">mv</span>, <span class="fl">1L</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 3600    8</span></span>
-<span><span class="va">active</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0L</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">p1</span><span class="op">[</span><span class="va">active</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      dpad_right dpad_left dpad_down dpad_up start select     b     a</span></span>
-<span><span class="co">#&gt; [1,]       TRUE     FALSE     FALSE   FALSE  TRUE   TRUE  TRUE  TRUE</span></span>
-<span><span class="co">#&gt; [2,]       TRUE     FALSE     FALSE   FALSE FALSE  FALSE  TRUE  TRUE</span></span>
-<span><span class="co">#&gt; [3,]       TRUE     FALSE     FALSE   FALSE FALSE  FALSE  TRUE  TRUE</span></span>
-<span><span class="co">#&gt; [4,]       TRUE     FALSE     FALSE   FALSE FALSE  FALSE  TRUE  TRUE</span></span>
-<span><span class="co">#&gt; [5,]       TRUE     FALSE     FALSE   FALSE FALSE  FALSE  TRUE FALSE</span></span>
-<span><span class="co">#&gt; [6,]       TRUE     FALSE     FALSE   FALSE FALSE  FALSE FALSE FALSE</span></span></code></pre></div>
-<p><code><a href="../reference/press_counts.html">press_counts()</a></code> returns the number of observations in
-which each control is active, under the same keys:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/press_counts.html">press_counts</a></span><span class="op">(</span><span class="va">mv</span>, <span class="fl">1L</span><span class="op">)</span></span>
-<span><span class="co">#&gt; dpad_right  dpad_left  dpad_down    dpad_up      start     select          b </span></span>
-<span><span class="co">#&gt;        900        900        900        900          6          4        900 </span></span>
-<span><span class="co">#&gt;          a </span></span>
-<span><span class="co">#&gt;        450</span></span></code></pre></div>
-<p>The counts summarise the time spent on each direction and action in
-this example. A long hold contributes once per observation, while a
-brief press contributes only for its active interval.</p>
-<p><code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> adds the number of activations, that is, of
-changes from released to active, so that one long hold and many short
-presses can be told apart. <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> returns one row
-per observation with the buttons and numeric channels of a controller,
-and <code>[</code> selects observations and returns a recording, on
-which every accessor works as before:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span></span>
 <span><span class="co">#&gt; fm2 recording sample.fm2: 3600 frames, 2 controllers, 8 controls</span></span>
 <span><span class="co">#&gt; Controls active at least once:</span></span>
 <span><span class="co">#&gt;  controller        key   name held activations</span></span>
@@ -208,41 +123,49 @@ which every accessor works as before:</p>
 <span><span class="co">#&gt;           2      start  Start    6           6</span></span>
 <span><span class="co">#&gt;           2     select Select    4           4</span></span>
 <span><span class="co">#&gt;           2          b      B  900         151</span></span>
-<span><span class="co">#&gt;           2          a      A  450          91</span></span>
-<span><span class="va">first_ten_seconds</span> <span class="op">&lt;-</span> <span class="va">mv</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">600</span><span class="op">]</span></span>
-<span><span class="va">first_ten_seconds</span></span>
-<span><span class="co">#&gt; &lt;replayr_movie [fm2] observations=600 players=2 buttons=8 source=sample.fm2&gt;</span></span>
-<span><span class="co">#&gt; Header keys: version, emuVersion, rerecordCount, palFlag, romFilename, comment</span></span>
-<span><span class="co">#&gt; P1 active observations: dpad_right=150, dpad_left=150, dpad_down=150, dpad_up=150, start=1, select=1, b=150, a=75</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">first_ten_seconds</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"observation"</span>, <span class="st">"dpad_right"</span>, <span class="st">"a"</span>, <span class="st">"commands"</span><span class="op">)</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   observation dpad_right    a commands</span></span>
-<span><span class="co">#&gt; 1           1       TRUE TRUE        0</span></span>
-<span><span class="co">#&gt; 2           2       TRUE TRUE        0</span></span>
-<span><span class="co">#&gt; 3           3       TRUE TRUE        0</span></span></code></pre></div>
+<span><span class="co">#&gt;           2          a      A  450          91</span></span></code></pre></div>
+<p>The summary counts, for each control, the observations in which it is
+held and the times it is pressed, so that one long hold and many short
+presses can be told apart.</p>
 </div>
 <div class="section level2">
-<h2 id="a-quick-visual">A quick visual<a class="anchor" aria-label="anchor" href="#a-quick-visual"></a>
+<h2 id="one-players-input">One player’s input<a class="anchor" aria-label="anchor" href="#one-players-input"></a>
 </h2>
-<p>Dividing these counts by the recording length gives the proportion of
-observations for which each control is active:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/press_counts.html">press_counts</a></span><span class="op">(</span><span class="va">mv</span>, <span class="fl">1L</span><span class="op">)</span></span>
-<span><span class="va">rates</span>  <span class="op">&lt;-</span> <span class="va">counts</span> <span class="op">/</span> <span class="fu"><a href="../reference/n_observations.html">n_observations</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="va">rates</span>,</span>
-<span>        las <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>        ylab <span class="op">=</span> <span class="st">"fraction of frames held"</span>,</span>
-<span>        main <span class="op">=</span> <span class="st">"Player 1: proportion of observations held"</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="../reference/player.html">player()</a></code> returns the input of one player as a logical
+matrix, one row per observation and one column per control. The columns
+are named by the control’s key, so <code>input[, "a"]</code> is the A
+button:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/player.html">player</a></span><span class="op">(</span><span class="va">movie</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">input</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 3600    8</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">input</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">input</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="op">]</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      dpad_right dpad_left dpad_down dpad_up start select    b    a</span></span>
+<span><span class="co">#&gt; [1,]       TRUE     FALSE     FALSE   FALSE  TRUE   TRUE TRUE TRUE</span></span>
+<span><span class="co">#&gt; [2,]       TRUE     FALSE     FALSE   FALSE FALSE  FALSE TRUE TRUE</span></span>
+<span><span class="co">#&gt; [3,]       TRUE     FALSE     FALSE   FALSE FALSE  FALSE TRUE TRUE</span></span></code></pre></div>
+<p><code><a href="../reference/press_counts.html">press_counts()</a></code> counts the observations in which each
+control is held. Divided by the number of observations, the counts give
+the share of the recording for which each control is held:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">shares</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/press_counts.html">press_counts</a></span><span class="op">(</span><span class="va">movie</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="../reference/n_observations.html">n_observations</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="va">shares</span>, las <span class="op">=</span> <span class="fl">2</span>, ylab <span class="op">=</span> <span class="st">"share of observations held"</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"Player 1"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="replayr_files/figure-html/press-rate-1.png" class="r-plt" alt="" width="672"></p>
+<p>A recording can also be cut: <code>movie[1:600]</code> keeps the
+first 600 observations and is again a recording, on which every function
+works, and <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> gives one row per observation
+with the controls and numeric channels of a player.</p>
 </div>
 <div class="section level2">
-<h2 id="compact-controller-columns-and-stable-ids">Compact controller columns and stable IDs<a class="anchor" aria-label="anchor" href="#compact-controller-columns-and-stable-ids"></a>
+<h2 id="control-identities">Control identities<a class="anchor" aria-label="anchor" href="#control-identities"></a>
 </h2>
-<p>The matrix has compact columns for the recorded controls. Fixed
-gamepad layouts retain unused buttons; event-based recordings expose the
-controls present in their events. Stable IDs identify the same control
-across layouts.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/button_layout.html">button_layout</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span> <span class="co"># column, id, key, mnemonic, name, kind</span></span>
+<p>The columns of a recording are compact: they hold the controls of its
+device and no others. <code><a href="../reference/button_layout.html">button_layout()</a></code> says which control
+each column is, with a key, a label as on the device, and an ID from a
+shared registry:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/button_layout.html">button_layout</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   column id        key mnemonic   name   kind</span></span>
 <span><span class="co">#&gt; 1      1  1 dpad_right        R  Right button</span></span>
 <span><span class="co">#&gt; 2      2  2  dpad_left        L   Left button</span></span>
@@ -252,178 +175,22 @@ across layouts.</p>
 <span><span class="co">#&gt; 6      6  6     select        S Select button</span></span>
 <span><span class="co">#&gt; 7      7  7          b        B      B button</span></span>
 <span><span class="co">#&gt; 8      8  8          a        A      A button</span></span></code></pre></div>
-<p>Left and right stick directions, stick clicks, N64 C-buttons, and
-keypad digits have distinct identities. <code><a href="../reference/button_layout.html">button_layout()</a></code>
-lists the shared registry; <code>button_layout(mv)</code> gives the
-complete layout for this recording, including source-specific keyboard
-and peripheral controls.</p>
-<p>The registry contains 53 consecutive IDs. The same rules decide in
-every reader which controls share an ID, so a console has the same IDs
-whichever emulator recorded it:</p>
-<ul>
-<li>
-<strong>By label.</strong> A button that carries one of the
-registry’s letters or words (A, B, C, X, Y, Z, L, R, Start, Select,
-Mode) has that ID. The ID follows the letter, not the place on the pad:
-A is the right-hand button of a Nintendo pad, the left one of a Genesis
-pad, and the lower one of an Xbox-style pad, which is what a libTAS
-recording of an SDL game controller holds.</li>
-<li>
-<strong>By place, for PlayStation pads.</strong> Their buttons carry
-shapes and have the IDs of the SNES buttons in the same places.</li>
-<li>
-<strong>In order, for numbered buttons.</strong> The first is A,
-then B, X, Y, L1, R1, L2, and R2.</li>
-<li>
-<strong>By role, for the rest.</strong> The table lists every such
-assignment.</li>
-</ul>
-<p><code>button_layout(mv)$name</code> shows the label on the device
-beside the shared <code>key</code> and <code>id</code>.</p>
-<table class="table">
-<colgroup>
-<col width="50%">
-<col width="50%">
-</colgroup>
-<thead><tr class="header">
-<th>Source controls</th>
-<th>Shared control and ID</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>Arcade and joystick buttons 1–8</td>
-<td>A, B, X, Y, L1, R1, L2, R2 (8, 7, 9–14)</td>
-</tr>
-<tr class="even">
-<td>Arcade buttons shown under a cabinet’s name: Attack or Punch; Jump,
-Jump/Start, or Missile; Kick; View change</td>
-<td>A (8); B (7); X (9); Select (6)</td>
-</tr>
-<tr class="odd">
-<td>Atari 7800 second trigger</td>
-<td>B (7)</td>
-</tr>
-<tr class="even">
-<td>Channel F stick: forward and back; twist left and right; push and
-pull</td>
-<td>Up and Down (4, 3); L1 and R1 (11, 12); A and B (8, 7)</td>
-</tr>
-<tr class="odd">
-<td>GunCon trigger, side A, side B, and offscreen shot</td>
-<td>A, B, X, Y (8, 7, 9, 10)</td>
-</tr>
-<tr class="even">
-<td>Intellivision Top</td>
-<td>X (9)</td>
-</tr>
-<tr class="odd">
-<td>Keypad Clear and Enter; keypad Star and Pound</td>
-<td>Select (6) and Start (5)</td>
-</tr>
-<tr class="even">
-<td>Keypad digits 0–9 and Power Pad sensors 1–12</td>
-<td>Equal numbers share <code>numbered_0</code>–<code>numbered_12</code>
-(40–52)</td>
-</tr>
-<tr class="odd">
-<td>Lynx Option 1</td>
-<td>Select (6)</td>
-</tr>
-<tr class="even">
-<td>Master System 1 and 2; UFO 50 Fire 1 and 2</td>
-<td>A, B (8, 7)</td>
-</tr>
-<tr class="odd">
-<td>Mouse buttons 4 and 5</td>
-<td>L1 and R1 (11 and 12)</td>
-</tr>
-<tr class="even">
-<td>Mouse left, right, and middle buttons</td>
-<td>A, B, X (8, 7, 9)</td>
-</tr>
-<tr class="odd">
-<td>Mouse wheel up and down</td>
-<td>C-Up and C-Down (23, 22)</td>
-</tr>
-<tr class="even">
-<td>Neo Geo A, B, C, and D</td>
-<td>A, B, X, Y (8, 7, 9, 10)</td>
-</tr>
-<tr class="odd">
-<td>Option buttons and mode switches: Jaguar Option, Lynx Option 2, PC
-Engine 2/6-button switch, PC-FX Mode 1 and 2</td>
-<td>Mode (19)</td>
-</tr>
-<tr class="even">
-<td>PC Engine and PC-FX I–VI</td>
-<td>A, B, X, Y, L1, R1 (8, 7, 9–12)</td>
-</tr>
-<tr class="odd">
-<td>PlayStation Cross, Circle, Triangle, and Square</td>
-<td>B, A, X, Y (7, 8, 9, 10)</td>
-</tr>
-<tr class="even">
-<td>Single fire button or trigger; light-gun trigger</td>
-<td>A (8)</td>
-</tr>
-<tr class="odd">
-<td>Start and pause buttons: 3DO P, Dustmod Escape, Jaguar Pause, Lynx
-Pause, Neo Geo Pocket Option, PC Engine Run</td>
-<td>Start (5)</td>
-</tr>
-<tr class="even">
-<td>Super Scope trigger, cursor, turbo, and pause</td>
-<td>A, B, Mode, Start (8, 7, 19, 5)</td>
-</tr>
-<tr class="odd">
-<td>Touch on a screen or touchpad</td>
-<td>L3 (15)</td>
-</tr>
-<tr class="even">
-<td>Wii Remote 1/2, +/−, and Home</td>
-<td>X/Y (9/10), Start/Select (5/6), and Mode (19)</td>
-</tr>
-</tbody>
-</table>
-<p>Wii Remote D-pad and A/B buttons use the gamepad IDs. Nunchuk C/Z use
-17/18, Classic Controller buttons use the corresponding gamepad IDs, and
-libTAS Guide uses Mode. The microphone uses ID 53. Genesis and Saturn C
-retain ID 17 because those controllers have separate C and X
-buttons.</p>
-<p>A shared ID says that two buttons are the same control; what a button
-does still depends on the game. Keyboard keys keep the code set of their
-source. For example, a Neo Geo D button uses Y (10), while a libTAS
-keyboard D keeps <code>control:keysym_64</code>. Each device of an
-openMSX recording is a controller of its own, listed in
-<code>header$controllers</code>, with the IDs of its kind. Of two
-direction pads, the left one is the direction pad (IDs 1–4) and the
-right one has the IDs of the N64’s C-buttons (20–23): the Virtual Boy’s
-pads and the WonderSwan’s X and Y crosses. An arcade cabinet’s two
-joysticks have the direction IDs of the left and the right analogue
-stick. The Intellivision disc has the eight direction IDs of the left
-stick; a direction between two of them, such as NNE, sets both. Buttons
-on the console itself, such as Reset, the Master System’s Pause, or the
-lid of a DS, are not part of a pad; <code><a href="../reference/system_channels.html">system_channels()</a></code>
-returns them.</p>
-<p>A Doom-engine demo stores no buttons at all. It stores what the game
-was asked to do in each tic, whatever keys the player had bound: attack,
-use and, in Hexen, jump. These game actions are kept apart from device
-buttons. They have kind <code>action</code> and IDs of their own
-(<code>action:attack</code>, <code>action:use</code>,
-<code>action:jump</code>), shared by every game that records the same
-action. A Dustmod script likewise holds jump, dash, light and heavy
-attack, taunt and restart as actions; its jump is the same
-<code>action:jump</code>. A GoldSrc demo (<em>Half-Life</em>,
-<em>Counter-Strike</em> 1.x) stores sixteen actions with every command,
-attack, use and jump among them, and the movement and view angles the
-command asks for as numeric channels. Numbered IDs are kept for what a
-player does to a device.</p>
-<p>When several controls of a recording share an ID, the column is
-active if any of them is pressed and is named after all of them.
-<code>source_inputs</code> and <code>source_layout</code> preserve the
-separate states and their mapping. To keep every control in a column of
-its own instead, read with <code>aliases = FALSE</code>:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p>The IDs make controls comparable across recorders. The same rules
+decide in every reader which controls share an ID, so a console’s
+buttons have the same IDs whichever emulator recorded them. A button
+that carries a letter or word of the registry, such as A, B, Start or
+Select, has that ID, wherever it sits on the pad; PlayStation buttons,
+which carry shapes, have the IDs of the SNES buttons in the same places;
+numbered buttons follow a fixed order. The compatibility guide,
+<code><a href="../articles/compatibility.html">vignette("compatibility", package = "replayr")</a></code>, lists every
+rule and every device.</p>
+<p>Controls of other devices take the ID of the registry control in the
+same role. A light gun’s trigger, for instance, has the ID of the A
+button and its offscreen shot that of Y, so that a study can compare it
+with a pad; <code>aliases = FALSE</code> keeps the device’s own controls
+with qualified IDs instead. When several controls of a recording share
+an ID, their column is active when any of them is pressed.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gun</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"paper"</span>, <span class="st">"light-gun.bk2"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/button_layout.html">button_layout</a></span><span class="op">(</span><span class="fu"><a href="../reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">gun</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"id"</span>, <span class="st">"key"</span>, <span class="st">"name"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   id key           name</span></span>
@@ -435,228 +202,70 @@ its own instead, read with <code>aliases = FALSE</code>:</p>
 <span><span class="co">#&gt; 1                      7              b              A</span></span>
 <span><span class="co">#&gt; 2    control:gun_trigger    gun_trigger        Trigger</span></span>
 <span><span class="co">#&gt; 3 control:offscreen_shot offscreen_shot Offscreen Shot</span></span></code></pre></div>
-<p>Wii device states also appear in <code>poll_fields</code> as
-<code>wii_remote_*</code> and <code>wii_classic_*</code> columns, which
-<code><a href="../reference/polls.html">polls()</a></code> includes for unassigned streams.</p>
-<div class="float">
-<img src="../reference/figures/universal_buttons_layout.svg" alt="Universal button IDs for gamepads, both sticks, keypads, and peripherals, with named controls and numeric channels"><div class="figcaption">Universal button IDs for gamepads, both sticks,
-keypads, and peripherals, with named controls and numeric channels</div>
-</div>
-<p>Use <code>align_buttons(list(movie1, movie2))</code> before comparing
-different controller layouts. It explicitly fills absent controls with
-FALSE and returns matrices with the same column identities. For
-comparisons of game actions, supply a justified action mapping instead
-of assuming common physical buttons perform the same action.</p>
+<p>Recordings of different devices have different columns.
+<code><a href="../reference/align_buttons.html">align_buttons()</a></code> puts a list of recordings into matrices
+with the same columns, filling the controls that a recording lacks with
+<code>FALSE</code>. A shared ID says that two buttons are the same
+control, not that they do the same thing in a game; what a button means
+remains a question for the analysis. Some recordings store what the game
+was asked to do rather than which button was pressed: a <em>Doom</em>
+demo records attacking and using, whatever keys the player had bound.
+Such controls have the kind <code>action</code> and IDs of their own,
+such as <code>action:attack</code>.</p>
 </div>
 <div class="section level2">
-<h2 id="reading-other-formats">Reading other formats<a class="anchor" aria-label="anchor" href="#reading-other-formats"></a>
+<h2 id="time">Time<a class="anchor" aria-label="anchor" href="#time"></a>
 </h2>
-<p>The package reads 33 recording formats under 37 file extensions:
-TASPROJ and GBMV files have the structure of BK2, TAS that of BKM, FM3
-that of FM2, and HGM that of Hourglass WTF, and the extension
-<code>.txt</code> is that of two formats, those of the Atari Grand
-Challenge and Atari-HEAD data sets. Published-file checks cover 61
-TASVideos platform labels:</p>
-<table class="table">
-<colgroup>
-<col width="50%">
-<col width="50%">
-</colgroup>
-<thead><tr class="header">
-<th>Family</th>
-<th>Platforms represented in the checked recordings</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>Arcade and application platforms</td>
-<td>Adobe Flash; Android; Arcade; IBM PC compatible; IBM PC DOS; Java 2
-Platform, Micro Edition (J2ME); Mac OS / macOS; PICO-8; TIC-80;
-Web.</td>
-</tr>
-<tr class="even">
-<td>Atari</td>
-<td>Atari 2600; Atari 7800; Atari Jaguar; Atari Jaguar CD; Atari
-Lynx.</td>
-</tr>
-<tr class="odd">
-<td>Home computers and calculators</td>
-<td>Amiga; Apple II; Commodore 64; MSX Home Computer System;
-Spectravideo SVI-318/328; Texas Instruments TI-83 Series; ZX
-Spectrum.</td>
-</tr>
-<tr class="even">
-<td>NEC</td>
-<td>NEC PC-98; PC Engine / TurboGrafx-16; PC Engine CD / TurboGrafx-CD;
-PC-FX; SuperGrafx.</td>
-</tr>
-<tr class="odd">
-<td>Nintendo</td>
-<td>Famicom Disk System; Game Boy; Game Boy Advance; Game Boy Color;
-Nintendo 3DS; Nintendo 64; Nintendo 64DD; Nintendo DS; Nintendo DSi;
-Nintendo Entertainment System / Famicom; Nintendo GameCube; Satellaview;
-Super Game Boy; Super Nintendo / Super Famicom; Virtual Boy; Wii.</td>
-</tr>
-<tr class="even">
-<td>Other consoles</td>
-<td>3DO; CD-i; ColecoVision; Fairchild Channel F; Intellivision; Neo Geo
-Pocket; Odyssey 2 / Videopac; Sony PlayStation; Uzebox; Vectrex;
-WonderSwan.</td>
-</tr>
-<tr class="odd">
-<td>Sega</td>
-<td>Game Gear; Sega 32X; Sega CD / Mega-CD; Sega Genesis / Mega Drive;
-Sega Master System; Sega Saturn; Sega SG-1000.</td>
-</tr>
-</tbody>
-</table>
-<p>These are the archive’s game-platform labels. Some recordings capture
-a host application, such as MAME or Ruffle under libTAS, so their key
-codes describe that application. Linux and Windows games are represented
-under IBM PC compatible. The <a href="compatibility.html">compatibility
-catalogue</a> lists every platform–format combination, the accepted
-versions and controller layouts within each format, and the evidence for
-each claim. It is included with the package and can also be opened with
-<code><a href="../articles/compatibility.html">vignette("compatibility", package = "replayr")</a></code>.</p>
-<p>For example, FM2 and FM3 support text and binary FCEUX input logs;
-BKM and early TAS use BizHawk’s older field order, while BK2, GBMV, and
-TASPROJ use named fields in ZIP containers. PlayStation PXM and PJM
-distinguish digital pads from analogue controllers with L3/R3 and two
-sticks. File extension alone is therefore only the first step in
-choosing a decoder.</p>
-<p>Every supported extension dispatches through the same entry point.
-<code><a href="../reference/supported_formats.html">supported_formats()</a></code> lists the extensions; with
-<code>details = TRUE</code> it also names the reader and the emulator of
-each, and the platform where a format serves one console. A
-<code>.txt</code> file is read where its first line shows one of the two
-tables; <code><a href="../reference/recording_format.html">recording_format()</a></code> says which files of a folder are
-recordings:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/supported_formats.html">supported_formats</a></span><span class="op">(</span>details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    extension  structure       reader                                  emulator</span></span>
-<span><span class="co">#&gt; 1       .fm2       .fm2     read_fm2                                     FCEUX</span></span>
-<span><span class="co">#&gt; 2       .bk2       .bk2     read_bk2                                   BizHawk</span></span>
-<span><span class="co">#&gt; 3       .fcm       .fcm     read_fcm                                      FCEU</span></span>
-<span><span class="co">#&gt; 4      .lsmv      .lsmv    read_lsmv                                     lsnes</span></span>
-<span><span class="co">#&gt; 5       .gmv       .gmv     read_gmv                                      Gens</span></span>
-<span><span class="co">#&gt; 6       .vbm       .vbm     read_vbm                          VisualBoyAdvance</span></span>
-<span><span class="co">#&gt; 7       .m64       .m64     read_m64                                   Mupen64</span></span>
-<span><span class="co">#&gt; 8       .smv       .smv     read_smv                                    Snes9x</span></span>
-<span><span class="co">#&gt; 9       .pxm       .pxm     read_pxm                                      PCSX</span></span>
-<span><span class="co">#&gt; 10      .pjm       .pjm     read_pjm                                    PSXjin</span></span>
-<span><span class="co">#&gt; 11      .dtm       .dtm     read_dtm                                   Dolphin</span></span>
-<span><span class="co">#&gt; 12      .lmp       .lmp     read_lmp                              Doom engines</span></span>
-<span><span class="co">#&gt; 13      .fm3       .fm2     read_fm3                          FCEUX TAS Editor</span></span>
-<span><span class="co">#&gt; 14      .fmv       .fmv     read_fmv                                  Famtasia</span></span>
-<span><span class="co">#&gt; 15      .bkm       .bkm     read_bkm                     BizHawk (legacy text)</span></span>
-<span><span class="co">#&gt; 16      .tas       .bkm     read_tas                      BizHawk (early text)</span></span>
-<span><span class="co">#&gt; 17  .tasproj       .bk2 read_tasproj                          BizHawk TAStudio</span></span>
-<span><span class="co">#&gt; 18     .gbmv       .bk2    read_gbmv                                   GBAHawk</span></span>
-<span><span class="co">#&gt; 19      .mmv       .mmv     read_mmv                                      Dega</span></span>
-<span><span class="co">#&gt; 20      .dsm       .dsm     read_dsm                                   DeSmuME</span></span>
-<span><span class="co">#&gt; 21      .mc2       .mc2     read_mc2                          PCEjin and VBjin</span></span>
-<span><span class="co">#&gt; 22      .mcm       .mcm     read_mcm                                  Mednafen</span></span>
-<span><span class="co">#&gt; 23      .ymv       .ymv     read_ymv                                   Yabause</span></span>
-<span><span class="co">#&gt; 24      .ctm       .ctm     read_ctm                                     Citra</span></span>
-<span><span class="co">#&gt; 25      .gzm       .gzm     read_gzm gz (The Legend of Zelda: Ocarina of Time)</span></span>
-<span><span class="co">#&gt; 26      .zmv       .zmv     read_zmv                                     ZSNES</span></span>
-<span><span class="co">#&gt; 27      .mar       .mar     read_mar                                   MAME-RR</span></span>
-<span><span class="co">#&gt; 28      .ltm       .ltm     read_ltm                                    libTAS</span></span>
-<span><span class="co">#&gt; 29      .wtf       .wtf     read_wtf                                 Hourglass</span></span>
-<span><span class="co">#&gt; 30      .hgm       .wtf     read_wtf                                 Hourglass</span></span>
-<span><span class="co">#&gt; 31     .jrsr      .jrsr    read_jrsr                                    JPC-RR</span></span>
-<span><span class="co">#&gt; 32      .omr       .omr     read_omr                                   openMSX</span></span>
-<span><span class="co">#&gt; 33     .ctas      .ctas    read_ctas                      CoffeeTools (UFO 50)</span></span>
-<span><span class="co">#&gt; 34      .fbm       .fbm     read_fbm                           FinalBurn Alpha</span></span>
-<span><span class="co">#&gt; 35      .dft       .dft     read_dft                    Dustmod (Dustforce DX)</span></span>
-<span><span class="co">#&gt; 36      .dem       .dem     read_dem                            GoldSrc engine</span></span>
-<span><span class="co">#&gt; 37      .txt   atari_gc     read_txt            Atari Grand Challenge data set</span></span>
-<span><span class="co">#&gt; 38      .txt atari_head     read_txt                       Atari-HEAD data set</span></span>
-<span><span class="co">#&gt;    platform</span></span>
-<span><span class="co">#&gt; 1       NES</span></span>
-<span><span class="co">#&gt; 2      &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 3       NES</span></span>
-<span><span class="co">#&gt; 4      &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 5       GEN</span></span>
-<span><span class="co">#&gt; 6      &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 7       N64</span></span>
-<span><span class="co">#&gt; 8      SNES</span></span>
-<span><span class="co">#&gt; 9       PSX</span></span>
-<span><span class="co">#&gt; 10      PSX</span></span>
-<span><span class="co">#&gt; 11     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12       PC</span></span>
-<span><span class="co">#&gt; 13      NES</span></span>
-<span><span class="co">#&gt; 14      NES</span></span>
-<span><span class="co">#&gt; 15     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 16     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 17     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 18     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 19     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 20      NDS</span></span>
-<span><span class="co">#&gt; 21     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 22     &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 23      SAT</span></span>
-<span><span class="co">#&gt; 24      3DS</span></span>
-<span><span class="co">#&gt; 25      N64</span></span>
-<span><span class="co">#&gt; 26     SNES</span></span>
-<span><span class="co">#&gt; 27   Arcade</span></span>
-<span><span class="co">#&gt; 28       PC</span></span>
-<span><span class="co">#&gt; 29       PC</span></span>
-<span><span class="co">#&gt; 30       PC</span></span>
-<span><span class="co">#&gt; 31       PC</span></span>
-<span><span class="co">#&gt; 32      MSX</span></span>
-<span><span class="co">#&gt; 33       PC</span></span>
-<span><span class="co">#&gt; 34   Arcade</span></span>
-<span><span class="co">#&gt; 35       PC</span></span>
-<span><span class="co">#&gt; 36       PC</span></span>
-<span><span class="co">#&gt; 37      A26</span></span>
-<span><span class="co">#&gt; 38      A26</span></span></code></pre></div>
-<p>The extension of a file decides its reader. A recording under another
-extension is recognised by its content where its format has a signature,
-as most binary formats, FCEUX movies and BizHawk archives have. Doom
-demos, gz macros and a few text formats have none;
-<code>read_movie(path, format = "lmp")</code> names the format for them.
-A file whose extension contradicts its signature is refused, and the
-message says which format its content shows.</p>
-<p>Bundled samples live next to the FM2 one:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bundled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span>,</span>
-<span>                      pattern <span class="op">=</span> <span class="st">"^sample\\."</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">bundled</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "sample.bk2"  "sample.dtm"  "sample.fcm"  "sample.fm2"  "sample.gmv" </span></span>
-<span><span class="co">#&gt;  [6] "sample.lmp"  "sample.lsmv" "sample.m64"  "sample.pjm"  "sample.pxm" </span></span>
-<span><span class="co">#&gt; [11] "sample.smv"  "sample.vbm"</span></span></code></pre></div>
-<p>The button helpers work with a BK2 recording in the same way:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mv_bk2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample.bk2"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">mv_bk2</span></span>
-<span><span class="co">#&gt; &lt;replayr_movie [bk2] observations=3600 players=1 buttons=8 source=sample.bk2&gt;</span></span>
-<span><span class="co">#&gt; Header keys: MovieVersion, Platform, Core, GameName, Author, comment, controllerPorts, bk2NonStickPlayers, ...</span></span>
-<span><span class="co">#&gt; P1 active observations: dpad_right=900, dpad_left=900, dpad_down=900, dpad_up=900, start=6, select=4, b=900, a=450</span></span>
-<span><span class="fu"><a href="../reference/press_counts.html">press_counts</a></span><span class="op">(</span><span class="va">mv_bk2</span>, <span class="fl">1L</span><span class="op">)</span></span>
-<span><span class="co">#&gt; dpad_right  dpad_left  dpad_down    dpad_up      start     select          b </span></span>
-<span><span class="co">#&gt;        900        900        900        900          6          4        900 </span></span>
-<span><span class="co">#&gt;          a </span></span>
-<span><span class="co">#&gt;        450</span></span></code></pre></div>
-<p>This BK2 example records an NES controller. It therefore has the same
-eight control columns as the FM2 example, allowing their matrices to be
-compared without rearranging columns.</p>
+<p>An observation is a video frame in most console recordings, a tic of
+the game in a <em>Doom</em> demo, an event in some computer recordings,
+and a poll of the controller in others. <code><a href="../reference/observation_unit.html">observation_unit()</a></code>
+names it, and <code><a href="../reference/recording_info.html">recording_info()</a></code> reports the platform, the
+video standard, the frame rate and the number of rerecords under one
+name each, whatever the format calls them:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/observation_unit.html">observation_unit</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "frame"</span></span>
+<span><span class="fu"><a href="../reference/recording_info.html">recording_info</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   format platform video_standard  unit observations frame_rate</span></span>
+<span><span class="co">#&gt; 1    fm2      NES           NTSC frame         3600   60.09881</span></span>
+<span><span class="co">#&gt;   frame_rate_source duration rerecords</span></span>
+<span><span class="co">#&gt; 1          platform 59.90135         0</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="../reference/observation_time.html">observation_time</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1]  0.00000 59.88471</span></span></code></pre></div>
+<p><code><a href="../reference/observation_time.html">observation_time()</a></code> gives the time of every observation
+in seconds. It takes the times stored in the recording where there are
+any, as in libTAS, JPC-RR and openMSX recordings, and otherwise the
+frame rate of the console and its video standard;
+<code>frame_rate_source</code> says which. Where neither is known, no
+rate is assumed:
+<code>observation_time(movie, fallback_rate = 60)</code> names one, and
+controller polls, whose number per frame varies, have no time.</p>
 </div>
 <div class="section level2">
-<h2 id="analogue-sticks-and-numeric-channels">Analogue sticks and numeric channels<a class="anchor" aria-label="anchor" href="#analogue-sticks-and-numeric-channels"></a>
+<h2 id="sticks-mice-and-other-numeric-channels">Sticks, mice and other numeric channels<a class="anchor" aria-label="anchor" href="#sticks-mice-and-other-numeric-channels"></a>
 </h2>
-<p><code>analog_channels(movie, 1L)</code> preserves the numeric source
-channels, including X/Y axes, triggers, and supported peripheral values.
-Its columns are named by key, as those of <code><a href="../reference/player.html">player()</a></code> are: the
-X axis of the left stick is <code>left_x</code> in an M64, a DTM and a
-BizHawk recording alike. Only the names are shared; values keep the
-range and unit of their source. <code><a href="../reference/channel_layout.html">channel_layout()</a></code> lists the
-keys beside the labels of the recording:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"paper"</span>, <span class="st">"mouse-drag.bk2"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/channel_layout.html">channel_layout</a></span><span class="op">(</span><span class="fu"><a href="../reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span><span class="op">)</span></span>
+<p>Not every input is a button. <code><a href="../reference/analog_channels.html">analog_channels()</a></code> returns
+the numeric channels of a player, such as the axes of sticks, the
+movement of a mouse, touch positions or motion sensors, in the units of
+the recording. Their columns are named by key, so the X axis of a left
+stick is <code>left_x</code> in every format;
+<code><a href="../reference/channel_layout.html">channel_layout()</a></code> lists them beside the recording’s own
+labels. In this artificial recording of a Saturn mouse, the left button
+is held while the mouse moves:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mouse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"paper"</span>, <span class="st">"mouse-drag.bk2"</span>,</span>
+<span>  package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/channel_layout.html">channel_layout</a></span><span class="op">(</span><span class="va">mouse</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   column      key                   name</span></span>
 <span><span class="co">#&gt; 1      1 mouse_dx P1 Motion Left / Right</span></span>
-<span><span class="co">#&gt; 2      2 mouse_dy    P1 Motion Up / Down</span></span></code></pre></div>
+<span><span class="co">#&gt; 2      2 mouse_dy    P1 Motion Up / Down</span></span>
+<span><span class="va">held</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/player.html">player</a></span><span class="op">(</span><span class="va">mouse</span><span class="op">)</span><span class="op">[</span>, <span class="st">"a"</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/analog_channels.html">analog_channels</a></span><span class="op">(</span><span class="va">mouse</span><span class="op">)</span><span class="op">[</span><span class="va">held</span>, <span class="op">]</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      mouse_dx mouse_dy</span></span>
+<span><span class="co">#&gt; [1,]        1        0</span></span>
+<span><span class="co">#&gt; [2,]        1       -1</span></span>
+<span><span class="co">#&gt; [3,]        1        0</span></span></code></pre></div>
+<p>The common keys are:</p>
 <table class="table">
 <colgroup>
 <col width="50%">
@@ -672,8 +281,8 @@ keys beside the labels of the recording:</p>
 <code>left_x</code>, <code>left_y</code>, <code>right_x</code>,
 <code>right_y</code>
 </td>
-<td>Axes of the analogue sticks. The N64 stick, the 3DS Circle Pad and
-the Nunchuk stick are the left stick.</td>
+<td>Axes of the analogue sticks; the N64 stick, the 3DS Circle Pad and
+the Nunchuk stick are the left stick</td>
 </tr>
 <tr class="even">
 <td>
@@ -709,99 +318,45 @@ the Nunchuk stick are the left stick.</td>
 </tr>
 </tbody>
 </table>
-<p>Any other channel has the key formed from its own name, such as
-<code>tilt_x</code> for the BizHawk field <code>Tilt X</code>.</p>
-<p>The default <code>analog = "raw"</code> keeps numeric channels
-separate from digital button states. Choose a representation for each
-stick explicitly:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample.dtm"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
-<span><span class="va">movie</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">path</span>, analog <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>left <span class="op">=</span> <span class="st">"angle+magnitude"</span>, right <span class="op">=</span> <span class="st">"cardinal8"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/analog_channels.html">analog_channels</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span><span class="op">)</span> <span class="co"># original values in source units</span></span>
-<span><span class="co">#&gt;      left_trigger right_trigger left_x left_y right_x right_y</span></span>
-<span><span class="co">#&gt; [1,]            0             0    198    128     128     128</span></span>
-<span><span class="co">#&gt; [2,]            0             0    198    130     128     128</span></span>
-<span><span class="co">#&gt; [3,]            0             0    198    132     128     128</span></span>
-<span><span class="co">#&gt; [4,]            0             0    198    133     128     128</span></span>
-<span><span class="co">#&gt; [5,]            0             0    198    135     128     128</span></span>
-<span><span class="co">#&gt; [6,]            0             0    197    137     129     128</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/stick_channels.html">stick_channels</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span><span class="op">)</span> <span class="co"># selected angles, magnitude, and direction centres</span></span>
+<p>A stick can also become directions.
+<code>read_movie(analog = "cardinal8")</code> adds eight direction
+columns per stick to the buttons, <code>"cardinal4"</code> four, and
+<code>"angle"</code> and <code>"angle+magnitude"</code> add the stick’s
+direction in degrees and its distance from the centre to
+<code><a href="../reference/stick_channels.html">stick_channels()</a></code>. A pair such as
+<code>c(left = "angle+magnitude", right = "cardinal8")</code> treats the
+two sticks differently, and <code>deadzone</code> sets how far a stick
+must move before it counts:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sample.dtm"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
+<span><span class="va">gc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">dtm</span>, analog <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>left <span class="op">=</span> <span class="st">"angle+magnitude"</span>, right <span class="op">=</span> <span class="st">"cardinal8"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/stick_channels.html">stick_channels</a></span><span class="op">(</span><span class="va">gc</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      left_angle left_magnitude right_direction</span></span>
 <span><span class="co">#&gt; [1,]   0.000000      0.5468750              NA</span></span>
 <span><span class="co">#&gt; [2,]   1.636577      0.5470982              NA</span></span>
 <span><span class="co">#&gt; [3,]   3.270488      0.5477671              NA</span></span>
-<span><span class="co">#&gt; [4,]   4.085617      0.5482683              NA</span></span>
-<span><span class="co">#&gt; [5,]   5.710593      0.5496026              NA</span></span>
-<span><span class="co">#&gt; [6,]   7.431408      0.5436288              NA</span></span>
-<span><span class="fu"><a href="../reference/button_layout.html">button_layout</a></span><span class="op">(</span><span class="va">movie</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    column id        key mnemonic           name            kind</span></span>
-<span><span class="co">#&gt; 1       1  1 dpad_right        R          Right          button</span></span>
-<span><span class="co">#&gt; 2       2  2  dpad_left        L           Left          button</span></span>
-<span><span class="co">#&gt; 3       3  3  dpad_down        D           Down          button</span></span>
-<span><span class="co">#&gt; 4       4  4    dpad_up        U             Up          button</span></span>
-<span><span class="co">#&gt; 5       5  5      start        T          Start          button</span></span>
-<span><span class="co">#&gt; 6       6  7          b        B              B          button</span></span>
-<span><span class="co">#&gt; 7       7  8          a        A              A          button</span></span>
-<span><span class="co">#&gt; 8       8  9          x        x              X          button</span></span>
-<span><span class="co">#&gt; 9       9 10          y        y              Y          button</span></span>
-<span><span class="co">#&gt; 10     10 11         l1        p             L1          button</span></span>
-<span><span class="co">#&gt; 11     11 12         r1        q             R1          button</span></span>
-<span><span class="co">#&gt; 12     12 18          z        Z              Z          button</span></span>
-<span><span class="co">#&gt; 13     13 32    right_e        a  Right stick E right_direction</span></span>
-<span><span class="co">#&gt; 14     14 33   right_ne        b Right stick NE right_direction</span></span>
-<span><span class="co">#&gt; 15     15 34    right_n        c  Right stick N right_direction</span></span>
-<span><span class="co">#&gt; 16     16 35   right_nw        d Right stick NW right_direction</span></span>
-<span><span class="co">#&gt; 17     17 36    right_w        l  Right stick W right_direction</span></span>
-<span><span class="co">#&gt; 18     18 37   right_sw        m Right stick SW right_direction</span></span>
-<span><span class="co">#&gt; 19     19 38    right_s        o  Right stick S right_direction</span></span>
-<span><span class="co">#&gt; 20     20 39   right_se        r Right stick SE right_direction</span></span></code></pre></div>
-<p>The four options are <code>cardinal4</code>, <code>cardinal8</code>,
-<code>angle</code>, and <code>angle+magnitude</code>. A scalar applies
-to both sticks; a named left/right pair configures them independently.
-Cardinal modes add four or eight separate direction columns per present
-stick. Angle modes retain continuous directions in degrees: right 0, up
-90, left 180, down 270. A neutral angle is NA. Magnitude is the
-Euclidean length of centred, range-normalised X/Y axes; diagonal values
-can exceed one.</p>
-<p><code>deadzone</code> accepts a scalar or named left/right values in
-[0,1]. It is a radial threshold whose default follows the controller:
-0.125 for the sticks of Nintendo’s consoles and 0.25 for all others
-(<code><a href="../reference/read_movie.html">?read_movie</a></code> gives the reasons). A boundary between sectors
-selects the anticlockwise centre. DTM analogue triggers remain numeric
-unless <code>triggers = "digital"</code> is requested (threshold
-128).</p>
-<p>Stick conversion covers M64/GZM and BKM N64 axes, GameCube DTM,
-supported Wii extensions, analogue PSX PXM/PJM, CTM Circle Pad/C-stick
-polls, libTAS gamepads, and identified BK2 N64, PSX, Saturn 3D-pad, and
-3DS controllers. BK2 accounts for different Nyma and Octoshock
-conventions. A recognised calibration supplies the centre, range, and
-vertical orientation. Other numeric channels remain available through
-<code><a href="../reference/analog_channels.html">analog_channels()</a></code> in their source units; requesting stick
-conversion for an unknown calibration raises an error.</p>
-<p>BK2 N64 files may log Boolean stick overrides as well as numeric
-axes. The selected representation follows the emulator’s override
-precedence and version-specific range. Numeric log values remain
-unchanged; the Boolean source controls are retained in
-<code>movie$stick_overrides</code>.</p>
-<p>Use <code><a href="../reference/button_layout.html">button_layout()</a></code> to translate between a recording’s
-compact columns and stable control IDs. Choose <code>cardinal4</code>,
-<code>cardinal8</code>, <code>angle</code>, or
-<code>angle+magnitude</code> when the analysis needs derived stick
-representations; the default keeps raw X/Y.</p>
+<span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"^right_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu"><a href="../reference/player.html">player</a></span><span class="op">(</span><span class="va">gc</span><span class="op">)</span><span class="op">)</span>, value <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "right_e"  "right_ne" "right_n"  "right_nw" "right_w"  "right_sw" "right_s" </span></span>
+<span><span class="co">#&gt; [8] "right_se"</span></span></code></pre></div>
+<p>Numeric values keep the range and unit of their source; converting
+the counts of a Wii Remote’s motion sensors into physical units, for
+instance, needs the device’s calibration. The help page of
+<code><a href="../reference/read_movie.html">read_movie()</a></code> gives the defaults and their reasons.</p>
 </div>
 <div class="section level2">
-<h2 id="unassigned-controller-polls">Unassigned controller polls<a class="anchor" aria-label="anchor" href="#unassigned-controller-polls"></a>
+<h2 id="several-players-and-unassigned-polls">Several players and unassigned polls<a class="anchor" aria-label="anchor" href="#several-players-and-unassigned-polls"></a>
 </h2>
-<p>Multi-controller M64 and DTM files retain their ordered polls in an
-S3 object of class <code>replayr_poll_stream</code>. Each row has
-<code>port = NA</code> because the format stores no per-poll port label.
-Numeric channels, digital controls, commands, and original record bytes
-remain accessible. A verified repeating polling order can be supplied
-through <code>controller_order</code> when player assignment is
-needed.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"paper"</span>, <span class="st">"unassigned.dtm"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/polls.html">polls</a></span><span class="op">(</span><span class="fu"><a href="../reference/read_dtm.html">read_dtm</a></span><span class="op">(</span><span class="va">path</span>, analog <span class="op">=</span> <span class="st">"angle+magnitude"</span><span class="op">)</span><span class="op">)</span></span>
+<p>A recording can hold several players, and
+<code>player(movie, 2)</code> returns the second. Some formats, such as
+GameCube recordings with several controllers, store a sequence of
+controller polls without saying which port each poll came from. replayr
+then returns an object of class <code>replayr_poll_stream</code> instead
+of a movie, and <code><a href="../reference/polls.html">polls()</a></code> lists the polls with their port
+left unknown:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">polls_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"paper"</span>, <span class="st">"unassigned.dtm"</span>,</span>
+<span>  package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/polls.html">polls</a></span><span class="op">(</span><span class="fu"><a href="../reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">polls_path</span><span class="op">)</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   poll port dpad_right dpad_left dpad_down dpad_up start     b     a     x</span></span>
 <span><span class="co">#&gt; 1    1   NA      FALSE     FALSE     FALSE   FALSE FALSE FALSE  TRUE FALSE</span></span>
 <span><span class="co">#&gt; 2    2   NA      FALSE     FALSE     FALSE   FALSE FALSE  TRUE FALSE FALSE</span></span>
@@ -810,153 +365,54 @@ needed.</p>
 <span><span class="co">#&gt; 1 FALSE FALSE FALSE FALSE            0             0    128    128     128</span></span>
 <span><span class="co">#&gt; 2 FALSE FALSE FALSE FALSE           10            20    200    160     100</span></span>
 <span><span class="co">#&gt; 3 FALSE FALSE FALSE FALSE            0             0    128    128     128</span></span>
-<span><span class="co">#&gt;   right_y left_angle left_magnitude right_angle right_magnitude commands</span></span>
-<span><span class="co">#&gt; 1     128         NA      0.0000000          NA       0.0000000        0</span></span>
-<span><span class="co">#&gt; 2      80   23.96249      0.6155536    239.7436       0.4341389        0</span></span>
-<span><span class="co">#&gt; 3     128         NA      0.0000000          NA       0.0000000        0</span></span>
-<span><span class="co">#&gt;   is_connected get_origin</span></span>
-<span><span class="co">#&gt; 1         TRUE      FALSE</span></span>
-<span><span class="co">#&gt; 2         TRUE      FALSE</span></span>
-<span><span class="co">#&gt; 3         TRUE       TRUE</span></span></code></pre></div>
+<span><span class="co">#&gt;   right_y commands is_connected get_origin</span></span>
+<span><span class="co">#&gt; 1     128        0         TRUE      FALSE</span></span>
+<span><span class="co">#&gt; 2      80        0         TRUE      FALSE</span></span>
+<span><span class="co">#&gt; 3     128        0         TRUE       TRUE</span></span></code></pre></div>
+<p>When the order in which the controllers were polled is known, the
+argument <code>controller_order</code> assigns the polls to players.</p>
 </div>
 <div class="section level2">
-<h2 id="additional-input-devices-and-timing">Additional input devices and timing<a class="anchor" aria-label="anchor" href="#additional-input-devices-and-timing"></a>
+<h2 id="formats-and-files">Formats and files<a class="anchor" aria-label="anchor" href="#formats-and-files"></a>
 </h2>
-<p>Keyboard support includes libTAS, Hourglass, JPC-RR, openMSX, and the
-relevant BizHawk cores. Mouse coordinates and movement come from libTAS,
-JPC-RR, openMSX, BizHawk, or Dustmod; Hourglass records Windows
-virtual-key states, including mouse-button virtual keys when used.
-DS/DSi and 3DS recordings add touch input, and Dolphin Wii reports add
-pointing and motion channels. <code><a href="../reference/analog_channels.html">analog_channels()</a></code> retains
-numeric fields in their original units. Source timing fields accompany
-event logs, so an event count should not be converted to seconds using a
-video rate. <code><a href="../reference/observation_unit.html">observation_unit()</a></code> names the unit of an
-imported recording, and the reader help pages describe it.</p>
-<p>Formats also name platform, video standard, frame rate and rerecord
-count differently. <code><a href="../reference/recording_info.html">recording_info()</a></code> reports them under one
-name each, and <code><a href="../reference/observation_time.html">observation_time()</a></code> gives the time of every
-observation in seconds:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/recording_info.html">recording_info</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   format platform video_standard  unit observations frame_rate</span></span>
-<span><span class="co">#&gt; 1    fm2      NES           NTSC frame         3600   60.09881</span></span>
-<span><span class="co">#&gt;   frame_rate_source duration rerecords</span></span>
-<span><span class="co">#&gt; 1          platform 59.90135         0</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="../reference/observation_time.html">observation_time</a></span><span class="op">(</span><span class="va">mv</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1]  0.00000 59.88471</span></span></code></pre></div>
-<p>The frame rate is read from the recording where it states one.
-Otherwise it is the nominal rate of the console and video standard, as
-<code>frame_rate_source</code> says. No rate is assumed where neither is
-known; <code>fallback_rate = 60</code> or <code>50</code> names one for
-such a recording. libTAS, JPC-RR and openMSX recordings carry their own
-times, which are used as they are. Controller polls have no time in the
-file, so <code><a href="../reference/observation_time.html">observation_time()</a></code> returns <code>NA</code> for
-them.</p>
-<p>LSMV recordings can contain several input observations per video
-frame. The reader retains every row, so
-<code>n_observations(movie)</code> counts input observations and
-<code>movie$header$frameCount</code> counts video-frame starts.
-<code>movie$subframes</code> provides <code>source_frame</code>,
-<code>subframe</code>, and <code>frame_start</code> for relating each
-input to its video frame, along with source-line and reset information.
-Extended SNES buttons and the full SNES-side layout of Super Game Boy
-recordings remain available. A declared Super Scope supplies trigger,
-cursor, turbo, and pause states and signed
-<code>aim_x</code>/<code>aim_y</code> coordinates in source units.</p>
-<p>openMSX events distinguish relative trackball and paddle movement
-from absolute touchpad coordinates. JoyMega buttons, JoyHandle buttons
-and wheel values, and the Arkanoid dial retain their recorded
-identities. Gunstick and Terminator Laser events provide trigger and
-light-sensor states, with the complete port status in numeric channels.
-Their light sensors use different polarities; these events describe a
-detected screen response rather than an aim position. The original
-<code>peripheral-events.omr</code> example exercises these
-distinctions.</p>
-<p>Controls outside the core gamepad registry have qualified textual
-IDs. For example, a KeySym and a Windows virtual-key code retain
-different names. <code>button_layout(movie)</code> identifies both the
-core controls and those additional keys. <code><a href="../reference/player.html">player()</a></code>,
-<code><a href="../reference/press_counts.html">press_counts()</a></code>, <code><a href="../reference/align_buttons.html">align_buttons()</a></code> and
-<code><a href="../reference/polls.html">polls()</a></code> all name their columns by key; the
-<code>mnemonic</code> column is a compact code for writing a controller
-state as text, and may contain several characters.</p>
-<p>For CTM and mixed-controller DTM, <code><a href="../reference/polls.html">polls()</a></code> exposes the
-device and observation flags beside the inputs. Use those flags to
-select observations of the device being analysed. The
-<code>poll_bytes</code> component retains source records for checking
-fields that require additional emulator context.</p>
+<p>replayr reads 33 recording formats under 37 file extensions.
+<code><a href="../reference/supported_formats.html">supported_formats()</a></code> lists them; with
+<code>details = TRUE</code> it names the reader and the emulator of
+each, and the platform where a format serves one console:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/supported_formats.html">supported_formats</a></span><span class="op">(</span>details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   extension structure    reader         emulator platform</span></span>
+<span><span class="co">#&gt; 1      .fm2      .fm2  read_fm2            FCEUX      NES</span></span>
+<span><span class="co">#&gt; 2      .bk2      .bk2  read_bk2          BizHawk     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3      .fcm      .fcm  read_fcm             FCEU      NES</span></span>
+<span><span class="co">#&gt; 4     .lsmv     .lsmv read_lsmv            lsnes     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5      .gmv      .gmv  read_gmv             Gens      GEN</span></span>
+<span><span class="co">#&gt; 6      .vbm      .vbm  read_vbm VisualBoyAdvance     &lt;NA&gt;</span></span></code></pre></div>
+<p>The extension of a file decides its reader. A recording under another
+extension is recognised by its content where its format has a signature,
+as most binary formats do, and <code><a href="../reference/recording_format.html">recording_format()</a></code> says
+which files of a folder are recordings. A format without a signature,
+such as a <em>Doom</em> demo, is named with
+<code>read_movie(path, format = "lmp")</code>. A download that bundles
+several recordings in a ZIP archive is listed with
+<code><a href="../reference/movie_members.html">movie_members()</a></code>, and one of its recordings read with
+<code>read_movie(path, member = )</code>. Very long BizHawk recordings
+can be processed in parts with <code><a href="../reference/read_bk2_chunks.html">read_bk2_chunks()</a></code>, which
+hands each part to a function of the analyst’s.</p>
 </div>
 <div class="section level2">
-<h2 id="a-mouse-drag-and-wii-motion-fields">A mouse drag and Wii motion fields<a class="anchor" aria-label="anchor" href="#a-mouse-drag-and-wii-motion-fields"></a>
+<h2 id="further-guides">Further guides<a class="anchor" aria-label="anchor" href="#further-guides"></a>
 </h2>
-<p>The artificial Saturn mouse recording moves the pointer, holds the
-left button while dragging for 60 observations, releases it, and moves
-back. Its two numeric fields are relative motion per observation. The
-active rows can be inspected alongside the movement values:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"paper"</span>, <span class="st">"mouse-drag.bk2"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
-<span><span class="va">mouse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
-<span><span class="va">left</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/player.html">player</a></span><span class="op">(</span><span class="va">mouse</span><span class="op">)</span><span class="op">[</span>, <span class="st">"a"</span><span class="op">]</span></span>
-<span><span class="va">movement</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/analog_channels.html">analog_channels</a></span><span class="op">(</span><span class="va">mouse</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>observation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">left</span><span class="op">)</span>, <span class="va">movement</span><span class="op">[</span><span class="va">left</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   observation mouse_dx mouse_dy</span></span>
-<span><span class="co">#&gt; 1          61        1        0</span></span>
-<span><span class="co">#&gt; 2          62        1       -1</span></span>
-<span><span class="co">#&gt; 3          63        1        0</span></span>
-<span><span class="co">#&gt; 4          64        1       -1</span></span>
-<span><span class="co">#&gt; 5          65        1        0</span></span>
-<span><span class="co">#&gt; 6          66        1       -1</span></span></code></pre></div>
-<p>The Wii example contains a pointing sweep with A held, an
-acceleration pulse, and changes in the three MotionPlus axes. Selected
-observations show how these fields vary independently:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"paper"</span>, <span class="st">"wii-motion.dtm"</span>, package <span class="op">=</span> <span class="st">"replayr"</span><span class="op">)</span></span>
-<span><span class="va">wii</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_movie.html">read_movie</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
-<span><span class="va">motion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/analog_channels.html">analog_channels</a></span><span class="op">(</span><span class="va">wii</span><span class="op">)</span></span>
-<span><span class="va">motion</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">61</span>, <span class="fl">121</span>, <span class="fl">141</span><span class="op">)</span>,</span>
-<span>       <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ir1_x"</span>, <span class="st">"ir1_y"</span>, <span class="st">"accel_x"</span>, <span class="st">"gyro_pitch"</span>, <span class="st">"gyro_roll"</span>,</span>
-<span>         <span class="st">"gyro_yaw"</span>, <span class="st">"gyro_yaw_slow"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;      ir1_x ir1_y accel_x gyro_pitch gyro_roll gyro_yaw gyro_yaw_slow</span></span>
-<span><span class="co">#&gt; [1,]   256   384     512       8192      8192     8192             1</span></span>
-<span><span class="co">#&gt; [2,]   256   384     512       8192      8192     8600             1</span></span>
-<span><span class="co">#&gt; [3,]   728   384     512       8192      8192     8192             1</span></span>
-<span><span class="co">#&gt; [4,]   728   384     592       8352      8112     8192             1</span></span></code></pre></div>
-<p><code>ir1_x</code> and <code>ir1_y</code> are coordinates for the
-first IR camera point. The value pair 1023, 1023, with size 15, denotes
-an absent point. MotionPlus pitch, roll, and yaw fields are 14-bit
-counts; the accompanying <code>*_slow</code> flags identify their range.
-Wii acceleration channels contain decoded device counts, with the
-recorded nine-bit Y/Z values expanded according to Dolphin’s convention.
-Converting these values to physical units requires device calibration.
-Estimating orientation also requires observation timing and a method for
-combining the motion measurements.</p>
-<p>In real recordings a report may update only some devices. Wii poll
-metadata gives <code>report_id</code>, <code>valid_report</code>, and,
-where relevant, <code>core_present</code>. Unobserved numeric fields use
-<code>NA</code>. Mixed GameCube/Wii streams also identify
-<code>observed_gc</code> and <code>observed_wii</code>. Unknown reports
-have <code>valid_report = FALSE</code> and retain their payloads in
-<code>poll_bytes</code>. A known device family can still have an unknown
-physical port when several ports of that family are enabled.</p>
-</div>
-<div class="section level2">
-<h2 id="download-archives-and-long-recordings">Download archives and long recordings<a class="anchor" aria-label="anchor" href="#download-archives-and-long-recordings"></a>
-</h2>
-<p><code>movie_members(path)</code> lists recognised input recordings
-inside a ZIP download. If the archive contains several movies, select
-one explicitly with
-<code>read_movie(path, member = "the-recording.fm2")</code>. Archive
-extraction verifies checksums and uses a private temporary
-directory.</p>
-<p><code>read_bk2_chunks(path, FUN)</code> reads a long BizHawk input
-log in bounded chunks. The callback receives the same S3 representation
-as <code><a href="../reference/read_bk2.html">read_bk2()</a></code>, with source observation positions in the
-header. The input log is verified and extracted once, requiring
-temporary disk space for the expanded log. The callback can return
-per-chunk counts or save results elsewhere without retaining the
-complete input array in memory. The ordinary BK2 and LSMV readers use a
-256 MiB default limit on the expanded log, with an explicit
-<code>max_input_bytes</code> override.</p>
+<ul>
+<li>
+<code><a href="../articles/compatibility.html">vignette("compatibility", package = "replayr")</a></code> lists
+the platforms, formats, versions and devices that replayr reads, the
+rules for the IDs of controls, and the recordings used to check
+them.</li>
+<li>The pisa package analyses the input that replayr reads: it maps
+controls to the actions of a game and compares players with the methods
+of stylometry.</li>
+</ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
