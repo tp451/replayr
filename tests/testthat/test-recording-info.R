@@ -35,6 +35,10 @@ test_that("an NES recording is placed on the console's frame rate", {
   info <- recording_info(read_movie(pal))
   expect_identical(info$video_standard, "PAL")
   expect_equal(info$frame_rate, 50.00697796826829)
+  # FCEUX plays a movie without a palFlag line as NTSC.
+  writeLines(c("version 3", "port0 1", "port1 0", "port2 0", "|0|.......A|||", "|0|........|||"), pal)
+  info <- recording_info(read_movie(pal))
+  expect_identical(c(info$video_standard, info$frame_rate_source), c("NTSC", "platform"))
 })
 test_that("the nominal rates are those BizHawk documents", {
   rates <- replayr:::.NOMINAL_FRAME_RATES

@@ -91,10 +91,13 @@ count under one name each, whatever the format calls them, and
 
 ## Documentation
 
-Open `vignette("replayr", package = "replayr")` for examples of button summaries,
-controller alignment, mouse movement, and Wii motion. Reader help pages describe
-format-specific options; `?read_bk2_chunks` explains how to process large BK2
-recordings in chunks.
+`vignette("replayr", package = "replayr")` reads a recording, looks at the
+input of one player, identifies its controls and the time of every
+observation, and shows sticks, mice, several players and the formats replayr
+reads. `vignette("compatibility", package = "replayr")` is the reference: the
+platforms, formats, versions and devices, and the rules for the IDs of
+controls. Reader help pages describe format-specific options;
+`?read_bk2_chunks` explains how to process large BK2 recordings in chunks.
 
 ## Author and license
 

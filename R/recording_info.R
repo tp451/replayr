@@ -69,6 +69,10 @@
   flag <- .header_value(header, c("palFlag", "PAL", "isPal"))
   if (!is.null(flag)) {
     standard <- if (tolower(as.character(flag)) %in% c("1", "true")) "PAL" else "NTSC"
+  } else if (format %in% c("fm2", "fm3")) {
+    # FCEUX plays a movie without a palFlag line as NTSC: the flag defaults
+    # to false (MovieData in movie.cpp) and selects the video system on load.
+    standard <- "NTSC"
   } else if (format %in% c("bk2", "bkm", "tas", "tasproj", "gbmv") &&
     "PAL" %in% names(.NOMINAL_FRAME_RATES[[platform %||% ""]])) {
     # BizHawk writes its PAL entry for PAL recordings only.

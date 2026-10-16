@@ -812,6 +812,39 @@
   }
   list(inputs = inputs, keys = keys, labels = labels, kinds = kinds, override = override)
 }
+# IntelliHawk logs the disc of its analogue controller as two axes from -127
+# to 127 and gives the console one of the disc's sixteen directions
+# (CalcDirection in BizHawk's IntellivisionControllers.cs): none within 50 of
+# the centre, Y negated so that -127 is up, and otherwise the nearest of the
+# sixteen, counted anticlockwise from east. The directions become the controls
+# of a disc that the log holds as sixteen buttons; the axes remain numeric
+# channels.
+.bk2_intv_disc_directions <- function(entries, values) {
+  directions <- c("e", "ene", "ne", "nne", "n", "nnw", "nw", "wnw",
+    "w", "wsw", "sw", "ssw", "s", "sse", "se", "ese")
+  numeric <- vapply(entries, function(e) e$numeric, logical(1))
+  keys <- vapply(entries, function(e) e$key, character(1))
+  ports <- vapply(entries, function(e) e$port, integer(1))
+  out <- list(entries = list(), values = list())
+  for (p in unique(ports[numeric & keys == "disc x"])) {
+    x <- which(numeric & keys == "disc x" & ports == p)
+    y <- which(numeric & keys == "disc y" & ports == p)
+    if (length(x) != 1L || length(y) != 1L) next
+    x <- values[[x]]
+    y <- -values[[y]]
+    active <- x * x + y * y >= 50^2
+    sector <- round(atan2(y, x) * 8 / pi) %% 16
+    for (k in seq_along(directions)) {
+      out$entries[[length(out$entries) + 1L]] <- list(
+        name = sprintf("P%d %s", p, toupper(directions[k])), key = directions[k],
+        port = p, numeric = FALSE, system = FALSE, group = NA_integer_, shared = FALSE,
+        identity = paste0("intv_disc_", directions[k]), kind = "button"
+      )
+      out$values[[length(out$values) + 1L]] <- active & sector == k - 1L
+    }
+  }
+  out
+}
 # The numeric fields of each controller, under the names of the log.
 .bk2_named_channels <- function(entries, values, ports, n) {
   raw <- .empty_analog(n, length(ports))
@@ -896,7 +929,14 @@
   }, logical(1)))
   header$sharedInputControls <- vapply(entries[vapply(entries, function(e) e$shared, logical(1))], function(e) e$name,
     character(1))
-  buttons <- .bk2_named_buttons(entries, values, ports, n, platform)
+  button_entries <- entries
+  button_values <- values
+  if (platform == "INTV") {
+    disc <- .bk2_intv_disc_directions(entries, values)
+    button_entries <- c(entries, disc$entries)
+    button_values <- c(values, disc$values)
+  }
+  buttons <- .bk2_named_buttons(button_entries, button_values, ports, n, platform)
   raw <- .bk2_named_channels(entries, values, ports, n)
   if (platform == "PSX") header <- .bk2_check_psx_axes(raw, ports, header)
   system <- .bk2_named_system(entries, values, n)

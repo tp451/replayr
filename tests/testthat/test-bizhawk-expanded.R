@@ -57,6 +57,37 @@ test_that("the sixteen disc directions use the eight directions of the left stic
   expect_setequal(keys_at(at("intv_disc_wsw")), c("left_sw", "left_w"))
   expect_true(all(c("start", "select", "numbered_0") %in% layout$key))
 })
+test_that("a disc logged as two axes gives the directions the console reads", {
+  root <- tempfile("intv-axes-")
+  dir.create(root)
+  on.exit(unlink(root, recursive = TRUE))
+  writeLines(c("Platform INTV", "Core IntelliHawk", "emuVersion Version 2.3.0"),
+    file.path(root, "Header.txt"))
+  # Centre, right, up (negative Y), down, inside the deadzone of 50, up and
+  # right at once, and a direction between north and north-east.
+  x <- c(0, 127, 0, 0, 30, 127, 40)
+  y <- c(0, 0, -127, 127, -30, -127, -127)
+  rows <- sprintf("|..|%5d,%5d,...|", x, y)
+  writeLines(c("[Input]", "LogKey:#Power|Reset|#P1 Disc X|P1 Disc Y|P1 L|P1 R|P1 Top|",
+    rows, "[/Input]"), file.path(root, "Input Log.txt"))
+  path <- tempfile(fileext = ".bk2")
+  on.exit(unlink(path), add = TRUE)
+  zip::zip(path, c("Header.txt", "Input Log.txt"), root = root, compression_level = 0L)
+  m <- read_bk2(path)
+  expect_equal(unname(analog_channels(m)[, 2L]), y)
+  held <- player(m)
+  direction <- function(row) colnames(held)[held[row, ] & startsWith(colnames(held), "left_")]
+  expect_length(direction(1), 0L)
+  expect_identical(direction(2), "left_e")
+  expect_identical(direction(3), "left_n")
+  expect_identical(direction(4), "left_s")
+  expect_length(direction(5), 0L)
+  expect_identical(direction(6), "left_ne")
+  expect_setequal(direction(7), c("left_n", "left_ne"))
+  source <- m$source_layout
+  expect_equal(sum(startsWith(source$key, "intv_disc_")), 16L)
+  expect_identical(which(m$source_inputs[, 1L, match("intv_disc_nne", source$key)]), 7L)
+})
 test_that("Virtual Boy's two pads remain separate digital controls", {
   m <- read_bk2(expanded_bizhawk("dual-digital-pad.bk2"))
   keys <- button_layout(m)$key

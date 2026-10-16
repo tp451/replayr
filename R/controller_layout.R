@@ -145,7 +145,8 @@
 #' set of their source. The Intellivision disc has the direction IDs of
 #' the left stick: one for each of its eight main directions, and the two
 #' neighbours together for a direction between them, such as N and NE for
-#' NNE. Keypad Star and Pound are Select and Start, like Clear and Enter in
+#' NNE. A disc that a core logs as two axes has the directions the console
+#' reads from them. Keypad Star and Pound are Select and Start, like Clear and Enter in
 #' the same places. On the Channel F stick, forward and back are Up and
 #' Down, the twist is L1 and R1, pushing down is A and pulling up is B. A
 #' mouse wheel turned up or down is C-Up or C-Down. A touch on a screen or
