@@ -190,6 +190,15 @@
     identical(controls[["NesLeftPort"]], "ControllerNES") &&
     identical(controls[["NesRightPort"]], "UnpluggedNES")) 2L else integer()
 }
+# BizHawk writes the hash of the game under the key SHA1 whatever it is.
+# Several cores write an MD5 there (Genesis, PC Engine, Nintendo DS and
+# others), old Master System cores the CRC32 of the ROM, and the PlayStation
+# core its own CRC32 of part of the disc. The number of hexadecimal digits
+# tells them apart; any other value, such as N/A, is no hash.
+.bizhawk_hash_kind <- function(hash) {
+  if (!grepl("^[0-9A-Fa-f]+$", hash)) return("")
+  switch(as.character(nchar(hash)), "40" = "SHA1", "32" = "MD5", "8" = "CRC32", "")
+}
 # Read BK2 metadata independently of the input log.
 .bk2_archive_info <- function(path) {
   if (!.is_zip_archive(path))
@@ -217,6 +226,7 @@
       }
     }
   }
+  if (!is.null(header$SHA1)) header$SHA1Kind <- .bizhawk_hash_kind(header$SHA1)
   platform <- toupper(if (is.null(header$Platform)) "" else header$Platform)
   sync_member <- .bk2_find_member(zip_names, "SyncSettings.json")
   if (platform %in% c("NES", "FDS") && !is.na(sync_member)) {

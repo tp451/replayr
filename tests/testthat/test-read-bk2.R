@@ -191,3 +191,30 @@ test_that("Octoshock follows its byte cast rather than clamping logged axes", {
     "outside declared encoding"
   )
 })
+test_that("read_bk2() says which hash BizHawk wrote under SHA1", {
+  # Older archives name their members without .txt, as here.
+  bk2 <- function(sha1) {
+    directory <- tempfile("bk2-")
+    dir.create(directory)
+    on.exit(unlink(directory, recursive = TRUE))
+    writeLines(c("MovieVersion BizHawk v2.0", "Platform GEN", paste("SHA1", sha1)), file.path(directory, "Header"))
+    writeLines(c("[Input]", "LogKey:#P1 Up|P1 Down|", "|..|", "|U.|", "[/Input]"), file.path(directory, "Input Log"))
+    path <- tempfile(fileext = ".bk2")
+    zip::zipr(path, c("Header", "Input Log"), root = directory)
+    path
+  }
+  cases <- c(
+    "6DB8FA65755DB86438ADA3D90F4C39CC288DCF84" = "SHA1",
+    "5E332FBFC1E0FC74223D2E73271CE650" = "MD5",
+    "838837D4" = "CRC32",
+    "N/A" = ""
+  )
+  for (sha1 in names(cases)) {
+    path <- bk2(sha1)
+    movie <- read_bk2(path)
+    unlink(path)
+    expect_identical(movie$header$SHA1, sha1)
+    expect_identical(movie$header$SHA1Kind, cases[[sha1]])
+    expect_identical(n_observations(movie), 2L)
+  }
+})

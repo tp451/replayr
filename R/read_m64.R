@@ -11,6 +11,9 @@
 #   0x015        u8  controller count
 #   0x018-0x01B  u32 number of input samples
 #   0x0C4-0x0E3  ROM internal name (32 bytes ASCII, NUL-padded)
+#   0x0E4-0x0E7  CRC1 of the ROM header, in the ROM's byte order
+#   0x0E8        country code of the ROM (ASCII, such as E or J)
+#   0x0E9        version of the ROM
 #   0x222-0x2FF  author (UTF-8)
 #   0x300-0x3FF  description (256 bytes)
 #   0x400+       input data: 4 bytes per input sample
@@ -153,6 +156,10 @@
     }
   }
   rom_name <- .read_cstring(data, 0x0C4L, 32L)
+  # Mupen64 copies the country code and the version byte that follows it in
+  # the ROM header; a file without a country code leaves both empty.
+  country <- as.integer(data[0x0E9L])
+  has_country <- country > 0x20L && country < 0x7FL
   author <- .read_cstring(data, 0x222L, 222L)
   header <- list(
     "_format" = "m64",
@@ -175,6 +182,9 @@
       "caller-supplied repeating order; not stored in M64" else "single enabled controller",
     observationUnit = if (length(controller_order) > 1L) "controller polling cycle" else "controller poll",
     romName = rom_name,
+    romHeaderCRC = .hex_bytes(data, 0x0E4L, 4L),
+    romCountry = if (has_country) intToUtf8(country) else "",
+    romVersion = if (has_country) as.character(as.integer(data[0x0EAL])) else "",
     author = author
   )
   mv <- .new_movie(

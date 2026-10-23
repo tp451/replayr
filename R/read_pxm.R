@@ -5,7 +5,7 @@
 #   0x00  magic "PXM "       0x04  version (2)
 #   0x0C  movie flags        0x0E/0x0F controller types for ports 1/2
 #   0x10  frame count        0x14 rerecord count
-#   0x2C  controller-data offset
+#   0x28  CD-ROM ID offset   0x2C controller-data offset
 #   0x30  author byte length 0x34 author bytes
 #
 # Each frame contains one record per configured controller followed by one
@@ -127,6 +127,7 @@
     reservedDigitalPadBitCounts = reserved_digital_bits,
     rerecordCount = as.character(rerec),
     controllerDataOffset = as.character(controller_data_offset),
+    cdromIds = .psx_cdrom_ids(data),
     author = author
   )
   .new_movie(

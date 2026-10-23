@@ -182,3 +182,24 @@ test_that("M64 retains surplus bytes beyond its declared samples", {
     expect_equal(unname(analog_channels(mv)), matrix(c(64, -64, 0, 127), nrow = 2L, byrow = TRUE))
   }
 })
+test_that("M64 keeps the header CRC, country code and version of the ROM", {
+  tf <- .mk_m64(matrix(0L, 1L, 4L))
+  on.exit(unlink(tf))
+  bytes <- readBin(tf, "raw", n = file.info(tf)$size)
+  bytes[0xC4 + 1:7] <- charToRaw("Kirby64")
+  # Kirby 64 (USA): CRC1 46039FB4 in the ROM's byte order, country E, and
+  # a version byte after it.
+  bytes[0xE4 + 1:6] <- as.raw(c(0x46, 0x03, 0x9f, 0xb4, 0x45, 0x01))
+  writeBin(bytes, tf)
+  h <- read_m64(tf)$header
+  expect_identical(h$romName, "Kirby64")
+  expect_identical(h$romHeaderCRC, "46039fb4")
+  expect_identical(h$romCountry, "E")
+  expect_identical(h$romVersion, "1")
+  # A file without a country code has neither field.
+  bytes[0xE8 + 1] <- as.raw(0)
+  writeBin(bytes, tf)
+  h <- read_m64(tf)$header
+  expect_identical(c(h$romCountry, h$romVersion), c("", ""))
+  expect_identical(h$romHeaderCRC, "46039fb4")
+})

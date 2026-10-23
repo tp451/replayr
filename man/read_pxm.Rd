@@ -64,6 +64,8 @@ Digital columns are compact; \code{\link[=button_layout]{button_layout()}} gives
 Cross, Circle, Triangle and Square keep their names and have the IDs of
 the SNES buttons in the same places: B, A, X and Y.
 Numeric source channels are always retained in \code{\link[=analog_channels]{analog_channels()}}.
+\code{header$cdromIds} lists the IDs of the discs played, in the order they
+were inserted, as PCSX stores them (such as \code{"SLUS00067"}).
 }
 \examples{
 movie <- read_pxm(system.file("extdata", "semantic", "semantic-onehot.pxm", package = "replayr"))

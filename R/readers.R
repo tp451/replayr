@@ -53,6 +53,12 @@ read_fm2 <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", al
 #' any other log without a LogKey raises an error.
 #' A digital control is held unless its character is `.`, as BizHawk reads
 #' it; the letter written there is a convention.
+#'
+#' BizHawk writes the hash of the game under `header$SHA1`, but several cores
+#' write an MD5 or a CRC32 there. `header$SHA1Kind` says which it is:
+#' `"SHA1"`, `"MD5"` or `"CRC32"`, and `""` for a value that is no hash,
+#' such as `"N/A"`. The MD5 and CRC32 of a disc are BizHawk's hashes of part
+#' of the disc, not those of an image file.
 #' @inheritParams read_movie
 #' @param max_input_bytes Maximum expanded input-log size for a full import,
 #'   in bytes. The default is `256 * 1024^2`. Increase this explicitly when
@@ -181,6 +187,13 @@ read_gmv <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", al
 #' word that lie outside the layout, with their original values: 1024 and
 #' 2048 mark a reset (old timing, and the timing used since format version
 #' 1.1), and 4096 to 32768 are the deprecated motion-sensor bits.
+#'
+#' The header identifies the ROM by its internal title (`header$romName`)
+#' and its header checksum (`header$romHeaderChecksum`), and adds the global
+#' checksum of a Game Boy ROM (`header$romGlobalChecksum`) or the game code
+#' of a Game Boy Advance ROM (`header$romGameCode`, such as `"A2CE"`). In
+#' place of the global checksum, a Game Boy Advance recording holds the
+#' checksum of the BIOS, in `header$biosChecksum`.
 #' @inheritParams read_movie
 #' @return A [replayr_movie] with compact digital columns and selected stick fields.
 #' @export
@@ -211,6 +224,12 @@ read_vbm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", al
 #' Import stops at the declared sample count, as Mupen playback does. Legacy
 #' writers can leave an extra terminal record or an older file suffix; these
 #' bytes remain in `source_tail`.
+#'
+#' The header identifies the ROM by its internal name (`header$romName`),
+#' the CRC1 of its header (`header$romHeaderCRC`, `"46039fb4"` for the North
+#' American *Kirby 64: The Crystal Shards*), its country code
+#' (`header$romCountry`, such as `"E"` for North America and `"J"` for
+#' Japan) and its version (`header$romVersion`).
 #'
 #' @param controller_order Optional sequence of distinct enabled controller
 #'   ports (1--4) in an externally verified repeating polling order. `NULL`
@@ -247,6 +266,11 @@ read_m64 <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", al
 #' when that count is larger and the samples are stored, all of them are
 #' returned. Bytes after the declared range are left unread and counted in
 #' `header$unusedTrailingBytes`.
+#'
+#' `header$romCRC32` and `header$romName` hold the CRC32 of the ROM and its
+#' internal name, as Snes9x stores them before the savestate; recordings of
+#' early Snes9x versions leave both empty. Japanese names keep their
+#' katakana.
 #' @inheritParams read_movie
 #' @return A [replayr_movie] with compact digital columns and selected stick fields.
 #' @export
@@ -267,6 +291,8 @@ read_smv <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", al
 #' Cross, Circle, Triangle and Square keep their names and have the IDs of
 #' the SNES buttons in the same places: B, A, X and Y.
 #' Numeric source channels are always retained in [analog_channels()].
+#' `header$cdromIds` lists the IDs of the discs played, in the order they
+#' were inserted, as PCSX stores them (such as `"SLUS00067"`).
 #' @inheritParams read_movie
 #' @return A [replayr_movie] with compact digital columns and selected stick fields.
 #' @export
@@ -293,6 +319,8 @@ read_pxm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", al
 #' Cross, Circle, Triangle and Square keep their names and have the IDs of
 #' the SNES buttons in the same places: B, A, X and Y.
 #' Numeric source channels are always retained in [analog_channels()].
+#' `header$cdromIds` lists the IDs of the discs played, in the order they
+#' were inserted, as PSXjin stores them (such as `"SLUS00067"`).
 #' @inheritParams read_movie
 #' @return A [replayr_movie] with compact digital columns and selected stick fields.
 #' @export
@@ -316,6 +344,8 @@ read_pjm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", al
 #' their signed difference in `header$pollCountDifference`. Dolphin uses the
 #' input count as a statistic, so differences remain metadata.
 #' `header$frameCount` retains the separate video-frame count.
+#' `header$romId` is the game ID of the disc, such as `"GALE01"`, and
+#' `header$romMD5` the MD5 of the disc image, where Dolphin computed one.
 #'
 #' Zelda Edition extends each poll with a loading flag, a Tingle Tuner event
 #' code, and Link's X/Z coordinates used by the emulator to detect desyncs.
@@ -770,6 +800,8 @@ read_omr <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", al
 #' Legacy BizHawk text recordings.
 #' Digital controls have compact columns with stable identities. Numeric source
 #' fields remain available through [analog_channels()].
+#' As in [read_bk2()], `header$SHA1Kind` says whether the hash under
+#' `header$SHA1` is a SHA1, an MD5 or a CRC32.
 #' @inheritParams read_movie
 #' @return An imported recording with header metadata and original input fields.
 #' @export
@@ -941,6 +973,7 @@ read_gzm <- function(path, analog = "raw", deadzone = NULL, triggers = "raw", al
 #' counts remain in `chapter_offsets` and the header. A header frame-count
 #' mismatch produces a warning, with complete stored frames retained. The
 #' header also preserves the PAL flag and any reset after the last frame.
+#' `header$romCRC32` is the CRC32 that ZSNES computed for the ROM.
 #' Mouse and Super Scope layouts require separate peripheral decoding.
 #' @inheritParams read_movie
 #' @return A [replayr_movie] with compact digital columns and source metadata.

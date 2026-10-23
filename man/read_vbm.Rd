@@ -71,6 +71,13 @@ keeps the header's count. \code{commands} retains the bits of each controller
 word that lie outside the layout, with their original values: 1024 and
 2048 mark a reset (old timing, and the timing used since format version
 1.1), and 4096 to 32768 are the deprecated motion-sensor bits.
+
+The header identifies the ROM by its internal title (\code{header$romName})
+and its header checksum (\code{header$romHeaderChecksum}), and adds the global
+checksum of a Game Boy ROM (\code{header$romGlobalChecksum}) or the game code
+of a Game Boy Advance ROM (\code{header$romGameCode}, such as \code{"A2CE"}). In
+place of the global checksum, a Game Boy Advance recording holds the
+checksum of the BIOS, in \code{header$biosChecksum}.
 }
 \examples{
 movie <- read_vbm(system.file("extdata", "sample.vbm", package = "replayr"))

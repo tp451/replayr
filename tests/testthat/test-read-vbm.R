@@ -58,3 +58,38 @@ test_that("replayr:::.decode_vbm() reads GBA shoulder buttons from system flags"
   expect_true(mv$inputs[1L, 1L, 11L])
   expect_equal(mv$header$isGBA, "1")
 })
+# The 20 bytes from 0x24: title, minor version, header checksum, a u16 and
+# four bytes of game code.
+.vbm_rom_info <- function(tf, title, check, u16_bytes, code) {
+  bytes <- readBin(tf, "raw", n = file.info(tf)$size)
+  bytes[0x24 + 1:20] <- c(charToRaw(title), raw(12L - nchar(title)), as.raw(c(1L, check, u16_bytes)), code)
+  writeBin(bytes, tf)
+}
+test_that("VBM keeps the header and global checksums of a Game Boy ROM", {
+  tf <- .mk_vbm(1L)
+  on.exit(unlink(tf))
+  # VBA reads the global checksum big-endian from the ROM, 0x955A, and
+  # writes it as a little-endian u16. The four bytes after it are the unit
+  # code, not a game code.
+  .vbm_rom_info(tf, "AVENGING SPI", 0x8e, c(0x5a, 0x95), as.raw(c(3, 0, 0, 0)))
+  h <- replayr:::.decode_vbm(tf)$header
+  expect_identical(h$romName, "AVENGING SPI")
+  expect_identical(h$romHeaderChecksum, "8e")
+  expect_identical(h$romGlobalChecksum, "955a")
+  expect_identical(h$romGameCode, "")
+  expect_identical(h$biosChecksum, "")
+})
+test_that("VBM keeps the game code of a Game Boy Advance ROM and the BIOS checksum", {
+  tf <- .mk_vbm(1L, system_flags = 1L)
+  on.exit(unlink(tf))
+  .vbm_rom_info(tf, "SONICADVANC2", 0x81, c(0x7f, 0x18), charToRaw("A2NE"))
+  h <- replayr:::.decode_vbm(tf)$header
+  expect_identical(h$romName, "SONICADVANC2")
+  expect_identical(h$romHeaderChecksum, "81")
+  expect_identical(h$romGameCode, "A2NE")
+  expect_identical(h$biosChecksum, "187f")
+  expect_identical(h$romGlobalChecksum, "")
+  # Bytes that are no game code are not reported as one.
+  .vbm_rom_info(tf, "SONICADVANC2", 0x81, c(0, 0), as.raw(c(0x41, 0x32, 0, 0)))
+  expect_identical(replayr:::.decode_vbm(tf)$header$romGameCode, "")
+})

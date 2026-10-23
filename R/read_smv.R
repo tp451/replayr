@@ -9,9 +9,15 @@
 #   0x04-0x07  u32 version (1, 4 or 5)
 #   0x10-0x13  u32 frame count
 #   0x14       1   controller mask (bits 0..4 = ports 1..5 polled)
+#   0x17       1   sync flags (bit 6: ROM information present)
+#   0x18-0x1B  u32 savestate offset
 #   0x1C-0x1F  u32 controller-data offset
 #   0x20-0x23  u32 input-sample count (versions 4 and 5)
 #   0x24-0x25  controller types for ports 1 and 2 (versions 4 and 5)
+#
+# ROM information, when present, is the 30 bytes before the savestate: three
+# zero bytes, the CRC32 of the ROM (u32), and its internal name (23 bytes,
+# JIS X 0201 as in the cartridge header).
 #
 # Per-frame controller word, *active-high*:
 #   bit  4: R-shoulder   bit  5: L-shoulder
@@ -130,28 +136,16 @@
     inputs[reset, , ] <- FALSE
     commands[reset] <- 1L
   }
-  # Best-effort ROM name extraction. Different SMV versions push the
-  # name to different offsets; scan the 0x23..0x60 region for the first
-  # run of printable ASCII bytes >= 4 chars long.
+  # The ROM information lies between the author's text and the savestate.
+  # Snes9x reads it 30 bytes before the savestate whenever the flag is set,
+  # and so does this reader. Movies of early versions have none; their fields
+  # stay empty.
+  rom_crc32 <- ""
   rom_name <- ""
-  scan_start <- min(length(data) + 1L, 0x24L)
-  scan_end <- min(length(data), 0x60L)
-  scan_chunk <- if (scan_start <= scan_end) data[scan_start:scan_end] else raw(0)
-  ascii_mask <- as.integer(scan_chunk) >= 0x20L &
-    as.integer(scan_chunk) <= 0x7EL
-  if (any(ascii_mask)) {
-    # Find first run of 4+ TRUE values.
-    rl <- rle(ascii_mask)
-    starts <- cumsum(c(1L, utils::head(rl$lengths, -1L)))
-    good <- which(rl$values & rl$lengths >= 4L)
-    if (length(good) > 0L) {
-      s <- starts[good[1L]]
-      e <- s + rl$lengths[good[1L]] - 1L
-      rom_name <- rawToChar(scan_chunk[s:e])
-      Encoding(rom_name) <- "latin1"
-      rom_name <- enc2utf8(rom_name)
-      rom_name <- sub("[[:space:]]+$", "", rom_name)
-    }
+  state_off <- .read_u32_le(data, 0x18L)
+  if (bitwAnd(as.integer(data[0x18L]), 0x40L) != 0L && state_off >= 30 && state_off <= length(data)) {
+    rom_crc32 <- .hex_u32_le(data, state_off - 27L)
+    rom_name <- .read_jis_x0201(data, state_off - 23L, 23L)
   }
   header <- list(
     "_format" = "smv",
@@ -169,6 +163,7 @@
     trailingSampleShortfall = as.character(shortfall),
     unusedTrailingBytes = as.character(max(0L, length(body) - n_frames * bytes_per_frame)),
     controllerTypes = paste(controller_types, collapse = ","),
+    romCRC32 = rom_crc32,
     romName = rom_name
   )
   mv <- .new_movie(

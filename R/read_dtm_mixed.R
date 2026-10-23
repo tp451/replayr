@@ -123,7 +123,8 @@
     assignmentReason = "interleaved controller families",
     enabledPorts = c(paste0("gc", gc_ports), paste0("wii", wii_ports)),
     frameCount = .read_u64_le(data, 13L), inputCount = .read_u64_le(data, 21L), availablePollCount = n,
-    observationUnit = "controller poll", controllerMask = mask, romId = rawToChar(data[5:10])
+    observationUnit = "controller poll", controllerMask = mask, romId = rawToChar(data[5:10]),
+    romMD5 = .dtm_disc_md5(data)
   )
   header$pollCountDifference <- as.character(header$inputCount - n)
   header$inputCountRole <- "emulator input statistic"

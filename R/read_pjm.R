@@ -70,6 +70,17 @@
   29L, 30L, 11L, 12L, # L2, R2, L1, R1
   9L, 8L, 7L, 10L # Triangle, Circle, Cross, Square
 )
+# PSXjin and PCSX-rr keep the IDs of the discs played, in the order they were
+# inserted, at the offset stored at 0x28: one count byte, then nine bytes per
+# disc, such as SLUS00067. A header without that section gives none.
+.psx_cdrom_ids <- function(data) {
+  if (length(data) < 0x2CL) return(character())
+  off <- .read_u32_le(data, 0x28L)
+  if (off < 0x34L || off >= length(data)) return(character())
+  n <- as.integer(data[off + 1L])
+  if (off + 1 + 9 * n > length(data)) return(character())
+  vapply(seq_len(n), function(i) .read_cstring(data, off + 1L + 9L * (i - 1L), 9L), character(1))
+}
 # MOV_ReadMovieFile replaces the header frame count with the complete-record
 # count calculated from file length, input offset, and configured record width.
 # Keep that behaviour for both text and binary records, retaining the original
@@ -107,7 +118,8 @@
     rerecordCount = as.character(rerec),
     description = desc,
     controllerType1 = as.character(controller_types[1L]),
-    controllerType2 = as.character(controller_types[2L])
+    controllerType2 = as.character(controller_types[2L]),
+    cdromIds = .psx_cdrom_ids(data)
   )
   # MOVIE_FLAG_IS_TEXT and SetBytesPerFrame define the ordinary layout.
   # Separator bytes are skipped by PSXjin, so they must not determine whether

@@ -81,6 +81,12 @@ poll count and VI count remain in \code{header$inputSampleCount} and
 Import stops at the declared sample count, as Mupen playback does. Legacy
 writers can leave an extra terminal record or an older file suffix; these
 bytes remain in \code{source_tail}.
+
+The header identifies the ROM by its internal name (\code{header$romName}),
+the CRC1 of its header (\code{header$romHeaderCRC}, \code{"46039fb4"} for the North
+American \emph{Kirby 64: The Crystal Shards}), its country code
+(\code{header$romCountry}, such as \code{"E"} for North America and \code{"J"} for
+Japan) and its version (\code{header$romVersion}).
 }
 \examples{
 movie <- read_m64(system.file("extdata", "sample.m64", package = "replayr"))

@@ -55,3 +55,23 @@ test_that('PXM standard pads do not invent stick-click buttons from reserved bit
   expect_false(any(mv$inputs))
   expect_equal(mv$header$reservedDigitalPadBitCounts, 2L)
 })
+test_that("PXM keeps the IDs of the discs played, in the order they were inserted", {
+  # The CD-ROM ID section, at the offset stored at 0x28, before the input:
+  # a count byte and nine bytes per disc.
+  ids <- c(as.raw(3L), charToRaw("SLUS00710SLUS00731slus00731"))
+  hdr <- raw(0x34L)
+  hdr[1:4] <- charToRaw("PXM ")
+  hdr[5:8] <- writeBin(2L, raw(), size = 4L, endian = "little")
+  hdr[15:16] <- as.raw(c(4L, 0L))
+  hdr[17:20] <- writeBin(1L, raw(), size = 4L, endian = "little")
+  hdr[41:44] <- writeBin(0x34L, raw(), size = 4L, endian = "little")
+  hdr[45:48] <- writeBin(0x34L + length(ids), raw(), size = 4L, endian = "little")
+  tf <- tempfile(fileext = ".pxm")
+  on.exit(unlink(tf))
+  writeBin(c(hdr, ids, as.raw(c(0x20, 0x00, 0x00))), tf)
+  mv <- replayr:::.decode_pxm(tf)
+  expect_identical(mv$header$cdromIds, c("SLUS00710", "SLUS00731", "slus00731"))
+  expect_true(mv$inputs[1L, 1L, 1L])
+  # A header without the section has no IDs.
+  expect_identical(replayr:::.decode_pxm(fixture_path("sample.pxm"))$header$cdromIds, character())
+})

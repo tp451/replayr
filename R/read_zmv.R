@@ -86,7 +86,7 @@
   if (frame != nf)
     warning(path, ": ZMV header declares ", nf, " frames; importing ", frame, " complete stored frames", call. = FALSE)
   header <- list(
-    `_format` = "zmv", system = "SNES", zsnesVersion = .read_u16_le(data, 3L), romCRC32 = .read_u32_le(data, 5L),
+    `_format` = "zmv", system = "SNES", zsnesVersion = .read_u16_le(data, 3L), romCRC32 = .hex_u32_le(data, 5L),
     declaredFrameCount = nf, frameCount = frame, rerecordCount = .read_u32_le(data, 13L),
     removedFrames = .read_u32_le(data, 17L),
     stepAdvancedFrames = .read_u32_le(data, 21L), averageFps = as.integer(data[26]),

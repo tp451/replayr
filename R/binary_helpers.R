@@ -41,6 +41,33 @@
   s <- enc2utf8(s)
   sub("[[:space:]]+$", "", s)
 }
+# Read a fixed-length title in JIS X 0201, the character set of the internal
+# header of a Super NES cartridge: ASCII, and half-width katakana at bytes
+# 0xA1 to 0xDF. Like .read_cstring(), the title ends at the first NUL and
+# trailing whitespace is trimmed; other bytes are read as Latin-1.
+.read_jis_x0201 <- function(data, off, len) {
+  if (off >= length(data)) return("")
+  chunk <- data[(off + 1L):min(length(data), off + len)]
+  nul_idx <- which(chunk == as.raw(0L))
+  if (length(nul_idx) > 0L) chunk <- chunk[seq_len(nul_idx[1L] - 1L)]
+  if (length(chunk) == 0L) return("")
+  codes <- as.integer(chunk)
+  kana <- codes >= 0xA1L & codes <= 0xDFL
+  codes[kana] <- codes[kana] - 0xA1L + 0xFF61L
+  sub("[[:space:]]+$", "", intToUtf8(codes))
+}
+# Lowercase hexadecimal digits of `len` bytes from 0-based `off`, in file
+# order. Checksums and digests are kept in this form, as for an MD5.
+.hex_bytes <- function(data, off, len) {
+  if (off < 0L || off + len > length(data)) return("")
+  paste(sprintf("%02x", as.integer(data[(off + 1L):(off + len)])), collapse = "")
+}
+# The value of the little-endian u32 at 0-based `off` as eight lowercase
+# hexadecimal digits, the usual form of a CRC32.
+.hex_u32_le <- function(data, off) {
+  if (off < 0L || off + 4L > length(data)) return("")
+  paste(sprintf("%02x", rev(as.integer(data[(off + 1L):(off + 4L)]))), collapse = "")
+}
 # Locate the first occurrence of the raw pattern `pat` inside `data`.
 # Returns a 0-based offset, or NA_integer_ if not found.
 .find_raw <- function(data, pat) {

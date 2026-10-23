@@ -68,6 +68,11 @@ frame count. Version 4 and 5 files also declare a count of input samples;
 when that count is larger and the samples are stored, all of them are
 returned. Bytes after the declared range are left unread and counted in
 \code{header$unusedTrailingBytes}.
+
+\code{header$romCRC32} and \code{header$romName} hold the CRC32 of the ROM and its
+internal name, as Snes9x stores them before the savestate; recordings of
+early Snes9x versions leave both empty. Japanese names keep their
+katakana.
 }
 \examples{
 movie <- read_smv(system.file("extdata", "sample.smv", package = "replayr"))

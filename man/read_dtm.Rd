@@ -110,6 +110,8 @@ retained as \code{header$inputCount}, alongside \code{header$availablePollCount}
 their signed difference in \code{header$pollCountDifference}. Dolphin uses the
 input count as a statistic, so differences remain metadata.
 \code{header$frameCount} retains the separate video-frame count.
+\code{header$romId} is the game ID of the disc, such as \code{"GALE01"}, and
+\code{header$romMD5} the MD5 of the disc image, where Dolphin computed one.
 
 Zelda Edition extends each poll with a loading flag, a Tingle Tuner event
 code, and Link's X/Z coordinates used by the emulator to detect desyncs.

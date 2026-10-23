@@ -18,6 +18,7 @@
     value <- sub("^[^ ]+ ?", "", line)
     header[[key]] <- if (is.null(header[[key]])) value else paste(header[[key]], value, sep = "\n")
   }
+  if (!is.null(header$SHA1)) header$SHA1Kind <- .bizhawk_hash_kind(header$SHA1)
   original <- toupper(header$Platform %||% "")
   platform <- switch(original,
     A2600 = "A26",

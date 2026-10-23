@@ -90,6 +90,12 @@ only when its header and every row match the standard two-pad NES layout;
 any other log without a LogKey raises an error.
 A digital control is held unless its character is \code{.}, as BizHawk reads
 it; the letter written there is a convention.
+
+BizHawk writes the hash of the game under \code{header$SHA1}, but several cores
+write an MD5 or a CRC32 there. \code{header$SHA1Kind} says which it is:
+\code{"SHA1"}, \code{"MD5"} or \code{"CRC32"}, and \code{""} for a value that is no hash,
+such as \code{"N/A"}. The MD5 and CRC32 of a disc are BizHawk's hashes of part
+of the disc, not those of an image file.
 }
 \examples{
 movie <- read_bk2(system.file("extdata", "sample.bk2", package = "replayr"))

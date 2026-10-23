@@ -14,7 +14,9 @@
 #   0x1c  4   controller data offset (LE u32)
 #   0x20 16   ROM MD5
 #   0x30  4   emulator version (LE u32)
-#   0x34  ?   ROM filename (UTF-8, NUL-terminated)
+#   0x34  ?   ROM filename (NUL-terminated). Documented as UTF-8, but real
+#             files use the code page of the recording system, such as
+#             Shift-JIS or GBK; it is read as Latin-1, which keeps every byte.
 #
 # Body: variable-length records. Each record starts with a "ub" byte:
 #   bit 7      command flag (1 = command record, 0 = button toggle)

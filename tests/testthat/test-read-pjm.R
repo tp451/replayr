@@ -314,3 +314,22 @@ test_that("PJM frame-count metadata follows complete text and binary streams", {
     }
   }
 })
+test_that("PJM keeps the IDs of the discs played, in the order they were inserted", {
+  # PSXjin's CD-ROM ID section, at the offset stored at 0x28: a count byte
+  # and nine bytes per disc. The binary input follows it.
+  ids <- c(as.raw(2L), charToRaw("SLUS00594SLUS00776"))
+  hdr <- raw(0x34L)
+  hdr[1:4] <- charToRaw("PJM ")
+  hdr[5:8] <- writeBin(2L, raw(), size = 4L, endian = "little")
+  hdr[15:16] <- as.raw(c(4L, 0L))
+  hdr[17:20] <- writeBin(1L, raw(), size = 4L, endian = "little")
+  hdr[41:44] <- writeBin(0x34L, raw(), size = 4L, endian = "little")
+  hdr[45:48] <- writeBin(0x34L + length(ids), raw(), size = 4L, endian = "little")
+  tf <- tempfile(fileext = ".pjm")
+  on.exit(unlink(tf))
+  writeBin(c(hdr, ids, as.raw(c(0x20, 0x00, 0x00))), tf)
+  movie <- read_pjm(tf)
+  expect_identical(movie$header$cdromIds, c("SLUS00594", "SLUS00776"))
+  expect_true(player(movie)[1L, "dpad_right"])
+  expect_identical(read_pjm(fixture_path("sample.pjm"))$header$cdromIds, character())
+})

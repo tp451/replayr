@@ -163,6 +163,16 @@ test_that("legacy Game Boy editor suffixes and delimiters follow source behavior
   writeLines(c('emuVersion Version 2.9', 'Platform GB', '|.|.......|'), p)
   expect_error(.decode_bkm(p), 'button count disagrees')
 })
+test_that("BKM says which hash BizHawk wrote under SHA1", {
+  p <- tempfile(fileext = '.bkm')
+  on.exit(unlink(p))
+  kind <- function(sha1) {
+    writeLines(c('emuVersion Version 1.4.1', 'Platform GB', paste('SHA1', sha1), '|.|........|'), p)
+    .decode_bkm(p)$header$SHA1Kind
+  }
+  expect_identical(kind('5EA438C5B52696255E8DF74EB19E3CAC1427A14A'), 'SHA1')
+  expect_identical(kind('147E02FA'), 'CRC32')
+})
 test_that("BK2 full imports enforce a configurable pre-extraction size limit", {
   p <- system.file('extdata', 'expanded', 'two-stick-3ds.bk2', package = 'replayr', mustWork = TRUE)
   expect_error(read_bk2(p, max_input_bytes = 1), class = 'replayr_resource_limit')

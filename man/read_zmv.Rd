@@ -67,6 +67,7 @@ Reset commands are attached to the following frame. Chapter offsets and
 counts remain in \code{chapter_offsets} and the header. A header frame-count
 mismatch produces a warning, with complete stored frames retained. The
 header also preserves the PAL flag and any reset after the last frame.
+\code{header$romCRC32} is the CRC32 that ZSNES computed for the ROM.
 Mouse and Super Scope layouts require separate peripheral decoding.
 }
 \examples{

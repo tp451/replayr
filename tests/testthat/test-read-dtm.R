@@ -260,3 +260,23 @@ test_that("the article fixture contains a moving right stick with known values",
       expect_equal(unname(channels[anchors, "right_magnitude"]), c(0, 70 / 128, 0, 70 / 128))
   }
 })
+test_that("DTM keeps the game ID and the MD5 of the disc for GameCube and Wii", {
+  digest <- as.raw(seq(1, 241, by = 16))
+  with_md5 <- function(source, md5) {
+    bytes <- readBin(source, "raw", n = file.info(source)$size)
+    bytes[0x71 + 1:16] <- md5
+    tf <- tempfile(fileext = ".dtm")
+    writeBin(bytes, tf)
+    tf
+  }
+  plain <- .mk_dtm(0L)
+  gc <- with_md5(plain, digest)
+  wii <- with_md5(fixture_path(file.path("paper", "wii-motion.dtm")), digest)
+  on.exit(unlink(c(plain, gc, wii)))
+  h <- read_dtm(gc)$header
+  expect_identical(h$romId, "TEST01")
+  expect_identical(h$romMD5, "01112131415161718191a1b1c1d1e1f1")
+  expect_identical(read_dtm(wii)$header$romMD5, "01112131415161718191a1b1c1d1e1f1")
+  # Sixteen zero bytes are no digest.
+  expect_identical(read_dtm(fixture_path("sample.dtm"))$header$romMD5, "")
+})

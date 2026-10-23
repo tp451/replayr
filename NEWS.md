@@ -38,6 +38,14 @@ Initial release.
 * Read the BK2 recordings of Gym Retro with `read_bk2()`.
 * Return the text that the author of a FinalBurn Alpha recording entered
   when recording, in `movie$header$metadata`.
+* Keep in the header what a recording says about the ROM or disc it was
+  made with: the CRC32 and internal name of a Snes9x or ZSNES ROM, with the
+  katakana of Japanese names; the header and global checksums of a Game Boy
+  ROM and the game code of a Game Boy Advance ROM; the header CRC, country
+  code and version of a Nintendo 64 ROM; the MD5 of a Dolphin disc image;
+  and the IDs of the PlayStation discs played, in the order they were
+  inserted. `header$SHA1Kind` says whether the hash BizHawk wrote under
+  `SHA1` is a SHA1, an MD5 or a CRC32.
 * Read the demonstration files of the Atari Grand Challenge and Atari-HEAD
   data sets (Atari 2600) with `read_txt()`. Each frame's
   action becomes the five controls of the joystick. The states of the game

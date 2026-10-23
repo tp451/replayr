@@ -61,6 +61,8 @@ An imported recording with header metadata and original input fields.
 Legacy BizHawk text recordings.
 Digital controls have compact columns with stable identities. Numeric source
 fields remain available through \code{\link[=analog_channels]{analog_channels()}}.
+As in \code{\link[=read_bk2]{read_bk2()}}, \code{header$SHA1Kind} says whether the hash under
+\code{header$SHA1} is a SHA1, an MD5 or a CRC32.
 }
 \examples{
 movie <- read_bkm(system.file("extdata", "expanded", "legacy-n64.bkm", package = "replayr"))

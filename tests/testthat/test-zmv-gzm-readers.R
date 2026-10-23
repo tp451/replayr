@@ -46,3 +46,13 @@ test_that('GZM and ZMV validate binary boundaries and peripheral variants', {
   writeBin(raw, path)
   expect_error(.decode_zmv(path), 'peripheral decoder')
 })
+test_that('ZMV gives the CRC32 of the ROM as hexadecimal digits', {
+  original <- system.file('extdata', 'legacy', 'holds.zmv', package = 'replayr', mustWork = TRUE)
+  path <- tempfile(fileext = '.zmv')
+  on.exit(unlink(path))
+  raw <- readBin(original, 'raw', file.info(original)$size)
+  raw[6:9] <- as.raw(c(0x8d, 0x35, 0xc3, 0xea))
+  writeBin(raw, path)
+  expect_identical(.decode_zmv(path)$header$romCRC32, 'eac3358d')
+  expect_identical(.decode_zmv(original)$header$romCRC32, '00000000')
+})

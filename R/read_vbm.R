@@ -21,6 +21,11 @@
 #   0x10-0x13  u32 rerecord count
 #   0x15       1   controller flags (bits 0..3 = controllers 1..4)
 #   0x16       1   system flags (bit 0: GBA, bit 1: GBC, bit 2: SGB)
+#   0x24-0x2F  12  internal title of the ROM
+#   0x31       1   header checksum of the ROM (GB 0x14D, GBA 0xBD)
+#   0x32-0x33  u16 GB: global checksum of the ROM (0x14E-0x14F, read
+#                  big-endian); GBA: checksum of the BIOS
+#   0x34-0x37  4   GBA: game code of the ROM (0xAC); GB: unit code (0x146)
 #   0x3C-0x3F  u32 controller-data offset (NOT always 0x100)
 #   0x100+     controller data, 2 bytes (uint16 LE) per active controller
 #
@@ -113,6 +118,10 @@
     }
   }
   rom_name <- .read_cstring(data, 0x24L, 12L)
+  # A game code is four capital letters or digits, such as A2CE.
+  code <- as.integer(data[0x35:0x38])
+  is_code <- all((code >= 0x30L & code <= 0x39L) | (code >= 0x41L & code <= 0x5AL))
+  game_code <- if (is_gba && is_code) intToUtf8(code) else ""
   author <- .read_cstring(data, 0x40L, 64L)
   header <- list(
     "_format" = "vbm",
@@ -126,6 +135,10 @@
     isGBC = if (is_gbc) "1" else "0",
     isSGB = if (is_sgb) "1" else "0",
     romName = rom_name,
+    romHeaderChecksum = .hex_bytes(data, 0x31L, 1L),
+    romGlobalChecksum = if (is_gba) "" else sprintf("%04x", .read_u16_le(data, 0x32L)),
+    romGameCode = game_code,
+    biosChecksum = if (is_gba) sprintf("%04x", .read_u16_le(data, 0x32L)) else "",
     author = author
   )
   mv <- .new_movie(

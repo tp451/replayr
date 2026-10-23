@@ -26,6 +26,7 @@
 #   0x0D       u64 frameCount  (game-side VI counter)
 #   0x15       u64 inputCount  (emulator input statistic; may differ from body count)
 #   0x2D       u32 numRerecords
+#   0x71       16  MD5 of the disc image (zero when it was not computed)
 #   0x100+     controller data, 8 bytes per controller poll:
 #       byte 0  buttons low  (Start, A, B, X, Y, Z, D-Up, D-Down) -- the packed
 #                            Dolphin ControllerState bitfield (NOT GCPadStatus order)
@@ -56,6 +57,12 @@
   12L, # bit 11: R-digital   -> 12
   NA_integer_, NA_integer_, NA_integer_, NA_integer_ # bits 12-15: disc/reset/is_connected/get_origin
 )
+# The MD5 of the disc image, shared by the GameCube, Wii and mixed readers.
+# Sixteen zero bytes are no digest: Dolphin did not compute one.
+.dtm_disc_md5 <- function(data) {
+  md5 <- .hex_bytes(data, 0x71L, 16L)
+  if (identical(md5, strrep("0", 32L))) "" else md5
+}
 .decode_dtm <- function(path, controller_order = NULL,
                         dtm_variant = c("auto", "standard", "zelda"),
                         wii_variant = "auto", wii_extension = "raw", wii_key = NULL,
@@ -186,6 +193,7 @@
     "_format" = "dtm",
     Platform = if (is_wii) "Wii" else "GameCube",
     romId = rom_id,
+    romMD5 = .dtm_disc_md5(data),
     rerecordCount = as.character(rerec),
     frameCount = as.character(frame_count),
     inputCount = as.character(input_count),

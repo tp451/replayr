@@ -378,7 +378,7 @@
     analog[[p]] <- numeric_values[take, , drop = FALSE]
   }
   header <- list(
-    `_format` = "dtm", Platform = "Wii", romId = rawToChar(data[5:10]),
+    `_format` = "dtm", Platform = "Wii", romId = rawToChar(data[5:10]), romMD5 = .dtm_disc_md5(data),
     frameCount = as.character(.read_u64_le(data, 13L)), inputCount = as.character(.read_u64_le(data, 21L)),
     rerecordCount = as.character(.read_u32_le(data, 45L)), availablePollCount = as.character(n),
     dtmVariant = paste0("wii-", variant), sourceRevision = revision, controllerMask = mask, enabledPorts = ports,
