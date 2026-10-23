@@ -145,6 +145,11 @@ poll count and VI count remain in <code>header$inputSampleCount</code> and
 Import stops at the declared sample count, as Mupen playback does. Legacy
 writers can leave an extra terminal record or an older file suffix; these
 bytes remain in <code>source_tail</code>.</p>
+<p>The header identifies the ROM by its internal name (<code>header$romName</code>),
+the CRC1 of its header (<code>header$romHeaderCRC</code>, <code>"46039fb4"</code> for the North
+American <em>Kirby 64: The Crystal Shards</em>), its country code
+(<code>header$romCountry</code>, such as <code>"E"</code> for North America and <code>"J"</code> for
+Japan) and its version (<code>header$romVersion</code>).</p>
     </div>
 
     <div class="section level2">

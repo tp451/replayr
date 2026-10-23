@@ -176,6 +176,11 @@ only when its header and every row match the standard two-pad NES layout;
 any other log without a LogKey raises an error.
 A digital control is held unless its character is <code>.</code>, as BizHawk reads
 it; the letter written there is a convention.</p>
+<p>BizHawk writes the hash of the game under <code>header$SHA1</code>, but several cores
+write an MD5 or a CRC32 there. <code>header$SHA1Kind</code> says which it is:
+<code>"SHA1"</code>, <code>"MD5"</code> or <code>"CRC32"</code>, and <code>""</code> for a value that is no hash,
+such as <code>"N/A"</code>. The MD5 and CRC32 of a disc are BizHawk's hashes of part
+of the disc, not those of an image file.</p>
     </div>
 
     <div class="section level2">

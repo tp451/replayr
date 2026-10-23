@@ -135,6 +135,12 @@ keeps the header's count. <code>commands</code> retains the bits of each control
 word that lie outside the layout, with their original values: 1024 and
 2048 mark a reset (old timing, and the timing used since format version
 1.1), and 4096 to 32768 are the deprecated motion-sensor bits.</p>
+<p>The header identifies the ROM by its internal title (<code>header$romName</code>)
+and its header checksum (<code>header$romHeaderChecksum</code>), and adds the global
+checksum of a Game Boy ROM (<code>header$romGlobalChecksum</code>) or the game code
+of a Game Boy Advance ROM (<code>header$romGameCode</code>, such as <code>"A2CE"</code>). In
+place of the global checksum, a Game Boy Advance recording holds the
+checksum of the BIOS, in <code>header$biosChecksum</code>.</p>
     </div>
 
     <div class="section level2">

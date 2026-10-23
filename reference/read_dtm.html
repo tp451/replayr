@@ -177,7 +177,9 @@ for a multi-controller recording with unassigned ports.</p>
 retained as <code>header$inputCount</code>, alongside <code>header$availablePollCount</code> and
 their signed difference in <code>header$pollCountDifference</code>. Dolphin uses the
 input count as a statistic, so differences remain metadata.
-<code>header$frameCount</code> retains the separate video-frame count.</p>
+<code>header$frameCount</code> retains the separate video-frame count.
+<code>header$romId</code> is the game ID of the disc, such as <code>"GALE01"</code>, and
+<code>header$romMD5</code> the MD5 of the disc image, where Dolphin computed one.</p>
 <p>Zelda Edition extends each poll with a loading flag, a Tingle Tuner event
 code, and Link's X/Z coordinates used by the emulator to detect desyncs.
 These are available in <code>poll_fields</code>, with one row per original poll,

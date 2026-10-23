@@ -127,11 +127,11 @@ observations and keeps the class.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">movie</span><span class="op">$</span><span class="va">inputs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3600    1   12</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">movie</span><span class="op">$</span><span class="va">header</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "_format"       "Platform"      "romId"         "rerecordCount"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "frameCount"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "_format"       "Platform"      "romId"         "romMD5"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "rerecordCount"</span>
 <span class="r-in"><span><span class="va">movie</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;replayr_movie [dtm] observations=3600 players=1 buttons=12 source=sample.dtm&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Header keys: Platform, romId, rerecordCount, frameCount, inputCount, inputCountRole, availablePollCount, pollCountDifference, ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Header keys: Platform, romId, romMD5, rerecordCount, frameCount, inputCount, inputCountRole, availablePollCount, ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> P1 active observations: dpad_right=900, dpad_left=900, dpad_down=900, dpad_up=900, start=6, b=900, a=450, x=288</span>
 <span class="r-in"><span><span class="co"># The accessors and methods work on a selection as on the whole recording.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">movie</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">600</span><span class="op">]</span><span class="op">)</span></span></span>
