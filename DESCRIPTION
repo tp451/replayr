@@ -20,7 +20,7 @@ Description: Imports input recordings and demo files of video games, as made
     magnitudes can be selected independently. Allows analysis of input
     recordings without running an emulator.
 License: GPL (>= 2)
-URL: https://github.com/tp451/replayr
+URL: https://github.com/tp451/replayr, https://tp451.github.io/replayr/
 BugReports: https://github.com/tp451/replayr/issues
 Encoding: UTF-8
 Language: en-GB

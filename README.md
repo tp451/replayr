@@ -23,7 +23,7 @@ Atari Grand Challenge and Atari-HEAD data sets. Supported platforms include:
 | Other consoles | 3DO; CD-i; ColecoVision; Fairchild Channel F; Intellivision; Neo Geo Pocket; Odyssey 2 / Videopac; Sony PlayStation; Uzebox; Vectrex; WonderSwan. |
 | Sega | Game Gear; Sega 32X; Sega CD / Mega-CD; Sega Genesis / Mega Drive; Sega Master System; Sega Saturn; Sega SG-1000. |
 
-The [compatibility catalogue](COMPATIBILITY.md) lists each format, version,
+The [compatibility catalogue](https://github.com/tp451/replayr/blob/main/COMPATIBILITY.md) lists each format, version,
 controller variant, and platform combination. Some desktop and browser games
 use input recorded through a host application such as libTAS or Hourglass;
 the catalogue identifies these cases. It is also included in the installed
@@ -64,7 +64,7 @@ Each recording has compact columns for its controls. Shared identifiers make
 comparable controls match across devices; `button_layout(movie)` gives the
 mapping, and `align_buttons()` aligns matrices from several recordings.
 
-See the [universal controller layout](CONTROLLERS.md) for the shared identifiers.
+See the [universal controller layout](https://github.com/tp451/replayr/blob/main/CONTROLLERS.md) for the shared identifiers.
 
 Recorded numeric values are available through `analog_channels()`, in columns
 named by key (`left_x`, `mouse_dx`); `channel_layout(movie)` lists the labels
@@ -98,6 +98,8 @@ reads. `vignette("compatibility", package = "replayr")` is the reference: the
 platforms, formats, versions and devices, and the rules for the IDs of
 controls. Reader help pages describe format-specific options;
 `?read_bk2_chunks` explains how to process large BK2 recordings in chunks.
+The vignettes and help pages are also on the package website,
+<https://tp451.github.io/replayr/>.
 
 ## Author and license
 

@@ -19,7 +19,7 @@ or a computer keyboard; its named fields determine the imported controls.
 The tables identify supported layouts, format versions, and the recordings
 used to check them. External checks cover 7,385 distinct recordings obtained
 from [TASVideos](https://tasvideos.org/Movies), including obsolete publications,
-and further files for the formats that TASVideos holds few or none of.
+and 3,893 further files for the formats that TASVideos holds few or none of.
 These checks are documented in the repository's [validation folder](https://github.com/tp451/replayr/tree/main/validation), which lists the source of every file and provides the scripts to repeat them.
 The package includes original artificial examples for testing and demonstration.
 

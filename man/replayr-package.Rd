@@ -42,6 +42,7 @@ dim(states)
 Useful links:
 \itemize{
   \item \url{https://github.com/tp451/replayr}
+  \item \url{https://tp451.github.io/replayr/}
   \item Report bugs at \url{https://github.com/tp451/replayr/issues}
 }
 

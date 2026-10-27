@@ -1,6 +1,12 @@
-## Submission
+## Resubmission
 
-Initial submission of replayr 0.4.0.
+This is a resubmission of the new package replayr 0.4.0. In this version I
+have:
+
+* Replaced the relative links to `COMPATIBILITY.md` and `CONTROLLERS.md` in
+  `README.md` with their addresses in the GitHub repository, as these two
+  files are not part of the package.
+* Added the package website to the `URL` field.
 
 ## Test environments
 
@@ -10,7 +16,7 @@ Initial submission of replayr 0.4.0.
   release, and oldrel-1).
 
 Both local environments ran `R CMD check --as-cran` on the same source
-archive, with remote CRAN incoming and URL checks enabled:
+archive, with remote CRAN incoming, URL and file URI checks enabled:
 0 errors, 0 warnings, and 1 NOTE ("New submission").
 Tests, examples, vignettes, and PDF/HTML manual checks passed.
 
