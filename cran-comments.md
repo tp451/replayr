@@ -4,13 +4,18 @@ Initial submission of replayr 0.4.0.
 
 ## Test environments
 
-* Windows 11 x64, R 4.6.0.
-* Ubuntu 24.04.4 under WSL, R-devel 4.7.0 (2026-10-08 r90650).
+* Windows 11 x64, R 4.6.0 (local).
+* Ubuntu 24.04.4 under WSL, R-devel 4.7.0 (2026-10-08 r90650) (local).
+* GitHub Actions: macOS (release), Windows (release), and Ubuntu (devel,
+  release, and oldrel-1).
 
-Both environments ran `R CMD check --as-cran` on the same source archive,
-with remote CRAN incoming and URL checks enabled:
+Both local environments ran `R CMD check --as-cran` on the same source
+archive, with remote CRAN incoming and URL checks enabled:
 0 errors, 0 warnings, and 1 NOTE ("New submission").
 Tests, examples, vignettes, and PDF/HTML manual checks passed.
+
+The GitHub Actions checks run `R CMD check --as-cran` without the manual on
+every push: 0 errors and 0 warnings on all five platforms.
 
 ## Examples and bundled files
 
