@@ -1,24 +1,24 @@
 Package: replayr
-Title: Import Emulator Input Recordings
+Title: Read Input Recordings of Video Games
 Version: 0.4.0
 Authors@R:
     person("Thorben", "Pelzer", , "thorben@pelzer.blog",
            role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5039-3779"))
-Description: Import input recordings and demo files of video games, as made
+Description: Imports input recordings and demo files of video games, as made
     in tool-assisted speedrunning, reinforcement learning, and research on
     human-game interaction. Reads the formats of 'FCEUX', 'BizHawk',
     'Dolphin', 'Citra', 'libTAS', 'openMSX', 'JPC-RR', 'Gym Retro', the
     'Doom' and 'GoldSrc' engines, and other recording tools. Platforms
     include the Atari 2600, Nintendo, Sega, and Sony consoles, arcade
-    machines, and personal computers. Imports retain compact digital
-    control arrays, stable control identities, original numeric channels,
-    metadata, and emulator commands. Supports gamepads, keyboards, mice,
-    touchscreens, and recorded motion or light-gun channels. Source timing
-    distinguishes frames, controller polls, and timestamped events. Left
-    and right stick directions, angles, and magnitudes can be selected
-    independently. Allows analysis of input recordings without running an
-    emulator.
+    machines, and personal computers. Imported recordings keep compact
+    digital control arrays, stable control identities, original numeric
+    channels, metadata, and emulator commands. Supports gamepads,
+    keyboards, mice, touchscreens, and recorded motion or light-gun
+    channels. Source timing distinguishes frames, controller polls, and
+    timestamped events. Left and right stick directions, angles, and
+    magnitudes can be selected independently. Allows analysis of input
+    recordings without running an emulator.
 License: GPL (>= 2)
 URL: https://github.com/tp451/replayr
 BugReports: https://github.com/tp451/replayr/issues
