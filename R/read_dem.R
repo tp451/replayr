@@ -77,7 +77,7 @@
     kind <- as.integer(data[at])
     if (kind > 9L) stop(path, ": invalid frame type ", kind, " at byte ", at - 1, call. = FALSE)
     payload <- at + 9
-    length <- if (kind %in% 2:7) {
+    frame_bytes <- if (kind %in% 2:7) {
       .DEM_FIXED_FRAMES[[as.character(kind)]]
     } else if (kind == 8L) {
       if (payload + 7 > size) break
@@ -96,7 +96,7 @@
         stop(path, ": invalid network message length ", message, " at byte ", at - 1, call. = FALSE)
       header + 4 + message
     }
-    if (payload + length - 1 > size) break
+    if (payload + frame_bytes - 1 > size) break
     if (n == length(kinds)) {
       kinds <- c(kinds, integer(n))
       starts <- c(starts, numeric(n))
@@ -104,7 +104,7 @@
     n <- n + 1L
     kinds[n] <- kind
     starts[n] <- payload
-    at <- payload + length
+    at <- payload + frame_bytes
     if (kind == 5L) {
       complete <- TRUE
       break

@@ -13,15 +13,15 @@
   keys <- sprintf("windows_vk_%02x", codes)
   inputs <- array(FALSE, c(n, 1L, length(keys)))
   for (k in seq_along(codes)) inputs[, 1L, k] <- rowSums(source == codes[k] & active) > 0L
-  names <- sprintf("Windows VK 0x%02X", codes)
+  labels <- sprintf("Windows VK 0x%02X", codes)
   printable <- (codes >= 48 & codes <= 57) | (codes >= 65 & codes <= 90)
-  names[printable] <- paste("Keyboard", intToUtf8(codes[printable], multiple = TRUE))
+  labels[printable] <- paste("Keyboard", intToUtf8(codes[printable], multiple = TRUE))
   special <- c(
     `8` = "Backspace", `9` = "Tab", `13` = "Return", `16` = "Shift", `17` = "Control",
     `18` = "Alt", `27` = "Escape", `32` = "Space", `37` = "Left", `38` = "Up", `39` = "Right", `40` = "Down"
   )
   idx <- match(as.character(codes), names(special))
-  names[!is.na(idx)] <- paste("Keyboard", special[idx[!is.na(idx)]])
+  labels[!is.na(idx)] <- paste("Keyboard", special[idx[!is.na(idx)]])
   declared <- .read_u32_le(data, 4L)
   .computer_count_note(declared, n, "Hourglass header")
   header <- list(
@@ -35,7 +35,7 @@
   )
   header[["_format"]] <- "wtf"
   movie <- .new_named_movie(header, integer(n), inputs, keys, path,
-    names = names, kinds = rep("keyboard", length(keys))
+    names = labels, kinds = rep("keyboard", length(keys))
   )
   movie$source_keycodes <- source
   movie$source_header <- data[seq_len(1024L)]

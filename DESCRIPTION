@@ -3,7 +3,8 @@ Title: Import Emulator Input Recordings
 Version: 0.4.0
 Authors@R:
     person("Thorben", "Pelzer", , "thorben@pelzer.blog",
-           role = c("aut", "cre"))
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-5039-3779"))
 Description: Import input recordings and demo files of video games, as made
     in tool-assisted speedrunning, reinforcement learning, and research on
     human-game interaction. Reads the formats of 'FCEUX', 'BizHawk',

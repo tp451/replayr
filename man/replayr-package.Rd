@@ -47,11 +47,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Thorben Pelzer \email{thorben@pelzer.blog}
+\strong{Maintainer}: Thorben Pelzer \email{thorben@pelzer.blog} (\href{https://orcid.org/0000-0001-5039-3779}{ORCID})
 
 Authors:
 \itemize{
-  \item Thorben Pelzer \email{thorben@pelzer.blog}
+  \item Thorben Pelzer \email{thorben@pelzer.blog} (\href{https://orcid.org/0000-0001-5039-3779}{ORCID})
 }
 
 }

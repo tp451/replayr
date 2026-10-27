@@ -85,7 +85,7 @@
 # count calculated from file length, input offset, and configured record width.
 # Keep that behaviour for both text and binary records, retaining the original
 # declared count so callers can inspect any discrepancy.
-.pjm_record_counts <- function(header, declared, available, path) {
+.pjm_record_counts <- function(header, declared, available) {
   difference <- declared - available
   header$declaredFrameCount <- as.character(declared)
   header$availableFrameCount <- as.character(available)
@@ -151,10 +151,7 @@
   if (!is.null(layout)) {
     mv <- .read_pjm_text(data, layout, n_frames_field, n_buttons, header, path)
   } else {
-    mv <- .read_pjm_binary(
-      data, n_frames_field, sz, n_buttons, header,
-      controller_types, body_off, path
-    )
+    mv <- .read_pjm_binary(data, n_frames_field, sz, n_buttons, header, controller_types, body_off)
   }
   mv$source_path <- path
   mv
@@ -239,7 +236,7 @@
     )
   }
   n_frames <- have
-  header <- .pjm_record_counts(header, n_frames_field, have, path)
+  header <- .pjm_record_counts(header, n_frames_field, have)
   header$terminalNewlineBytesMissing <- as.character(missing_newline)
   n_players <- lay$n_players
   inputs <- .empty_inputs(n_frames, n_players, n_buttons)
@@ -333,8 +330,7 @@
   )
 }
 .read_pjm_binary <- function(data, n_frames_field, sz, n_buttons, header,
-                             controller_types = c(0L, 0L), body_offset = 0L,
-                             path = "PJM recording") {
+                             controller_types = c(0L, 0L), body_offset = 0L) {
   if (body_offset > 0L) {
     widths <- c("0" = 0L, "8" = 0L, "4" = 2L, "5" = 6L, "7" = 6L)[as.character(controller_types)]
     if (anyNA(widths)) stop("PJM binary peripheral type is not supported")
@@ -342,7 +338,7 @@
     if (sum(widths) == 0L || (sz - body_offset) %% stride != 0L)
       stop("PJM binary body has a partial final frame or no controllers")
     n_frames <- (sz - body_offset) %/% stride
-    header <- .pjm_record_counts(header, n_frames_field, n_frames, path)
+    header <- .pjm_record_counts(header, n_frames_field, n_frames)
     n_players <- max(which(widths > 0L))
     inputs <- .empty_inputs(n_frames, n_players, n_buttons)
     analog_values <- .empty_analog(n_frames, n_players)
