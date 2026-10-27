@@ -16,6 +16,9 @@ catalogue <- sub(
   fixed = TRUE
 )
 stopifnot(!any(grepl("](validation/", catalogue, fixed = TRUE)))
+# Figures are found from the vignettes folder and fill the page.
+figure <- grepl("^!\\[.*\\]\\(man/figures/[^)]*\\)$", catalogue)
+catalogue[figure] <- paste0(sub("](man/figures/", "](../man/figures/", catalogue[figure], fixed = TRUE), "{width=100%}")
 header <- c(
   "---",
   'title: "Recording compatibility"',

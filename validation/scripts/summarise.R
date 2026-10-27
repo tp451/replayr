@@ -98,6 +98,27 @@ stopifnot(all(texts$status == "agrees"))
 add("fbm", "recordings", nrow(texts))
 add("fbm", "recordings_with_a_text", sum(present(texts$text)))
 
+# The time to read every distinct TASVideos recording and every file of the
+# other collections once, one at a time. Only the GoldSrc files that both
+# readers refuse are not read.
+timing <- table_of("timing-tasvideos.csv")
+stopifnot(setequal(timing$relative_path, corpus$relative_path), !anyDuplicated(timing$relative_path),
+  !any(grepl("^error", timing$how)))
+add("timing", "recordings", nrow(timing))
+add("timing", "observations", sum(timing$observations))
+add("timing", "seconds", round(sum(timing$seconds), 2))
+add("timing", "recordings_read_in_chunks", sum(timing$how == "chunks"))
+others <- table_of("timing-other-collections.csv")
+others_read <- !grepl("^error", others$how)
+of <- function(collection) others$sha256[others$collection == collection]
+stopifnot(setequal(of("doom"), doom$sha256), setequal(of("goldsrc"), goldsrc$sha256),
+  setequal(of("gymretro"), gymretro$sha256),
+  setequal(c(of("atari_grand_challenge"), of("atari_head")), table_of("atari-comparison-by-file.csv")$sha256),
+  setequal(others$sha256[!others_read], goldsrc$sha256[goldsrc$status == "refused by both"]))
+add("timing", "other_files", sum(others_read))
+add("timing", "other_observations", sum(others$observations[others_read]))
+add("timing", "other_seconds", round(sum(others$seconds[others_read]), 2))
+
 summary <- do.call(rbind, rows)
 write.csv(summary, output, row.names = FALSE, fileEncoding = "UTF-8")
 print(summary, row.names = FALSE)

@@ -1,4 +1,4 @@
-# Validation record
+# Validation
 
 This folder records how the readers of replayr were checked against real
 files: which files, where each comes from, what was compared, and the scripts
@@ -6,9 +6,9 @@ that repeat the checks. It belongs to the repository and is not part of the
 installed package. No recording is stored here: the tables name every file
 by its source and its SHA-256 hash, and the scripts retrieve them.
 
-The numbers below are those of `summary.csv`, as of 14 October 2026.
+The numbers below are those of `summary.csv`.
 
-## What was checked
+## Results
 
 | Files | Number | Check | Result |
 |---|---|---|---|
@@ -18,6 +18,19 @@ The numbers below are those of `summary.csv`, as of 14 October 2026.
 | Recordings of Gym Retro and of its successor stable-retro | 60, of which 58 are human demonstrations of the Sonic benchmark | Compared with a decoder that follows Gym Retro's own reading rule; the length of each demonstration is held against the number of steps that Gym Retro counted. | 9.7 million values agree; all 58 lengths are equal. |
 | Tables of the Atari Grand Challenge data set (version 1) and of Atari-HEAD | 2,313 trajectories and 471 trials | Compared with a separate decoder; each trial of Atari-HEAD is held against the number of frames and the play time that the data set lists for it. | 130 million values agree; all 471 trials equal their listing. |
 | FinalBurn recordings among the TASVideos publications | 62 | The text of the author after the input is compared with a separate reading of the same bytes. | 42 have such a text; all agree. |
+
+## Performance
+
+Every file was read once, one at a time: the 7,385 distinct TASVideos
+recordings, with 1.04 billion observations, in 42 minutes, and the 3,880
+files of the other collections, with 29.5 million observations, in 5
+minutes. BizHawk recordings too long for a full import are read in chunks
+with `read_bk2_chunks()`. For twelve TASVideos formats,
+the Doom-engine and GoldSrc demos and each Atari data set, the files at the
+median and at the 95th percentile of length were read five times each, and
+artificial FM2 recordings of ten thousand to ten million frames three times.
+The times were taken with replayr 0.4.0 and R 4.6.0 on Windows 11, on an
+Intel Core Ultra 9 285K processor with 32 GB of memory and an NVMe disk.
 
 ## Tables
 
@@ -37,6 +50,11 @@ checked.
 | `gymretro-comparison.csv` | each Gym Retro recording | address, game, observations, the step count of Gym Retro, values compared |
 | `atari-comparison-by-file.csv` | each Atari table | data set, game, size, hash, observations, values compared, and for Atari-HEAD whether the trial equals its listing |
 | `atari-comparison.csv` | each game of the two data sets | tables, observations, hours of play, values compared |
+| `timing-tasvideos.csv` | each distinct TASVideos recording | size, observations, seconds for one read, size of the result, whether it was read whole or in chunks |
+| `timing-other-collections.csv` | each file of the Doom-engine, GoldSrc, Gym Retro and Atari collections | collection, hash, size, observations, seconds for one read, size of the result |
+| `timing-recordings.csv` | the TASVideos recordings at the median and at the 95th percentile of length in each of twelve formats | observations, controllers, controls, numeric channels, file size, median seconds of five reads, sizes of the result and of its logical array, peak memory |
+| `timing-other-recordings.csv` | the files at the median and at the 95th percentile of length of the Doom-engine demos, the GoldSrc demos and each Atari data set | as `timing-recordings.csv`, with the collection and the hash of the file |
+| `timing-sizes.csv` | each length of the artificial FM2 recordings | file size, median seconds of three reads, sizes of the result and of its logical array, bytes per button state, peak memory |
 | `fbm-text-comparison.csv` | each FinalBurn recording | the text of its author, if any |
 
 `summary.csv` holds one row for each number reported above and in the article
@@ -44,7 +62,7 @@ on replayr. `scripts/summarise.R` writes it from the tables and first checks
 them for what is said of them: that every comparison agrees, that no file is
 listed twice, that only FinalBurn recordings need an argument, and so on.
 
-## Repeating the checks
+## Reproducing the results
 
 The scripts are in `scripts/` and are run from this folder. They take the
 folders for downloads and results as arguments or from the environment; none
@@ -60,6 +78,9 @@ export REPLAYR_VALIDATION_ROOT=recordings
 Rscript scripts/retrieve-recordings.R            # or a part: fm2,smv 20
 Rscript scripts/validate-recordings.R            # import and check every file
 Rscript scripts/game-checks.R                    # checks against known controls of two games
+Rscript scripts/timing-recordings.R              # time and memory for chosen recordings
+Rscript scripts/timing-tasvideos.R               # every distinct recording once, about 45 minutes
+Rscript scripts/timing-sizes.R                   # artificial FM2 recordings; needs no download
 ```
 
 The separate decoders, `scripts/independent-decoders`. replayr's values are
@@ -117,13 +138,21 @@ Rscript scripts/fbm-text-read.R recordings/tasvideos_archive/movies/Arcade table
 python scripts/fbm-text-compare.py recordings/tasvideos_archive/movies/Arcade fbm-text.csv tables/fbm-text-comparison.csv
 ```
 
+The time to read the other collections, from the folders of the Doom-engine
+demos, the GoldSrc demos, the Gym Retro recordings and the Atari data, as the
+commands above name them (files are found by their hash):
+
+```sh
+Rscript scripts/timing-other-collections.R recordings demos recordings atari
+```
+
 Last, the summary:
 
 ```sh
 Rscript scripts/summarise.R
 ```
 
-## Licences of the files
+## Licences
 
 The recordings belong to their authors and are not redistributed. The
 tables give, where a source states one, its licence: the parser

@@ -35,8 +35,11 @@
     keep <- which(nzchar(clean))
     data.frame(line = keep, text = clean[keep], stringsAsFactors = FALSE)
   })
+  # Input rows are collected in blocks: the run of input lines between two
+  # commands of one script, with the script and line of each row.
   rows <- list()
-  locations <- list()
+  row_members <- list()
+  row_lines <- list()
   commands <- list()
   row_count <- 0L
   command_count <- 0L
@@ -47,41 +50,52 @@
     if (!member %in% names(parsed)) stop("Missing DFT included script: ", member, call. = FALSE)
     visited <<- union(visited, member)
     script <- parsed[[member]]
-    for (i in seq_len(nrow(script))) {
-      line <- script$text[i]
-      if (grepl("^[012]", line)) {
-        digits <- gsub("[[:space:]]", "", line)
-        if (!grepl("^[012]{4}[01]{5,7}$", digits))
-          stop("Invalid DFT input at ", member, ":", script$line[i], call. = FALSE)
-        row_count <<- row_count + 1L
-        if (row_count > 10000000L) stop("DFT expansion exceeds ten million scripted frames", call. = FALSE)
-        rows[[row_count]] <<- digits
-        locations[[row_count]] <<- c(member, as.character(script$line[i]))
-      } else {
-        parts <- strsplit(line, ":", fixed = TRUE)[[1L]]
-        kind <- parts[1L]
-        if (!kind %in% c("INCLUDE", "MOUSE", "LOAD", "STATS", "SYNCLOAD"))
-          stop("Unknown DFT command at ", member, ":", script$line[i], ": ", kind, call. = FALSE)
-        count <- c(INCLUDE = 2L, MOUSE = 4L, LOAD = 4L, STATS = 2L, SYNCLOAD = 1L)[kind]
-        if (length(parts) != count || any(!nzchar(parts)))
-          stop("Invalid DFT ", kind, " command at ", member, ":", script$line[i], call. = FALSE)
-        if (kind == "INCLUDE") parts[2L] <- .computer_tar_path(parts[2L])
-        if (kind == "MOUSE") {
-          .computer_number(parts[2:3], "DFT mouse coordinates", whole = FALSE)
-          if (!grepl("^[01]{1,5}$", parts[4L])) stop("Invalid DFT mouse button state", call. = FALSE)
-        }
-        if (kind == "LOAD") .computer_number(parts[2L], "DFT character ID", 0, 3)
-        if (kind == "STATS") .computer_number(parts[2L], "DFT stats ID", 0)
-        command_count <<- command_count + 1L
-        if (command_count > 1000000L) stop("DFT expansion exceeds one million commands", call. = FALSE)
-        commands[[command_count]] <<- data.frame(
-          order = command_count,
-          before_row = row_count + 1L, member = member, line = script$line[i],
-          command = kind, text = line, stringsAsFactors = FALSE
-        )
-        if (kind == "INCLUDE") expand(parts[2L], c(stack, member))
-      }
+    input <- grepl("^[012]", script$text)
+    # Each input row is checked before it is counted, so an invalid row within
+    # the limit is reported before the limit.
+    add_rows <- function(at) {
+      if (!length(at)) return(invisible(NULL))
+      digits <- gsub("[[:space:]]", "", script$text[at])
+      invalid <- which(!grepl("^[012]{4}[01]{5,7}$", digits))
+      room <- 10000000L - row_count
+      if (length(invalid) && invalid[1L] <= room + 1L)
+        stop("Invalid DFT input at ", member, ":", script$line[at[invalid[1L]]], call. = FALSE)
+      if (length(at) > room) stop("DFT expansion exceeds ten million scripted frames", call. = FALSE)
+      rows[[length(rows) + 1L]] <<- digits
+      row_members[[length(row_members) + 1L]] <<- rep(member, length(at))
+      row_lines[[length(row_lines) + 1L]] <<- script$line[at]
+      row_count <<- row_count + length(at)
+      invisible(NULL)
     }
+    done <- 0L
+    for (i in which(!input)) {
+      add_rows(seq_len(i - 1L - done) + done)
+      done <- i
+      line <- script$text[i]
+      parts <- strsplit(line, ":", fixed = TRUE)[[1L]]
+      kind <- parts[1L]
+      if (!kind %in% c("INCLUDE", "MOUSE", "LOAD", "STATS", "SYNCLOAD"))
+        stop("Unknown DFT command at ", member, ":", script$line[i], ": ", kind, call. = FALSE)
+      count <- c(INCLUDE = 2L, MOUSE = 4L, LOAD = 4L, STATS = 2L, SYNCLOAD = 1L)[kind]
+      if (length(parts) != count || any(!nzchar(parts)))
+        stop("Invalid DFT ", kind, " command at ", member, ":", script$line[i], call. = FALSE)
+      if (kind == "INCLUDE") parts[2L] <- .computer_tar_path(parts[2L])
+      if (kind == "MOUSE") {
+        .computer_number(parts[2:3], "DFT mouse coordinates", whole = FALSE)
+        if (!grepl("^[01]{1,5}$", parts[4L])) stop("Invalid DFT mouse button state", call. = FALSE)
+      }
+      if (kind == "LOAD") .computer_number(parts[2L], "DFT character ID", 0, 3)
+      if (kind == "STATS") .computer_number(parts[2L], "DFT stats ID", 0)
+      command_count <<- command_count + 1L
+      if (command_count > 1000000L) stop("DFT expansion exceeds one million commands", call. = FALSE)
+      commands[[command_count]] <<- data.frame(
+        order = command_count,
+        before_row = row_count + 1L, member = member, line = script$line[i],
+        command = kind, text = line, stringsAsFactors = FALSE
+      )
+      if (kind == "INCLUDE") expand(parts[2L], c(stack, member))
+    }
+    add_rows(seq_len(nrow(script) - done) + done)
     invisible(NULL)
   }
   expand(entry)
@@ -154,10 +168,10 @@
   movie$source_digits <- source_digits
   movie$source_values <- source_values
   movie$double_tapped <- source_values[, 1:4, drop = FALSE] == 2L
-  movie$source_locations <- if (n) {
-    loc <- do.call(rbind, locations)
-    data.frame(member = loc[, 1L], line = as.integer(loc[, 2L]), stringsAsFactors = FALSE)
-  } else data.frame(member = character(), line = integer(), stringsAsFactors = FALSE)
+  movie$source_locations <- data.frame(
+    member = as.character(unlist(row_members, use.names = FALSE)),
+    line = as.integer(unlist(row_lines, use.names = FALSE)), stringsAsFactors = FALSE
+  )
   movie$source_commands <- source_commands
   movie$mouse_observed <- mouse_observed
   movie$mouse_button_observed <- mouse_button_observed

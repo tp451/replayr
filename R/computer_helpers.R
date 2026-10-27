@@ -3,9 +3,12 @@
 # interchangeable keyboard layouts.
 .computer_number <- function(x, what, min = -Inf, max = Inf, whole = TRUE) {
   out <- suppressWarnings(as.numeric(x))
-  if (anyNA(out) || any(!is.finite(out)) || any(out < min | out > max) ||
-    (whole && any(out != trunc(out)))) stop("Invalid ", what, call. = FALSE)
+  if (!all(.computer_valid(out, min, max, whole))) stop("Invalid ", what, call. = FALSE)
   out
+}
+# Which numbers are finite, within the limits and, where asked, whole.
+.computer_valid <- function(x, min = -Inf, max = Inf, whole = TRUE) {
+  !is.na(x) & is.finite(x) & x >= min & x <= max & (!whole | x == trunc(x))
 }
 .computer_ini <- function(lines) {
   result <- list()

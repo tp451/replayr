@@ -23,7 +23,7 @@ and further files for the formats that TASVideos holds few or none of.
 These checks are documented in the repository's [validation folder](https://github.com/tp451/replayr/tree/main/validation), which lists the source of every file and provides the scripts to repeat them.
 The package includes original artificial examples for testing and demonstration.
 
-## Platforms represented in the checked recordings
+## Platforms
 
 The names and codes follow the [TASVideos system list](https://tasvideos.org/Systems),
 with familiar regional names added where useful. Numbers in parentheses count

@@ -55,6 +55,22 @@ test_that('JPC-RR reconstructs edges on its nanosecond event clock', {
   expect_equal(.jrsr_components('DISKNAME 0(disk (sample))'), c('DISKNAME', '0', 'disk (sample)'))
   expect_equal(.jrsr_components('a\\ b c'), c('a b', 'c'))
   expect_error(.jrsr_components('a(b'), 'Incomplete')
+  expect_equal(.jrsr_components_of(c('+0 a(b c)', 'x  y')), list(c('+0', 'a', 'b c'), c('x', 'y')))
+})
+test_that('JPC-RR reports the first event it cannot read', {
+  p <- tempfile(fileext = '.jrsr')
+  on.exit(unlink(p))
+  events <- function(...) writeLines(c('JRSR', '!BEGIN events', paste0('+', c(...)), '!END'), p)
+  # The second joystick is named only by an event that no recording of two joysticks has.
+  events('0 org.jpc.modules.Joystick BUTTONA 1', '1 org.jpc.modules.Joystick BUTTONXC 1')
+  expect_error(read_jrsr(p), 'Invalid JPC-RR joystick event')
+  events('0 org.jpc.modules.Joystick BUTTONA 2', '1 org.jpc.emulator.peripheral.Keyboard FOO 1')
+  expect_error(read_jrsr(p), 'Invalid JPC-RR joystick button')
+  events('0 org.jpc.emulator.peripheral.Keyboard FOO 1', '1 org.jpc.modules.Joystick BUTTONA 2')
+  expect_error(read_jrsr(p), 'Unsupported JPC-RR keyboard event: FOO')
+  events('0 OPTION RELATIVE', '5 org.jpc.emulator.peripheral.Keyboard KEYEDGE 30', '0 OPTION ABSOLUTE',
+    '2 org.jpc.emulator.peripheral.Keyboard KEYEDGE 30')
+  expect_error(read_jrsr(p), 'unordered')
 })
 test_that('openMSX retains event timing, source key matrix, and joystick identity', {
   x <- .computer_read('omr', 'keyboard-joystick.omr')

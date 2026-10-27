@@ -16,7 +16,7 @@ and further files for the formats that TASVideos holds few or none of.
 These checks are documented in the repository's [validation folder](validation/README.md), which lists the source of every file and provides the scripts to repeat them.
 The package includes original artificial examples for testing and demonstration.
 
-## Platforms represented in the checked recordings
+## Platforms
 
 The names and codes follow the [TASVideos system list](https://tasvideos.org/Systems),
 with familiar regional names added where useful. Numbers in parentheses count
@@ -251,6 +251,87 @@ single-string limit. `read_bk2_chunks()` verifies and extracts the input log
 once, then processes bounded groups of rows; it therefore needs temporary
 disk space for the expanded log. The callback determines how much output is
 retained. `read_lsmv()` also has a 256 MiB default with an explicit override.
+
+## Shared control identities
+
+Every control of a recording has an ID from a shared registry, which `button_layout()` reports beside the control's key and its label on the device. The registry contains 53 consecutive IDs. The same rules decide in every
+reader which controls share an ID, so a console has the same IDs whichever
+emulator recorded it:
+
+- **By label.** A button that carries one of the registry's letters or words
+  (A, B, C, X, Y, Z, L, R, Start, Select, Mode) has that ID. The ID follows
+  the letter, not the place on the pad: A is the right-hand button of a
+  Nintendo pad, the left one of a Genesis pad, and the lower one of an
+  Xbox-style pad, which is what a libTAS recording of an SDL game controller
+  holds.
+- **By place, for PlayStation pads.** Their buttons carry shapes and have the
+  IDs of the SNES buttons in the same places.
+- **In order, for numbered buttons.** The first is A, then B, X, Y, L1, R1,
+  L2, and R2.
+- **By role, for the rest.** The table lists every such assignment.
+
+`button_layout(movie)$name` shows the label on the device beside the shared
+`key` and `id`.
+
+| Source controls | Shared control and ID |
+|---|---|
+| Arcade and joystick buttons 1–8 | A, B, X, Y, L1, R1, L2, R2 (8, 7, 9–14) |
+| Arcade buttons shown under a cabinet's name: Attack or Punch; Jump, Jump/Start, or Missile; Kick; View change | A (8); B (7); X (9); Select (6) |
+| Atari 7800 second trigger | B (7) |
+| Channel F stick: forward and back; twist left and right; push and pull | Up and Down (4, 3); L1 and R1 (11, 12); A and B (8, 7) |
+| GunCon trigger, side A, side B, and offscreen shot | A, B, X, Y (8, 7, 9, 10) |
+| Intellivision Top | X (9) |
+| Keypad Clear and Enter; keypad Star and Pound | Select (6) and Start (5) |
+| Keypad digits 0–9 and Power Pad sensors 1–12 | Equal numbers share `numbered_0`–`numbered_12` (40–52) |
+| Lynx Option 1 | Select (6) |
+| Master System 1 and 2; UFO 50 Fire 1 and 2 | A, B (8, 7) |
+| Mouse buttons 4 and 5 | L1 and R1 (11 and 12) |
+| Mouse left, right, and middle buttons | A, B, X (8, 7, 9) |
+| Mouse wheel up and down | C-Up and C-Down (23, 22) |
+| Neo Geo A, B, C, and D | A, B, X, Y (8, 7, 9, 10) |
+| Option buttons and mode switches: Jaguar Option, Lynx Option 2, PC Engine 2/6-button switch, PC-FX Mode 1 and 2 | Mode (19) |
+| PC Engine and PC-FX I–VI | A, B, X, Y, L1, R1 (8, 7, 9–12) |
+| PlayStation Cross, Circle, Triangle, and Square | B, A, X, Y (7, 8, 9, 10) |
+| Single fire button or trigger; light-gun trigger | A (8) |
+| Start and pause buttons: 3DO P, Dustmod Escape, Jaguar Pause, Lynx Pause, Neo Geo Pocket Option, PC Engine Run | Start (5) |
+| Super Scope trigger, cursor, turbo, and pause | A, B, Mode, Start (8, 7, 19, 5) |
+| Touch on a screen or touchpad | L3 (15) |
+| Wii Remote 1/2, +/−, and Home | X/Y (9/10), Start/Select (5/6), and Mode (19) |
+
+Wii Remote D-pad and A/B buttons use the gamepad IDs. Nunchuk C/Z use
+17/18, Classic Controller buttons use the corresponding gamepad IDs, and
+libTAS Guide uses Mode. The microphone uses ID 53. Genesis and Saturn C
+retain ID 17 because those controllers have separate C and X buttons.
+
+A shared ID says that two buttons are the same control; what a button does
+still depends on the game. Keyboard keys keep the code set of their source.
+For example, a Neo Geo D button uses Y (10), while a libTAS keyboard D keeps
+`control:keysym_64`. Each device of an openMSX recording is a controller of
+its own, listed in `header$controllers`, with the IDs of its kind.
+Of two direction pads, the left one is the direction pad (IDs 1–4) and the
+right one has the IDs of the N64's C-buttons (20–23): the Virtual Boy's pads
+and the WonderSwan's X and Y crosses. An arcade cabinet's two joysticks have
+the direction IDs of the left and the right analogue stick.
+The Intellivision disc has the eight direction IDs of the left stick; a
+direction between two of them, such as NNE, sets both. Where a core logs the
+disc as two axes, its sixteen directions are those the console reads from
+them.
+Buttons on the console itself, such as Reset, the Master System's Pause, or
+the lid of a DS, are not part of a pad; `system_channels()` returns them.
+
+A Doom-engine demo stores no buttons at all. It stores what the game was
+asked to do in each tic, whatever keys the player had bound: attack, use
+and, in Hexen, jump. These game actions are kept apart from device buttons.
+They have kind `action` and IDs of their own (`action:attack`, `action:use`,
+`action:jump`), shared by every game that records the same action. A
+Dustmod script likewise holds jump, dash, light and heavy attack, taunt and
+restart as actions; its jump is the same `action:jump`. A GoldSrc demo
+(*Half-Life*, *Counter-Strike* 1.x) stores sixteen actions with every
+command, attack, use and jump among them, and the movement and view angles
+the command asks for as numeric channels. Numbered IDs are kept for what a
+player does to a device.
+
+![Universal button IDs for gamepads, both sticks, keypads, and peripherals, with named controls and numeric channels](man/figures/universal_buttons_layout.svg)
 
 ## Format references
 
